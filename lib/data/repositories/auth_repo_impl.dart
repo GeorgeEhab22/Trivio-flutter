@@ -1,0 +1,185 @@
+import 'package:auth/core/errors/failure.dart';
+import 'package:auth/data/core/error/exceptions.dart';
+import 'package:auth/data/datasource/auth_remote_datasource.dart';
+import 'package:auth/domain/repositories/auth_repo.dart';
+import 'package:dartz/dartz.dart';
+import '../../domain/entities/user.dart';
+
+class AuthRepositoryImpl implements AuthRepository {
+  final AuthRemoteDataSource remoteDataSource;
+
+  AuthRepositoryImpl({required this.remoteDataSource});
+
+  @override
+  Future<Either<Failure, User>> signIn({
+    required String email,
+    required String password,
+  }) async {
+    try {
+      final userModel = await remoteDataSource.signIn(
+        email: email,
+        password: password,
+      );
+      return Right(userModel.toEntity());
+    } on AuthException catch (e) {
+      return Left(AuthFailure(e.message));
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } catch (_) {
+      return Left(ServerFailure('An unexpected error occurred'));
+    }
+  }
+  @override
+  Future<Either<Failure, User>> signUp({
+    required String email,
+    required String username,
+    required String password,
+  }) async {
+    try {
+      final userModel = await remoteDataSource.signUp(
+        email: email,
+        username: username,
+        password: password,
+      );
+      return Right(userModel.toEntity());
+    } on AuthException catch (e) {
+      return Left(AuthFailure(e.message));
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } catch (_) {
+      return Left(ServerFailure('An unexpected error occurred'));
+    }
+  }
+
+  Future<Either<Failure, void>> signOut() async {
+    try {
+      await remoteDataSource.signOut();
+      return const Right(null);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } catch (_) {
+      return Left(ServerFailure('Failed to sign out'));
+    }
+  }
+
+  Future<Either<Failure, User?>> getCurrentUser() async {
+    try {
+      final userModel = await remoteDataSource.getCurrentUser();
+      if (userModel != null) {
+        return Right(userModel.toEntity());
+      } else {
+        return const Right(null);
+      }
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } catch (_) {
+      return Left(ServerFailure('Failed to get current user'));
+    }
+  }
+
+  Future<Either<Failure, void>> forgotPassword({required String email}) async {
+    try {
+      await remoteDataSource.forgotPassword(email: email);
+      return const Right(null);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } catch (_) {
+      return Left(ServerFailure('Failed to send reset password email'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, User>> signInWithGoogle({
+    required String idToken,
+  }) async {
+    try {
+      final userModel = await remoteDataSource.signInWithGoogle(
+        idToken: idToken,
+      );
+      return Right(userModel.toEntity());
+    } on AuthException catch (e) {
+      return Left(AuthFailure(e.message));
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } catch (_) {
+      return Left(ServerFailure('Google sign-in failed'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, User>> signInWithApple({
+    required String identityToken,
+    required String authorizationCode,
+  }) async {
+    try {
+      final userModel = await remoteDataSource.signInWithApple(
+        identityToken: identityToken,
+        authorizationCode: authorizationCode,
+      );
+      return Right(userModel.toEntity());
+    } on AuthException catch (e) {
+      return Left(AuthFailure(e.message));
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } catch (_) {
+      return Left(ServerFailure('Apple sign-in failed'));
+    }
+  }
+   @override
+     Future<Either<Failure, User>> registerWithGoogle({
+    required String idToken,
+  }) async {
+    try {
+      final userModel = await remoteDataSource.registerWithGoogle(
+        idToken: idToken,
+      );
+      return Right(userModel.toEntity());
+    } on AuthException catch (e) {
+      return Left(AuthFailure(e.message));
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } catch (_) {
+      return Left(ServerFailure('Google registration failed'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, User>> registerWithApple({
+    required String identityToken,
+    required String authorizationCode,
+  }) async {
+    try {
+      final userModel = await remoteDataSource.registerWithApple(
+        identityToken: identityToken,
+        authorizationCode: authorizationCode,
+      );
+      return Right(userModel.toEntity());
+    } on AuthException catch (e) {
+      return Left(AuthFailure(e.message));
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } catch (_) {
+      return Left(ServerFailure('Apple registration failed'));
+    }
+  }
+  
+
+}
