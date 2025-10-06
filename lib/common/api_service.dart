@@ -12,7 +12,6 @@ class ApiService {
               receiveTimeout: const Duration(seconds: 10),
               headers: {
                 'Content-Type': 'application/json',
-                'authorization': 'Bearer ',
                 'Accept': 'application/json',
               },
             ));

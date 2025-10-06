@@ -53,7 +53,6 @@ class MyApp extends StatelessWidget {
   }
 }
 
-// Placeholder pages
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 

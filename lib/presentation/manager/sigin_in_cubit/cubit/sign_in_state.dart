@@ -1,4 +1,3 @@
-import 'package:auth/domain/entities/user.dart';
 import 'package:equatable/equatable.dart';
 
 abstract class SignInState extends Equatable {
@@ -17,12 +16,9 @@ class SignInLoading extends SignInState {
 }
 
 class SignInSuccess extends SignInState {
-  final User user;
 
-  const SignInSuccess({required this.user});
+  const SignInSuccess();
 
-  @override
-  List<Object> get props => [user];
 }
 
 class SignInFailure extends SignInState {

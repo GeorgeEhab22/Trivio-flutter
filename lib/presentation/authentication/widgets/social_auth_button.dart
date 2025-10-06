@@ -26,7 +26,7 @@ class SocialSignInButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(8.0),
         ),
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-        elevation: 2, // subtle shadow
+        elevation: 2, 
       ),
       onPressed: onPressed,
       child: Row(

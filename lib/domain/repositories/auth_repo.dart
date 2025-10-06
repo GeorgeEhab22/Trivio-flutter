@@ -3,7 +3,7 @@ import 'package:auth/domain/entities/user.dart';
 import 'package:dartz/dartz.dart';
 
 abstract class AuthRepository {
-  Future<Either<Failure, User>> signIn({
+  Future<Either<Failure, void>> signIn({
     required String email,
     required String password,
   });

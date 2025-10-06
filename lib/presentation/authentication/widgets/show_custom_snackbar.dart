@@ -13,7 +13,7 @@ void showCustomSnackBar(BuildContext context, String message, bool success) {
       child: AnimatedSnackBar(
         message: message,
         success: success,
-        onDismissed: () => overlayEntry.remove(), // 🔹 Clean removal
+        onDismissed: () => overlayEntry.remove(), 
       ),
     ),
   );

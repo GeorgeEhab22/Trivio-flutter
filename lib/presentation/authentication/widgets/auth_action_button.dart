@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:auth/common/basic_app_button.dart';
 
-/// A generic button for auth actions (Sign in, Register, Forgot Password, etc.)
 class AuthActionButton<C extends StateStreamable<S>, S, L> extends StatelessWidget {
   final VoidCallback onPressed;
   final String title;

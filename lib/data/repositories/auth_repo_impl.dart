@@ -11,26 +11,27 @@ class AuthRepositoryImpl implements AuthRepository {
   AuthRepositoryImpl({required this.remoteDataSource});
 
   @override
-  Future<Either<Failure, User>> signIn({
-    required String email,
-    required String password,
-  }) async {
-    try {
-      final userModel = await remoteDataSource.signIn(
-        email: email,
-        password: password,
-      );
-      return Right(userModel.toEntity());
-    } on AuthException catch (e) {
-      return Left(AuthFailure(e.message));
-    } on ServerException catch (e) {
-      return Left(ServerFailure(e.message));
-    } on NetworkException catch (e) {
-      return Left(NetworkFailure(e.message));
-    } catch (_) {
-      return Left(ServerFailure('An unexpected error occurred'));
-    }
+Future<Either<Failure, void>> signIn({
+  required String email,
+  required String password,
+}) async {
+  try {
+    await remoteDataSource.signIn(
+      email: email,
+      password: password,
+    );
+    return const Right(null);
+  } on AuthException catch (e) {
+    return Left(AuthFailure(e.message));
+  } on ServerException catch (e) {
+    return Left(ServerFailure(e.message));
+  } on NetworkException catch (e) {
+    return Left(NetworkFailure(e.message));
+  } catch (_) {
+    return Left(ServerFailure('An unexpected error occurred'));
   }
+}
+
   @override
   Future<Either<Failure, User>> signUp({
     required String email,

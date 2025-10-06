@@ -6,7 +6,7 @@ import '../models/user_model.dart';
 import '../../common/api_service.dart';
 
 abstract class AuthRemoteDataSource {
-  Future<UserModel> signIn({required String email, required String password});
+  Future<void> signIn({required String email, required String password});
   Future<UserModel> signUp({required String email, required String username, required String password});
   Future<void> signOut();
   Future<UserModel?> getCurrentUser();
@@ -32,24 +32,26 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   Future<void> _clearToken() async => prefs.remove('auth_token');
 
   @override
-  Future<UserModel> signIn({required String email, required String password}) async {
-    try {
-      final response = await api.post(ApiEndpoints.signin, data: {
-        'email': email,
-        'password': password,
-      });
-
-      final user = UserModel.fromJson(response['user']);
-      if (response['token'] != null) {
-        await _storeToken(response['token']);
-      }
-      return user;
-    } on SocketException {
-      throw NetworkException('No internet connection');
-    } catch (_) {
-      throw AuthException('Failed to sign in');
+  @override
+Future<void> signIn({required String email, required String password}) async {
+  try {
+    final response = await api.post(ApiEndpoints.login, data: {
+      'email': email,
+      'password': password,
+    });
+    final token = response['data']?[0];
+    if (token != null) {
+      await _storeToken(token);
+    } else {
+      throw AuthException('Token not found in response');
     }
+  } on SocketException {
+    throw NetworkException('No internet connection');
+  } catch (e) {
+    throw AuthException('Failed to sign in');
   }
+}
+
 
   @override
   Future<UserModel> signUp({required String email, required String username, required String password}) async {

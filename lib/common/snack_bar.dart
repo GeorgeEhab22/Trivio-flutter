@@ -5,7 +5,7 @@ class AnimatedSnackBar extends StatefulWidget {
   final String message;
   final Duration displayDuration; 
   final bool success;
-  final VoidCallback? onDismissed; // 🔹 callback for cleanup
+  final VoidCallback? onDismissed;
 
   const AnimatedSnackBar({
     super.key,

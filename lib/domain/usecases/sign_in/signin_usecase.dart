@@ -1,14 +1,13 @@
 import 'package:auth/core/errors/failure.dart';
 import 'package:auth/domain/repositories/auth_repo.dart';
 import 'package:dartz/dartz.dart';
-import '../../entities/user.dart';
 
 class SignInUseCase {
   final AuthRepository repository;
 
   SignInUseCase(this.repository);
 
-  Future<Either<Failure, User>> call({
+  Future<Either<Failure, void>> call({
     required String email,
     required String password,
   }) async {
@@ -27,18 +26,25 @@ class SignInUseCase {
     }
 
     final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-    if (email.contains('@')) {
-      if (!emailRegex.hasMatch(email.trim())) {
-        return Left(ValidationFailure('Please enter a valid email address'));
+    final trimmedEmail = email.trim();
+
+    if (trimmedEmail.contains('@')) {
+      if (!emailRegex.hasMatch(trimmedEmail)) {
+        return const Left(
+          ValidationFailure('Please enter a valid email address'),
+        );
       }
     } else {
-      if (email.trim().length < 3) {
-        return Left(
+      if (trimmedEmail.length < 3) {
+        return const Left(
           ValidationFailure('Username must be at least 3 characters'),
         );
       }
     }
 
-    return await repository.signIn(email: email.trim(), password: password);
+    return await repository.signIn(
+      email: trimmedEmail,
+      password: password,
+    );
   }
 }

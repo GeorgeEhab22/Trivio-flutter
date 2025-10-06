@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 class SignInListener {
   static void handleStateChanges(BuildContext context, SignInState state) {
     if (state is SignInSuccess) {
-      showCustomSnackBar(context, 'Welcome back, ${state.user.username}!', true);
+      showCustomSnackBar(context, 'Welcome back!', true);
       Navigator.pushReplacementNamed(context, '/home');
     } else if (state is SignInFailure) {
       showCustomSnackBar(context, state.message, false);

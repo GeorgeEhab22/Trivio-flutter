@@ -18,9 +18,8 @@ final sl = GetIt.instance;
 Future<void> init() async {
   final prefs = await SharedPreferences.getInstance();
   sl.registerLazySingleton(() => prefs);
-  //TODO:replace with api
   sl.registerLazySingleton(
-    () => ApiService(baseUrl: "https://your-api.com/api/v1"),
+    () => ApiService(baseUrl: "http://localhost:3500/api/v1/"),
   );
 
   sl.registerLazySingleton<AuthRemoteDataSource>(

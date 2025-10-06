@@ -1,4 +1,3 @@
-// ignore_for_file: type_literal_in_constant_pattern
 
 import 'package:auth/core/errors/failure.dart';
 import 'package:auth/domain/entities/user.dart';
@@ -24,7 +23,6 @@ class RegisterCubit extends Cubit<RegisterState> {
         _appleRegisterUseCase = appleRegisterUseCase,
         super(const RegisterInitial());
 
-  /// Email + Password registration
   Future<void> register({
     required String email,
     required String password,
@@ -40,7 +38,6 @@ class RegisterCubit extends Cubit<RegisterState> {
     );
   }
 
-  /// Google registration
   Future<void> registerWithGoogle() async {
     emit(const RegisterLoading());
     try {
@@ -66,7 +63,6 @@ class RegisterCubit extends Cubit<RegisterState> {
     }
   }
 
-  /// Apple registration
   Future<void> registerWithApple() async {
     emit(const RegisterLoading());
     try {
@@ -96,14 +92,13 @@ class RegisterCubit extends Cubit<RegisterState> {
     }
   }
 
-  /// Map failures
   RegisterFailure _mapFailureToState(Failure failure) {
     switch (failure.runtimeType) {
-      case ValidationFailure:
+      case const (ValidationFailure):
         return RegisterFailure(message: failure.message, errorType: 'validation');
-      case NetworkFailure:
+      case const (NetworkFailure):
         return RegisterFailure(message: failure.message, errorType: 'network');
-      case AuthFailure:
+      case const (AuthFailure):
         return RegisterFailure(message: failure.message, errorType: 'auth');
       default:
         return RegisterFailure(message: failure.message, errorType: 'server');
@@ -112,7 +107,6 @@ class RegisterCubit extends Cubit<RegisterState> {
 
   void resetState() => emit(const RegisterInitial());
 
-  /// Helpers
   bool get isLoading => state is RegisterLoading;
   bool get isSuccess => state is RegisterSuccess;
   bool get isFailure => state is RegisterFailure;
