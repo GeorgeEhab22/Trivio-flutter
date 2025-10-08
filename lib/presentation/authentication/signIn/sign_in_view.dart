@@ -55,6 +55,7 @@ class _SignInPageState extends State<SignInPage> {
                 EmailField(controller: _emailController, isLogin: true),
                 const SizedBox(height: 20),
                 PasswordField(
+                  isLogin: true,
                   controller: _passwordController,
                   isPasswordVisible: _isPasswordVisible,
                   onVisibilityToggle: () {

@@ -17,10 +17,6 @@ class RegisterUseCase {
       return const Left(ValidationFailure('Email is required'));
     }
 
-    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-    if (!emailRegex.hasMatch(email.trim())) {
-      return const Left(ValidationFailure('Please enter a valid email address'));
-    }
 
     if (username.trim().isEmpty) {
       return const Left(ValidationFailure('Username is required'));

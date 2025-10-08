@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../widgets/email_field.dart';
 import '../widgets/password_field.dart';
-import '../widgets/already_have_account.dart'; 
+import '../widgets/already_have_account.dart';
 import 'register_listener.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -25,7 +25,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   bool _isPasswordVisible = false;
-  bool _isConfirmPasswordVisible = false; 
+  bool _isConfirmPasswordVisible = false;
 
   @override
   void dispose() {
@@ -33,6 +33,8 @@ class _RegisterPageState extends State<RegisterPage> {
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
+    _passwordController.clear();
+    _confirmPasswordController.clear();
     super.dispose();
   }
 
@@ -77,29 +79,24 @@ class _RegisterPageState extends State<RegisterPage> {
                 const SizedBox(height: 20),
                 PasswordField(
                   controller: _confirmPasswordController,
+                  originalController: _passwordController,
                   isPasswordVisible: _isConfirmPasswordVisible,
                   onVisibilityToggle: () {
-                    setState(() =>
-                        _isConfirmPasswordVisible = !_isConfirmPasswordVisible);
+                    setState(
+                      () => _isConfirmPasswordVisible =
+                          !_isConfirmPasswordVisible,
+                    );
                   },
                   onSubmit: _handleRegister,
                   label: "Confirm Password",
                   hint: "Re-enter your password",
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "Please confirm your password";
-                    }
-                    if (value != _passwordController.text) {
-                      return "Passwords do not match";
-                    }
-                    return null;
-                  },
+                  isConfirm: true,
                 ),
                 const SizedBox(height: 20),
                 AuthActionButton<RegisterCubit, RegisterState, RegisterLoading>(
                   onPressed: _handleRegister,
-                  title: "Register",
-                  loadingText: "Registering...",
+                  title: "send code",
+                  loadingText: "Sending code...",
                   isLoading: (state) => state is RegisterLoading,
                 ),
                 const GoogleAndAppleFields(isLogin: false),

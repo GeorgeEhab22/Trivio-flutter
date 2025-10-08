@@ -11,26 +11,23 @@ class AuthRepositoryImpl implements AuthRepository {
   AuthRepositoryImpl({required this.remoteDataSource});
 
   @override
-Future<Either<Failure, void>> signIn({
-  required String email,
-  required String password,
-}) async {
-  try {
-    await remoteDataSource.signIn(
-      email: email,
-      password: password,
-    );
-    return const Right(null);
-  } on AuthException catch (e) {
-    return Left(AuthFailure(e.message));
-  } on ServerException catch (e) {
-    return Left(ServerFailure(e.message));
-  } on NetworkException catch (e) {
-    return Left(NetworkFailure(e.message));
-  } catch (_) {
-    return Left(ServerFailure('An unexpected error occurred'));
+  Future<Either<Failure, void>> signIn({
+    required String email,
+    required String password,
+  }) async {
+    try {
+      await remoteDataSource.signIn(email: email, password: password);
+      return const Right(null);
+    } on AuthException catch (e) {
+      return Left(AuthFailure(e.message));
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } catch (_) {
+      return Left(ServerFailure('An unexpected error occurred'));
+    }
   }
-}
 
   @override
   Future<Either<Failure, User>> signUp({
@@ -140,8 +137,9 @@ Future<Either<Failure, void>> signIn({
       return Left(ServerFailure('Apple sign-in failed'));
     }
   }
-   @override
-     Future<Either<Failure, User>> registerWithGoogle({
+
+  @override
+  Future<Either<Failure, User>> registerWithGoogle({
     required String idToken,
   }) async {
     try {
@@ -181,6 +179,27 @@ Future<Either<Failure, void>> signIn({
       return Left(ServerFailure('Apple registration failed'));
     }
   }
-  
 
+  @override
+  Future<Either<Failure, void>> resendVerificationCode({required String email}) {
+    // TODO: implement
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Either<Failure, String>> verifyCode({
+    required String email,
+    required String code,
+  }) async {
+    try {
+      await remoteDataSource.verifyCode(email: email, code: code);
+      return const Right('Verification code sent');
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } catch (_) {
+      return Left(ServerFailure('Failed to verify code'));
+    }
+  }
 }

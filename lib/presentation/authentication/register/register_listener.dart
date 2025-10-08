@@ -10,7 +10,11 @@ class RegisterListener {
         'Welcome, ${state.user.username}! Your account has been created.',
         true,
       );
-      Navigator.pushReplacementNamed(context, '/home'); 
+      Navigator.pushNamed(
+        context,
+        '/verify',
+        arguments: state.user.email, 
+      );
     } else if (state is RegisterFailure) {
       showCustomSnackBar(context, state.message, false);
     }

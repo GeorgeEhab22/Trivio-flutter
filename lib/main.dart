@@ -1,5 +1,7 @@
 import 'package:auth/presentation/authentication/register/register_view.dart';
+import 'package:auth/presentation/authentication/register/verify_code_view.dart';
 import 'package:auth/presentation/manager/register_cubit/cubit/register_cubit.dart';
+import 'package:auth/presentation/manager/register_cubit/cubit/verify_code_cubit.dart';
 import 'package:auth/presentation/manager/sigin_in_cubit/cubit/sign_in_cubit.dart';
 import 'package:auth/presentation/authentication/signIn/sign_in_view.dart';
 import 'package:device_preview/device_preview.dart';
@@ -38,6 +40,22 @@ class MyApp extends StatelessWidget {
         create: (context) => di.sl<SignInCubit>(),
         child: const SignInPage(),
       ),
+      onGenerateRoute: (settings) {
+        if (settings.name == '/verify') {
+          final email = settings.arguments as String;
+          return MaterialPageRoute(
+            builder: (context) => BlocProvider(
+              create: (context) => VerifyCodeCubit(
+                verifyCode: di.sl(),
+                resendVerificationCode: di.sl(),
+                email: email, // Pass email here
+              ),
+              child: VerifyCodePage(email: email),
+            ),
+          );
+        }
+        return null;
+      },
       routes: {
         '/signin': (context) => BlocProvider(
           create: (context) => di.sl<SignInCubit>(),
@@ -58,6 +76,11 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(body: Center(child: Text('Home Page')));
+    return Scaffold(
+      appBar: AppBar(title: const Text('Home')),
+      body: const Center(
+        child: Text('Welcome! Email Verified Successfully'),
+      ),
+    );
   }
 }

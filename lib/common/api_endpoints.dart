@@ -10,5 +10,6 @@ class ApiEndpoints {
   static const googleRegister = 'auth/google/register';
   static const appleRegister = 'auth/apple/register';
   static const verifyEmail = 'auth/verify-code';
+  static const resendVerificationCode = 'auth/resend-code';
   static const resetPassword = 'auth/reset-password';
 }

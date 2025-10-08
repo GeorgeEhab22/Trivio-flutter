@@ -25,4 +25,8 @@ class ApiService {
     final res = await _dio.post(endPoint, data: data);
     return res.data;
   }
+   Future<Map<String, dynamic>> patch(String endPoint, {Map<String, dynamic>? data}) async {
+    final res = await _dio.patch(endPoint, data: data);
+    return res.data;
+  }
 }

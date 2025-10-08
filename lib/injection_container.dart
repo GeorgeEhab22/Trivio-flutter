@@ -5,6 +5,8 @@ import 'package:auth/domain/repositories/auth_repo.dart';
 import 'package:auth/domain/usecases/rigester/apple_register_usecase.dart';
 import 'package:auth/domain/usecases/rigester/google_register_usecase.dart';
 import 'package:auth/domain/usecases/rigester/register_usecase.dart';
+import 'package:auth/domain/usecases/rigester/resend_verification_code.dart';
+import 'package:auth/domain/usecases/rigester/verify_code.dart';
 import 'package:auth/domain/usecases/sign_in/apple_sign_in_usecases.dart';
 import 'package:auth/domain/usecases/sign_in/google_sign_in_usecases.dart';
 import 'package:auth/domain/usecases/sign_in/signin_usecase.dart';
@@ -34,12 +36,12 @@ Future<void> init() async {
   sl.registerLazySingleton(() => GoogleSignInUseCase(sl()));
   sl.registerLazySingleton(() => AppleSignInUseCase(sl()));
 
-  sl.registerLazySingleton(() => RegisterUseCase( sl()));
-  sl.registerLazySingleton(() => GoogleRegisterUseCase( sl()));
-  sl.registerLazySingleton(() => AppleRegisterUseCase( sl()));
+  sl.registerLazySingleton(() => RegisterUseCase(sl()));
+  sl.registerLazySingleton(() => GoogleRegisterUseCase(sl()));
+  sl.registerLazySingleton(() => AppleRegisterUseCase(sl()));
 
-  
-
+  sl.registerLazySingleton(() => VerifyCode(sl()));
+  sl.registerLazySingleton(() => ResendVerificationCode(sl()));
 
   sl.registerFactory(
     () => SignInCubit(
@@ -49,7 +51,8 @@ Future<void> init() async {
     ),
   );
 
-  sl.registerFactory( 
+
+  sl.registerFactory(
     () => RegisterCubit(
       registerUseCase: sl(),
       googleRegisterUseCase: sl(),
