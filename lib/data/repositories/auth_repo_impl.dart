@@ -14,9 +14,10 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Either<Failure, void>> signIn({
     required String email,
     required String password,
+    required bool isEmail,
   }) async {
     try {
-      await remoteDataSource.signIn(email: email, password: password);
+      await remoteDataSource.signIn(email: email, password: password, isEmail: isEmail);
       return const Right(null);
     } on AuthException catch (e) {
       return Left(AuthFailure(e.message));
@@ -83,18 +84,6 @@ class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
-  Future<Either<Failure, void>> forgotPassword({required String email}) async {
-    try {
-      await remoteDataSource.forgotPassword(email: email);
-      return const Right(null);
-    } on ServerException catch (e) {
-      return Left(ServerFailure(e.message));
-    } on NetworkException catch (e) {
-      return Left(NetworkFailure(e.message));
-    } catch (_) {
-      return Left(ServerFailure('Failed to send reset password email'));
-    }
-  }
 
   @override
   Future<Either<Failure, User>> signInWithGoogle({
@@ -200,6 +189,42 @@ class AuthRepositoryImpl implements AuthRepository {
       return Left(NetworkFailure(e.message));
     } catch (_) {
       return Left(ServerFailure('Failed to verify code'));
+    }
+  }
+  @override
+  Future<Either<Failure, User>> verifyOTP({
+    required String otp,
+    required String email,
+    required String password,
+  }) async {
+    try {
+      final userModel = await remoteDataSource.verifyOTP(
+        otp: otp,
+        email: email,
+        password: password,
+      );
+      return Right(userModel.toEntity());
+    } on AuthException catch (e) {
+      return Left(AuthFailure(e.message));
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } catch (_) {
+      return Left(ServerFailure('OTP verification failed'));
+    }
+  }
+  @override
+  Future<Either<Failure, String>> sendPasswordResetOtp({required String email}) async {
+    try {
+      await remoteDataSource.sendPasswordResetOtp(email: email);
+      return const Right('Password reset OTP sent');
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } catch (_) {
+      return Left(ServerFailure('Failed to send password reset OTP'));
     }
   }
 }

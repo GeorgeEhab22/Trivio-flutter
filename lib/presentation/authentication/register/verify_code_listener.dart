@@ -1,5 +1,5 @@
 import 'package:auth/presentation/authentication/widgets/show_custom_snackbar.dart';
-import 'package:auth/presentation/manager/register_cubit/cubit/verify_code_state.dart';
+import 'package:auth/presentation/manager/register_cubit/verify_code_state.dart';
 import 'package:flutter/material.dart';
 
 class VerifyCodeListener {

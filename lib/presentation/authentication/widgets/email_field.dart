@@ -1,12 +1,13 @@
+import 'package:auth/core/validator.dart';
 import 'package:auth/core/vanishing_item.dart';
 import 'package:auth/core/vanishing_item_controller.dart';
+import 'package:auth/presentation/authentication/widgets/requirement_indecator.dart';
 import 'package:flutter/material.dart';
 
 class EmailField extends StatefulWidget {
   final TextEditingController controller;
   final bool isLogin;
   final VoidCallback? onSubmit;
-  final String? Function(String?)? validator;
   final bool showValidation;
 
   const EmailField({
@@ -14,7 +15,6 @@ class EmailField extends StatefulWidget {
     required this.controller,
     required this.isLogin,
     this.onSubmit,
-    this.validator,
     this.showValidation = true,
   });
 
@@ -23,31 +23,32 @@ class EmailField extends StatefulWidget {
 }
 
 class _EmailFieldState extends State<EmailField> {
-  static final _emailRegex = RegExp(
-    r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
-  );
+
+
 
   late final VanishingItemController<String> _vanishingController;
+  final _formFieldKey = GlobalKey<FormFieldState>();
+  String? _errorText;
 
-  final Map<String, _Requirement> _requirements = {
-    'noSpaces': _Requirement(
+  final Map<String, Requirement> _requirements = {
+    'noSpaces': Requirement(
       label: 'No spaces allowed',
       check: (email) => !email.contains(' '),
     ),
-    'atSymbol': _Requirement(
+    'atSymbol': Requirement(
       label: 'Contains @ symbol',
       check: (email) => email.contains('@'),
     ),
-    'domain': _Requirement(
+    'domain': Requirement(
       label: 'Valid domain (e.g., example.com)',
       check: (email) {
         final parts = email.split('@');
         return parts.length == 2 && parts[1].contains('.');
       },
     ),
-    'validFormat': _Requirement(
+    'validFormat': Requirement(
       label: 'Valid email format',
-      check: (email) => _emailRegex.hasMatch(email),
+      check: (email) => Validator.isValidEmail(email),
     ),
   };
 
@@ -67,8 +68,18 @@ class _EmailFieldState extends State<EmailField> {
     super.dispose();
   }
 
+
+
+
   void _validateEmail() {
     final email = widget.controller.text.trim();
+
+    if (email.isNotEmpty && _errorText != null) {
+      setState(() {
+        _errorText = null;
+      });
+    }
+
     if (email.isNotEmpty) _hasTouched = true;
 
     bool shouldRebuild = false;
@@ -104,30 +115,40 @@ class _EmailFieldState extends State<EmailField> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final hasErrors = widget.showValidation &&
+    final input = widget.controller.text.trim();
+    final isValidUsername = Validator.isValidUsername(input);
+    final isValidEmail = _hasValidFormat;
+
+    final hasErrors =
+        widget.showValidation &&
         !widget.isLogin &&
         _hasTouched &&
-        _hasBrokenRequirements;
+        _hasBrokenRequirements &&
+        input.isNotEmpty &&
+        !isValidEmail;
 
-    final validFormat = _hasValidFormat;
+    final isValid = isValidEmail || (widget.isLogin && isValidUsername);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         TextFormField(
+          key: _formFieldKey,
           controller: widget.controller,
           keyboardType: TextInputType.emailAddress,
           textInputAction: TextInputAction.next,
           onFieldSubmitted: (_) => widget.onSubmit?.call(),
           decoration: InputDecoration(
-            labelText: 'Email',
-            hintText:
-                widget.isLogin ? 'Enter username or email' : 'Enter email',
-            suffixIcon: validFormat && _hasTouched
+            labelText: widget.isLogin ? 'Username or Email' : 'Email',
+            hintText: widget.isLogin
+                ? 'Enter username or email'
+                : 'Enter email',
+            errorText: _errorText,
+            suffixIcon: isValid && _hasTouched&&!widget.isLogin
                 ? const Icon(Icons.check_circle, color: Colors.green, size: 20)
                 : null,
           ).applyDefaults(theme.inputDecorationTheme),
-          validator: widget.validator ?? _defaultValidator,
+          validator: _defaultValidator,
         ),
         if (hasErrors) ...[
           const SizedBox(height: 8),
@@ -135,7 +156,7 @@ class _EmailFieldState extends State<EmailField> {
             if (entry.value.wasMet && !entry.value.isMet)
               VanishingItem(
                 isVisible: !_vanishingController.isHidden(entry.key),
-                child: _RequirementIndicator(
+                child: RequirementIndicator(
                   label: entry.value.label,
                   isMet: entry.value.isMet,
                 ),
@@ -148,58 +169,33 @@ class _EmailFieldState extends State<EmailField> {
   String? _defaultValidator(String? value) {
     final trimmed = value?.trim() ?? '';
     if (trimmed.isEmpty) {
-      return widget.isLogin
+      final error = widget.isLogin
           ? 'Please enter your username or email'
           : 'Please enter your email';
+      setState(() {
+        _errorText = error;
+      });
+      return error;
     }
-    if (!widget.isLogin && !_emailRegex.hasMatch(trimmed)) {
-      return 'Please enter a valid email address';
+
+    if (widget.isLogin) {
+      if (!Validator.isValidUsername(trimmed) && !Validator.isValidEmail(trimmed)) {
+        final error = 'Please enter a valid username or email address';
+        setState(() {
+          _errorText = error;
+        });
+        return error;
+      }
+    } else {
+      if (!Validator.isValidEmail(trimmed)) {
+        final error = 'Please enter a valid email address';
+        setState(() {
+          _errorText = error;
+        });
+        return error;
+      }
     }
+
     return null;
-  }
-}
-
-class _Requirement {
-  final String label;
-  final bool Function(String) check;
-  bool isMet = false;
-  bool wasMet = false;
-
-  _Requirement({required this.label, required this.check});
-}
-
-class _RequirementIndicator extends StatelessWidget {
-  final String label;
-  final bool isMet;
-
-  const _RequirementIndicator({
-    required this.label,
-    required this.isMet,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 2),
-      child: Row(
-        children: [
-          Icon(
-            isMet ? Icons.check_circle : Icons.cancel,
-            size: 16,
-            color: isMet ? Colors.green : Colors.red,
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              label,
-              style: TextStyle(
-                fontSize: 12,
-                color: isMet ? Colors.green : Colors.red,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
   }
 }

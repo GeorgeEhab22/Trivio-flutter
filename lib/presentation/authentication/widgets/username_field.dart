@@ -1,3 +1,5 @@
+import 'package:auth/core/validator.dart';
+import 'package:auth/presentation/authentication/widgets/requirement_indecator.dart';
 import 'package:flutter/material.dart';
 import 'package:auth/core/vanishing_item.dart';
 import 'package:auth/core/vanishing_item_controller.dart';
@@ -5,14 +7,12 @@ import 'package:auth/core/vanishing_item_controller.dart';
 class UsernameField extends StatefulWidget {
   final TextEditingController controller;
   final VoidCallback? onSubmit;
-  final String? Function(String?)? validator;
   final bool showValidation;
 
   const UsernameField({
     super.key,
     required this.controller,
     this.onSubmit,
-    this.validator,
     this.showValidation = true,
   });
 
@@ -22,22 +22,25 @@ class UsernameField extends StatefulWidget {
 
 class _UsernameFieldState extends State<UsernameField> {
   late final VanishingItemController<String> _vanishingController;
+  late final Validator regEx;
 
-  final _requirements = <String, _Requirement>{
-    'minLength': _Requirement(
+  final _requirements = <String, Requirement>{
+    'minLength': Requirement(
       label: 'At least 3 characters',
       check: (username) => username.length >= 3,
     ),
-    'noSpaces': _Requirement(
+    'noSpaces': Requirement(
       label: 'No spaces allowed',
       check: (username) => !username.contains(' '),
     ),
-    'validChars': _Requirement(
+    'validChars': Requirement(
       label: 'Only letters, numbers, and underscores',
-      check: (username) => RegExp(r'^[a-zA-Z0-9_]+$').hasMatch(username),
+      check: (username) =>
+          Validator.isValidUsername(username),
     ),
   };
 
+  String? _errorText;
   bool _hasTouched = false;
 
   @override
@@ -57,6 +60,14 @@ class _UsernameFieldState extends State<UsernameField> {
   void _validateUsername() {
     final username = widget.controller.text.trim();
     if (username.isNotEmpty) _hasTouched = true;
+    if (_errorText != null) {
+      final newError = _defaultValidator(username);
+      if (newError == null) {
+        setState(() => _errorText = null);
+      } else if (newError != _errorText) {
+        setState(() => _errorText = newError);
+      }
+    }
 
     bool shouldRebuild = false;
 
@@ -106,11 +117,16 @@ class _UsernameFieldState extends State<UsernameField> {
           decoration: InputDecoration(
             labelText: "Username",
             hintText: "Enter your username",
+            errorText: _errorText,
             suffixIcon: allValid
                 ? const Icon(Icons.check_circle, color: Colors.green, size: 20)
                 : null,
           ).applyDefaults(theme.inputDecorationTheme),
-          validator: widget.validator ?? _defaultValidator,
+          validator: (value){
+             final error = _defaultValidator(value);
+            setState(() => _errorText = error);
+            return error;
+          },
         ),
         if (showErrors) ...[
           const SizedBox(height: 8),
@@ -118,7 +134,7 @@ class _UsernameFieldState extends State<UsernameField> {
             if (entry.value.wasMet && !entry.value.isMet)
               VanishingItem(
                 isVisible: !_vanishingController.isHidden(entry.key),
-                child: _RequirementIndicator(
+                child: RequirementIndicator(
                   label: entry.value.label,
                   isMet: entry.value.isMet,
                 ),
@@ -132,54 +148,9 @@ class _UsernameFieldState extends State<UsernameField> {
     final trimmed = value?.trim() ?? '';
     if (trimmed.isEmpty) return "Username is required";
     if (trimmed.length < 3) return "Username must be at least 3 characters";
-    if (!RegExp(r'^[a-zA-Z0-9_]+$').hasMatch(trimmed)) {
+    if (!Validator.isValidUsername(trimmed)) {
       return "Only letters, numbers, and underscores are allowed";
     }
     return null;
-  }
-}
-
-class _Requirement {
-  final String label;
-  final bool Function(String) check;
-  bool isMet = false;
-  bool wasMet = false;
-
-  _Requirement({required this.label, required this.check});
-}
-
-class _RequirementIndicator extends StatelessWidget {
-  final String label;
-  final bool isMet;
-
-  const _RequirementIndicator({
-    required this.label,
-    required this.isMet,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 2),
-      child: Row(
-        children: [
-          Icon(
-            isMet ? Icons.check_circle : Icons.cancel,
-            size: 16,
-            color: isMet ? Colors.green : Colors.red,
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              label,
-              style: TextStyle(
-                fontSize: 12,
-                color: isMet ? Colors.green : Colors.red,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
   }
 }

@@ -4,7 +4,7 @@ import 'package:auth/domain/entities/user.dart';
 import 'package:auth/domain/usecases/rigester/apple_register_usecase.dart';
 import 'package:auth/domain/usecases/rigester/google_register_usecase.dart';
 import 'package:auth/domain/usecases/rigester/register_usecase.dart';
-import 'package:auth/presentation/manager/register_cubit/cubit/register_state.dart';
+import 'package:auth/presentation/manager/register_cubit/register_state.dart';
 import 'package:auth/services/social_auth_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -27,10 +27,16 @@ class RegisterCubit extends Cubit<RegisterState> {
     required String email,
     required String password,
     required String username,
+    required String confirmPassword,
   }) async {
     emit(const RegisterLoading());
 
-    final result = await _registerUseCase(email: email, password: password, username: username);
+    final result = await _registerUseCase(
+      email: email,
+      password: password,
+      username: username,
+      confirmPassword: confirmPassword,
+    );
 
     result.fold(
       (failure) => emit(_mapFailureToState(failure)),

@@ -1,3 +1,4 @@
+import 'package:auth/core/validator.dart';
 import 'package:auth/core/vanishing_item.dart';
 import 'package:auth/core/vanishing_item_controller.dart';
 import 'package:flutter/material.dart';
@@ -35,9 +36,6 @@ class PasswordField extends StatefulWidget {
 }
 
 class _PasswordFieldState extends State<PasswordField> {
-  final passwordRegex =
-      RegExp(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#\$&*~]).+$');
-
   bool hasMinLength = false;
   bool hasUppercase = false;
   bool hasLowercase = false;
@@ -47,7 +45,7 @@ class _PasswordFieldState extends State<PasswordField> {
   bool passwordsMatch = false;
   bool showRequiredMessage = false;
 
-  String? _errorText; 
+  String? _errorText;
 
   late final VanishingItemController<String> _vanishingController;
 
@@ -90,7 +88,7 @@ class _PasswordFieldState extends State<PasswordField> {
         _vanishingController.hideImmediately('required');
         setState(() {
           showRequiredMessage = false;
-          _errorText = null; 
+          _errorText = null;
         });
       }
     } else {
@@ -143,18 +141,22 @@ class _PasswordFieldState extends State<PasswordField> {
       if (!_vanishingController.isHidden('passwordMatch')) {
         _vanishingController.hideImmediately('passwordMatch');
       }
-
       if (passwordsMatch) {
         setState(() => passwordsMatch = false);
       }
-
+      if (_errorText != null) {
+        setState(() => _errorText = null);
+      }
       return;
     }
 
     final match = confirm == original;
 
     if (passwordsMatch != match) {
-      setState(() => passwordsMatch = match);
+      setState(() {
+        passwordsMatch = match;
+        _errorText = match ? null : 'Passwords do not match';
+      });
 
       if (match) {
         _vanishingController.scheduleHide('passwordMatch');
@@ -162,7 +164,16 @@ class _PasswordFieldState extends State<PasswordField> {
         _vanishingController.show('passwordMatch');
       }
     } else {
-      if (!match) _vanishingController.show('passwordMatch');
+      if (!match) {
+        if (_errorText != 'Passwords do not match') {
+          setState(() => _errorText = 'Passwords do not match');
+        }
+        _vanishingController.show('passwordMatch');
+      } else {
+        if (_errorText != null) {
+          setState(() => _errorText = null);
+        }
+      }
     }
   }
 
@@ -206,7 +217,8 @@ class _PasswordFieldState extends State<PasswordField> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final showRequirements = widget.showValidation &&
+    final showRequirements =
+        widget.showValidation &&
         !widget.isLogin &&
         !widget.isConfirm &&
         (hasTouched || widget.controller.text.isNotEmpty);
@@ -236,33 +248,11 @@ class _PasswordFieldState extends State<PasswordField> {
             ),
           ).applyDefaults(theme.inputDecorationTheme),
           validator: (value) {
-            final trimmed = value?.trim() ?? '';
-            if (trimmed.isEmpty) {
-              setState(() {
-                _errorText = widget.isConfirm
-                    ? 'Please confirm your password'
-                    : 'Password is required';
-                showRequiredMessage = true;
-              });
-              return _errorText;
-            }
-            return null;
+            final result = _validatePassword(value);
+            setState(() => _errorText = result);
+            return result;
           },
         ),
-
-       
-        if (widget.isConfirm && widget.originalController != null) ...[
-          const SizedBox(height: 8),
-          VanishingItem(
-            isVisible: !_vanishingController.isHidden('passwordMatch'),
-            child: _buildRequirement(
-              passwordsMatch
-                  ? 'Passwords match'
-                  : 'Passwords do not match',
-              passwordsMatch,
-            ),
-          ),
-        ],
 
         if (showRequirements) ...[
           const SizedBox(height: 8),
@@ -292,6 +282,29 @@ class _PasswordFieldState extends State<PasswordField> {
         ],
       ],
     );
+  }
+
+  String? _validatePassword(String? value) {
+    final trimmed = value?.trim() ?? '';
+
+    if (trimmed.isEmpty) {
+      return widget.isConfirm
+          ? 'Please confirm your password'
+          : 'Password is required';
+    }
+
+    if (widget.isConfirm && widget.originalController != null) {
+      final original = widget.originalController!.text.trim();
+      if (trimmed != original) {
+        return 'Passwords do not match';
+      }
+    }
+
+    if (!Validator.isValidPassword(trimmed)) {
+      return 'Must include upper, lower, number & symbol';
+    }
+
+    return null;
   }
 
   Widget _buildRequirement(String text, bool isMet) {

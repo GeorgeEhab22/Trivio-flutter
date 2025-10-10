@@ -2,7 +2,7 @@ import 'package:auth/core/errors/failure.dart';
 import 'package:auth/domain/usecases/sign_in/apple_sign_in_usecases.dart';
 import 'package:auth/domain/usecases/sign_in/google_sign_in_usecases.dart';
 import 'package:auth/domain/usecases/sign_in/signin_usecase.dart';
-import 'package:auth/presentation/manager/sigin_in_cubit/cubit/sign_in_state.dart';
+import 'package:auth/presentation/manager/sigin_in_cubit/sign_in_state.dart';
 import 'package:auth/services/social_auth_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

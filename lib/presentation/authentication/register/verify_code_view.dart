@@ -1,13 +1,13 @@
 import 'package:auth/common/basic_app_button.dart';
+import 'package:auth/common/functions/code_box_handlers.dart';
 import 'package:auth/constants/colors';
 import 'package:auth/core/styels.dart';
 import 'package:auth/presentation/authentication/register/verify_code_listener.dart';
-import 'package:auth/presentation/authentication/widgets/show_custom_snackbar.dart';
-import 'package:auth/presentation/authentication/widgets/code_box.dart';
-import 'package:auth/presentation/manager/register_cubit/cubit/verify_code_cubit.dart';
-import 'package:auth/presentation/manager/register_cubit/cubit/verify_code_state.dart';
+import 'package:auth/presentation/authentication/widgets/resend_code_button.dart';
+import 'package:auth/presentation/authentication/widgets/verify_code_box_list.dart';
+import 'package:auth/presentation/manager/register_cubit/verify_code_cubit.dart';
+import 'package:auth/presentation/manager/register_cubit/verify_code_state.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class VerifyCodePage extends StatefulWidget {
@@ -23,10 +23,7 @@ class _VerifyCodePageState extends State<VerifyCodePage> {
     6,
     (index) => TextEditingController(),
   );
-  final List<FocusNode> _focusNodes = List.generate(
-    6,
-    (index) => FocusNode(),
-  );
+  final List<FocusNode> _focusNodes = List.generate(6, (index) => FocusNode());
 
   @override
   void initState() {
@@ -49,41 +46,6 @@ class _VerifyCodePageState extends State<VerifyCodePage> {
     super.dispose();
   }
 
-  void _handleVerifyCode() {
-    String code = _controllers.map((c) => c.text).join();
-    if (code.length == 6) {
-      context.read<VerifyCodeCubit>().verify(code);
-    } else {
-      showCustomSnackBar(context, 'Please enter all 6 digits', false);
-    }
-  }
-
-  void _onCodeChanged(String value, int index) {
-    if (value.isEmpty && index > 0) {
-      _focusNodes[index - 1].requestFocus();
-    } else if (value.isNotEmpty && index < 5) {
-      _focusNodes[index + 1].requestFocus();
-    } else if (index == 5 && value.isNotEmpty) {
-      _handleVerifyCode();
-    }
-  }
-
-  void _onKeyEvent(KeyEvent event, int index) {
-    if (event is KeyDownEvent &&
-        event.logicalKey == LogicalKeyboardKey.backspace &&
-        _controllers[index].text.isEmpty &&
-        index > 0) {
-      _focusNodes[index - 1].requestFocus();
-    }
-  }
-
-  void _clearCode() {
-    for (var controller in _controllers) {
-      controller.clear();
-    }
-    _focusNodes[0].requestFocus();
-  }
-
   @override
   Widget build(BuildContext context) {
     return BlocListener<VerifyCodeCubit, VerifyCodeState>(
@@ -91,7 +53,7 @@ class _VerifyCodePageState extends State<VerifyCodePage> {
         VerifyCodeListener.handleStateChanges(context, state);
 
         if (state is VerifyCodeError) {
-          _clearCode();
+          CodeBoxHandlers.clearCode(_controllers, _focusNodes);
         }
       },
       child: Scaffold(
@@ -134,91 +96,35 @@ class _VerifyCodePageState extends State<VerifyCodePage> {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 48),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: List.generate(6, (index) {
-                    return Container(
-                      margin: EdgeInsets.symmetric(
-                        horizontal: MediaQuery.of(context).size.width > 400 ? 8 : 4,
-                      ),
-                      child: BlocBuilder<VerifyCodeCubit, VerifyCodeState>(
-                        builder: (context, state) {
-                          final isLoading = state is VerifyCodeLoading;
-                          return CodeBox(
-                            controller: _controllers[index],
-                            focusNode: _focusNodes[index],
-                            onChanged: (value) => _onCodeChanged(value, index),
-                            onKeyEvent: (event) => _onKeyEvent(event, index),
-                            enabled: !isLoading,
-                          );
-                        },
-                      ),
-                    );
-                  }),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: VerifyCodeBoxList(
+                    controllers: _controllers,
+                    focusNodes: _focusNodes,
+                  ),
                 ),
                 const SizedBox(height: 48),
                 BlocBuilder<VerifyCodeCubit, VerifyCodeState>(
                   builder: (context, state) {
                     final isLoading = state is VerifyCodeLoading;
                     return BasicAppButton(
-                      onPressed: isLoading ? null : _handleVerifyCode,
+                      onPressed: isLoading
+                          ? null
+                          : () => CodeBoxHandlers.handleVerifyCode(
+                              context,
+                              _controllers,
+                            ),
                       title: isLoading ? 'Verifying...' : 'Verify Code',
                     );
                   },
                 ),
                 const SizedBox(height: 24),
-                _ResendCodeButton(),
+                ResendCodeButton(),
               ],
             ),
           ),
         ),
       ),
-    );
-  }
-}
-
-class _ResendCodeButton extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<VerifyCodeCubit, VerifyCodeState>(
-      builder: (context, state) {
-        final cubit = context.read<VerifyCodeCubit>();
-        final isResending = state is VerifyCodeResending;
-        final countdown = cubit.resendCountdown;
-        final canResend = cubit.canResend;
-
-        return Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              "Didn't receive the code? ",
-              style: TextStyle(
-                color: Colors.grey[600],
-                fontSize: 14,
-              ),
-            ),
-            TextButton(
-              onPressed: (canResend && !isResending)
-                  ? () => cubit.resend()
-                  : null,
-              child: Text(
-                isResending
-                    ? 'Resending...'
-                    : canResend
-                        ? 'Resend'
-                        : 'Resend in ${countdown}s',
-                style: TextStyle(
-                  color: (canResend && !isResending)
-                      ? AppColors.primary
-                      : Colors.grey,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 14,
-                ),
-              ),
-            ),
-          ],
-        );
-      },
     );
   }
 }

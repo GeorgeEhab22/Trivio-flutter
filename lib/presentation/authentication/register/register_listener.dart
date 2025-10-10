@@ -1,4 +1,4 @@
-import 'package:auth/presentation/manager/register_cubit/cubit/register_state.dart';
+import 'package:auth/presentation/manager/register_cubit/register_state.dart';
 import 'package:auth/presentation/authentication/widgets/show_custom_snackbar.dart';
 import 'package:flutter/material.dart';
 

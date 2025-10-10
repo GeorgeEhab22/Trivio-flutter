@@ -1,4 +1,5 @@
 import 'package:auth/core/errors/failure.dart';
+import 'package:auth/core/validator.dart';
 import 'package:auth/domain/repositories/auth_repo.dart';
 import 'package:dartz/dartz.dart';
 
@@ -19,17 +20,17 @@ class SignInUseCase {
       return const Left(ValidationFailure('Password is required'));
     }
 
-    if (password.length < 6) {
+    if (password.length < 8) {
       return const Left(
-        ValidationFailure('Password must be at least 6 characters'),
+        ValidationFailure('Password must be at least 8 characters'),
       );
     }
 
-    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+    
     final trimmedEmail = email.trim();
 
     if (trimmedEmail.contains('@')) {
-      if (!emailRegex.hasMatch(trimmedEmail)) {
+      if (!Validator.isValidEmail(trimmedEmail)) {
         return const Left(
           ValidationFailure('Please enter a valid email address'),
         );
@@ -45,6 +46,7 @@ class SignInUseCase {
     return await repository.signIn(
       email: trimmedEmail,
       password: password,
+      isEmail: Validator.isValidEmail(trimmedEmail),
     );
   }
 }

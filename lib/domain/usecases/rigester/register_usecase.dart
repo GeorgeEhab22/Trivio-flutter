@@ -1,4 +1,5 @@
 import 'package:auth/core/errors/failure.dart';
+import 'package:auth/core/validator.dart';
 import 'package:auth/domain/entities/user.dart';
 import 'package:auth/domain/repositories/auth_repo.dart';
 import 'package:dartz/dartz.dart';
@@ -12,11 +13,17 @@ class RegisterUseCase {
     required String email,
     required String username,
     required String password,
+    required String confirmPassword,
   }) async {
     if (email.trim().isEmpty) {
       return const Left(ValidationFailure('Email is required'));
     }
-
+    if(!Validator.isValidPassword(password)){
+      return const Left(ValidationFailure('Please enter a valid password'));
+    }
+    if(password != confirmPassword){
+      return const Left(ValidationFailure('Passwords do not match'));
+    }
 
     if (username.trim().isEmpty) {
       return const Left(ValidationFailure('Username is required'));

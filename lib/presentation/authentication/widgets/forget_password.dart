@@ -1,29 +1,28 @@
-import 'package:auth/presentation/manager/register_cubit/register_cubit.dart';
+import 'package:auth/core/app_routes.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
-class AlreadyHaveAccount extends StatelessWidget {
-  const AlreadyHaveAccount({super.key});
+class ForgetPassword extends StatelessWidget {
+  const ForgetPassword({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Center(
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Text(
-            'Already have an account?',
+          Text(
+            'Forgot your password?',
             style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
             textAlign: TextAlign.center,
           ),
+          const SizedBox(width: 4),
           TextButton(
             onPressed: () {
-              context.read<RegisterCubit>().resetState();
-
-              Navigator.pushReplacementNamed(context, '/signin');
+              Navigator.pushNamed(context, AppRoutes.requsetResetPassword);
             },
             child: const Text(
-              'Sign in',
+              'Reset it',
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.bold,

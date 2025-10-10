@@ -1,8 +1,8 @@
 import 'package:auth/constants/paths.dart';
 import 'package:auth/presentation/authentication/widgets/divider.dart';
 import 'package:auth/presentation/authentication/widgets/social_auth_button.dart';
-import 'package:auth/presentation/manager/register_cubit/cubit/register_cubit.dart';
-import 'package:auth/presentation/manager/sigin_in_cubit/cubit/sign_in_cubit.dart';
+import 'package:auth/presentation/manager/register_cubit/register_cubit.dart';
+import 'package:auth/presentation/manager/sigin_in_cubit/sign_in_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

@@ -15,7 +15,7 @@ class CodeBox extends StatelessWidget {
   final FocusNode focusNode;
   final Function(String)? onChanged;
   final Function(KeyEvent)? onKeyEvent;
-  final bool enabled; // Add this
+  final bool enabled; 
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +23,7 @@ class CodeBox extends StatelessWidget {
       width: 48,
       height: 56,
       decoration: BoxDecoration(
-        color: enabled ? Colors.white : Colors.grey[100], // Change color when disabled
+        color: enabled ? Colors.white : Colors.grey[100], 
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: focusNode.hasFocus
@@ -45,14 +45,14 @@ class CodeBox extends StatelessWidget {
         child: TextField(
           controller: controller,
           focusNode: focusNode,
-          enabled: enabled, // Add this
+          enabled: enabled, 
           textAlign: TextAlign.center,
           keyboardType: TextInputType.number,
           maxLength: 1,
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
-            color: enabled ? Colors.black : Colors.grey, // Change text color
+            color: enabled ? Colors.black : Colors.grey, 
           ),
           decoration: const InputDecoration(
             border: InputBorder.none,

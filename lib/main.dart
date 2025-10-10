@@ -1,8 +1,14 @@
+import 'package:auth/core/app_routes.dart';
+import 'package:auth/domain/usecases/sign_in/request_otp.dart';
 import 'package:auth/presentation/authentication/register/register_view.dart';
 import 'package:auth/presentation/authentication/register/verify_code_view.dart';
-import 'package:auth/presentation/manager/register_cubit/cubit/register_cubit.dart';
-import 'package:auth/presentation/manager/register_cubit/cubit/verify_code_cubit.dart';
-import 'package:auth/presentation/manager/sigin_in_cubit/cubit/sign_in_cubit.dart';
+import 'package:auth/presentation/authentication/signIn/request_otp_view.dart';
+import 'package:auth/presentation/authentication/signIn/forget_password_otp_view.dart';
+import 'package:auth/presentation/manager/register_cubit/register_cubit.dart';
+import 'package:auth/presentation/manager/register_cubit/verify_code_cubit.dart';
+import 'package:auth/presentation/manager/sigin_in_cubit/forget_password_otp_cubit.dart';
+import 'package:auth/presentation/manager/sigin_in_cubit/request_otp/request_otp_cubit.dart';
+import 'package:auth/presentation/manager/sigin_in_cubit/sign_in_cubit.dart';
 import 'package:auth/presentation/authentication/signIn/sign_in_view.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/foundation.dart';
@@ -36,38 +42,68 @@ class MyApp extends StatelessWidget {
           contentPadding: EdgeInsets.all(16),
         ),
       ),
-      home: BlocProvider(
-        create: (context) => di.sl<SignInCubit>(),
-        child: const SignInPage(),
-      ),
-      onGenerateRoute: (settings) {
-        if (settings.name == '/verify') {
-          final email = settings.arguments as String;
-          return MaterialPageRoute(
-            builder: (context) => BlocProvider(
-              create: (context) => VerifyCodeCubit(
-                verifyCode: di.sl(),
-                resendVerificationCode: di.sl(),
-                email: email, // Pass email here
-              ),
-              child: VerifyCodePage(email: email),
-            ),
-          );
-        }
-        return null;
-      },
-      routes: {
-        '/signin': (context) => BlocProvider(
-          create: (context) => di.sl<SignInCubit>(),
-          child: const SignInPage(),
-        ),
-        '/home': (context) => const HomePage(),
-        '/register': (context) => BlocProvider(
-          create: (context) => di.sl<RegisterCubit>(),
-          child: const RegisterPage(),
-        ),
-      },
+      initialRoute: AppRoutes.signIn,
+      onGenerateRoute: _onGenerateRoute,
     );
+  }
+
+  Route? _onGenerateRoute(RouteSettings settings) {
+    switch (settings.name) {
+      case AppRoutes.signIn:
+        return MaterialPageRoute(
+          builder: (context) => BlocProvider(
+            create: (context) => di.sl<SignInCubit>(),
+            child: const SignInPage(),
+          ),
+        );
+
+      case AppRoutes.register:
+        return MaterialPageRoute(
+          builder: (context) => BlocProvider(
+            create: (context) => di.sl<RegisterCubit>(),
+            child: const RegisterPage(),
+          ),
+        );
+
+      case AppRoutes.verifyCode:
+        final email = settings.arguments as String;
+        return MaterialPageRoute(
+          builder: (context) => BlocProvider(
+            create: (context) => VerifyCodeCubit(
+              verifyCode: di.sl(),
+              resendVerificationCode: di.sl(),
+              email: email,
+            ),
+            child: VerifyCodePage(email: email),
+          ),
+        );
+
+      case AppRoutes.requsetResetPassword:
+        return MaterialPageRoute(
+          builder: (context) => BlocProvider(
+            create: (context) => RequestOTPCubit(
+              sendPasswordResetOtp: di.sl<SendPasswordResetOtp>(),
+            ),
+
+            child: const RequestOTPView(),
+          ),
+        );
+
+      case AppRoutes.home:
+        return MaterialPageRoute(builder: (context) => const HomePage());
+
+      case AppRoutes.forgetPasswordOtp:
+        final email = settings.arguments as String;
+        return MaterialPageRoute(
+          builder: (context) => BlocProvider(
+            create: (context) => ForgetPasswordOTPCubit(verifyOTP: di.sl()),
+            child: ForgetPasswordOtp(email: email),
+          ),
+        );
+
+      default:
+        return null;
+    }
   }
 }
 
@@ -78,9 +114,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Home')),
-      body: const Center(
-        child: Text('Welcome! Email Verified Successfully'),
-      ),
+      body: const Center(child: Text('Welcome! Email Verified Successfully')),
     );
   }
 }

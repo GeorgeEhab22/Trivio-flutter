@@ -1,4 +1,4 @@
-import 'package:auth/presentation/manager/sigin_in_cubit/cubit/sign_in_cubit.dart';
+import 'package:auth/presentation/manager/sigin_in_cubit/sign_in_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

@@ -2,8 +2,8 @@ import 'package:auth/core/styels.dart';
 import 'package:auth/presentation/authentication/widgets/auth_action_button.dart';
 import 'package:auth/presentation/authentication/widgets/google_and_apple_fields.dart';
 import 'package:auth/presentation/authentication/widgets/username_field.dart';
-import 'package:auth/presentation/manager/register_cubit/cubit/register_cubit.dart';
-import 'package:auth/presentation/manager/register_cubit/cubit/register_state.dart';
+import 'package:auth/presentation/manager/register_cubit/register_cubit.dart';
+import 'package:auth/presentation/manager/register_cubit/register_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../widgets/email_field.dart';
@@ -26,6 +26,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final _confirmPasswordController = TextEditingController();
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
+  
 
   @override
   void dispose() {
@@ -33,8 +34,6 @@ class _RegisterPageState extends State<RegisterPage> {
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
-    _passwordController.clear();
-    _confirmPasswordController.clear();
     super.dispose();
   }
 
@@ -44,6 +43,7 @@ class _RegisterPageState extends State<RegisterPage> {
         username: _usernameController.text.trim(),
         email: _emailController.text.trim(),
         password: _passwordController.text,
+        confirmPassword: _confirmPasswordController.text,
       );
     }
   }

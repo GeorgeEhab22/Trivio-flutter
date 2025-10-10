@@ -1,24 +1,33 @@
 import 'dart:io';
 import 'package:auth/common/api_endpoints.dart';
+import 'package:auth/common/functions/handle_dio_error.dart';
 import 'package:auth/data/core/error/exceptions.dart';
-import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user_model.dart';
 import '../../common/api_service.dart';
 
 abstract class AuthRemoteDataSource {
-  Future<void> signIn({required String email, required String password});
+  Future<void> signIn({
+    required String email,
+    required String password,
+    required bool isEmail,
+  });
   Future<UserModel> signUp({
     required String email,
     required String username,
     required String password,
   });
+
   Future<void> verifyCode({required String code, required String email});
   Future<void> resendVerificationCode({required String email});
   Future<void> signOut();
   Future<UserModel?> getCurrentUser();
-  Future<void> forgotPassword({required String email});
-
+  Future<void> sendPasswordResetOtp({required String email});
+  Future<UserModel> verifyOTP({
+    required String otp,
+    required String email,
+    required String password,
+  });
   Future<UserModel> signInWithGoogle({required String idToken});
   Future<UserModel> signInWithApple({
     required String identityToken,
@@ -34,8 +43,13 @@ abstract class AuthRemoteDataSource {
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   final ApiService api;
   final SharedPreferences prefs;
+  final ErrorHandler errorHandler;
 
-  AuthRemoteDataSourceImpl({required this.api, required this.prefs});
+  AuthRemoteDataSourceImpl({
+    required this.api,
+    required this.prefs,
+    required this.errorHandler,
+  });
 
   Future<String?> _getToken() async => prefs.getString('auth_token');
   Future<void> _storeToken(String token) async =>
@@ -43,23 +57,63 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   Future<void> _clearToken() async => prefs.remove('auth_token');
 
   @override
-  @override
-  Future<void> signIn({required String email, required String password}) async {
+  Future<void> signIn({
+    required String email,
+    required String password,
+    required bool isEmail,
+  }) async {
     try {
-      final response = await api.post(
-        ApiEndpoints.login,
-        data: {'email': email, 'password': password},
-      );
+      final response = isEmail
+          ? await api.post(
+              ApiEndpoints.login,
+              data: {'email': email, 'password': password},
+            )
+          : await api.post(
+              ApiEndpoints.login,
+              data: {'username': email, 'password': password},
+            );
       final token = response['data']?[0];
+
       if (token != null) {
         await _storeToken(token);
       } else {
         throw AuthException('Token not found in response');
       }
-    } on SocketException {
-      throw NetworkException('No internet connection');
     } catch (e) {
-      throw AuthException('Failed to sign in');
+      errorHandler.handleDioError(e);
+    }
+  }
+
+  @override
+  Future<UserModel> verifyOTP({
+    required String otp,
+    required String email,
+    required String password,
+  }) async {
+    try {
+      final response = await api.patch(
+        ApiEndpoints.forgetPassword,
+        data: {'otp': otp, 'email': email, 'password': password},
+      );
+
+      if (response["status"] == "success") {
+        final data = response['data'];
+
+        if (data != null && data.isNotEmpty) {
+          final user = UserModel.fromJson(data[0]);
+          if (response['token'] != null) {
+            await _storeToken(response['token']);
+          }
+          return user;
+        } else {
+          throw ServerException('Invalid response data');
+        }
+      } else {
+        throw AuthException('OTP verification failed');
+      }
+    } catch (e) {
+      errorHandler.handleDioError(e);
+      rethrow;
     }
   }
 
@@ -86,28 +140,19 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       } else {
         throw ServerException('Sign up failed');
       }
-    } on DioException catch (e) {
-      final errorData = e.response?.data;
-      String errorMessage = 'An error occurred';
-
-      if (errorData is Map && errorData['message'] != null) {
-        errorMessage = errorData['message'];
-      }
-
-      throw ServerException(errorMessage);
-    } on SocketException {
-      throw NetworkException('No internet connection');
+    } catch (e) {
+      errorHandler.handleDioError(e);
+      rethrow;
     }
   }
-@override
+
+  @override
   Future<void> verifyCode({required String code, required String email}) async {
     try {
-      print('verifying code $code for email $email');
       final response = await api.patch(
         ApiEndpoints.verifyEmail,
         data: {'code': code, 'email': email},
       );
-      print('Response from verifyCode: $response');
       if (response['status'] != 'success') {
         throw AuthException('Invalid verification code');
       }
@@ -117,7 +162,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       throw AuthException('Failed to verify code');
     }
   }
-// TODO: Implement resendVerificationCode method
+
+  // TODO: Implement resendVerificationCode method
   @override
   Future<void> resendVerificationCode({required String email}) async {
     try {
@@ -159,9 +205,15 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
-  Future<void> forgotPassword({required String email}) async {
+  Future<void> sendPasswordResetOtp({required String email}) async {
     try {
-      await api.post(ApiEndpoints.forgotPassword, data: {'email': email});
+      final response = await api.patch(
+        ApiEndpoints.requestOTP,
+        data: {'email': email},
+      );
+      if (response['status'] != 'success') {
+        throw AuthException('Failed to send reset password email');
+      }
     } catch (_) {
       throw AuthException('Failed to send reset password email');
     }
