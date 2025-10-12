@@ -170,9 +170,17 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Either<Failure, void>> resendVerificationCode({required String email, required String username}) {
-    // TODO: implement
-    throw UnimplementedError();
+  Future<Either<Failure, void>> resendVerificationCode({required String email, required String username})  async {
+    try {
+      await remoteDataSource.resendVerificationCode(email: email, username: username);
+      return const Right(null);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } catch (_) {
+      return Left(ServerFailure('Failed to resend verification code'));
+    }
   }
 
   @override

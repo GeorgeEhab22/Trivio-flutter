@@ -67,10 +67,11 @@ class VerifyCodeCubit extends Cubit<VerifyCodeState> {
     );
   }
 
-  Future<void> resend() async {
+  Future<void> resend(String?newEmail) async {
     if (!canResend) return;
+    emit(const VerifyCodeInitial());
 
-    emit(const VerifyCodeResending());
+    emit(const VerifyCodeLoading());
 
     final result = await resendVerificationCode(email,username);
 

@@ -1,29 +1,30 @@
 import 'package:auth/core/app_routes.dart';
+import 'package:auth/presentation/manager/sigin_in_cubit/sign_in_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-class ForgetPassword extends StatelessWidget {
-  const ForgetPassword({super.key});
+class NewAccountButton extends StatelessWidget {
+  const NewAccountButton({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
+    return Center(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(
-            'Forgot your password?',
+          const Text(
+            'Not A Member?',
             style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(width: 4),
           TextButton(
             onPressed: () {
-              context.push( AppRoutes.requsetResetPassword);
+              context.read<SignInCubit>().resetState();
+              context.replace(AppRoutes.register);
             },
             child: const Text(
-              'Reset it',
+              'Register Now',
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.bold,

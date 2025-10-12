@@ -3,7 +3,7 @@ import 'package:auth/common/functions/code_box_handlers.dart';
 import 'package:auth/constants/colors';
 import 'package:auth/core/styels.dart';
 import 'package:auth/presentation/authentication/register/verify_code_listener.dart';
-import 'package:auth/presentation/authentication/widgets/resend_code_button.dart';
+import 'package:auth/presentation/authentication/widgets/change_email_button.dart';
 import 'package:auth/presentation/authentication/widgets/verify_code_box_list.dart';
 import 'package:auth/presentation/manager/register_cubit/verify_code_cubit.dart';
 import 'package:auth/presentation/manager/register_cubit/verify_code_state.dart';
@@ -119,7 +119,7 @@ class _VerifyCodePageState extends State<VerifyCodePage> {
                   },
                 ),
                 const SizedBox(height: 24),
-                ResendCodeButton(),
+                ChangeEmailButton(),
               ],
             ),
           ),

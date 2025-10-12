@@ -1,5 +1,4 @@
 class ApiEndpoints {
-  //TODO: Add endpoints
   static const login = 'auth/login';
   static const signup = 'auth/signup';
   static const signout = 'auth/signout';
@@ -11,6 +10,6 @@ class ApiEndpoints {
   static const appleRegister = 'auth/apple/register';
   static const verifyEmail = 'auth/verify-code';
   static const forgetPassword = 'auth/forget-password';
-  static const resendVerificationCode = 'auth/resend-code';
+  static const resendVerificationCode = 'auth/resend-verification-code';
   static const resetPassword = 'auth/reset-password';
 }

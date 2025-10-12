@@ -2,7 +2,7 @@ import 'package:auth/core/app_routes.dart';
 import 'package:auth/domain/usecases/sign_in/request_otp.dart';
 import 'package:auth/presentation/authentication/register/register_view.dart';
 import 'package:auth/presentation/authentication/register/verify_code_view.dart';
-import 'package:auth/presentation/authentication/signIn/request_otp_view.dart';
+import 'package:auth/presentation/authentication/signIn/request_email_view.dart';
 import 'package:auth/presentation/authentication/signIn/forget_password_otp_view.dart';
 import 'package:auth/presentation/manager/register_cubit/register_cubit.dart';
 import 'package:auth/presentation/manager/register_cubit/verify_code_cubit.dart';
@@ -52,7 +52,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
 
-        /// 🟨 Verify Code (expects email argument)
+        /// 🟨 Verify Code
         GoRoute(
           path: AppRoutes.verifyCode,
           builder: (context, state) {
@@ -74,12 +74,37 @@ class MyApp extends StatelessWidget {
         /// 🟧 Request Reset Password
         GoRoute(
           path: AppRoutes.requsetResetPassword,
-          builder: (context, state) => BlocProvider(
-            create: (_) => RequestOTPCubit(
-              sendPasswordResetOtp: di.sl<SendPasswordResetOtp>(),
-            ),
-            child: const RequestOTPView(),
-          ),
+          builder: (context, state) {
+            final username = '';
+            return BlocProvider(
+              create: (_) => RequestOTPCubit(
+                sendPasswordResetOtp: di.sl<SendPasswordResetOtp>(),
+              ),
+              child: RequestEmailView(
+                isForVerification: false,
+                username: username,
+              ),
+            );
+          },
+        ),
+
+        /// 🟦 Change Email for verfication code
+        GoRoute(
+          path: AppRoutes.changeEmail,
+          builder: (context, state) {
+            final data = state.extra as Map<String, dynamic>;
+            final username = data['username'] as String;
+            final cubit = data['cubit'] as VerifyCodeCubit;
+
+            return BlocProvider.value(
+              value: cubit,
+              child: RequestEmailView(
+                isForVerification: true,
+                username: username,
+                
+              ),
+            );
+          },
         ),
 
         /// 🟦 Forget Password OTP
@@ -120,7 +145,6 @@ class MyApp extends StatelessWidget {
   }
 }
 
-/// ✅ Home Page
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 

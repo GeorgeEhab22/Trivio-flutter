@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../widgets/email_field.dart';
 import '../widgets/password_field.dart';
-import '../widgets/already_have_account.dart';
+import '../widgets/already_have_account_button.dart';
 import 'register_listener.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -26,7 +26,6 @@ class _RegisterPageState extends State<RegisterPage> {
   final _confirmPasswordController = TextEditingController();
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
-  
 
   @override
   void dispose() {
@@ -101,7 +100,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 const GoogleAndAppleFields(isLogin: false),
                 const SizedBox(height: 40),
-                const AlreadyHaveAccount(),
+                const AlreadyHaveAccountButton(),
               ],
             ),
           ),

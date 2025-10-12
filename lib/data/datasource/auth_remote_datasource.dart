@@ -19,7 +19,10 @@ abstract class AuthRemoteDataSource {
   });
 
   Future<void> verifyCode({required String code, required String email});
-  Future<void> resendVerificationCode({required String email});
+  Future<void> resendVerificationCode({
+    required String email,
+    required String username,
+  });
   Future<void> signOut();
   Future<UserModel?> getCurrentUser();
   Future<void> sendPasswordResetOtp({required String email});
@@ -163,14 +166,19 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     }
   }
 
-  // TODO: Implement resendVerificationCode method
   @override
-  Future<void> resendVerificationCode({required String email}) async {
+  Future<void> resendVerificationCode({
+    required String email,
+    required String username,
+  }) async {
     try {
-      await api.post(
+      final response = await api.patch(
         ApiEndpoints.resendVerificationCode,
-        data: {'email': email},
+        data: {'email': email, 'username': username},
       );
+      if (response['status'] != 'success') {
+        throw AuthException('Failed to resend verification code');
+      }
     } on SocketException {
       throw NetworkException('No internet connection');
     } catch (e) {
@@ -212,8 +220,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         data: {'email': email},
       );
       if (response['status'] != 'success') {
-        throw AuthException('Failed to send reset password email');
+        throw AuthException('Failed to send OTP');
       }
+    } on SocketException {
+      throw NetworkException('No internet connection');
     } catch (_) {
       throw AuthException('Failed to send reset password email');
     }

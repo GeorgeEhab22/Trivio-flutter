@@ -1,11 +1,11 @@
 import 'package:auth/core/app_routes.dart';
-import 'package:auth/presentation/manager/sigin_in_cubit/sign_in_cubit.dart';
+import 'package:auth/presentation/manager/register_cubit/register_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-class NewAccount extends StatelessWidget {
-  const NewAccount({super.key});
+class AlreadyHaveAccountButton extends StatelessWidget {
+  const AlreadyHaveAccountButton({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -14,17 +14,17 @@ class NewAccount extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const Text(
-            'Not A Member?',
+            'Already have an account?',
             style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
             textAlign: TextAlign.center,
           ),
           TextButton(
             onPressed: () {
-              context.read<SignInCubit>().resetState();
-              context.replace(AppRoutes.register);
+              context.read<RegisterCubit>().resetState();
+              context.replace(AppRoutes.signIn);
             },
             child: const Text(
-              'Register Now',
+              'Sign in',
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
