@@ -1,20 +1,40 @@
 import 'package:equatable/equatable.dart';
 
-
-
-sealed class RequestOTPState extends Equatable {
+abstract class RequestOTPState extends Equatable {
   const RequestOTPState();
+
   @override
-  List<Object> get props => [];
+  List<Object?> get props => [];
 }
 
-final class RequestOTPInitial extends RequestOTPState {}
+class RequestOTPInitial extends RequestOTPState {
+  const RequestOTPInitial();
+}
 
-final class RequestOTPLoading extends RequestOTPState {}
+class RequestOTPLoading extends RequestOTPState {
+  const RequestOTPLoading();
+}
 
-final class RequestOTPSuccess extends RequestOTPState {}
+class RequestOTPSuccess extends RequestOTPState {
+  const RequestOTPSuccess();
+}
 
-final class RequestOTPFailure extends RequestOTPState {
+class RequestOTPResent extends RequestOTPState {
+  const RequestOTPResent();
+}
+
+class RequestOTPFailure extends RequestOTPState {
   final String message;
   const RequestOTPFailure(this.message);
+
+  @override
+  List<Object?> get props => [message];
+}
+
+class RequestOTPCountdown extends RequestOTPState {
+  final int seconds;
+  const RequestOTPCountdown(this.seconds);
+
+  @override
+  List<Object?> get props => [seconds];
 }

@@ -8,7 +8,7 @@ class CodeBox extends StatelessWidget {
     required this.focusNode,
     this.onChanged,
     this.onKeyEvent,
-    this.enabled = true, // Add this
+    this.enabled = true, 
   });
 
   final TextEditingController controller;

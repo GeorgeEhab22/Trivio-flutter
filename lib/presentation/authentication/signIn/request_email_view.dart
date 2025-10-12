@@ -13,8 +13,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class RequestEmailView extends StatefulWidget {
-  /// If true → used for resending verification code.
-  /// If false → used for forgot password OTP.
+
+
   final bool isForVerification;
   final String username;
   const RequestEmailView({

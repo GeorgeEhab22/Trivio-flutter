@@ -119,7 +119,7 @@ class _VerifyCodePageState extends State<VerifyCodePage> {
                   },
                 ),
                 const SizedBox(height: 24),
-                ChangeEmailButton(),
+                ChangeEmailButton(isVerifying: true,),
               ],
             ),
           ),

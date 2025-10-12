@@ -90,7 +90,7 @@ class MyApp extends StatelessWidget {
 
         /// 🟦 Change Email for verfication code
         GoRoute(
-          path: AppRoutes.changeEmail,
+          path: AppRoutes.changeEmailVerification,
           builder: (context, state) {
             final data = state.extra as Map<String, dynamic>;
             final username = data['username'] as String;
@@ -101,8 +101,21 @@ class MyApp extends StatelessWidget {
               child: RequestEmailView(
                 isForVerification: true,
                 username: username,
-                
               ),
+            );
+          },
+        ),
+
+        /// 🟦 Change Email for OTP
+        GoRoute(
+          path: AppRoutes.changeEmailOTP,
+          builder: (context, state) {
+            final data = state.extra as Map<String, dynamic>;
+            final cubit = data['cubit'] as RequestOTPCubit;
+
+            return BlocProvider.value(
+              value: cubit,
+              child: RequestEmailView(isForVerification: false, username: ''),
             );
           },
         ),
@@ -112,8 +125,17 @@ class MyApp extends StatelessWidget {
           path: AppRoutes.forgetPasswordOtp,
           builder: (context, state) {
             final email = state.extra as String;
-            return BlocProvider(
-              create: (_) => ForgetPasswordOTPCubit(verifyOTP: di.sl()),
+            return MultiBlocProvider(
+              providers: [
+                BlocProvider(
+                  create: (_) => ForgetPasswordOTPCubit(verifyOTP: di.sl()),
+                ),
+                BlocProvider(
+                  create: (_) => RequestOTPCubit(
+                    sendPasswordResetOtp: di.sl<SendPasswordResetOtp>(),
+                  ),
+                ),
+              ],
               child: ForgetPasswordOtp(email: email),
             );
           },

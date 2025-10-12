@@ -1,4 +1,3 @@
-// verify_code_cubit.dart
 import 'dart:async';
 
 import 'package:auth/core/errors/failure.dart';

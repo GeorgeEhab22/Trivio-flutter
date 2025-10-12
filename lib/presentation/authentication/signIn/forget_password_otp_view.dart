@@ -3,9 +3,11 @@ import 'package:auth/common/functions/code_box_handlers.dart';
 import 'package:auth/constants/colors';
 import 'package:auth/core/styels.dart';
 import 'package:auth/presentation/authentication/signIn/forget_password_otp_listener.dart';
+import 'package:auth/presentation/authentication/widgets/change_email_button.dart';
 import 'package:auth/presentation/authentication/widgets/forget_password_code_box_list.dart';
 import 'package:auth/presentation/authentication/widgets/password_field.dart';
 import 'package:auth/presentation/manager/sigin_in_cubit/forget_password_otp_cubit.dart';
+import 'package:auth/presentation/manager/sigin_in_cubit/request_otp/request_otp_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -33,7 +35,7 @@ class _ForgetPasswordOtpState extends State<ForgetPasswordOtp> {
   @override
   void initState() {
     super.initState();
-
+context.read<RequestOTPCubit>().startResendTimer();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _focusNodes[0].requestFocus();
     });
@@ -171,6 +173,7 @@ class _ForgetPasswordOtpState extends State<ForgetPasswordOtp> {
                       );
                     },
                   ),
+                  ChangeEmailButton(isVerifying: false),
                 ],
               ),
             ),
