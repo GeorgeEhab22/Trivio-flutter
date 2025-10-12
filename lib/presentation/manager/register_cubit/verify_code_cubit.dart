@@ -11,11 +11,13 @@ class VerifyCodeCubit extends Cubit<VerifyCodeState> {
   final VerifyCode verifyCode;
   final ResendVerificationCode resendVerificationCode;
 
+  final String username;
   final String email;
   Timer? _resendTimer;
   int _resendCountdown = 0;
 
   VerifyCodeCubit({
+    required this.username,
     required this.verifyCode,
     required this.resendVerificationCode,
     required this.email,
@@ -25,7 +27,7 @@ class VerifyCodeCubit extends Cubit<VerifyCodeState> {
   bool get canResend => _resendCountdown == 0;
 
 
-  void startResendTimer({int seconds = 60}) {
+  void startResendTimer({int seconds = 5}) {
     _resendTimer?.cancel();
 
     _resendCountdown = (seconds < 0) ? 0 : seconds;
@@ -70,7 +72,7 @@ class VerifyCodeCubit extends Cubit<VerifyCodeState> {
 
     emit(const VerifyCodeResending());
 
-    final result = await resendVerificationCode(email);
+    final result = await resendVerificationCode(email,username);
 
     result.fold(
       (failure) => emit(VerifyCodeError(_mapFailureToMessage(failure))),

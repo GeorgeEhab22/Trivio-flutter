@@ -7,7 +7,7 @@ class ResendVerificationCode {
 
   ResendVerificationCode(this.repository);
 
-  Future<Either<Failure, void>> call(String email) {
-    return repository.resendVerificationCode( email: email);
+  Future<Either<Failure, void>> call(String email, String username) {
+    return repository.resendVerificationCode( email: email, username: username);
   }
 }

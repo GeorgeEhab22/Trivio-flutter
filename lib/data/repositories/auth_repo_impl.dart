@@ -170,7 +170,7 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Either<Failure, void>> resendVerificationCode({required String email}) {
+  Future<Either<Failure, void>> resendVerificationCode({required String email, required String username}) {
     // TODO: implement
     throw UnimplementedError();
   }

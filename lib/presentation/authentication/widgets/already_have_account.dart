@@ -1,6 +1,8 @@
+import 'package:auth/core/app_routes.dart';
 import 'package:auth/presentation/manager/register_cubit/register_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class AlreadyHaveAccount extends StatelessWidget {
   const AlreadyHaveAccount({super.key});
@@ -19,8 +21,8 @@ class AlreadyHaveAccount extends StatelessWidget {
           TextButton(
             onPressed: () {
               context.read<RegisterCubit>().resetState();
+              context.replace(AppRoutes.signIn);
 
-              Navigator.pushReplacementNamed(context, '/signin');
             },
             child: const Text(
               'Sign in',

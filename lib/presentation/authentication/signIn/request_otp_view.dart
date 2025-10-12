@@ -7,6 +7,7 @@ import 'package:auth/presentation/manager/sigin_in_cubit/request_otp/request_otp
 import 'package:auth/presentation/manager/sigin_in_cubit/request_otp/request_otp_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class RequestOTPView extends StatefulWidget {
   const RequestOTPView({super.key});
@@ -48,7 +49,7 @@ class _RequestOTPViewState extends State<RequestOTPView> {
           elevation: 0,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios, color: Colors.black87),
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => context.pop(),
           ),
         ),
         body: SafeArea(

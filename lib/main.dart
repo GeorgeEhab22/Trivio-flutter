@@ -14,11 +14,13 @@ import 'package:device_preview/device_preview.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'injection_container.dart' as di;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await di.init();
+
   runApp(
     DevicePreview(enabled: !kReleaseMode, builder: (context) => const MyApp()),
   );
@@ -29,11 +31,82 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    final router = GoRouter(
+      initialLocation: AppRoutes.signIn,
+      routes: [
+        /// 🟦 Sign In
+        GoRoute(
+          path: AppRoutes.signIn,
+          builder: (context, state) => BlocProvider(
+            create: (_) => di.sl<SignInCubit>(),
+            child: const SignInPage(),
+          ),
+        ),
+
+        /// 🟩 Register
+        GoRoute(
+          path: AppRoutes.register,
+          builder: (context, state) => BlocProvider(
+            create: (_) => di.sl<RegisterCubit>(),
+            child: const RegisterPage(),
+          ),
+        ),
+
+        /// 🟨 Verify Code (expects email argument)
+        GoRoute(
+          path: AppRoutes.verifyCode,
+          builder: (context, state) {
+            final args = state.extra as Map<String, String?>;
+            final email = args['email']!;
+            final username = args['username']!;
+            return BlocProvider(
+              create: (_) => VerifyCodeCubit(
+                verifyCode: di.sl(),
+                resendVerificationCode: di.sl(),
+                email: email,
+                username: username,
+              ),
+              child: VerifyCodePage(email: email),
+            );
+          },
+        ),
+
+        /// 🟧 Request Reset Password
+        GoRoute(
+          path: AppRoutes.requsetResetPassword,
+          builder: (context, state) => BlocProvider(
+            create: (_) => RequestOTPCubit(
+              sendPasswordResetOtp: di.sl<SendPasswordResetOtp>(),
+            ),
+            child: const RequestOTPView(),
+          ),
+        ),
+
+        /// 🟦 Forget Password OTP
+        GoRoute(
+          path: AppRoutes.forgetPasswordOtp,
+          builder: (context, state) {
+            final email = state.extra as String;
+            return BlocProvider(
+              create: (_) => ForgetPasswordOTPCubit(verifyOTP: di.sl()),
+              child: ForgetPasswordOtp(email: email),
+            );
+          },
+        ),
+
+        /// 🟢 Home Page
+        GoRoute(
+          path: AppRoutes.home,
+          builder: (context, state) => const HomePage(),
+        ),
+      ],
+    );
+
+    return MaterialApp.router(
       title: 'Auth App',
+      debugShowCheckedModeBanner: false,
       locale: DevicePreview.locale(context),
       builder: DevicePreview.appBuilder,
-      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.blue,
         useMaterial3: true,
@@ -42,71 +115,12 @@ class MyApp extends StatelessWidget {
           contentPadding: EdgeInsets.all(16),
         ),
       ),
-      initialRoute: AppRoutes.signIn,
-      onGenerateRoute: _onGenerateRoute,
+      routerConfig: router,
     );
-  }
-
-  Route? _onGenerateRoute(RouteSettings settings) {
-    switch (settings.name) {
-      case AppRoutes.signIn:
-        return MaterialPageRoute(
-          builder: (context) => BlocProvider(
-            create: (context) => di.sl<SignInCubit>(),
-            child: const SignInPage(),
-          ),
-        );
-
-      case AppRoutes.register:
-        return MaterialPageRoute(
-          builder: (context) => BlocProvider(
-            create: (context) => di.sl<RegisterCubit>(),
-            child: const RegisterPage(),
-          ),
-        );
-
-      case AppRoutes.verifyCode:
-        final email = settings.arguments as String;
-        return MaterialPageRoute(
-          builder: (context) => BlocProvider(
-            create: (context) => VerifyCodeCubit(
-              verifyCode: di.sl(),
-              resendVerificationCode: di.sl(),
-              email: email,
-            ),
-            child: VerifyCodePage(email: email),
-          ),
-        );
-
-      case AppRoutes.requsetResetPassword:
-        return MaterialPageRoute(
-          builder: (context) => BlocProvider(
-            create: (context) => RequestOTPCubit(
-              sendPasswordResetOtp: di.sl<SendPasswordResetOtp>(),
-            ),
-
-            child: const RequestOTPView(),
-          ),
-        );
-
-      case AppRoutes.home:
-        return MaterialPageRoute(builder: (context) => const HomePage());
-
-      case AppRoutes.forgetPasswordOtp:
-        final email = settings.arguments as String;
-        return MaterialPageRoute(
-          builder: (context) => BlocProvider(
-            create: (context) => ForgetPasswordOTPCubit(verifyOTP: di.sl()),
-            child: ForgetPasswordOtp(email: email),
-          ),
-        );
-
-      default:
-        return null;
-    }
   }
 }
 
+/// ✅ Home Page
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 

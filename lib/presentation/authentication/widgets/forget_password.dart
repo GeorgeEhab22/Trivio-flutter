@@ -1,5 +1,6 @@
 import 'package:auth/core/app_routes.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class ForgetPassword extends StatelessWidget {
   const ForgetPassword({super.key});
@@ -19,7 +20,7 @@ class ForgetPassword extends StatelessWidget {
           const SizedBox(width: 4),
           TextButton(
             onPressed: () {
-              Navigator.pushNamed(context, AppRoutes.requsetResetPassword);
+              context.push( AppRoutes.requsetResetPassword);
             },
             child: const Text(
               'Reset it',
