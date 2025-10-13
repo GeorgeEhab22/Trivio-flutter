@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "377990095945",
+    "project_id": "trivio-2cc30",
+    "storage_bucket": "trivio-2cc30.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:377990095945:android:edae5b045a76a6181bcb98",
+        "android_client_info": {
+          "package_name": "com.example.auth"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDZDkrDGo6_cWRbHbZabndLYICVTgvW9X4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

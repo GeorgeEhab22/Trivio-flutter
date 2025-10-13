@@ -16,10 +16,10 @@ class SignInCubit extends Cubit<SignInState> {
     required SignInUseCase signInUseCase,
     required GoogleSignInUseCase googleSignInUseCase,
     required AppleSignInUseCase appleSignInUseCase,
-  })  : _signInUseCase = signInUseCase,
-        _googleSignInUseCase = googleSignInUseCase,
-        _appleSignInUseCase = appleSignInUseCase,
-        super(const SignInInitial());
+  }) : _signInUseCase = signInUseCase,
+       _googleSignInUseCase = googleSignInUseCase,
+       _appleSignInUseCase = appleSignInUseCase,
+       super(const SignInInitial());
 
   Future<void> signIn({required String email, required String password}) async {
     emit(const SignInLoading());
@@ -28,7 +28,7 @@ class SignInCubit extends Cubit<SignInState> {
 
     result.fold(
       (failure) => emit(_mapFailureToState(failure)),
-      (_) => emit(const SignInSuccess()), 
+      (_) => emit(const SignInSuccess()),
     );
   }
 
@@ -37,23 +37,28 @@ class SignInCubit extends Cubit<SignInState> {
     try {
       final idToken = await socialAuthService.getGoogleIdToken();
       if (idToken == null) {
-        emit(const SignInFailure(
-          message: "Google sign-in cancelled",
-          errorType: "auth",
-        ));
+        emit(
+          const SignInFailure(
+            message: "Google sign-in cancelled",
+            errorType: "auth",
+          ),
+        );
         return;
       }
 
       final result = await _googleSignInUseCase(idToken: idToken);
       result.fold(
         (failure) => emit(_mapFailureToState(failure)),
-        (user) => emit(SignInSuccess()),
+        (_) => emit(SignInSuccess()),
       );
-    } catch (_) {
-      emit(const SignInFailure(
-        message: "Google sign-in failed",
-        errorType: "auth",
-      ));
+      emit(const SignInSuccess());
+    } catch (e) {
+      emit(
+        const SignInFailure(
+          message: "Google sign-in failed",
+          errorType: "auth",
+        ),
+      );
     }
   }
 
@@ -62,10 +67,12 @@ class SignInCubit extends Cubit<SignInState> {
     try {
       final creds = await socialAuthService.getAppleCredentials();
       if (creds == null) {
-        emit(const SignInFailure(
-          message: "Apple sign-in cancelled",
-          errorType: "auth",
-        ));
+        emit(
+          const SignInFailure(
+            message: "Apple sign-in cancelled",
+            errorType: "auth",
+          ),
+        );
         return;
       }
 
@@ -75,21 +82,21 @@ class SignInCubit extends Cubit<SignInState> {
       );
       result.fold(
         (failure) => emit(_mapFailureToState(failure)),
-        (user) => emit(SignInSuccess( )),
+        (user) => emit(SignInSuccess()),
       );
     } catch (_) {
-      emit(const SignInFailure(
-        message: "Apple sign-in failed",
-        errorType: "auth",
-      ));
+      emit(
+        const SignInFailure(message: "Apple sign-in failed", errorType: "auth"),
+      );
     }
   }
 
   SignInFailure _mapFailureToState(Failure failure) {
+    print("Failure type: ${failure.runtimeType}, message: ${failure.message}");
+
     switch (failure.runtimeType) {
       case const (ValidationFailure):
-        return SignInFailure(
-            message: failure.message, errorType: 'validation');
+        return SignInFailure(message: failure.message, errorType: 'validation');
       case const (NetworkFailure):
         return SignInFailure(message: failure.message, errorType: 'network');
       case const (AuthFailure):

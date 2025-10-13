@@ -5,7 +5,7 @@ class ApiEndpoints {
   static const signout = 'auth/signout';
   static const me = 'auth/me';
   static const forgotPassword = 'auth/forgot-password';
-  static const googleSignIn = 'auth/google';
+  static const googleSignIn = 'auth/google-login';
   static const appleSignIn = 'auth/apple';
   static const googleRegister = 'auth/google/register';
   static const appleRegister = 'auth/apple/register';

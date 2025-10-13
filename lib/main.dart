@@ -23,50 +23,47 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Auth App',
-      locale: DevicePreview.locale(context),
-      builder: DevicePreview.appBuilder,
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        useMaterial3: true,
-        inputDecorationTheme: const InputDecorationTheme(
-          border: OutlineInputBorder(),
-          contentPadding: EdgeInsets.all(16),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => di.sl<SignInCubit>()),
+        BlocProvider(create: (context) => di.sl<RegisterCubit>()),
+      ],
+      child: MaterialApp(
+        title: 'Auth App',
+        locale: DevicePreview.locale(context),
+        builder: DevicePreview.appBuilder,
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+          useMaterial3: true,
+          inputDecorationTheme: const InputDecorationTheme(
+            border: OutlineInputBorder(),
+            contentPadding: EdgeInsets.all(16),
+          ),
         ),
-      ),
-      home: BlocProvider(
-        create: (context) => di.sl<SignInCubit>(),
-        child: const SignInPage(),
-      ),
-      onGenerateRoute: (settings) {
-        if (settings.name == '/verify') {
-          final email = settings.arguments as String;
-          return MaterialPageRoute(
-            builder: (context) => BlocProvider(
-              create: (context) => VerifyCodeCubit(
-                verifyCode: di.sl(),
-                resendVerificationCode: di.sl(),
-                email: email, // Pass email here
+        home: const SignInPage(),
+        onGenerateRoute: (settings) {
+          if (settings.name == '/verify') {
+            final email = settings.arguments as String;
+            return MaterialPageRoute(
+              builder: (context) => BlocProvider(
+                create: (context) => VerifyCodeCubit(
+                  verifyCode: di.sl(),
+                  resendVerificationCode: di.sl(),
+                  email: email,
+                ),
+                child: VerifyCodePage(email: email),
               ),
-              child: VerifyCodePage(email: email),
-            ),
-          );
-        }
-        return null;
-      },
-      routes: {
-        '/signin': (context) => BlocProvider(
-          create: (context) => di.sl<SignInCubit>(),
-          child: const SignInPage(),
-        ),
-        '/home': (context) => const HomePage(),
-        '/register': (context) => BlocProvider(
-          create: (context) => di.sl<RegisterCubit>(),
-          child: const RegisterPage(),
-        ),
-      },
+            );
+          }
+          return null;
+        },
+        routes: {
+          '/signin': (context) => const SignInPage(),
+          '/home': (context) => const HomePage(),
+          '/register': (context) => const RegisterPage(),
+        },
+      ),
     );
   }
 }
@@ -78,9 +75,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Home')),
-      body: const Center(
-        child: Text('Welcome! Email Verified Successfully'),
-      ),
+      body: const Center(child: Text('Welcome! Email Verified Successfully')),
     );
   }
 }

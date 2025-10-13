@@ -74,7 +74,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         ApiEndpoints.signup,
         data: {'email': email, 'username': username, 'password': password},
       );
-
       if (response["status"] == "success") {
         final data = response['data'];
 
@@ -93,21 +92,19 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       if (errorData is Map && errorData['message'] != null) {
         errorMessage = errorData['message'];
       }
-
       throw ServerException(errorMessage);
     } on SocketException {
       throw NetworkException('No internet connection');
     }
   }
-@override
+
+  @override
   Future<void> verifyCode({required String code, required String email}) async {
     try {
-      print('verifying code $code for email $email');
       final response = await api.patch(
         ApiEndpoints.verifyEmail,
         data: {'code': code, 'email': email},
       );
-      print('Response from verifyCode: $response');
       if (response['status'] != 'success') {
         throw AuthException('Invalid verification code');
       }
@@ -117,14 +114,17 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       throw AuthException('Failed to verify code');
     }
   }
-// TODO: Implement resendVerificationCode method
+
   @override
   Future<void> resendVerificationCode({required String email}) async {
     try {
-      await api.post(
+      final response = await api.post(
         ApiEndpoints.resendVerificationCode,
         data: {'email': email},
       );
+      if (response['status'] != 'success') {
+        throw AuthException(response['message'] ?? 'Failed to resend code');
+      }
     } on SocketException {
       throw NetworkException('No internet connection');
     } catch (e) {
@@ -175,11 +175,15 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         data: {"idToken": idToken},
       );
 
-      final user = UserModel.fromJson(response['user']);
-      if (response['token'] != null) {
-        await _storeToken(response['token']);
+      final jtwToken = response['data'] != null && response['data'].isNotEmpty
+          ? response['data'][0]
+          : null;
+
+      if (jtwToken != null) {
+        await _storeToken(jtwToken);
       }
-      return user;
+
+      return UserModel.empty();
     } on SocketException {
       throw NetworkException('No internet connection');
     } catch (_) {
