@@ -169,7 +169,7 @@ context.read<RequestOTPCubit>().startResendTimer();
                         onPressed: isLoading
                             ? null
                             : () => _handleNewPassword(),
-                        title: isLoading ? 'Verifying...' : 'Verify Code',
+                        title: isLoading ? 'resetting...' : 'reset password',
                       );
                     },
                   ),

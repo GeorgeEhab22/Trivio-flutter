@@ -12,23 +12,18 @@ class RequestOTPCubit extends Cubit<RequestOTPState> {
   int _resendCountdown = 0;
 
   RequestOTPCubit({required this.sendPasswordResetOtp})
-    : super(const RequestOTPInitial()){
-        print('✅ RequestOTPCubit created $hashCode');
-
-    }
+    : super(const RequestOTPInitial());
 
   int get resendCountdown => _resendCountdown;
   bool get canResend => _resendCountdown == 0;
 
   void startResendTimer({int seconds = 60}) {
-    print('🔁 Starting resend timer...');
     _resendTimer?.cancel();
     _resendCountdown = seconds;
     emit(RequestOTPCountdown(_resendCountdown));
 
     _resendTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       _resendCountdown--;
-      print('Countdown: $_resendCountdown');
       if (_resendCountdown <= 0) {
         _resendCountdown = 0;
         timer.cancel();
@@ -84,7 +79,6 @@ class RequestOTPCubit extends Cubit<RequestOTPState> {
 
   @override
   Future<void> close() {
-      print('❌ RequestOTPCubit closed');
 
     _resendTimer?.cancel();
     return super.close();

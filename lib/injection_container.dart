@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:auth/common/api_service.dart';
 import 'package:auth/common/functions/handle_dio_error.dart';
 import 'package:auth/data/datasource/auth_remote_datasource.dart';
@@ -15,17 +17,27 @@ import 'package:auth/domain/usecases/sign_in/signin_usecase.dart';
 import 'package:auth/domain/usecases/sign_in/verify_otp.dart';
 import 'package:auth/presentation/manager/register_cubit/register_cubit.dart';
 import 'package:auth/presentation/manager/sigin_in_cubit/sign_in_cubit.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final sl = GetIt.instance;
 
 Future<void> init() async {
+  await dotenv.load(fileName: ".env");
+
+   String baseUrl;
+  if (kIsWeb) {
+    baseUrl = dotenv.env['LOCAL_URL']!;
+  } else if (Platform.isAndroid || Platform.isIOS) {
+    baseUrl = dotenv.env['MOBILE_URL']!;
+  } else {
+    baseUrl = dotenv.env['LOCAL_URL']!;
+  }
   final prefs = await SharedPreferences.getInstance();
   sl.registerLazySingleton(() => prefs);
-  sl.registerLazySingleton(
-    () => ApiService(baseUrl: "http://localhost:3500/api/v1/"),
-  );
+  sl.registerLazySingleton(() => ApiService(baseUrl: baseUrl));
   sl.registerLazySingleton(() => ErrorHandler());
   sl.registerLazySingleton<AuthRemoteDataSource>(
     () => AuthRemoteDataSourceImpl(api: sl(), prefs: sl(), errorHandler: sl()),
@@ -63,6 +75,4 @@ Future<void> init() async {
       appleRegisterUseCase: sl(),
     ),
   );
-
-
 }

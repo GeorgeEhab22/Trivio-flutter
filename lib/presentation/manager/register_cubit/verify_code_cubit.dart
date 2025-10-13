@@ -26,7 +26,7 @@ class VerifyCodeCubit extends Cubit<VerifyCodeState> {
   bool get canResend => _resendCountdown == 0;
 
 
-  void startResendTimer({int seconds = 5}) {
+  void startResendTimer({int seconds = 60}) {
     _resendTimer?.cancel();
 
     _resendCountdown = (seconds < 0) ? 0 : seconds;

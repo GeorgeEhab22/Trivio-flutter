@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:auth/core/app_routes.dart';
 import 'package:auth/domain/usecases/sign_in/request_otp.dart';
 import 'package:auth/presentation/authentication/register/register_view.dart';
@@ -14,15 +16,23 @@ import 'package:device_preview/device_preview.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
 import 'injection_container.dart' as di;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await di.init();
+  await dotenv.load(fileName: ".env");
 
+  final bool isDesktop =
+      !kIsWeb && (Platform.isWindows || Platform.isMacOS || Platform.isLinux);
+  final bool enableDevicePreview = !kReleaseMode && (isDesktop || kIsWeb);
   runApp(
-    DevicePreview(enabled: !kReleaseMode, builder: (context) => const MyApp()),
+    DevicePreview(
+      enabled: enableDevicePreview,
+      builder: (context) => const MyApp(),
+    ),
   );
 }
 
