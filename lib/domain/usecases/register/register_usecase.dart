@@ -17,7 +17,6 @@ class RegisterUseCase {
       return const Left(ValidationFailure('Email is required'));
     }
 
-
     if (username.trim().isEmpty) {
       return const Left(ValidationFailure('Username is required'));
     }
@@ -37,11 +36,10 @@ class RegisterUseCase {
         ValidationFailure('Password must be at least 8 characters'),
       );
     }
-    return await repository.signUp(
+    return await repository.register(
       email: email.trim(),
       username: username.trim(),
       password: password,
     );
   }
 }
-

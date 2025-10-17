@@ -8,7 +8,7 @@ import '../../common/api_service.dart';
 
 abstract class AuthRemoteDataSource {
   Future<void> signIn({required String email, required String password});
-  Future<UserModel> signUp({
+  Future<UserModel> register({
     required String email,
     required String username,
     required String password,
@@ -19,16 +19,7 @@ abstract class AuthRemoteDataSource {
   Future<UserModel?> getCurrentUser();
   Future<void> forgotPassword({required String email});
 
-  Future<UserModel> signInWithGoogle({required String idToken});
-  Future<UserModel> signInWithApple({
-    required String identityToken,
-    required String authorizationCode,
-  });
-  Future<UserModel> registerWithGoogle({required String idToken});
-  Future<UserModel> registerWithApple({
-    required String identityToken,
-    required String authorizationCode,
-  });
+  Future<UserModel> signInAndRegisterWithGoogle({required String idToken});
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -64,7 +55,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
-  Future<UserModel> signUp({
+  Future<UserModel> register({
     required String email,
     required String username,
     required String password,
@@ -168,7 +159,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
-  Future<UserModel> signInWithGoogle({required String idToken}) async {
+  Future<UserModel> signInAndRegisterWithGoogle({
+    required String idToken,
+  }) async {
     try {
       final response = await api.post(
         ApiEndpoints.googleSignIn,
@@ -188,78 +181,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       throw NetworkException('No internet connection');
     } catch (_) {
       throw AuthException('Failed to sign in with Google');
-    }
-  }
-
-  @override
-  Future<UserModel> signInWithApple({
-    required String identityToken,
-    required String authorizationCode,
-  }) async {
-    try {
-      final response = await api.post(
-        ApiEndpoints.appleSignIn,
-        data: {
-          "identityToken": identityToken,
-          "authorizationCode": authorizationCode,
-        },
-      );
-
-      final user = UserModel.fromJson(response['user']);
-      if (response['token'] != null) {
-        await _storeToken(response['token']);
-      }
-      return user;
-    } on SocketException {
-      throw NetworkException('No internet connection');
-    } catch (_) {
-      throw AuthException('Failed to sign in with Apple');
-    }
-  }
-
-  @override
-  Future<UserModel> registerWithGoogle({required String idToken}) async {
-    try {
-      final response = await api.post(
-        ApiEndpoints.googleRegister,
-        data: {"idToken": idToken},
-      );
-
-      final user = UserModel.fromJson(response['user']);
-      if (response['token'] != null) {
-        await _storeToken(response['token']);
-      }
-      return user;
-    } on SocketException {
-      throw NetworkException('No internet connection');
-    } catch (_) {
-      throw AuthException('Failed to register with Google');
-    }
-  }
-
-  @override
-  Future<UserModel> registerWithApple({
-    required String identityToken,
-    required String authorizationCode,
-  }) async {
-    try {
-      final response = await api.post(
-        ApiEndpoints.appleRegister,
-        data: {
-          "identityToken": identityToken,
-          "authorizationCode": authorizationCode,
-        },
-      );
-
-      final user = UserModel.fromJson(response['user']);
-      if (response['token'] != null) {
-        await _storeToken(response['token']);
-      }
-      return user;
-    } on SocketException {
-      throw NetworkException('No internet connection');
-    } catch (_) {
-      throw AuthException('Failed to register with Apple');
     }
   }
 }

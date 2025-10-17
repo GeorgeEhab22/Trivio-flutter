@@ -30,13 +30,13 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Either<Failure, User>> signUp({
+  Future<Either<Failure, User>> register({
     required String email,
     required String username,
     required String password,
   }) async {
     try {
-      final userModel = await remoteDataSource.signUp(
+      final userModel = await remoteDataSource.register(
         email: email,
         username: username,
         password: password,
@@ -97,11 +97,11 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Either<Failure, User>> signInWithGoogle({
+  Future<Either<Failure, User>> signInAndRegisterWithGoogle({
     required String idToken,
   }) async {
     try {
-      final userModel = await remoteDataSource.signInWithGoogle(
+      final userModel = await remoteDataSource.signInAndRegisterWithGoogle(
         idToken: idToken,
       );
       return Right(userModel.toEntity());
@@ -117,71 +117,9 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Either<Failure, User>> signInWithApple({
-    required String identityToken,
-    required String authorizationCode,
-  }) async {
-    try {
-      final userModel = await remoteDataSource.signInWithApple(
-        identityToken: identityToken,
-        authorizationCode: authorizationCode,
-      );
-      return Right(userModel.toEntity());
-    } on AuthException catch (e) {
-      return Left(AuthFailure(e.message));
-    } on ServerException catch (e) {
-      return Left(ServerFailure(e.message));
-    } on NetworkException catch (e) {
-      return Left(NetworkFailure(e.message));
-    } catch (_) {
-      return Left(ServerFailure('Apple sign-in failed'));
-    }
-  }
-
-  @override
-  Future<Either<Failure, User>> registerWithGoogle({
-    required String idToken,
-  }) async {
-    try {
-      final userModel = await remoteDataSource.registerWithGoogle(
-        idToken: idToken,
-      );
-      return Right(userModel.toEntity());
-    } on AuthException catch (e) {
-      return Left(AuthFailure(e.message));
-    } on ServerException catch (e) {
-      return Left(ServerFailure(e.message));
-    } on NetworkException catch (e) {
-      return Left(NetworkFailure(e.message));
-    } catch (_) {
-      return Left(ServerFailure('Google registration failed'));
-    }
-  }
-
-  @override
-  Future<Either<Failure, User>> registerWithApple({
-    required String identityToken,
-    required String authorizationCode,
-  }) async {
-    try {
-      final userModel = await remoteDataSource.registerWithApple(
-        identityToken: identityToken,
-        authorizationCode: authorizationCode,
-      );
-      return Right(userModel.toEntity());
-    } on AuthException catch (e) {
-      return Left(AuthFailure(e.message));
-    } on ServerException catch (e) {
-      return Left(ServerFailure(e.message));
-    } on NetworkException catch (e) {
-      return Left(NetworkFailure(e.message));
-    } catch (_) {
-      return Left(ServerFailure('Apple registration failed'));
-    }
-  }
-
-  @override
-  Future<Either<Failure, void>> resendVerificationCode({required String email}) {
+  Future<Either<Failure, void>> resendVerificationCode({
+    required String email,
+  }) {
     // TODO: implement
     throw UnimplementedError();
   }

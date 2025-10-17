@@ -1,6 +1,6 @@
 import 'package:auth/core/styels.dart';
 import 'package:auth/presentation/authentication/widgets/auth_action_button.dart';
-import 'package:auth/presentation/authentication/widgets/google_and_apple_fields.dart';
+import 'package:auth/presentation/authentication/widgets/google_field.dart';
 import 'package:auth/presentation/authentication/widgets/username_field.dart';
 import 'package:auth/presentation/manager/register_cubit/cubit/register_cubit.dart';
 import 'package:auth/presentation/manager/register_cubit/cubit/register_state.dart';
@@ -99,7 +99,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   loadingText: "Sending code...",
                   isLoading: (state) => state is RegisterLoading,
                 ),
-                const GoogleAndAppleFields(isLogin: false),
+                const GoogleField(isLogin: false),
                 const SizedBox(height: 40),
                 const AlreadyHaveAccount(),
               ],

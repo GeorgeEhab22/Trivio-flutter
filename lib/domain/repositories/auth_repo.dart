@@ -7,21 +7,17 @@ abstract class AuthRepository {
     required String email,
     required String password,
   });
-  Future<Either<Failure, User>> signInWithGoogle({required String idToken});
-  Future<Either<Failure, User>> signInWithApple({
-    required String identityToken,
-    required String authorizationCode,
+  Future<Either<Failure, User>> signInAndRegisterWithGoogle({
+    required String idToken,
   });
-  Future<Either<Failure, User>> registerWithGoogle({required String idToken});
-  Future<Either<Failure, User>> registerWithApple({
-    required String identityToken,
-    required String authorizationCode,
-  });
-  Future<Either<Failure, User>> signUp({
+  Future<Either<Failure, User>> register({
     required String email,
     required String username,
     required String password,
   });
-  Future<Either<Failure, String>> verifyCode({required String email, required String code});
-  Future<Either<Failure, void>> resendVerificationCode( {required String email});
+  Future<Either<Failure, String>> verifyCode({
+    required String email,
+    required String code,
+  });
+  Future<Either<Failure, void>> resendVerificationCode({required String email});
 }

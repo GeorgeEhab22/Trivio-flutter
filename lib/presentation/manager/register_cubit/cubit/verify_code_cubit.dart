@@ -2,8 +2,8 @@
 import 'dart:async';
 
 import 'package:auth/core/errors/failure.dart';
-import 'package:auth/domain/usecases/rigester/resend_verification_code.dart';
-import 'package:auth/domain/usecases/rigester/verify_code.dart';
+import 'package:auth/domain/usecases/register/resend_verification_code.dart';
+import 'package:auth/domain/usecases/register/verify_code.dart';
 import 'package:auth/presentation/manager/register_cubit/cubit/verify_code_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
