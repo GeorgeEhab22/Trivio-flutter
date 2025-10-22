@@ -54,6 +54,7 @@ class _RegisterPageState extends State<RegisterPage> {
         listener: (context, state) =>
             RegisterListener.handleStateChanges(context, state),
         child: SingleChildScrollView(
+          
           padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 60),
           child: Form(
             key: _formKey,
