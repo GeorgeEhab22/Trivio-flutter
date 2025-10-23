@@ -54,6 +54,7 @@ class CodeBoxHandlers {
     if (code.length == 6) {
       context.read<VerifyCodeCubit>().verify(code);
     } else {
+      clearCode(controllers, []);
       showCustomSnackBar(context, 'Please enter all 6 digits', false);
     }
   }

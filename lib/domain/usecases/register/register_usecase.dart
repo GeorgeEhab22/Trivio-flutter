@@ -44,11 +44,10 @@ class RegisterUseCase {
         ValidationFailure('Password must be at least 8 characters'),
       );
     }
-    return await repository.signUp(
+    return await repository.register(
       email: email.trim(),
       username: username.trim(),
       password: password,
     );
   }
 }
-

@@ -1,9 +1,11 @@
 import 'package:auth/core/styels.dart';
 import 'package:auth/presentation/authentication/widgets/auth_action_button.dart';
 import 'package:auth/presentation/authentication/widgets/forget_password_button.dart';
-import 'package:auth/presentation/authentication/widgets/google_and_apple_fields.dart';
+import 'package:auth/presentation/authentication/widgets/google_field.dart';
 import 'package:auth/presentation/manager/sigin_in_cubit/sign_in_cubit.dart';
 import 'package:auth/presentation/manager/sigin_in_cubit/sign_in_state.dart';
+
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../widgets/email_field.dart';
@@ -71,7 +73,7 @@ class _SignInPageState extends State<SignInPage> {
                   loadingText: "Signing In...",
                   isLoading: (state) => state is SignInLoading,
                 ),
-                const GoogleAndAppleFields(isLogin: true),
+                const GoogleField(isLogin: true),
                 const SizedBox(height: 40),
                 const ForgetPasswordButton(),
                 const NewAccountButton(),

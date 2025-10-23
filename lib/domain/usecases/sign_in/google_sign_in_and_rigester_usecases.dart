@@ -3,12 +3,12 @@ import 'package:auth/domain/entities/user.dart';
 import 'package:auth/domain/repositories/auth_repo.dart';
 import 'package:dartz/dartz.dart';
 
-class GoogleRegisterUseCase {
+class GoogleSignInAndRegisterUseCase {
   final AuthRepository repository;
 
-  GoogleRegisterUseCase(this.repository);
+  GoogleSignInAndRegisterUseCase(this.repository);
 
   Future<Either<Failure, User>> call({required String idToken}) async {
-    return await repository.registerWithGoogle(idToken: idToken);
+    return await repository.signInAndRegisterWithGoogle(idToken: idToken);
   }
 }

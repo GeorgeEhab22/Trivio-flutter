@@ -8,17 +8,8 @@ abstract class AuthRepository {
     required String password,
     required bool isEmail,
   });
-  Future<Either<Failure, User>> signInWithGoogle({required String idToken});
-  Future<Either<Failure, User>> signInWithApple({
-    required String identityToken,
-    required String authorizationCode,
-  });
-  Future<Either<Failure, User>> registerWithGoogle({required String idToken});
-  Future<Either<Failure, User>> registerWithApple({
-    required String identityToken,
-    required String authorizationCode,
-  });
-  Future<Either<Failure, User>> signUp({
+ 
+  Future<Either<Failure, User>> register({
     required String email,
     required String username,
     required String password,
@@ -37,4 +28,5 @@ abstract class AuthRepository {
     required String username,
   });
   Future<Either<Failure, String>> sendPasswordResetOtp({required String email});
+  Future<Either<Failure, User>> signInAndRegisterWithGoogle({required String idToken});
 }

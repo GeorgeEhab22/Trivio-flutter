@@ -160,7 +160,7 @@ class MyApp extends StatelessWidget {
     );
 
     return MaterialApp.router(
-      title: 'Auth App',
+      title: 'TRIVIO',
       debugShowCheckedModeBanner: false,
       locale: DevicePreview.locale(context),
       builder: DevicePreview.appBuilder,
@@ -173,6 +173,8 @@ class MyApp extends StatelessWidget {
         ),
       ),
       routerConfig: router,
+
+
     );
   }
 }

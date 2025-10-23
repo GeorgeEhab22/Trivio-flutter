@@ -54,4 +54,15 @@ class UserModel extends User {
       updatedAt: DateTime.now(),
     );
   }
+  ////////////////////////////////////////////////////////
+  factory UserModel.empty() {
+    return UserModel(
+      id: '',
+      email: '',
+      username: '',
+      isVerified: false,
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+    );
+  }
 }
