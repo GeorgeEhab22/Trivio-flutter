@@ -6,6 +6,7 @@ import 'package:auth/presentation/authentication/register/register_view.dart';
 import 'package:auth/presentation/authentication/register/verify_code_view.dart';
 import 'package:auth/presentation/authentication/signIn/request_email_view.dart';
 import 'package:auth/presentation/authentication/signIn/forget_password_otp_view.dart';
+import 'package:auth/presentation/home/home_page.dart';
 import 'package:auth/presentation/manager/register_cubit/register_cubit.dart';
 import 'package:auth/presentation/manager/register_cubit/verify_code_cubit.dart';
 import 'package:auth/presentation/manager/sigin_in_cubit/forget_password_otp_cubit.dart';
@@ -154,7 +155,24 @@ class MyApp extends StatelessWidget {
         /// 🟢 Home Page
         GoRoute(
           path: AppRoutes.home,
-          builder: (context, state) => const HomePage(),
+          builder: (context, state) {
+            // TODO: Add your Posts Cubits here later when ready.
+            //
+            // Example:
+            //
+            // return MultiBlocProvider(
+            //   providers: [
+            //     BlocProvider(create: (_) => di.sl<PostsCubit>()..getPosts()),
+            //     BlocProvider(create: (_) => di.sl<CreatePostCubit>()),
+            //     // If backend supports comments later:
+            //     // BlocProvider(create: (_) => di.sl<CommentsCubit>()),
+            //     // If backend supports reactions later:
+            //     // BlocProvider(create: (_) => di.sl<ReactionsCubit>()),
+            //   ],
+            //   child: const HomePage(),
+            // );
+            return const HomePage();
+          },
         ),
       ],
     );
@@ -173,20 +191,18 @@ class MyApp extends StatelessWidget {
         ),
       ),
       routerConfig: router,
-
-
     );
   }
 }
 
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+// class HomePage extends StatelessWidget {
+//   const HomePage({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Home')),
-      body: const Center(child: Text('Welcome! Email Verified Successfully')),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(title: const Text('Home')),
+//       body: const Center(child: Text('Welcome! Email Verified Successfully')),
+//     );
+//   }
+// }

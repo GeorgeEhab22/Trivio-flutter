@@ -29,4 +29,12 @@ class ApiService {
     final res = await _dio.patch(endPoint, data: data);
     return res.data;
   }
+  Future<Map<String, dynamic>> delete(String endPoint, {Map<String, dynamic>? data}) async {
+    final res = await _dio.delete(endPoint, data: data);
+    return res.data;
+  }
+  Future<Map<String, dynamic>> put(String endPoint, {Map<String, dynamic>? data}) async {
+    final res = await _dio.put(endPoint, data: data);
+    return res.data;
+  }
 }

@@ -6,4 +6,6 @@ class RegexPatterns {
   static final passwordRegex = RegExp(
     r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#\$&*~]).+$',
   );
+  static final urlRegex = RegExp(r'^(http|https):\/\/[^\s$.?#].[^\s]*$');
+  static final idRegex = RegExp(r'^[a-zA-Z0-9_-]{6,}$');
 }

@@ -1,0 +1,181 @@
+import 'package:auth/core/errors/failure.dart';
+import 'package:auth/data/core/error/exceptions.dart';
+import 'package:auth/data/datasource/comments_remote_datasource.dart';
+import 'package:auth/domain/entities/comment.dart';
+import 'package:auth/domain/repositories/comment_repo.dart';
+import 'package:dartz/dartz.dart';
+
+class CommentRepositoryImpl implements CommentRepository {
+  final CommentsRemoteDataSource remoteDataSource;
+
+  CommentRepositoryImpl({required this.remoteDataSource});
+
+  @override
+  Future<Either<Failure, List<Comment>>> getComments(String postId) async {
+    try {
+      final models = await remoteDataSource.getComments(postId);
+      return Right(models.map((m) => m.toEntity()).toList());
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } catch (_) {
+      return Left(ServerFailure('Failed to get comments'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, Comment>> addComment({
+    required String postId,
+    required String userId,
+    required String text,
+    String? parentCommentId,
+  }) async {
+    try {
+      final model = await remoteDataSource.addComment(
+        postId: postId,
+        userId: userId,
+        text: text,
+        parentCommentId: parentCommentId,
+      );
+      return Right(model.toEntity());
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } catch (_) {
+      return Left(ServerFailure('Failed to add comment'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> deleteComment(String commentId) async {
+    try {
+      await remoteDataSource.deleteComment(commentId);
+      return const Right(null);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } catch (_) {
+      return Left(ServerFailure('Failed to delete comment'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, Comment>> likeComment(String commentId, String userId) async {
+    try {
+      // If your backend has a dedicated like endpoint returning updated comment:
+      final model = await remoteDataSource.reactToComment(
+        commentId: commentId,
+        userId: userId,
+        reactionType: 'like',
+      );
+      return Right(model.toEntity());
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } catch (_) {
+      return Left(ServerFailure('Failed to like comment'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, Comment>> editComment({
+    required String commentId,
+    required String userId,
+    required String newContent,
+  }) async {
+    try {
+      final model = await remoteDataSource.editComment(
+        commentId: commentId,
+        userId: userId,
+        newContent: newContent,
+      );
+      return Right(model.toEntity());
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } catch (_) {
+      return Left(ServerFailure('Failed to edit comment'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, Comment>> reactToComment({
+    required String commentId,
+    required String userId,
+    required String reactionType,
+  }) async {
+    try {
+      final model = await remoteDataSource.reactToComment(
+        commentId: commentId,
+        userId: userId,
+        reactionType: reactionType,
+      );
+      return Right(model.toEntity());
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } catch (_) {
+      return Left(ServerFailure('Failed to react to comment'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<Comment>>> getReplies(String parentCommentId) async {
+    try {
+      final models = await remoteDataSource.getReplies(parentCommentId);
+      return Right(models.map((m) => m.toEntity()).toList());
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } catch (_) {
+      return Left(ServerFailure('Failed to get replies'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, Comment>> removeReactionFromComment({
+    required String commentId,
+    required String userId,
+  }) async {
+    try {
+      final model = await remoteDataSource.removeReactionFromComment(
+        commentId: commentId,
+        userId: userId,
+      );
+      return Right(model.toEntity());
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } catch (_) {
+      return Left(ServerFailure('Failed to remove reaction from comment'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, Comment>> mentionUsersInComment({
+    required String commentId,
+    required List<String> mentionedUserIds,
+  }) async {
+    try {
+      final model = await remoteDataSource.mentionUsersInComment(
+        commentId: commentId,
+        mentionedUserIds: mentionedUserIds,
+      );
+      return Right(model.toEntity());
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } catch (_) {
+      return Left(ServerFailure('Failed to mention users in comment'));
+    }
+  }
+}

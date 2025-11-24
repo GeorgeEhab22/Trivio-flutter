@@ -50,7 +50,11 @@ dependencies:
   animated_bottom_navigation_bar: ^1.4.0
   google_nav_bar: ^5.0.6
   salomon_bottom_bar: ^3.3.2
-
+  font_awesome_flutter: ^10.7.0
+  image_picker: ^1.1.2
+  image_picker_web: ^4.0.0
+  video_player: ^2.9.2
+  intl: ^0.20.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -3,8 +3,35 @@ import 'dart:io';
 import 'package:auth/common/api_service.dart';
 import 'package:auth/common/functions/handle_dio_error.dart';
 import 'package:auth/data/datasource/auth_remote_datasource.dart';
+import 'package:auth/data/datasource/comments_remote_datasource.dart';
+import 'package:auth/data/datasource/posts_remote_datasource.dart';
 import 'package:auth/data/repositories/auth_repo_impl.dart';
+import 'package:auth/data/repositories/comment_repo_impl.dart';
+import 'package:auth/data/repositories/post_repo_impl.dart';
 import 'package:auth/domain/repositories/auth_repo.dart';
+import 'package:auth/domain/repositories/comment_repo.dart';
+import 'package:auth/domain/repositories/post_repo.dart';
+import 'package:auth/domain/usecases/comment/add_comment_usecase.dart';
+import 'package:auth/domain/usecases/comment/delete_comment_usecase.dart';
+import 'package:auth/domain/usecases/comment/edit_comment_usecase.dart';
+import 'package:auth/domain/usecases/comment/get_comments_usecase.dart';
+import 'package:auth/domain/usecases/comment/get_replies_usecase.dart';
+import 'package:auth/domain/usecases/comment/like_comment_usecase.dart';
+import 'package:auth/domain/usecases/comment/mention_users_in_comment_usecase.dart';
+import 'package:auth/domain/usecases/comment/react_to_comment_usecase.dart';
+import 'package:auth/domain/usecases/comment/remove_reaction_from_comment_usecase.dart';
+import 'package:auth/domain/usecases/post/comment_on_post_usecase.dart';
+import 'package:auth/domain/usecases/post/create_post_usecase.dart';
+import 'package:auth/domain/usecases/post/delete_post_usecase.dart';
+import 'package:auth/domain/usecases/post/edit_post_usecase.dart';
+import 'package:auth/domain/usecases/post/fetch_posts_usecase.dart';
+import 'package:auth/domain/usecases/post/fetch_single_post_usecase.dart';
+import 'package:auth/domain/usecases/post/react_to_post_usecase.dart';
+import 'package:auth/domain/usecases/post/report_post_usecase.dart';
+import 'package:auth/domain/usecases/post/search_post_usecase.dart';
+import 'package:auth/domain/usecases/post/share_post_usecase.dart';
+import 'package:auth/domain/usecases/post/toggle_follow_user.dart';
+import 'package:auth/domain/usecases/post/toggle_save_post_usecase.dart';
 import 'package:auth/domain/usecases/register/register_usecase.dart';
 import 'package:auth/domain/usecases/register/resend_verification_code.dart';
 import 'package:auth/domain/usecases/register/verify_code.dart';
@@ -59,4 +86,45 @@ Future<void> init() async {
   );
 
   sl.registerFactory(() => RegisterCubit(registerUseCase: sl()));
+
+  //posts
+  sl.registerLazySingleton<PostsRemoteDataSource>(
+    () => PostsRemoteDataSourceImpl(api: sl(), prefs: sl(), errorHandler: sl()),
+  );
+  sl.registerLazySingleton<PostRepository>(
+    () => PostRepositoryImpl(remoteDataSource: sl()),
+  );
+  sl.registerLazySingleton(() => CommentOnPostUseCase(sl()));
+  sl.registerLazySingleton(() => CreatePostUseCase(sl()));
+  sl.registerLazySingleton(() => DeletePostUseCase(sl()));
+  sl.registerLazySingleton(() => EditPostUseCase(sl()));
+  sl.registerLazySingleton(() => GetAllPostsUseCase(sl()));
+  sl.registerLazySingleton(() => GetPostByIdUseCase(sl()));
+  sl.registerLazySingleton(() => ReactToPostUseCase(sl()));
+  sl.registerLazySingleton(() => RemoveReactionFromCommentUseCase(sl()));
+  sl.registerLazySingleton(() => ReportPostUseCase(sl()));
+  sl.registerLazySingleton(() => SearchPostsUseCase(sl()));
+  sl.registerLazySingleton(() => SharePostUseCase(sl()));
+  sl.registerLazySingleton(() => ToggleFollowUserUseCase(sl()));
+  sl.registerLazySingleton(() => ToggleSavePostUseCase(sl()));
+
+  // comments
+  sl.registerLazySingleton<CommentsRemoteDataSource>(
+    () => CommentsRemoteDataSourceImpl(
+      api: sl(),
+      prefs: sl(),
+      errorHandler: sl(),
+    ),
+  );
+  sl.registerLazySingleton<CommentRepository>(
+    () => CommentRepositoryImpl(remoteDataSource: sl()),
+  );
+  sl.registerLazySingleton(() => AddCommentUseCase(sl()));
+  sl.registerLazySingleton(() => DeleteCommentUseCase(sl()));
+  sl.registerLazySingleton(() => EditCommentUseCase(sl()));
+  sl.registerLazySingleton(() => GetCommentsUseCase(sl()));
+  sl.registerLazySingleton(() => GetRepliesUseCase(sl()));
+  sl.registerLazySingleton(() => LikeCommentUseCase(sl()));
+  sl.registerLazySingleton(() => MentionUsersInCommentUseCase(sl()));
+  sl.registerLazySingleton(() => ReactToCommentUseCase(sl()));
 }
