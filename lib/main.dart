@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:auth/core/app_routes.dart';
+import 'package:auth/core/custom_bottom_navigation_bar.dart';
 import 'package:auth/domain/usecases/sign_in/request_otp.dart';
 import 'package:auth/presentation/authentication/register/register_view.dart';
 import 'package:auth/presentation/authentication/register/verify_code_view.dart';
@@ -42,7 +43,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final router = GoRouter(
-      initialLocation: AppRoutes.signIn,
+      initialLocation: AppRoutes.home,
       routes: [
         /// 🟦 Sign In
         GoRoute(
@@ -173,8 +174,6 @@ class MyApp extends StatelessWidget {
         ),
       ),
       routerConfig: router,
-
-
     );
   }
 }
@@ -187,6 +186,7 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Home')),
       body: const Center(child: Text('Welcome! Email Verified Successfully')),
+      bottomNavigationBar: GlassmorphismNav(),
     );
   }
 }
