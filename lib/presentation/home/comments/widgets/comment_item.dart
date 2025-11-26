@@ -38,12 +38,12 @@ class CommentItem extends StatefulWidget {
 class _CommentItemState extends State<CommentItem> {
   bool _showReplies = false;
 
-  void _showEditDialog(String id, String oldText) {
+  Future<void> _showEditDialog(String id, String oldText) async {
     final controller = TextEditingController(text: oldText);
 
-    showDialog(
+    final result = await showDialog<bool>(
       context: context,
-      builder: (_) => AlertDialog(
+      builder: (ctx) => AlertDialog(
         title: const Text("Edit Comment"),
         content: TextField(
           controller: controller,
@@ -52,29 +52,34 @@ class _CommentItemState extends State<CommentItem> {
             hintText: "Edit your comment...",
             border: OutlineInputBorder(),
           ),
+          maxLines: null,
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.pop(ctx, false),
             child: const Text("Cancel"),
           ),
           ElevatedButton(
-            onPressed: () {
-              widget.onEdit(id, controller.text);
-              Navigator.pop(context);
-            },
+            onPressed: () => Navigator.pop(ctx, true),
             child: const Text("Save"),
           ),
         ],
       ),
     );
+
+    try {
+      if (result == true) {
+        widget.onEdit(id, controller.text);
+      }
+    } finally {
+      controller.dispose();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final c = widget.comment;
     final replies = List<Map<String, dynamic>>.from(c["replies"] ?? []);
-
     final bool isOwner = c["userId"] == widget.currentUserId;
 
     final content = Column(
@@ -85,16 +90,16 @@ class _CommentItemState extends State<CommentItem> {
           userImage: c["userImage"],
           time: c["time"],
           commentText: c["text"],
-
           isOwner: isOwner,
-
           onReply: () => widget.onReply(c["id"], c["user"]),
           onEdit: () => _showEditDialog(c["id"], c["text"]),
           onDelete: () => widget.onDelete(c["id"]),
-
           onReport: () => widget.onReport(c["id"]),
           onHide: () => widget.onHide(c["id"]),
         ),
+
+        if (widget.replyingTo != null && widget.replyingTo!.isNotEmpty)
+          const SizedBox(height: 4),
 
         if (widget.replyingTo != null && widget.replyingTo!.isNotEmpty)
           Padding(
@@ -114,9 +119,7 @@ class _CommentItemState extends State<CommentItem> {
           onReply: () => widget.onReply(c["id"], c["user"]),
           showReplies: _showReplies,
           repliesCount: replies.length,
-          onToggleReplies: () => setState(() {
-            _showReplies = !_showReplies;
-          }),
+          onToggleReplies: () => setState(() => _showReplies = !_showReplies),
           onReactionChanged: (int value) {},
         ),
 
@@ -132,17 +135,13 @@ class _CommentItemState extends State<CommentItem> {
               child: Row(
                 children: [
                   Icon(
-                    _showReplies
-                        ? Icons.keyboard_arrow_up
-                        : Icons.keyboard_arrow_down,
+                    _showReplies ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
                     size: 18,
                     color: Colors.grey[600],
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    _showReplies
-                        ? "Hide replies"
-                        : "View ${replies.length} replies",
+                    _showReplies ? "Hide replies" : "View ${replies.length} replies",
                     style: TextStyle(
                       color: Colors.grey[700],
                       fontSize: 13,
@@ -156,6 +155,7 @@ class _CommentItemState extends State<CommentItem> {
 
         if (_showReplies)
           CommentRepliesList(
+            key: ValueKey('replies_${c["id"]}'),
             currentUserId: widget.currentUserId,
             onReport: widget.onReport,
             onHide: widget.onHide,
@@ -167,8 +167,11 @@ class _CommentItemState extends State<CommentItem> {
       ],
     );
 
+    final topKey = ValueKey(c['id']);
+
     return widget.isReply
         ? Transform.scale(
+            key: topKey,
             scale: 0.95,
             alignment: Alignment.topLeft,
             child: Container(
@@ -181,6 +184,9 @@ class _CommentItemState extends State<CommentItem> {
               child: content,
             ),
           )
-        : content;
+        : KeyedSubtree(
+            key: topKey,
+            child: content,
+          );
   }
 }

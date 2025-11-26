@@ -4,13 +4,13 @@ import 'package:flutter/material.dart';
 class ExpandableText extends StatefulWidget {
   final String text;
   final int previewLines;
-  final bool canCollapse; // If true, text can collapse again when tapped
+  final bool canCollapse;
 
   const ExpandableText({
     super.key,
     required this.text,
-    required this.previewLines,
-    this.canCollapse = true, // Default: collapse allowed
+    this.previewLines = 3,
+    this.canCollapse = true,
   });
 
   @override
@@ -19,117 +19,107 @@ class ExpandableText extends StatefulWidget {
 
 class _ExpandableTextState extends State<ExpandableText> {
   bool _expanded = false;
-  bool _isOverflowing = false;
-  String? _trimmedText;
 
-  static const textStyle16 = TextStyle(
+  // Cache inputs used for overflow calculation to avoid redundant TextPainter work.
+  String? _lastText;
+  double? _lastMaxWidth;
+  bool? _lastDidOverflow;
+
+  static const TextStyle _textStyle = TextStyle(
     fontSize: 16,
     fontWeight: FontWeight.w500,
+    color: AppColors.iconsColor,
   );
 
-  @override
-  void initState() {
-    super.initState();
+  bool _didOverflow(String text, double maxWidth) {
+    // Return cached result when inputs unchanged
+    if (_lastText == text && _lastMaxWidth == maxWidth && _lastDidOverflow != null) {
+      return _lastDidOverflow!;
+    }
 
-    //  After first layout, check if the text exceeds previewLines
-    WidgetsBinding.instance.addPostFrameCallback((_) => _checkOverflow());
-  }
-
-  void _checkOverflow() {
-    // Measure the available width
-    final renderBox = context.findRenderObject() as RenderBox?;
-    if (renderBox == null) return;
-
-    final maxWidth = renderBox.size.width;
-
-    // Measure text with previewLines
-    final textPainter = TextPainter(
-      text: TextSpan(text: widget.text, style: textStyle16),
+    final tp = TextPainter(
+      text: TextSpan(text: text, style: _textStyle),
       maxLines: widget.previewLines,
       textDirection: TextDirection.ltr,
     )..layout(maxWidth: maxWidth);
 
-    final isOverflow = textPainter.didExceedMaxLines;
+    final overflow = tp.didExceedMaxLines;
 
-    if (mounted) {
-      setState(() {
-        _isOverflowing = isOverflow;
+    // Update cache
+    _lastText = text;
+    _lastMaxWidth = maxWidth;
+    _lastDidOverflow = overflow;
 
-        // If overflow → generate trimmed preview text
-        _trimmedText = isOverflow
-            ? _trimText(widget.text, widget.previewLines, maxWidth)
-            : widget.text;
-      });
-    }
+    return overflow;
   }
 
   void _toggleExpand() {
-    // If collapse is disabled → do not collapse again
-    if (_expanded && !widget.canCollapse) return;
-
+    if (_expanded && !widget.canCollapse) {
+      return; // don't allow collapsing
+    }
     setState(() => _expanded = !_expanded);
   }
 
   @override
+  void didUpdateWidget(covariant ExpandableText oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // If text or previewLines changed, invalidate cache
+    if (oldWidget.text != widget.text || oldWidget.previewLines != widget.previewLines) {
+      _lastText = null;
+      _lastMaxWidth = null;
+      _lastDidOverflow = null;
+      // If the text changed while expanded and canCollapse is false, keep expanded (or you might want to collapse)
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final displayText = _expanded ? widget.text : (_trimmedText ?? widget.text);
+    // Use LayoutBuilder to get the available width reliably
+    return LayoutBuilder(builder: (context, constraints) {
+      final maxWidth = constraints.maxWidth.isFinite ? constraints.maxWidth : MediaQuery.of(context).size.width;
 
-    return GestureDetector(
-      onTap: _toggleExpand, // Expand or collapse text
-      child: RichText(
-        text: TextSpan(
-          style: textStyle16.copyWith(color: AppColors.iconsColor),
+      final overflow = _didOverflow(widget.text, maxWidth);
+
+      // When expanded: show full text
+      if (_expanded) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TextSpan(text: displayText),
-
-            // If text overflows and is not expanded → show "... more"
-            if (_isOverflowing && !_expanded)
-              WidgetSpan(
-                alignment: PlaceholderAlignment.baseline,
-                baseline: TextBaseline.alphabetic,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 4),
-                  child: Text(
-                    '... more',
-                    style: textStyle16.copyWith(color: const Color(0xFF838383)),
-                  ),
+            Text(widget.text, style: _textStyle),
+            if (widget.canCollapse)
+              Align(
+                alignment: Alignment.centerLeft,
+                child: TextButton(
+                  onPressed: _toggleExpand,
+                  style: TextButton.styleFrom(padding: EdgeInsets.zero, minimumSize: const Size(0, 0)),
+                  child: const Text('less', style: TextStyle(color: Color(0xFF838383))),
                 ),
               ),
           ],
-        ),
-      ),
-    );
-  }
-
-  String _trimText(String text, int maxLines, double maxWidth) {
-    const seeMoreText = " ... more";
-
-    int start = 0;
-    int end = text.length;
-    int mid;
-
-    // Binary search to find the maximum substring that fits
-    while (start < end) {
-      mid = (start + end) ~/ 2;
-
-      final painter = TextPainter(
-        text: TextSpan(
-          text: text.substring(0, mid) + seeMoreText,
-          style: textStyle16,
-        ),
-        maxLines: maxLines,
-        textDirection: TextDirection.ltr,
-      )..layout(maxWidth: maxWidth);
-
-      if (painter.didExceedMaxLines) {
-        end = mid;
-      } else {
-        start = mid + 1;
+        );
       }
-    }
 
-    // Safety cut to avoid showing a broken character
-    final safeEnd = (end - 4).clamp(0, text.length);
-    return text.substring(0, safeEnd);
+      // Collapsed: show truncated text with ellipsis and a "more" button if overflow detected
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            widget.text,
+            style: _textStyle,
+            maxLines: widget.previewLines,
+            overflow: TextOverflow.ellipsis,
+          ),
+          if (overflow)
+            Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton(
+                onPressed: _toggleExpand,
+                style: TextButton.styleFrom(padding: EdgeInsets.zero, minimumSize: const Size(0, 0)),
+                child: const Text('more', style: TextStyle(color: Color(0xFF838383))),
+              ),
+            ),
+        ],
+      );
+    });
   }
 }

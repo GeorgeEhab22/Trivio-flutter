@@ -35,6 +35,9 @@ class CommentHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // compute once
+    final String timeAgo = formatTime(time);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       child: Row(
@@ -43,21 +46,20 @@ class CommentHeader extends StatelessWidget {
           Expanded(
             child: AuthorInfo(
               author: user,
-              timeAgo: formatTime(time),
+              timeAgo: timeAgo,
               avatarRadius: 18,
               showTimeInline: true,
               authorTextStyle: Styles.textStyle15,
-              authorImage: userImage ?? "",
+              authorImage: userImage ?? '',
             ),
           ),
 
+       
           CommentActionsMenu(
             parentContext: context,
             commentText: commentText,
             isOwner: isOwner,
-
             onReply: onReply,
-
             onEdit: onEdit,
             onDelete: onDelete,
             onReport: onReport,

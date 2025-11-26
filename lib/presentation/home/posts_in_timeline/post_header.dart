@@ -1,8 +1,8 @@
 import 'package:auth/constants/colors';
 import 'package:auth/core/styels.dart';
 import 'package:auth/presentation/authentication/widgets/show_custom_snackbar.dart';
-import 'package:auth/presentation/home/posts_in_timeline/options_buttom_sheet.dart';
-import 'package:auth/presentation/home/posts_in_timeline/report_resons_buttom_sheet.dart';
+import 'package:auth/presentation/home/posts_in_timeline/options_bottom_sheet.dart';
+import 'package:auth/presentation/home/posts_in_timeline/report_reasons_buttom_sheet.dart';
 import 'package:auth/presentation/home/widgets/author_info.dart';
 import 'package:flutter/material.dart';
 

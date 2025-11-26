@@ -1,18 +1,19 @@
 import 'dart:io';
-
 import 'package:auth/core/app_routes.dart';
-import 'package:auth/domain/usecases/sign_in/request_otp.dart';
+import 'package:auth/core/auth_shell.dart';
+import 'package:auth/core/custom_bottom_navigation_bar.dart';
+import 'package:auth/presentation/home/home_page.dart';
+import 'package:auth/presentation/authentication/signIn/sign_in_view.dart';
 import 'package:auth/presentation/authentication/register/register_view.dart';
 import 'package:auth/presentation/authentication/register/verify_code_view.dart';
 import 'package:auth/presentation/authentication/signIn/request_email_view.dart';
 import 'package:auth/presentation/authentication/signIn/forget_password_otp_view.dart';
-import 'package:auth/presentation/home/home_page.dart';
 import 'package:auth/presentation/manager/register_cubit/register_cubit.dart';
 import 'package:auth/presentation/manager/register_cubit/verify_code_cubit.dart';
 import 'package:auth/presentation/manager/sigin_in_cubit/forget_password_otp_cubit.dart';
 import 'package:auth/presentation/manager/sigin_in_cubit/request_otp/request_otp_cubit.dart';
 import 'package:auth/presentation/manager/sigin_in_cubit/sign_in_cubit.dart';
-import 'package:auth/presentation/authentication/signIn/sign_in_view.dart';
+import 'package:auth/domain/usecases/sign_in/request_otp.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -37,15 +38,46 @@ void main() async {
   );
 }
 
+// global to track previous tab for direction-aware animation
+int previousTabIndex = 0;
+
+/// Helper: build a CustomTransitionPage that slides left/right based on index direction
+CustomTransitionPage buildAnimatedPage({
+  required Widget child,
+  required int newIndex,
+}) {
+  // Determine direction: if newIndex > previousTabIndex we slide left (from right to left)
+  final bool leftToRight = newIndex > previousTabIndex ? true : false;
+  // store for next navigation
+  previousTabIndex = newIndex;
+
+  return CustomTransitionPage(
+    key: ValueKey(child.runtimeType.toString() + newIndex.toString()),
+    child: child,
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      final begin = Offset(leftToRight ? 1.0 : -1.0, 0.0); // enter from right if forward
+      const end = Offset.zero;
+      final curve = Curves.easeInOut;
+      final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+      return SlideTransition(
+        position: animation.drive(tween),
+        child: child,
+      );
+    },
+    transitionDuration: const Duration(milliseconds: 300),
+  );
+}
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     final router = GoRouter(
-      initialLocation: AppRoutes.signIn,
+      initialLocation: '/app/home', // must point to nested /app route
       routes: [
-        /// 🟦 Sign In
+        // Public routes
         GoRoute(
           path: AppRoutes.signIn,
           builder: (context, state) => BlocProvider(
@@ -54,7 +86,6 @@ class MyApp extends StatelessWidget {
           ),
         ),
 
-        /// 🟩 Register
         GoRoute(
           path: AppRoutes.register,
           builder: (context, state) => BlocProvider(
@@ -63,75 +94,59 @@ class MyApp extends StatelessWidget {
           ),
         ),
 
-        /// 🟨 Verify Code
         GoRoute(
           path: AppRoutes.verifyCode,
           builder: (context, state) {
             final args = state.extra as Map<String, String?>;
-            final email = args['email']!;
-            final username = args['username']!;
             return BlocProvider(
               create: (_) => VerifyCodeCubit(
                 verifyCode: di.sl(),
                 resendVerificationCode: di.sl(),
-                email: email,
-                username: username,
+                email: args['email']!,
+                username: args['username']!,
               ),
-              child: VerifyCodePage(email: email),
+              child: VerifyCodePage(email: args['email']!),
             );
           },
         ),
 
-        /// 🟧 Request Reset Password
         GoRoute(
           path: AppRoutes.requsetResetPassword,
           builder: (context, state) {
-            final username = '';
             return BlocProvider(
               create: (_) => RequestOTPCubit(
                 sendPasswordResetOtp: di.sl<SendPasswordResetOtp>(),
               ),
-              child: RequestEmailView(
-                isForVerification: false,
-                username: username,
-              ),
-            );
-          },
-        ),
-
-        /// 🟦 Change Email for verfication code
-        GoRoute(
-          path: AppRoutes.changeEmailVerification,
-          builder: (context, state) {
-            final data = state.extra as Map<String, dynamic>;
-            final username = data['username'] as String;
-            final cubit = data['cubit'] as VerifyCodeCubit;
-
-            return BlocProvider.value(
-              value: cubit,
-              child: RequestEmailView(
-                isForVerification: true,
-                username: username,
-              ),
-            );
-          },
-        ),
-
-        /// 🟦 Change Email for OTP
-        GoRoute(
-          path: AppRoutes.changeEmailOTP,
-          builder: (context, state) {
-            final data = state.extra as Map<String, dynamic>;
-            final cubit = data['cubit'] as RequestOTPCubit;
-
-            return BlocProvider.value(
-              value: cubit,
               child: RequestEmailView(isForVerification: false, username: ''),
             );
           },
         ),
 
-        /// 🟦 Forget Password OTP
+        GoRoute(
+          path: AppRoutes.changeEmailVerification,
+          builder: (context, state) {
+            final data = state.extra as Map<String, dynamic>;
+            return BlocProvider.value(
+              value: data['cubit'] as VerifyCodeCubit,
+              child: RequestEmailView(
+                isForVerification: true,
+                username: data['username'],
+              ),
+            );
+          },
+        ),
+
+        GoRoute(
+          path: AppRoutes.changeEmailOTP,
+          builder: (context, state) {
+            final data = state.extra as Map<String, dynamic>;
+            return BlocProvider.value(
+              value: data['cubit'] as RequestOTPCubit,
+              child: RequestEmailView(isForVerification: false, username: ''),
+            );
+          },
+        ),
+
         GoRoute(
           path: AppRoutes.forgetPasswordOtp,
           builder: (context, state) {
@@ -152,27 +167,43 @@ class MyApp extends StatelessWidget {
           },
         ),
 
-        /// 🟢 Home Page
+        // Parent /app route that contains the ShellRoute
         GoRoute(
-          path: AppRoutes.home,
-          builder: (context, state) {
-            // TODO: Add your Posts Cubits here later when ready.
-            //
-            // Example:
-            //
-            // return MultiBlocProvider(
-            //   providers: [
-            //     BlocProvider(create: (_) => di.sl<PostsCubit>()..getPosts()),
-            //     BlocProvider(create: (_) => di.sl<CreatePostCubit>()),
-            //     // If backend supports comments later:
-            //     // BlocProvider(create: (_) => di.sl<CommentsCubit>()),
-            //     // If backend supports reactions later:
-            //     // BlocProvider(create: (_) => di.sl<ReactionsCubit>()),
-            //   ],
-            //   child: const HomePage(),
-            // );
-            return const HomePage();
-          },
+          path: '/app', // '/app'
+          builder: (context, state) => const SizedBox.shrink(),
+          routes: [
+            ShellRoute(
+              builder: (context, state, child) => AuthShell(child: child),
+              routes: [
+                // Use pageBuilder with our animated page helper
+                GoRoute(
+                  path: 'home',
+                  pageBuilder: (context, state) =>
+                      buildAnimatedPage(child: const HomePage(), newIndex: 0),
+                ),
+                GoRoute(
+                  path: 'reels',
+                  pageBuilder: (context, state) =>
+                      buildAnimatedPage(child: const ReelsPage(), newIndex: 1),
+                ),
+                GoRoute(
+                  path: 'chatbot',
+                  pageBuilder: (context, state) =>
+                      buildAnimatedPage(child: const ChatBotPage(), newIndex: 2),
+                ),
+                GoRoute(
+                  path: 'groups',
+                  pageBuilder: (context, state) =>
+                      buildAnimatedPage(child: const GroupPage(), newIndex: 3),
+                ),
+                GoRoute(
+                  path: 'stats',
+                  pageBuilder: (context, state) =>
+                      buildAnimatedPage(child: const StatsPage(), newIndex: 4),
+                ),
+              ],
+            ),
+          ],
         ),
       ],
     );
@@ -194,15 +225,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
-// class HomePage extends StatelessWidget {
-//   const HomePage({super.key});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(title: const Text('Home')),
-//       body: const Center(child: Text('Welcome! Email Verified Successfully')),
-//     );
-//   }
-// }

@@ -24,14 +24,38 @@ class _SelectedMediaPreviewState extends State<SelectedMediaPreview> {
   @override
   void initState() {
     super.initState();
-    _initVideoControllers();
+    _initVideoControllersFor(widget.files);
+  }
+
+  @override
+  void didUpdateWidget(covariant SelectedMediaPreview oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    final oldPaths = oldWidget.files.map((f) => f.path).toSet();
+    final newPaths = widget.files.map((f) => f.path).toSet();
+
+    final removed = oldPaths.difference(newPaths);
+    for (final path in removed) {
+      final c = _controllers.remove(path);
+      c?.dispose();
+    }
+
+    final added = newPaths.difference(oldPaths);
+    if (added.isNotEmpty) {
+      final addedFiles =
+          widget.files.where((f) => added.contains(f.path)).toList();
+      _initVideoControllersFor(addedFiles);
+    }
   }
 
   @override
   void dispose() {
     for (var c in _controllers.values) {
-      c.dispose();
+      try {
+        c.dispose();
+      } catch (_) {}
     }
+    _controllers.clear();
     super.dispose();
   }
 
@@ -45,28 +69,51 @@ class _SelectedMediaPreviewState extends State<SelectedMediaPreview> {
         ext.endsWith('.webm');
   }
 
-  Future<void> _initVideoControllers() async {
-    for (var file in widget.files) {
-      if (_isVideo(file)) {
-        late VideoPlayerController controller;
-        if (kIsWeb) {
-          controller = VideoPlayerController.networkUrl(Uri.parse(file.path));
-        } else {
-          controller = VideoPlayerController.file(File(file.path));
-        }
-        await controller.initialize();
-        controller.setLooping(true);
-        controller.setVolume(0);
-        setState(() {
-          _controllers[file.path] = controller;
-        });
+
+  void _initVideoControllersFor(List<XFile> files) {
+    for (var file in files) {
+      if (!_isVideo(file)) continue;
+      if (_controllers.containsKey(file.path)) continue; 
+
+      late final VideoPlayerController controller;
+      if (kIsWeb) {
+        controller = VideoPlayerController.networkUrl(Uri.parse(file.path));
+      } else {
+        controller = VideoPlayerController.file(File(file.path));
       }
+
+      controller.setLooping(true);
+      controller.setVolume(0);
+
+      final initializeFuture = controller.initialize();
+
+      initializeFuture.then((_) {
+        if (!mounted) {
+          try {
+            controller.dispose();
+          } catch (_) {}
+          return;
+        }
+        final existing = _controllers[file.path];
+        if (existing != null && existing != controller) {
+          try {
+            controller.dispose();
+          } catch (_) {}
+          return;
+        }
+
+        _controllers[file.path] = controller;
+        if (mounted) setState(() {});
+      }).catchError((err) {
+        try {
+          controller.dispose();
+        } catch (_) {}
+      });
     }
   }
 
   void _showPreviewDialog(XFile file) {
     final isVideo = _isVideo(file);
-
     showDialog(
       context: context,
       builder: (context) {
@@ -75,38 +122,12 @@ class _SelectedMediaPreviewState extends State<SelectedMediaPreview> {
           return Dialog(
             insetPadding: const EdgeInsets.all(16),
             child: AspectRatio(
-              aspectRatio:
-                  controller != null && controller.value.isInitialized
-                      ? controller.value.aspectRatio
-                      : 16 / 9,
+              aspectRatio: controller != null && controller.value.isInitialized
+                  ? controller.value.aspectRatio
+                  : 16 / 9,
               child: controller != null && controller.value.isInitialized
-                  ? Stack(
-                      children: [
-                        VideoPlayer(controller),
-                        Align(
-                          alignment: Alignment.center,
-                          child: IconButton(
-                            icon: Icon(
-                              controller.value.isPlaying
-                                  ? Icons.pause_circle
-                                  : Icons.play_circle,
-                              color: Colors.white70,
-                              size: 60,
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                controller.value.isPlaying
-                                    ? controller.pause()
-                                    : controller.play();
-                              });
-                            },
-                          ),
-                        ),
-                      ],
-                    )
-                  : const Center(
-                      child: CircularProgressIndicator(),
-                    ),
+                  ? _VideoPreviewDialog(controller: controller)
+                  : const Center(child: CircularProgressIndicator()),
             ),
           );
         } else {
@@ -152,6 +173,7 @@ class _SelectedMediaPreviewState extends State<SelectedMediaPreview> {
                 ),
               );
             } else {
+              // Placeholder while video controller initializes
               mediaWidget = Container(
                 width: 100,
                 height: 100,
@@ -168,6 +190,7 @@ class _SelectedMediaPreviewState extends State<SelectedMediaPreview> {
                 : Image.file(File(file.path),
                     width: 100, height: 100, fit: BoxFit.cover);
           }
+
           return Stack(
             children: [
               GestureDetector(
@@ -197,6 +220,66 @@ class _SelectedMediaPreviewState extends State<SelectedMediaPreview> {
           );
         }),
       ),
+    );
+  }
+}
+
+
+class _VideoPreviewDialog extends StatefulWidget {
+  final VideoPlayerController controller;
+  const _VideoPreviewDialog({required this.controller});
+
+  @override
+  State<_VideoPreviewDialog> createState() => _VideoPreviewDialogState();
+}
+
+class _VideoPreviewDialogState extends State<_VideoPreviewDialog> {
+  late VideoPlayerController _controller;
+  late VoidCallback _listener;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = widget.controller;
+    _listener = () {
+      if (mounted) setState(() {});
+    };
+    _controller.addListener(_listener);
+  }
+
+  @override
+  void dispose() {
+    try {
+      _controller.removeListener(_listener);
+    } catch (_) {}
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isPlaying = _controller.value.isPlaying;
+    return Stack(
+      children: [
+        VideoPlayer(_controller),
+        Align(
+          alignment: Alignment.center,
+          child: IconButton(
+            icon: Icon(
+              isPlaying ? Icons.pause_circle : Icons.play_circle,
+              color: Colors.white70,
+              size: 60,
+            ),
+            onPressed: () {
+              if (isPlaying) {
+                _controller.pause();
+              } else {
+                _controller.play();
+              }
+              // controller listener will call setState to update icon
+            },
+          ),
+        ),
+      ],
     );
   }
 }

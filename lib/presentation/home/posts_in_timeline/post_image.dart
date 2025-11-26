@@ -14,6 +14,9 @@ class PostImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (imageUrl == null) {
+      return SizedBox();
+    }
     final screenWidth = MediaQuery.of(context).size.width;
     final imageWidth =
         screenWidth * 0.9; // Display image at 90% of screen width
@@ -46,11 +49,7 @@ class PostImage extends StatelessWidget {
                   height: imageHeight,
                   fit: BoxFit.cover,
                 )
-              : Icon(
-                  Icons.sports_soccer,
-                  size: imageHeight * 0.25,
-                  color: Colors.grey[500],
-                ),
+              : SizedBox()
         ),
       ),
     );

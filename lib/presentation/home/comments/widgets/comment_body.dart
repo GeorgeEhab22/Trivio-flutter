@@ -8,6 +8,7 @@ class CommentBody extends StatelessWidget {
   final int repliesCount;
   final VoidCallback onToggleReplies;
   final ValueChanged<int> onReactionChanged;
+  final int initialReactionCount;
 
   const CommentBody({
     super.key,
@@ -17,36 +18,49 @@ class CommentBody extends StatelessWidget {
     required this.repliesCount,
     required this.onToggleReplies,
     required this.onReactionChanged,
+    this.initialReactionCount = 0,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 70, right: 10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(text),
-          const SizedBox(height: 4),
-          Row(
-            children: [
-              ReactionButton(
-                initialCount: 3,
-                onReactionChanged: onReactionChanged,
+    return const Padding(
+      padding: EdgeInsets.only(left: 70, right: 10),
+      child: _CommentBodyView(),
+    );
+  }
+}
+
+
+class _CommentBodyView extends StatelessWidget {
+  const _CommentBodyView();
+
+  @override
+  Widget build(BuildContext context) {
+    final parent = context.findAncestorWidgetOfExactType<CommentBody>()!;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(parent.text),
+        const SizedBox(height: 4),
+        Row(
+          children: [
+
+            ReactionButton(
+              initialCount: parent.initialReactionCount,
+              onReactionChanged: parent.onReactionChanged,
+            ),
+            const SizedBox(width: 8),
+            TextButton(
+              onPressed: parent.onReply,
+              style: TextButton.styleFrom(padding: EdgeInsets.zero),
+              child: const Text(
+                "Reply",
+                style: TextStyle(fontSize: 13),
               ),
-              const SizedBox(width: 8),
-              TextButton(
-                onPressed: onReply,
-                style: TextButton.styleFrom(padding: EdgeInsets.zero),
-                child: const Text(
-                  "Reply",
-                  style: TextStyle(fontSize: 13),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }

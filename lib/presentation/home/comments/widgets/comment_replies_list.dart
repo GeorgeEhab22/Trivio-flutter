@@ -26,9 +26,16 @@ class CommentRepliesList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: replies.map((reply) {
+
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: replies.length,
+      itemBuilder: (context, index) {
+        final reply = replies[index];
+        final id = reply['id']?.toString() ?? 'reply_$index';
         return CommentItem(
+          key: ValueKey(id), 
           comment: reply,
           onEdit: onEdit,
           onDelete: onDelete,
@@ -36,11 +43,10 @@ class CommentRepliesList extends StatelessWidget {
           onReport: onReport,
           onHide: onHide,
           currentUserId: currentUserId,
-
           isReply: true,
           replyingTo: reply["replyingTo"] ?? '',
         );
-      }).toList(),
+      },
     );
   }
 }

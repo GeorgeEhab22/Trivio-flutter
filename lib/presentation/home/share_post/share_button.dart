@@ -17,7 +17,8 @@ class ShareButton extends StatelessWidget {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (_) => ShareBottomSheet(onShare: onShare),
+      // use `ctx` inside the builder to avoid shadowing and accidental pops on the wrong Navigator
+      builder: (ctx) => ShareBottomSheet(onShare: onShare),
     );
   }
 

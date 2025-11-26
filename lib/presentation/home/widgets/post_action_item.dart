@@ -8,6 +8,7 @@ class PostActionItem extends StatelessWidget {
   final int count;
   final Color? color;
   final VoidCallback? onTap;
+  final String? tooltip; // optional for accessibility
 
   const PostActionItem({
     super.key,
@@ -15,24 +16,37 @@ class PostActionItem extends StatelessWidget {
     required this.count,
     this.color = AppColors.iconsColor,
     this.onTap,
+    this.tooltip,
   });
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Row(
-        children: [
-          icon,
-          const SizedBox(width: 5),
-          Text(
-            formatNumber(count),
-            style: Styles.textStyle14.copyWith(
-              fontWeight: FontWeight.w500,
-              color: color ,
-            ),
+    final content = Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        icon,
+        const SizedBox(width: 5),
+        Text(
+          formatNumber(count),
+          style: Styles.textStyle14.copyWith(
+            fontWeight: FontWeight.w500,
+            color: color,
           ),
-        ],
+        ),
+      ],
+    );
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(8),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          child: tooltip != null
+              ? Tooltip(message: tooltip!, child: content)
+              : content,
+        ),
       ),
     );
   }

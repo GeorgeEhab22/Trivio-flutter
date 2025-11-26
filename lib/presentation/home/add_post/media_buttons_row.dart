@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:auth/constants/colors';
+import 'package:flutter/material.dart';
 
 class MediaButtonsRow extends StatelessWidget {
   final VoidCallback onPickImage;
@@ -13,23 +13,39 @@ class MediaButtonsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const iconColor = AppColors.primary;
+
+    final buttonStyle = OutlinedButton.styleFrom(
+      side: const BorderSide(color: AppColors.primary),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
+    );
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 6),
       child: Row(
         children: [
           Expanded(
             child: OutlinedButton.icon(
+              style: buttonStyle,
               onPressed: onPickImage,
-              icon: const Icon(Icons.image, color: AppColors.primary),
-              label: const Text("Image", style: TextStyle(color: AppColors.primary)),
+              icon: const Icon(Icons.image, color: iconColor),
+              label: const Text(
+                "Image",
+                style: TextStyle(color: iconColor),
+              ),
             ),
           ),
           const SizedBox(width: 12),
           Expanded(
             child: OutlinedButton.icon(
+              style: buttonStyle,
               onPressed: onPickVideo,
-              icon: const Icon(Icons.videocam, color: AppColors.primary),
-              label: const Text("Video", style: TextStyle(color: AppColors.primary)),
+              icon: const Icon(Icons.videocam, color: iconColor),
+              label: const Text(
+                "Video",
+                style: TextStyle(color: iconColor),
+              ),
             ),
           ),
         ],

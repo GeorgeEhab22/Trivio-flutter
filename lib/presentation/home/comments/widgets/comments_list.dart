@@ -39,19 +39,24 @@ class CommentsList extends StatelessWidget {
       initialItemCount: comments.length,
       itemBuilder: (context, index, animation) {
         final comment = comments[index];
+        final id = comment['id']?.toString() ?? 'comment_$index';
+
         return SizeTransition(
           sizeFactor: animation,
           axisAlignment: -1,
           child: FadeTransition(
             opacity: animation,
-            child: CommentItem(
-              comment: comment,
-              onEdit: onEdit,
-              onDelete: onDelete,
-              onReply: onReply,
-              onReport: onReport,
-              onHide: onHide,
-              currentUserId: currentUserId,
+            child: KeyedSubtree(
+              key: ValueKey(id),
+              child: CommentItem(
+                comment: comment,
+                onEdit: onEdit,
+                onDelete: onDelete,
+                onReply: onReply,
+                onReport: onReport,
+                onHide: onHide,
+                currentUserId: currentUserId,
+              ),
             ),
           ),
         );

@@ -1,7 +1,6 @@
-import 'package:auth/presentation/home/add_post/add_post_buttom_sheet.dart';
-import 'package:auth/presentation/home/app_bar/home_app_bar.dart';
+import 'package:auth/presentation/home/add_post/add_post_bottom_sheet.dart';
+import 'package:auth/core/custom_app_bar.dart';
 import 'package:flutter/material.dart';
-import 'navigation/custom_button_nav_bar.dart';
 import 'posts_in_timeline/post_card.dart';
 
 class HomePage extends StatefulWidget {
@@ -12,8 +11,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  // stores the current index of the bottom navigation bar
-  int _currentIndex = 0;
 
   @override
   void initState() {
@@ -65,7 +62,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F6FA),
+      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
       appBar: const HomeAppBar(),
       body: SafeArea(
         top: false,
@@ -99,14 +96,7 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
 
-      bottomNavigationBar: CustomBottomNavBar(
-        currentIndex: _currentIndex,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-      ),
+     
 
       floatingActionButton: FloatingActionButton(
         shape: const CircleBorder(),

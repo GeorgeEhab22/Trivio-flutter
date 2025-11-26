@@ -25,14 +25,14 @@ class SocialAuthService {
       GoogleSignInAccount? account = await _googleSignIn.signInSilently();
 
       if (account == null) {
-   //     print('User not signed in yet');
+        //     print('User not signed in yet');
         return null;
       }
       final auth = await account.authentication;
       //print('ID Token: ${auth.idToken}');
       return auth.idToken;
     } catch (e) {
-     // print('Google sign-in error: $e');
+      // print('Google sign-in error: $e');
       return null;
     }
   }
@@ -48,12 +48,10 @@ class SocialAuthService {
       } catch (_) {}
       final account = await _googleSignIn.signIn();
       if (account != null) {
-        final auth = await account.authentication;
-    //    print('ID Token: ${auth.idToken}');
         onSignedIn();
       }
     } catch (e) {
-   //   print('Google sign-in error: $e');
+      rethrow;
     }
   }
 

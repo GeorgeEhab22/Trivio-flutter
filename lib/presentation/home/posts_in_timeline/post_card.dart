@@ -3,7 +3,7 @@ import 'post_header.dart';
 import 'post_content.dart';
 import 'post_image.dart';
 import 'post_states.dart';
-
+//TODO: use proper entity instead of individual parameters
 class PostCard extends StatefulWidget {
   final String author;
   final String? authorImage;
@@ -62,7 +62,7 @@ class _PostCardState extends State<PostCard> {
       child: Card(
         margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
         color: Colors.white,
-        elevation: 1.5,
+        elevation: 0.1,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 6),

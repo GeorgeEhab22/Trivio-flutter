@@ -1,13 +1,21 @@
+import 'package:auth/common/functions/bottom_sheet_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:auth/constants/colors';
 
 class PrivacySelector extends StatelessWidget {
   final String privacy;
   final ValueChanged<String> onChange;
-  const PrivacySelector({super.key, required this.privacy, required this.onChange});
+  const PrivacySelector({
+    super.key,
+    required this.privacy,
+    required this.onChange,
+  });
+
+ 
 
   @override
   Widget build(BuildContext context) {
+    final bool isPublic = privacy == "Public";
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Container(
@@ -21,43 +29,21 @@ class PrivacySelector extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(privacy == "Public" ? Icons.public : Icons.lock,
-                    color: AppColors.iconsColor),
+                Icon(
+                  isPublic ? Icons.public : Icons.lock,
+                  color: AppColors.iconsColor,
+                ),
                 const SizedBox(width: 8),
                 Text(privacy),
               ],
             ),
             InkWell(
-              onTap: () {
-                showModalBottomSheet(
-                  context: context,
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                  ),
-                  builder: (context) => Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      ListTile(
-                        leading: const Icon(Icons.public),
-                        title: const Text("Public"),
-                        onTap: () {
-                          onChange("Public");
-                          Navigator.pop(context);
-                        },
-                      ),
-                      ListTile(
-                        leading: const Icon(Icons.lock),
-                        title: const Text("Private"),
-                        onTap: () {
-                          onChange("Private");
-                          Navigator.pop(context);
-                        },
-                      ),
-                    ],
-                  ),
-                );
-              },
-              child: const Icon(Icons.arrow_drop_down, color: AppColors.iconsColor),
+              onTap: () => BottomSheetManager.showPrivacyOptions(context, onChange),
+              borderRadius: BorderRadius.circular(20),
+              child: const Padding(
+                padding: EdgeInsets.all(4.0),
+                child: Icon(Icons.arrow_drop_down, color: AppColors.iconsColor),
+              ),
             ),
           ],
         ),

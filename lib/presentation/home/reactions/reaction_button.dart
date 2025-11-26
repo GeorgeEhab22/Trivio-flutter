@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:auth/constants/colors';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import '../widgets/post_action_item.dart';
-
+//TODO: most of this logic should be moved to a cubit
 enum ReactionType { none, goal, offside }
 
 class ReactionButton extends StatefulWidget {
@@ -29,9 +29,10 @@ class _ReactionButtonState extends State<ReactionButton> {
   bool _isHoveringOverlay = false;
   Timer? _exitTimer;
 
-  final List<String> _emojiList = ['🥅', '🚩'];
-  final List<String> _reactionNames = ['Goal', 'Offside'];
-  final List<ReactionType> _reactionList = [
+  // Make these const/final to avoid recreating lists every build
+  static const List<String> _emojiList = ['🥅', '🚩'];
+  static const List<String> _reactionNames = ['Goal', 'Offside'];
+  static const List<ReactionType> _reactionList = [
     ReactionType.goal,
     ReactionType.offside,
   ];
@@ -42,49 +43,77 @@ class _ReactionButtonState extends State<ReactionButton> {
     _reactionCount = widget.initialCount;
   }
 
-  void _toggleReaction() {
-    setState(() {
-      if (_reaction == ReactionType.goal) {
-        _reaction = ReactionType.none;
-        _reactionCount--;
-      } else {
-        // TODO :
-        // context.read<PostReactionsCubit>().removeReactionFromPost(
-        //       postId: postId,
-        //       userId: userId,
-        //     );
+  @override
+  void didUpdateWidget(covariant ReactionButton oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // If parent updates the authoritative count, sync local counter.
+    if (oldWidget.initialCount != widget.initialCount) {
+      _reactionCount = widget.initialCount;
+    }
+  }
 
-        if (_reaction == ReactionType.none) _reactionCount++;
-        _reaction = ReactionType.goal;
+  @override
+  void dispose() {
+    _exitTimer?.cancel();
+    _closeOverlayImmediately();
+    super.dispose();
+  }
+
+  void _toggleReaction() {
+    // Toggle a simple "goal" reaction on single tap
+    final wasGoal = _reaction == ReactionType.goal;
+    int newCount = _reactionCount;
+    ReactionType newReaction = _reaction;
+
+    if (wasGoal) {
+      // remove reaction
+      newReaction = ReactionType.none;
+      newCount = (newCount - 1).clamp(0, 1 << 30);
+    } else {
+      // add goal reaction
+      if (_reaction == ReactionType.none) {
+        newCount = newCount + 1;
       }
+      newReaction = ReactionType.goal;
+    }
+
+    // Only update state if something actually changed
+    if (newCount != _reactionCount || newReaction != _reaction) {
+      setState(() {
+        _reactionCount = newCount;
+        _reaction = newReaction;
+      });
       widget.onReactionChanged(_reactionCount);
-    });
+    }
   }
 
   void _chooseReaction(ReactionType type) {
+    // Choose a specific reaction (from overlay)
+    final wasNone = _reaction == ReactionType.none;
+    int newCount = _reactionCount;
+    if (wasNone) newCount = newCount + 1;
+
+    // If identical reaction chosen and not none, keep it (or toggle off?)
+    // Here we set to chosen type (idempotent)
     setState(() {
-      if (_reaction == ReactionType.none) _reactionCount++;
+      _reactionCount = newCount;
       _reaction = type;
-      widget.onReactionChanged(_reactionCount);
     });
-    // TODO:  :
-    //context.read<PostReactionsCubit>().reactToPost(
-    //postId: postId,
-    //userId: userId,
-    //reactionType: type,
-    //);
+    widget.onReactionChanged(_reactionCount);
+
     _closeOverlayImmediately();
   }
 
   void _showReactionsOverlay(BuildContext context) {
     _closeOverlayImmediately();
 
-    final overlay = Overlay.of(context);
+    final overlayState = Overlay.of(context);
 
     final buttonBox = context.findRenderObject() as RenderBox?;
-    final overlayBox = overlay.context.findRenderObject() as RenderBox?;
+    final overlayBox = overlayState.context.findRenderObject() as RenderBox?;
     if (buttonBox == null || overlayBox == null) return;
 
+    // Position relative to overlay
     final position = buttonBox.localToGlobal(Offset.zero, ancestor: overlayBox);
 
     _overlayEntry = buildReactionsOverlay(
@@ -97,7 +126,7 @@ class _ReactionButtonState extends State<ReactionButton> {
       onHoverChange: _handleOverlayHoverChange,
     );
 
-    overlay.insert(_overlayEntry!);
+    overlayState.insert(_overlayEntry!);
   }
 
   void _handleOverlayHoverChange(bool hovering) {
@@ -112,6 +141,7 @@ class _ReactionButtonState extends State<ReactionButton> {
 
   void _resetExitTimer() {
     _exitTimer?.cancel();
+    // Small delay so brief pointer leaves don't immediately close the overlay
     _exitTimer = Timer(const Duration(milliseconds: 180), () {
       if (!_isHoveringButton && !_isHoveringOverlay) {
         _closeOverlayImmediately();
@@ -120,9 +150,11 @@ class _ReactionButtonState extends State<ReactionButton> {
   }
 
   void _closeOverlayImmediately() {
-    _exitTimer?.cancel();
-    _overlayEntry?.remove();
+    try {
+      _overlayEntry?.remove();
+    } catch (_) {}
     _overlayEntry = null;
+    _exitTimer?.cancel();
     _isHoveringButton = false;
     _isHoveringOverlay = false;
   }
@@ -156,15 +188,20 @@ class _ReactionButtonState extends State<ReactionButton> {
     return MouseRegion(
       onEnter: (_) {
         _isHoveringButton = true;
-        if (_isHoveringPlatform()) _showReactionsOverlay(context);
+        if (_isHoveringPlatform()) {
+          // show overlay on hover for web
+          _showReactionsOverlay(context);
+        }
       },
       onExit: (_) {
         _isHoveringButton = false;
         _resetExitTimer();
       },
       child: GestureDetector(
+        // Single tap toggles a default reaction
         onTap: _toggleReaction,
-        onTapDown: (_) {
+        // On mobile, a long press reveals the overlay to pick a specific reaction
+        onLongPress: () {
           if (!_isHoveringPlatform()) _showReactionsOverlay(context);
         },
         child: PostActionItem(

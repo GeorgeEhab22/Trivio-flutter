@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../reactions/reaction_button.dart';
 import '../comments/comment_button.dart';
 import '../share_post/share_button.dart';
-import 'save_button.dart';
+//TODO: use proper entity instead of individual parameters and handle all states via Bloc
 
 class PostStates extends StatefulWidget {
   final int reactions;
@@ -24,7 +24,6 @@ class _PostStatesState extends State<PostStates> {
   late int _reactionsCount;
   late int _commentCount;
   late int _shareCount;
-  bool _isSaved = false;
 
   @override
   void initState() {
@@ -34,7 +33,6 @@ class _PostStatesState extends State<PostStates> {
     _shareCount = widget.shares;
   }
 
-  void _toggleSave() => setState(() => _isSaved = !_isSaved);
   void _incrementShares() => setState(() => _shareCount++);
   void _incrementComments() => setState(() => _commentCount++);
   void _decrementComments() => setState(() => _commentCount--);
@@ -78,14 +76,7 @@ class _PostStatesState extends State<PostStates> {
             // context.read<SharePostCubit>().share(postId)
           ),
           const Spacer(),
-          SaveButton(
-            isSaved: _isSaved,
-            onTap: _toggleSave,
 
-            // TODO: Call save/unsave post use-case here
-            // Example:
-            // context.read<SavePostCubit>().toggleSave(postId)
-          ),
         ],
       ),
     );

@@ -21,7 +21,6 @@ class CodeBoxHandlers {
       handleVerifyCode(context, controllers); 
     }
   }
-
   static void onKeyEvent(
     KeyEvent event,
     int index,
@@ -35,7 +34,6 @@ class CodeBoxHandlers {
       focusNodes[index - 1].requestFocus();
     }
   }
-
   static void clearCode(
     List<TextEditingController> controllers,
     List<FocusNode> focusNodes,
@@ -45,7 +43,6 @@ class CodeBoxHandlers {
     }
     focusNodes[0].requestFocus();
   }
-
   static void handleVerifyCode(
     BuildContext context,
     List<TextEditingController> controllers,

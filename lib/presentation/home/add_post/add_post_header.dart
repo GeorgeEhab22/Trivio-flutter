@@ -7,6 +7,19 @@ class AddPostHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return const _AddPostHeaderView();
+  }
+}
+
+class _AddPostHeaderView extends StatelessWidget {
+  const _AddPostHeaderView();
+
+  @override
+  Widget build(BuildContext context) {
+   
+    final VoidCallback? onPost =
+        (context.findAncestorWidgetOfExactType<AddPostHeader>())?.onPost;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       child: Row(
@@ -14,7 +27,9 @@ class AddPostHeader extends StatelessWidget {
         children: [
           IconButton(
             icon: const Icon(Icons.arrow_back_ios_new, size: 20),
-            onPressed: () => Navigator.pop(context),
+            tooltip: 'Back',
+            splashRadius: 20,
+            onPressed: () => Navigator.maybePop(context),
           ),
           const Text(
             "Create New Post",
@@ -24,7 +39,7 @@ class AddPostHeader extends StatelessWidget {
             width: 90,
             height: 36,
             child: BasicAppButton(
-              onPressed: onPost,
+              onPressed: onPost ?? () => Navigator.maybePop(context),
               height: 36,
               width: 80,
               title: "Post",

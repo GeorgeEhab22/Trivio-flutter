@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:auth/constants/colors';
-
+// TODO: handle this sheet's actions in the Bloc
 class OptionsBottomSheet extends StatelessWidget {
   final VoidCallback onSave;
   final VoidCallback onCopyLink;
@@ -21,6 +21,9 @@ class OptionsBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final grey100 = Colors.grey[100] ?? const Color(0xFFF5F5F5);
+    final grey300 = Colors.grey[300] ?? const Color(0xFFD6D6D6);
+
     return Container(
       decoration: const BoxDecoration(
         color: Colors.white,
@@ -37,28 +40,34 @@ class OptionsBottomSheet extends StatelessWidget {
               height: 5,
               margin: const EdgeInsets.only(bottom: 12),
               decoration: BoxDecoration(
-                color: Colors.grey[300],
+                color: grey300,
                 borderRadius: BorderRadius.circular(3),
               ),
             ),
 
-            // Save + Copy Link
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 14),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   _buildSquareButton(
-                    icon: Icons.bookmark_border,
                     label: 'Save',
+                    icon: Icons.bookmark_border,
+                    backgroundColor: grey100,
                     onTap: () {
-                      onSave(); // calls the same toggleSave callback from PostStates
+                      Navigator.pop(context);
+                      onSave();
                     },
                   ),
+                  const SizedBox(width: 8),
                   _buildSquareButton(
-                    icon: Icons.link_outlined,
                     label: 'Copy Link',
-                    onTap: onCopyLink,
+                    icon: Icons.link_outlined,
+                    backgroundColor: grey100,
+                    onTap: () {
+                      Navigator.pop(context);
+                      onCopyLink();
+                    },
                   ),
                 ],
               ),
@@ -67,22 +76,24 @@ class OptionsBottomSheet extends StatelessWidget {
             const SizedBox(height: 12),
             const Divider(height: 1),
 
-            // View Edit History + Not Interested + Report
             _buildListOption(
               context,
               icon: Icons.history,
               text: 'View Edit History',
               color: Colors.black87,
-              onTap: onViewEditHistory,
+              onTap: () {
+                Navigator.pop(context);
+                onViewEditHistory();
+              },
             ),
+
             _buildListOption(
               context,
-              icon: isNotInterested
-                  ? Icons.visibility
-                  : Icons.visibility_off_outlined,
+              icon: isNotInterested ? Icons.visibility : Icons.visibility_off_outlined,
               text: isNotInterested ? 'Interested' : 'Not Interested',
               color: Colors.black87,
               onTap: () {
+                Navigator.pop(context);
                 onNotInterested();
               },
             ),
@@ -92,7 +103,10 @@ class OptionsBottomSheet extends StatelessWidget {
               icon: Icons.report_gmailerrorred_outlined,
               text: 'Report',
               color: Colors.redAccent,
-              onTap: onReportFlow,
+              onTap: () {
+                Navigator.pop(context);
+                onReportFlow();
+              },
             ),
           ],
         ),
@@ -100,42 +114,42 @@ class OptionsBottomSheet extends StatelessWidget {
     );
   }
 
-  // Square button used in the top row (Save, Copy Link)
   Widget _buildSquareButton({
     required IconData icon,
     required String label,
     required VoidCallback onTap,
+    Color? backgroundColor,
   }) {
     return Expanded(
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 4),
-          padding: const EdgeInsets.symmetric(vertical: 14),
-          decoration: BoxDecoration(
-            color: Colors.grey[100],
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Column(
-            children: [
-              Icon(icon, color: AppColors.iconsColor, size: 24),
-              const SizedBox(height: 6),
-              Text(
-                label,
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.black87,
+      child: Material(
+        color: backgroundColor ?? Colors.grey[100],
+        borderRadius: BorderRadius.circular(12),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(12),
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 14),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(icon, color: AppColors.iconsColor, size: 24),
+                const SizedBox(height: 6),
+                Text(
+                  label,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black87,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  // List option used in the bottom part (View Edit History, Not Interested, Report)
   Widget _buildListOption(
     BuildContext context, {
     required IconData icon,
@@ -153,10 +167,8 @@ class OptionsBottomSheet extends StatelessWidget {
           fontWeight: FontWeight.w500,
         ),
       ),
-      onTap: () {
-        Navigator.of(context, rootNavigator: true).pop();
-        onTap();
-      },
+      onTap: onTap,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 14),
     );
   }
 }
