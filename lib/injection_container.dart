@@ -52,7 +52,7 @@ final sl = GetIt.instance;
 Future<void> init() async {
   await dotenv.load(fileName: ".env");
 
-   String baseUrl;
+  String baseUrl;
   if (kIsWeb) {
     baseUrl = dotenv.env['LOCAL_URL']!;
   } else if (Platform.isAndroid || Platform.isIOS) {
@@ -98,8 +98,8 @@ Future<void> init() async {
   sl.registerLazySingleton(() => CreatePostUseCase(sl()));
   sl.registerLazySingleton(() => DeletePostUseCase(sl()));
   sl.registerLazySingleton(() => EditPostUseCase(sl()));
-  sl.registerLazySingleton(() => GetAllPostsUseCase(sl()));
-  sl.registerLazySingleton(() => GetPostByIdUseCase(sl()));
+  sl.registerLazySingleton(() => FetchPostsUseCase(sl()));
+  sl.registerLazySingleton(() => FetchSinglePostUseCase(sl()));
   sl.registerLazySingleton(() => ReactToPostUseCase(sl()));
   sl.registerLazySingleton(() => RemoveReactionFromCommentUseCase(sl()));
   sl.registerLazySingleton(() => ReportPostUseCase(sl()));

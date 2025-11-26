@@ -4,10 +4,10 @@ import 'package:auth/domain/entities/post.dart';
 import 'package:auth/domain/repositories/post_repo.dart';
 import 'package:dartz/dartz.dart';
 
-class GetPostByIdUseCase {
+class FetchSinglePostUseCase {
   final PostRepository repository;
 
-  GetPostByIdUseCase(this.repository);
+  FetchSinglePostUseCase(this.repository);
 
   Future<Either<Failure, Post>> call(String postId) async {
     if (postId.trim().isEmpty) {
