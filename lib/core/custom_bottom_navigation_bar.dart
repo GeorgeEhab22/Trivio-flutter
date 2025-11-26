@@ -142,14 +142,8 @@ class StatsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Stats")),
-      body: const Center(
-        child: Text(
-          "📊 Stats Page",
-          style: TextStyle(fontSize: 24),
-        ),
-      ),
+    return const Center(
+      child: Text("📊 Stats Page", style: TextStyle(fontSize: 24)),
     );
   }
 }
@@ -159,14 +153,8 @@ class ChatBotPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("ChatBot")),
-      body: const Center(
-        child: Text(
-          "🤖 ChatBot Page",
-          style: TextStyle(fontSize: 24),
-        ),
-      ),
+    return const Center(
+      child: Text("🤖 ChatBot Page", style: TextStyle(fontSize: 24)),
     );
   }
 }
@@ -176,14 +164,8 @@ class ReelsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Reels")),
-      body: const Center(
-        child: Text(
-          "🎬 Reels Page",
-          style: TextStyle(fontSize: 24),
-        ),
-      ),
+    return const Center(
+      child: Text("🎬 Reels Page", style: TextStyle(fontSize: 24)),
     );
   }
 }
@@ -193,14 +175,8 @@ class GroupPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Groups")),
-      body: const Center(
-        child: Text(
-          "👥 Group Page",
-          style: TextStyle(fontSize: 24),
-        ),
-      ),
+    return const Center(
+      child: Text("👥 Group Page", style: TextStyle(fontSize: 24)),
     );
   }
 }

@@ -59,6 +59,7 @@ class AuthShell extends StatelessWidget {
     double dragDelta = 0.0; // accumulates horizontal movement during the drag
 
     return Scaffold(
+      backgroundColor: Colors.white,
       body: RawGestureDetector(
         gestures: {
           // Use a HorizontalDragGestureRecognizer so it doesn't fight with vertical scrolls
