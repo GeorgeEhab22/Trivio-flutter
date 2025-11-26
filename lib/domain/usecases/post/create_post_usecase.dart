@@ -14,7 +14,7 @@ class CreatePostUseCase {
 
   Future<Either<Failure, Post>> call({
     required String userId,
-    required String content,
+     String? content,
     String? imageUrl,
     String? videoUrl,
     List<String>? tags,
@@ -27,8 +27,7 @@ class CreatePostUseCase {
       return const Left(ValidationFailure('Invalid User ID'));
     }
 
-    final trimmedContent = content.trim();
-
+    final trimmedContent = content?.trim() ?? '';
     if (trimmedContent.isEmpty &&
         (imageUrl == null || imageUrl.isEmpty) &&
         (videoUrl == null || videoUrl.isEmpty)) {
