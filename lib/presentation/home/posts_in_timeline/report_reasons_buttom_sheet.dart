@@ -1,9 +1,8 @@
 import 'package:auth/core/styels.dart';
-import 'package:auth/presentation/authentication/widgets/show_custom_snackbar.dart';
 import 'package:flutter/material.dart';
 
 class ReportReasonsBottomSheet extends StatelessWidget {
-  final Future<bool> Function(String reason) onReportSelected;
+  final void Function(String reason) onReportSelected;
 
   const ReportReasonsBottomSheet({super.key, required this.onReportSelected});
 
@@ -79,7 +78,7 @@ class ReportReasonsBottomSheet extends StatelessWidget {
                   color: Colors.transparent,
                   child: InkWell(
                     borderRadius: BorderRadius.circular(8),
-                    onTap: () => _handleReportTap(context, reason),
+                    onTap: () => onReportSelected(reason),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 6),
                       child: Row(
@@ -103,37 +102,5 @@ class ReportReasonsBottomSheet extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  Future<void> _handleReportTap(BuildContext context, String reason) async {
-    // Show blocking loading dialog
-    showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (dCtx) => const Center(child: CircularProgressIndicator()),
-    );
-
-    bool success = false;
-    try {
-      // Await the provided handler (may be a network call)
-      success = await onReportSelected(reason);
-    } catch (e) {
-      success = false;
-    } finally {
-      // Remove loading dialog if still mounted
-      if (Navigator.of(context).mounted) {
-        Navigator.of(context).pop(); // pop loading
-      }
-    }
-
-    // If the sheet is still visible, close it and show feedback
-    if (Navigator.of(context).mounted) {
-      Navigator.of(context).pop(); // close sheet
-      showCustomSnackBar(
-        context,
-        success ? 'Post reported — thank you for your feedback' : 'Failed to report post. Please try again.',
-        success,
-      );
-    }
   }
 }

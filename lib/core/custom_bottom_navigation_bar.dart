@@ -142,8 +142,11 @@ class StatsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text("📊 Stats Page", style: TextStyle(fontSize: 24)),
+    return Container(
+      color: Colors.white,
+      child: const Center(
+        child: Text("📊 Stats Page", style: TextStyle(fontSize: 24)),
+      ),
     );
   }
 }
@@ -153,8 +156,11 @@ class ChatBotPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text("🤖 ChatBot Page", style: TextStyle(fontSize: 24)),
+    return Container(
+      color: Colors.white,
+      child: const Center(
+        child: Text("🤖 ChatBot Page", style: TextStyle(fontSize: 24)),
+      ),
     );
   }
 }
@@ -164,8 +170,11 @@ class ReelsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text("🎬 Reels Page", style: TextStyle(fontSize: 24)),
+    return Container(
+      color: Colors.white,
+      child: const Center(
+        child: Text("🎬 Reels Page", style: TextStyle(fontSize: 24)),
+      ),
     );
   }
 }
@@ -175,8 +184,11 @@ class GroupPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text("👥 Group Page", style: TextStyle(fontSize: 24)),
+    return Container(
+      color: Colors.white,
+      child: const Center(
+        child: Text("👥 Group Page", style: TextStyle(fontSize: 24)),
+      ),
     );
   }
 }

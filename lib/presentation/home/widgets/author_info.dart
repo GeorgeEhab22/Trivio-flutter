@@ -1,24 +1,27 @@
+import 'package:auth/common/functions/format_time.dart';
 import 'package:flutter/material.dart';
 import 'package:auth/constants/colors';
 import 'package:auth/core/styels.dart';
 
 class AuthorInfo extends StatelessWidget {
-  final String author;
+  final String authorName;
   final String? authorImage;
-  final String timeAgo;
+  final DateTime createdAt;
   final bool showTimeInline;
   final double avatarRadius;
   final TextStyle? authorTextStyle;
 
   const AuthorInfo({
+    required this.authorName,
+    this.authorImage,
+    required this.createdAt,
     super.key,
-    required this.author,
-    required this.authorImage,
-    required this.timeAgo,
     this.showTimeInline = false,
     this.avatarRadius = 22,
     this.authorTextStyle,
   });
+
+  // final Post post;
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +31,7 @@ class AuthorInfo extends StatelessWidget {
     );
 
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         CircleAvatar(
           radius: avatarRadius,
@@ -43,40 +46,46 @@ class AuthorInfo extends StatelessWidget {
         ),
 
         const SizedBox(width: 10),
+
         Expanded(
           child: showTimeInline
               ? Row(
                   children: [
                     Flexible(
                       child: Text(
-                        author,
+                        authorName,
                         style: authorTextStyle ?? defaultAuthorStyle,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    if (timeAgo.isNotEmpty) ...[
-                      const SizedBox(width: 4),
-                      Text(
-                        timeAgo,
-                        style: Styles.textStyle14.copyWith(
-                          color: const Color(0xFF888888),
-                        ),
+                    const SizedBox(width: 4),
+                    Text(
+                      formatTime(createdAt),
+                      style: Styles.textStyle14.copyWith(
+                        color: const Color(0xFF888888),
                       ),
-                    ] else
-                      const Spacer(), // Add Spacer if timeAgo is empty
+                    ),
                   ],
                 )
               : Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(author, style: authorTextStyle ?? defaultAuthorStyle),
-                    if (timeAgo.isNotEmpty)
-                      Text(
-                        timeAgo,
+                    Text(
+                      authorName,
+                      style: authorTextStyle ?? defaultAuthorStyle,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 2),
+                      child: Text(
+                        formatTime(createdAt),
                         style: Styles.textStyle14.copyWith(
                           color: const Color(0xFF888888),
+                          height: 1,
                         ),
                       ),
+                    ),
                   ],
                 ),
         ),

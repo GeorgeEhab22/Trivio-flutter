@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:auth/core/styels.dart';
-import 'package:auth/common/functions/format_time.dart';
-import 'package:auth/presentation/home/comments/widgets/comment_actions_menu.dart';
 import 'package:auth/presentation/home/widgets/author_info.dart';
 
 class CommentHeader extends StatelessWidget {
@@ -12,12 +10,6 @@ class CommentHeader extends StatelessWidget {
 
   final bool isOwner;
 
-  final VoidCallback onEdit;
-  final VoidCallback onDelete;
-  final VoidCallback onReply;
-
-  final VoidCallback onReport;
-  final VoidCallback onHide;
 
   const CommentHeader({
     super.key,
@@ -26,17 +18,12 @@ class CommentHeader extends StatelessWidget {
     required this.time,
     required this.commentText,
     required this.isOwner,
-    required this.onEdit,
-    required this.onDelete,
-    required this.onReply,
-    required this.onReport,
-    required this.onHide,
+ 
   });
 
   @override
   Widget build(BuildContext context) {
     // compute once
-    final String timeAgo = formatTime(time);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -45,8 +32,8 @@ class CommentHeader extends StatelessWidget {
         children: [
           Expanded(
             child: AuthorInfo(
-              author: user,
-              timeAgo: timeAgo,
+              authorName: user,
+              createdAt: time ?? DateTime.now(),
               avatarRadius: 18,
               showTimeInline: true,
               authorTextStyle: Styles.textStyle15,
@@ -55,16 +42,16 @@ class CommentHeader extends StatelessWidget {
           ),
 
        
-          CommentActionsMenu(
-            parentContext: context,
-            commentText: commentText,
-            isOwner: isOwner,
-            onReply: onReply,
-            onEdit: onEdit,
-            onDelete: onDelete,
-            onReport: onReport,
-            onHide: onHide,
-          ),
+          // CommentActionsMenu(
+          //   parentContext: context,
+          //   commentText: commentText,
+          //   isOwner: isOwner,
+          //   onReply: onReply,
+          //   onEdit: onEdit,
+          //   onDelete: onDelete,
+          //   onReport: onReport,
+          //   onHide: onHide,
+          // ),
         ],
       ),
     );

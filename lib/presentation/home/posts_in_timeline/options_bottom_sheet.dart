@@ -1,23 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:auth/constants/colors';
 // TODO: handle this sheet's actions in the Bloc
-class OptionsBottomSheet extends StatelessWidget {
-  final VoidCallback onSave;
-  final VoidCallback onCopyLink;
-  final VoidCallback onViewEditHistory;
-  final VoidCallback onNotInterested;
-  final VoidCallback onReportFlow;
-  final bool isNotInterested;
 
-  const OptionsBottomSheet({
-    super.key,
-    required this.onSave,
-    required this.onCopyLink,
-    required this.onViewEditHistory,
-    required this.onNotInterested,
-    required this.onReportFlow,
-    required this.isNotInterested,
-  });
+
+class OptionsBottomSheet extends StatelessWidget {
+  const OptionsBottomSheet({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -45,30 +32,15 @@ class OptionsBottomSheet extends StatelessWidget {
               ),
             ),
 
+            // 🔹 Top buttons
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 14),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  _buildSquareButton(
-                    label: 'Save',
-                    icon: Icons.bookmark_border,
-                    backgroundColor: grey100,
-                    onTap: () {
-                      Navigator.pop(context);
-                      onSave();
-                    },
-                  ),
+                  _buildSquareButton(label: 'Save', icon: Icons.bookmark_border, backgroundColor: grey100),
                   const SizedBox(width: 8),
-                  _buildSquareButton(
-                    label: 'Copy Link',
-                    icon: Icons.link_outlined,
-                    backgroundColor: grey100,
-                    onTap: () {
-                      Navigator.pop(context);
-                      onCopyLink();
-                    },
-                  ),
+                  _buildSquareButton(label: 'Copy Link', icon: Icons.link_outlined, backgroundColor: grey100),
                 ],
               ),
             ),
@@ -76,38 +48,10 @@ class OptionsBottomSheet extends StatelessWidget {
             const SizedBox(height: 12),
             const Divider(height: 1),
 
-            _buildListOption(
-              context,
-              icon: Icons.history,
-              text: 'View Edit History',
-              color: Colors.black87,
-              onTap: () {
-                Navigator.pop(context);
-                onViewEditHistory();
-              },
-            ),
-
-            _buildListOption(
-              context,
-              icon: isNotInterested ? Icons.visibility : Icons.visibility_off_outlined,
-              text: isNotInterested ? 'Interested' : 'Not Interested',
-              color: Colors.black87,
-              onTap: () {
-                Navigator.pop(context);
-                onNotInterested();
-              },
-            ),
-
-            _buildListOption(
-              context,
-              icon: Icons.report_gmailerrorred_outlined,
-              text: 'Report',
-              color: Colors.redAccent,
-              onTap: () {
-                Navigator.pop(context);
-                onReportFlow();
-              },
-            ),
+            // 🔹 List options
+            _buildListOption(icon: Icons.history, text: 'View Edit History', color: Colors.black87),
+            _buildListOption(icon: Icons.visibility_off_outlined, text: 'Not Interested', color: Colors.black87),
+            _buildListOption(icon: Icons.report_gmailerrorred_outlined, text: 'Report', color: Colors.redAccent),
           ],
         ),
       ),
@@ -117,7 +61,6 @@ class OptionsBottomSheet extends StatelessWidget {
   Widget _buildSquareButton({
     required IconData icon,
     required String label,
-    required VoidCallback onTap,
     Color? backgroundColor,
   }) {
     return Expanded(
@@ -126,7 +69,9 @@ class OptionsBottomSheet extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         child: InkWell(
           borderRadius: BorderRadius.circular(12),
-          onTap: onTap,
+          onTap: () {
+            // TODO: handle via Cubit
+          },
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 14),
             child: Column(
@@ -134,14 +79,7 @@ class OptionsBottomSheet extends StatelessWidget {
               children: [
                 Icon(icon, color: AppColors.iconsColor, size: 24),
                 const SizedBox(height: 6),
-                Text(
-                  label,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black87,
-                  ),
-                ),
+                Text(label, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Colors.black87)),
               ],
             ),
           ),
@@ -150,24 +88,17 @@ class OptionsBottomSheet extends StatelessWidget {
     );
   }
 
-  Widget _buildListOption(
-    BuildContext context, {
+  Widget _buildListOption({
     required IconData icon,
     required String text,
     required Color color,
-    required VoidCallback onTap,
   }) {
     return ListTile(
       leading: Icon(icon, color: color, size: 24),
-      title: Text(
-        text,
-        style: TextStyle(
-          color: color,
-          fontSize: 15,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
-      onTap: onTap,
+      title: Text(text, style: TextStyle(color: color, fontSize: 15, fontWeight: FontWeight.w500)),
+      onTap: () {
+        // TODO: handle via Cubit
+      },
       contentPadding: const EdgeInsets.symmetric(horizontal: 14),
     );
   }

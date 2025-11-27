@@ -282,9 +282,10 @@ class BottomSheetManager {
       backgroundColor: Colors.transparent,
       barrierColor: Colors.black38,
       builder: (ctx) => CommentsBottomSheet(
-        reactionsCount: reactionsCount,
-        onCommentAdded: onCommentAdded,
-        onCommentDeleted: onCommentDeleted,
+        
+        reactionsCount: reactionsCount, postId: 'post1', currentUserId: 'user1',
+        // onCommentAdded: onCommentAdded,
+        // onCommentDeleted: onCommentDeleted,
       ),
     );
   }

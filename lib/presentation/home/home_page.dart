@@ -1,3 +1,4 @@
+import 'package:auth/domain/entities/post.dart';
 import 'package:auth/presentation/home/add_post/add_post_bottom_sheet.dart';
 import 'package:auth/core/custom_app_bar.dart';
 import 'package:flutter/material.dart';
@@ -11,118 +12,130 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
   @override
   void initState() {
     super.initState();
-
-    // ✅ TODO :
-    // Call fetchPostsUseCase() through your state management layer (Cubit/Provider).
-    //
-    // Example for later:
-    // context.read<PostsCubit>().fetchPosts();
   }
 
   final posts = [
     {
-      'author': 'Marcus Rashford',
+      'id': '1',
+      'authorId': '101',
+      'authorName': 'Marcus Rashford',
       'authorImage': 'assets/images/player1.png',
-      'timeAgo': '2 hours ago',
       'content':
           "Thrilled with the team's performance today! The energy on the pitch was electric. Great win, and a huge thank you to the fans for their incredible support! ⚽ #ManUtd #FootballIsLife",
       'imageUrl': 'assets/images/post1.png',
-      'likes': 999,
-      'comments': 870,
-      'shares': 999,
+      'createdAt': DateTime.now()
+          .subtract(const Duration(hours: 2))
+          .toIso8601String(),
     },
     {
-      'author': 'LionessPride Official',
+      'id': '2',
+      'authorId': '102',
+      'authorName': 'LionessPride Official',
       'authorImage': 'assets/images/player2.png',
-      'timeAgo': '5 hours ago',
       'content':
           "What a spectacular match last night! The determination and skill shown by our squad were truly inspiring. Onwards and upwards! 💪 #WomensFootball",
       'imageUrl': 'assets/images/post2.png',
-      'likes': 7800,
-      'comments': 5100000,
-      'shares': 180,
+      'createdAt': DateTime.now()
+          .subtract(const Duration(hours: 5))
+          .toIso8601String(),
     },
     {
-      'author': 'Marcus Rashford',
+      'id': '3',
+      'authorId': '103',
+      'authorName': 'Marcus Rashford',
       'authorImage': 'assets/images/player1.png',
-      'timeAgo': '2 hours ago',
       'content':
           "Thrilled with the team's performance today! The energy on the pitch was electric. Great win, and a huge thank you to the fans for their incredible support! ⚽ #ManUtd #FootballIsLife",
       'imageUrl': 'assets/images/post1.png',
-      'likes': 1250,
-      'comments': 870,
-      'shares': 320,
+      'createdAt': DateTime.now()
+          .subtract(const Duration(hours: 8))
+          .toIso8601String(),
+    },
+    {
+      'id': '4',
+      'authorId': '104',
+      'authorName': 'Marcus Rashford',
+      'authorImage': 'assets/images/player1.png',
+      'content':
+          "Thrilled with the team's performance today! The energy on the pitch was electric. Great win, and a huge thank you to the fans for their incredible support! ⚽ #ManUtd #FootballIsLife",
+      'imageUrl': 'assets/images/post1.png',
+      'createdAt': DateTime.now()
+          .subtract(const Duration(hours: 8))
+          .toIso8601String(),
+    },{
+      'id': '5',
+      'authorId': '105',
+      'authorName': 'Marcus Rashford',
+      'authorImage': 'assets/images/player1.png',
+      'content':
+          "Thrilled with the team's performance today! The energy on the pitch was electric. Great win, and a huge thank you to the fans for their incredible support! ⚽ #ManUtd #FootballIsLife",
+      'imageUrl': 'assets/images/post1.png',
+      'createdAt': DateTime.now()
+          .subtract(const Duration(hours: 8))
+          .toIso8601String(),
     },
   ];
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-      appBar: const HomeAppBar(),
-      body: SafeArea(
-        top: false,
-        child: ListView.builder(
-          // ✅ TODO:
-          // Later, replace this static list with state from Cubit/Provider.
-          // Example:
-          //
-          // BlocBuilder<PostsCubit, PostsState>(
-          //   builder: (context, state) {
-          //     if (state is PostsLoading) return CircularProgressIndicator();
-          //     if (state is PostsLoaded) return ListView.builder(...);
-          //   },
-          // );
-          itemCount: posts.length,
-          itemBuilder: (context, index) {
-            final post = posts[index] as Map<String, dynamic>;
-            return PostCard(
-              author: post['author']!,
-              authorImage: post['authorImage'],
-              timeAgo: post['timeAgo']!,
-              content: post['content']!,
-              imageUrl: post['imageUrl'],
-              likes: post['likes']!,
-              comments: post['comments']!,
-              shares: post['shares']!,
-              isFollowing: true,
-              isSaved: false,
-            );
-          },
-        ),
-      ),
+    return SafeArea(
+      child: Stack(
+        children: [
+          /// ---------- MAIN CONTENT ---------- 
+          CustomScrollView(
+            slivers: [
+              SliverAppBar(
+                floating: true,
+                snap: true,
+                pinned: false,
+                backgroundColor: Colors.white,
+                automaticallyImplyLeading: false,
+                title: const HomeAppBar(),
+              ),
+              SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    final postMap = posts[index];
+                    final postEntity = Post(
+                      id: postMap['id'] ?? '',
+                      authorId: postMap['authorId'] ?? '',
+                      authorName: postMap['authorName'] ?? '',
+                      authorImage: postMap['authorImage'] ?? '',
+                      content: postMap['content'] ?? '',
+                      imageUrl: postMap['imageUrl'] ?? '',
+                      createdAt: DateTime.parse(
+                          postMap['createdAt'] ?? DateTime.now().toIso8601String()),
+                    );
+                    return PostCard(post: postEntity);
+                  },
+                  childCount: posts.length,
+                ),
+              ),
+            ],
+          ),
 
-     
-
-      floatingActionButton: FloatingActionButton(
-        shape: const CircleBorder(),
-        backgroundColor: const Color(0xff42C83C),
-        child: const Icon(Icons.add, color: Colors.white),
-        onPressed: () {
-          // ✅ TODO:
-          // Open AddPostBottomSheet and after the user submits,
-          // call createPostUseCase() through your state management layer.
-          //
-          // Example for later:
-          // context.read<CreatePostCubit>().createPost(data);
-          showModalBottomSheet(
-            context: context,
-            isScrollControlled: true,
-            backgroundColor: Colors.transparent,
-            builder: (context) => const AddPostBottomSheet(
-              // TODO:
-              // Add a callback here when you implement create post:
-              //
-              // onSubmit: (postData) {
-              //   context.read<CreatePostCubit>().createPost(postData);
-              // }
+          /// ---------- FAB ---------- 
+          Positioned(
+            bottom: 20,
+            right: 20,
+            child: FloatingActionButton(
+              shape: const CircleBorder(),
+              backgroundColor: const Color(0xff42C83C),
+              child: const Icon(Icons.add, color: Colors.white),
+              onPressed: () {
+                showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  backgroundColor: Colors.transparent,
+                  builder: (context) => const AddPostBottomSheet(),
+                );
+              },
             ),
-          );
-        },
+          ),
+        ],
       ),
     );
   }

@@ -3,21 +3,15 @@ import 'package:auth/presentation/home/reactions/reaction_button.dart';
 
 class CommentBody extends StatelessWidget {
   final String text;
-  final VoidCallback onReply;
   final bool showReplies;
   final int repliesCount;
-  final VoidCallback onToggleReplies;
-  final ValueChanged<int> onReactionChanged;
   final int initialReactionCount;
 
   const CommentBody({
     super.key,
     required this.text,
-    required this.onReply,
     required this.showReplies,
     required this.repliesCount,
-    required this.onToggleReplies,
-    required this.onReactionChanged,
     this.initialReactionCount = 0,
   });
 
@@ -47,11 +41,11 @@ class _CommentBodyView extends StatelessWidget {
 
             ReactionButton(
               initialCount: parent.initialReactionCount,
-              onReactionChanged: parent.onReactionChanged,
+              onReactionChanged: (_){},
             ),
             const SizedBox(width: 8),
             TextButton(
-              onPressed: parent.onReply,
+              onPressed:() {},
               style: TextButton.styleFrom(padding: EdgeInsets.zero),
               child: const Text(
                 "Reply",

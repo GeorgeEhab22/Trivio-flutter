@@ -1,30 +1,16 @@
+import 'package:auth/domain/entities/comment.dart';
 import 'package:flutter/material.dart';
 import 'package:auth/presentation/home/comments/widgets/comment_item.dart';
 
 class CommentsList extends StatelessWidget {
-  final List<Map<String, dynamic>> comments;
+  final List<Comment> comments;
   final GlobalKey<AnimatedListState> listKey;
-
-  final void Function(String id, String newText) onEdit;
-  final void Function(String id) onDelete;
-  final void Function(String id, String username) onReply;
-
-  final void Function(String id) onReport;
-  final void Function(String id) onHide;
-
   final String currentUserId;
-
   final ScrollController scrollController;
-
   const CommentsList({
     super.key,
     required this.comments,
     required this.listKey,
-    required this.onEdit,
-    required this.onDelete,
-    required this.onReply,
-    required this.onReport,
-    required this.onHide,
     required this.currentUserId,
     required this.scrollController,
   });
@@ -39,23 +25,18 @@ class CommentsList extends StatelessWidget {
       initialItemCount: comments.length,
       itemBuilder: (context, index, animation) {
         final comment = comments[index];
-        final id = comment['id']?.toString() ?? 'comment_$index';
-
         return SizeTransition(
           sizeFactor: animation,
           axisAlignment: -1,
           child: FadeTransition(
             opacity: animation,
             child: KeyedSubtree(
-              key: ValueKey(id),
+              key: ValueKey(comment.id),
               child: CommentItem(
                 comment: comment,
-                onEdit: onEdit,
-                onDelete: onDelete,
-                onReply: onReply,
-                onReport: onReport,
-                onHide: onHide,
                 currentUserId: currentUserId,
+                showReplies: false, // handle using cubit
+                replies: [], // handle using cubit
               ),
             ),
           ),

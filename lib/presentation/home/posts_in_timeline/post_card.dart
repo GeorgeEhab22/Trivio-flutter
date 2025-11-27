@@ -1,63 +1,30 @@
+import 'package:auth/domain/entities/post.dart';
+import 'package:auth/presentation/home/comments/comment_button.dart';
+import 'package:auth/presentation/home/reactions/reaction_button.dart';
+import 'package:auth/presentation/home/share_post/share_button.dart';
+import 'package:auth/presentation/home/widgets/author_info.dart';
+import 'package:auth/presentation/home/widgets/exbandable_text.dart';
 import 'package:flutter/material.dart';
 import 'post_header.dart';
-import 'post_content.dart';
 import 'post_image.dart';
-import 'post_states.dart';
-//TODO: use proper entity instead of individual parameters
-class PostCard extends StatefulWidget {
-  final String author;
-  final String? authorImage;
-  final String timeAgo;
-  final String content;
-  final String? imageUrl;
-  final int likes;
-  final int comments;
-  final int shares;
-  final bool isFollowing;
-  final bool isSaved;
 
-  const PostCard({
-    super.key,
-    required this.author,
-    required this.authorImage,
-    required this.timeAgo,
-    required this.content,
-    this.imageUrl,
-    required this.likes,
-    required this.comments,
-    required this.shares,
-    required this.isFollowing,
-    required this.isSaved,
-  });
-
-  @override
-  State<PostCard> createState() => _PostCardState();
-}
-
-class _PostCardState extends State<PostCard> {
-  bool isFollowing = false;
-  bool isNotInterested = false;
-  void _toggleFollow() {
-    setState(() {
-      isFollowing = !isFollowing;
-    });
-    // ✅ TODO:
-    // Later, connect this to your state management (Cubit/Provider)
-    // Example:
-    // context.read<FollowCubit>().toggleFollow(userId);
-  }
+//TODO: use proper entity instead of individual parameters => done
+class PostCard extends StatelessWidget {
+  final Post post;
+  const PostCard({super.key, required this.post});
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final double spacing = screenWidth < 350
+        ? 12
+        : screenWidth < 600
+        ? 20
+        : 28;
     return InkWell(
       borderRadius: BorderRadius.circular(16),
       onTap: () {
-        // ✅ TODO:
-        // When single post feature is implemented:
-        // Navigate and fetch the full post by postId using a Cubit/Provider.
-        //
-        // Example:
-        // context.read<PostCubit>().getPostById(postId);
+        //  TODO: add navigation to single post page
       },
       child: Card(
         margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
@@ -69,26 +36,38 @@ class _PostCardState extends State<PostCard> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              PostHeader(
-                author: widget.author,
-                authorImage: widget.authorImage,
-                timeAgo: widget.timeAgo,
-                isFollowing: isFollowing,
-                onFollowToggle: _toggleFollow,
-                isNotInterested: isNotInterested,
-                onToggleInterest: () {
-                  setState(() {
-                    isNotInterested = !isNotInterested;
-                  });
-                  // ✅ TODO:
-                  // Connect to your Cubit/Provider later to toggle interest in post
-                  //
-                  // Example:
-                  // context.read<PostInterestCubit>().toggleInterest(postId);
-                },
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 10,
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: AuthorInfo(
+                        authorName: post.authorName,
+                        authorImage: post.authorImage,
+                        createdAt: post.createdAt,
+                        showTimeInline: false,
+                      ),
+                    ),
+                    PostHeader(isFollowing: true),
+                  ],
+                ),
               ),
-              PostContent(content: widget.content),
-              if (widget.imageUrl != null) ...[
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 6,
+                ),
+                child: ExpandableText(
+                  text: post.content,
+                  previewLines: 2,
+                  canCollapse: true,
+                ),
+              ),
+              if (post.imageUrl != null) ...[
                 const SizedBox(height: 6),
                 PostImage(),
               ],
@@ -100,10 +79,32 @@ class _PostCardState extends State<PostCard> {
                 indent: 12,
                 endIndent: 12,
               ),
-              PostStates(
-                reactions: widget.likes,
-                comments: widget.comments,
-                shares: widget.shares,
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 8,
+                ),
+                child: Row(
+                  children: [
+                    ReactionButton(
+                      initialCount: post.reactions.length,
+                      onReactionChanged: (_) {},
+                    ),
+                    SizedBox(width: spacing),
+                    CommentButton(
+                      commentsCount: post.comments.length,
+                      reactionsCount: post.reactions.length,
+                      onCommentAdded: () {},
+                      onCommentDeleted: () {},
+                    ),
+                    SizedBox(width: spacing),
+                    ShareButton(
+                      count: 0,
+                      // onShare: () {},
+                    ),
+                    const Spacer(),
+                  ],
+                ),
               ),
             ],
           ),

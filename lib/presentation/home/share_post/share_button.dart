@@ -5,9 +5,9 @@ import '../widgets/post_action_item.dart';
 
 class ShareButton extends StatelessWidget {
   final int count;
-  final VoidCallback onShare;
+  // final VoidCallback onShare;
 
-  const ShareButton({super.key, required this.count, required this.onShare});
+  const ShareButton({super.key, required this.count});
 
   void _openShareSheet(BuildContext context) {
     showModalBottomSheet(
@@ -18,7 +18,7 @@ class ShareButton extends StatelessWidget {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       // use `ctx` inside the builder to avoid shadowing and accidental pops on the wrong Navigator
-      builder: (ctx) => ShareBottomSheet(onShare: onShare),
+      builder: (ctx) => ShareBottomSheet(),
     );
   }
 

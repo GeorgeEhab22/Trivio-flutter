@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import '../../../common/basic_app_button.dart';
 
 class ShareBottomSheet extends StatefulWidget {
-  final VoidCallback onShare;
+  // final VoidCallback onShare;
 
-  const ShareBottomSheet({super.key, required this.onShare});
+  const ShareBottomSheet({super.key, });
 
   @override
   State<ShareBottomSheet> createState() => _ShareBottomSheetState();
@@ -44,7 +44,6 @@ class _ShareBottomSheetState extends State<ShareBottomSheet> {
     }
 
     // First call the share callback so parent updates its state/servers.
-    widget.onShare();
 
     // Provide immediate feedback while the sheet is still mounted.
     showCustomSnackBar(context, "Post shared successfully!", true);
