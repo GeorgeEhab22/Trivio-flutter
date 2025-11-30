@@ -1,4 +1,5 @@
 import 'package:auth/domain/entities/reaction.dart';
+import 'package:auth/domain/entities/reaction_type.dart';
 
 class ReactionModel extends Reaction {
   const ReactionModel({
@@ -13,29 +14,20 @@ class ReactionModel extends Reaction {
       id: json['_id'] ?? '',
       userId: json['userId'] ?? '',
       postId: json['postId'] ?? '',
-      type: json['type'] ?? '',
+      type: _mapStringToReactionType(json['type']),
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      '_id': id,
-      'userId': userId,
-      'postId': postId,
-      'type': type,
-    };
+    return {'_id': id, 'userId': userId, 'postId': postId, 'type': type.name};
   }
 
-  Reaction toEntity() => Reaction(
-        id: id,
-        userId: userId,
-        postId: postId,
-        type: type,
-      );
+  Reaction toEntity() =>
+      Reaction(id: id, userId: userId, postId: postId, type: type);
 
   factory ReactionModel.fromEntity(Reaction reaction) {
     return ReactionModel(
-      id: '',
+      id: reaction.id,
       userId: reaction.userId,
       postId: reaction.postId,
       type: reaction.type,
@@ -47,7 +39,17 @@ class ReactionModel extends Reaction {
       id: '',
       userId: '',
       postId: '',
-      type: '',
+      type: ReactionType.none,
     );
+  }
+
+  static ReactionType _mapStringToReactionType(String? typeStr) {
+    if (typeStr == null) return ReactionType.none;
+
+    try {
+      return ReactionType.values.firstWhere((e) => e.name == typeStr);
+    } catch (e) {
+      return ReactionType.none;
+    }
   }
 }

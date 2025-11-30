@@ -1,16 +1,18 @@
+import 'package:auth/domain/entities/reaction_type.dart';
 import 'package:equatable/equatable.dart';
 
 class Reaction extends Equatable {
   final String id;
   final String userId;
   final String postId;
-  final String type; 
+  final ReactionType type;
 
   const Reaction({
     required this.id,
     required this.userId,
     required this.postId,
     required this.type,
+    
   });
 
   @override

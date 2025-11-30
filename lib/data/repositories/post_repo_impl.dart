@@ -2,6 +2,7 @@ import 'package:auth/core/errors/failure.dart';
 import 'package:auth/data/core/error/exceptions.dart';
 import 'package:auth/data/datasource/posts_remote_datasource.dart';
 import 'package:auth/domain/entities/post.dart';
+import 'package:auth/domain/entities/reaction_type.dart';
 import 'package:auth/domain/repositories/post_repo.dart';
 import 'package:dartz/dartz.dart';
 

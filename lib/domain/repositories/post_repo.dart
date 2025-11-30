@@ -1,8 +1,7 @@
 import 'package:auth/core/errors/failure.dart';
 import 'package:auth/domain/entities/post.dart';
+import 'package:auth/domain/entities/reaction_type.dart';
 import 'package:dartz/dartz.dart';
-
-enum ReactionType { goal,offside, }
 
 abstract class PostRepository {
   // 13 use case untill now

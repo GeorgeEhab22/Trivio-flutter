@@ -1,6 +1,7 @@
 import 'package:auth/core/errors/failure.dart';
 import 'package:auth/core/validator.dart';
 import 'package:auth/domain/entities/post.dart';
+import 'package:auth/domain/entities/reaction_type.dart';
 import 'package:auth/domain/repositories/post_repo.dart';
 import 'package:dartz/dartz.dart';
 
@@ -12,7 +13,7 @@ class ReactToPostUseCase {
   Future<Either<Failure, Post>> call({
     required String postId,
     required String userId,
-    required ReactionType reactionType, // goal , offside
+    required ReactionType reactionType, // none ,goal , offside
   }) async {
     if (postId.trim().isEmpty) {
       return const Left(ValidationFailure('Post ID is required'));
