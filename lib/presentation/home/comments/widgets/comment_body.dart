@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:auth/presentation/home/reactions/reaction_button.dart';
+import 'package:auth/presentation/home/reactions/widgets/reaction_button.dart';
 
 class CommentBody extends StatelessWidget {
   final String text;
@@ -8,11 +8,12 @@ class CommentBody extends StatelessWidget {
   final int initialReactionCount;
 
   const CommentBody({
+
     super.key,
     required this.text,
     required this.showReplies,
     required this.repliesCount,
-    this.initialReactionCount = 0,
+    this.initialReactionCount = 0, 
   });
 
   @override
@@ -39,10 +40,10 @@ class _CommentBodyView extends StatelessWidget {
         Row(
           children: [
 
-            ReactionButton(
-              initialCount: parent.initialReactionCount,
-              onReactionChanged: (_){},
-            ),
+            // ReactionButton(
+            //   // initialCount: parent.initialReactionCount,
+            //   // onReactionChanged: (_){},
+            // ),
             const SizedBox(width: 8),
             TextButton(
               onPressed:() {},

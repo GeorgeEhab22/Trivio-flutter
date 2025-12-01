@@ -29,7 +29,7 @@ CustomTransitionPage buildAnimatedPage({
   return CustomTransitionPage(
     key: ValueKey(child.runtimeType.toString() + newIndex.toString()),
     child: child,
-    opaque: true, // مهم
+    opaque: true,
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
       final begin = Offset(leftToRight ? 1.0 : -1.0, 0.0);
       const end = Offset.zero;
@@ -89,7 +89,6 @@ GoRouter createRouter() {
           );
         },
       ),
-      // ... بقية الرووتس بنفس الطريقة
       GoRoute(
         path: '/app',
         builder: (context, state) => const SizedBox.shrink(),

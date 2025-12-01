@@ -5,44 +5,50 @@ sealed class PostInteractionState extends Equatable {
 
   @override
   List<Object?> get props => [];
+
+  ReactionType get reactionType => ReactionType.none;
 }
 
 class PostInteractionInitial extends PostInteractionState {}
 
 // react to post
-
 class ReactToPostLoading extends PostInteractionState {
   final String postId;
   const ReactToPostLoading({required this.postId});
+}
 
+class PostReactionUpdated extends PostInteractionState {
+  final ReactionType reactionType;
+  final int count;
+  const PostReactionUpdated({required this.reactionType, required this.count});
+  
   @override
-  List<Object> get props => [postId];
+  List<Object> get props => [reactionType, count];
 }
 
 class ReactToPostSuccess extends PostInteractionState {
   final String postId;
   final ReactionType reactionType;
   const ReactToPostSuccess({required this.postId, required this.reactionType});
-
-  @override
-  List<Object> get props => [postId, reactionType];
 }
 
 class ReactToPostError extends PostInteractionState {
   final String postId;
   final String message;
-  final String? errorType;
+  final String errorType;
+  final ReactionType? oldReactionType; 
+  final int? oldCount;
 
   const ReactToPostError({
-    required this.postId,
-    required this.message,
-    this.errorType,
+    required this.postId, 
+    required this.message, 
+    required this.errorType,
+    this.oldReactionType,
+    this.oldCount,
   });
 
   @override
-  List<Object?> get props => [postId, message, errorType];
-  bool get isValidationError => errorType == 'validation';
-  bool get isNetworkError => errorType == 'network';
+  List<Object?> get props => [postId, message, errorType, oldReactionType, oldCount];
 }
 
 // remove reaction from post

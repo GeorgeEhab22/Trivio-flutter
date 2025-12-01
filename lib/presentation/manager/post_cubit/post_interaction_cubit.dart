@@ -1,6 +1,6 @@
 import 'package:auth/core/errors/failure.dart';
 import 'package:auth/domain/entities/post.dart';
-import 'package:auth/domain/repositories/post_repo.dart';
+import 'package:auth/domain/entities/reaction_type.dart';
 import 'package:auth/domain/usecases/post/comment_on_post_usecase.dart';
 import 'package:auth/domain/usecases/post/delete_post_usecase.dart';
 import 'package:auth/domain/usecases/post/edit_post_usecase.dart';
@@ -39,60 +39,130 @@ class PostInteractionCubit extends Cubit<PostInteractionState> {
   }) : super(PostInteractionInitial());
 
   // react to post
-  Future<void> reactToPost({
+  Future<void> toggleReaction({
+    required String postId,
+    required String userId,
+    required ReactionType currentReaction,
+    required int currentCount,
+  }) async {
+    final wasGoal = currentReaction == ReactionType.goal;
+    int newCount = currentCount;
+    ReactionType newReaction = currentReaction;
+
+// later add offside logic
+    if (wasGoal) {
+      // User wants to remove the 'goal' reaction
+      newReaction = ReactionType.none;
+      newCount = (newCount - 1).clamp(0, 1 << 30);
+    } else {
+      // User wants to add 'goal' reaction (or switch to it if he had 'none')
+      if (currentReaction == ReactionType.none) {
+        newCount = newCount + 1;
+      }
+      newReaction = ReactionType.goal;
+    }
+
+    emit(PostReactionUpdated(reactionType: newReaction, count: newCount));
+
+    if (newReaction == ReactionType.none) {
+        await _performRemoveReaction(
+            postId: postId, 
+            userId: userId, 
+            oldReaction: currentReaction, 
+            oldCount: currentCount
+        );
+    } else {
+        await _performReactApiCall(
+            postId: postId,
+            userId: userId,
+            reactionType: newReaction,
+            oldReaction: currentReaction,
+            oldCount: currentCount,
+        );
+    }
+  }
+
+  Future<void> chooseReaction({
+    required String postId,
+    required String userId,
+    required ReactionType chosenType,
+    required ReactionType currentReaction,
+    required int currentCount,
+  }) async {
+    final wasNone = currentReaction == ReactionType.none;
+    int newCount = currentCount;
+
+    if (wasNone) {
+      newCount = newCount + 1;
+    }
+
+    emit(PostReactionUpdated(reactionType: chosenType, count: newCount));
+
+    await _performReactApiCall(
+      postId: postId,
+      userId: userId,
+      reactionType: chosenType,
+      oldReaction: currentReaction,
+      oldCount: currentCount,
+    );
+  }
+
+  Future<void> _performReactApiCall({
     required String postId,
     required String userId,
     required ReactionType reactionType,
+    required ReactionType oldReaction,
+    required int oldCount,
   }) async {
-    emit(ReactToPostLoading(postId: postId));
-
     final result = await reactToPostUseCase(
       postId: postId,
       userId: userId,
       reactionType: reactionType,
     );
 
-    result.fold((failure) => emit(_mapFailureToState(failure, postId)), (post) {
-      emit(ReactToPostSuccess(postId: post.id, reactionType: reactionType));
-    });
-  }
-
-  ReactToPostError _mapFailureToState(Failure failure, String postId) {
-    switch (failure.runtimeType) {
-      case const (ValidationFailure):
-        return ReactToPostError(
-          postId: postId,
-          message: failure.message,
-          errorType: 'validation',
-        );
-      case const (NetworkFailure):
-        return ReactToPostError(
-          postId: postId,
-          message: failure.message,
-          errorType: 'network',
-        );
-      default:
-        return ReactToPostError(
+    result.fold(
+      (failure) {
+        emit(ReactToPostError(
           postId: postId,
           message: failure.message,
           errorType: 'server',
-        );
-    }
+          oldReactionType: oldReaction,
+          oldCount: oldCount,
+        ));
+      },
+      (post) {
+        emit(ReactToPostSuccess(postId: post.id, reactionType: reactionType));
+      },
+    );
   }
 
-  void resetState() => emit(PostInteractionInitial());
+  Future<void> _performRemoveReaction({
+      required String postId,
+      required String userId,
+      required ReactionType oldReaction,
+      required int oldCount,
+  }) async {
+      final result = await removeReactionFromPostUseCase(
+          postId: postId, 
+          userId: userId,
+                );
 
-  bool get isLoading => state is ReactToPostLoading;
-  bool get isSuccess => state is ReactToPostSuccess;
-  bool get isFailure => state is ReactToPostError;
-  bool get isInitial => state is PostInteractionInitial;
-
-  ReactionType? get currentUser => state is ReactToPostSuccess
-      ? (state as ReactToPostSuccess).reactionType
-      : null;
-
-  String? get errorMessage =>
-      state is ReactToPostError ? (state as ReactToPostError).message : null;
+      result.fold(
+          (failure) {
+            
+              emit(ReactToPostError(
+                  postId: postId,
+                  message: failure.message,
+                  errorType: 'server',
+                  oldReactionType: oldReaction,
+                  oldCount: oldCount,
+              ));
+          },
+          (post) {
+              emit(ReactToPostSuccess(postId: postId, reactionType: ReactionType.none));
+          }
+      );
+  }
 
   // delete post
   Future<void> deletePost({required Post post}) async {

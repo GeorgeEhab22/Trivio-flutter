@@ -19,7 +19,6 @@ import 'package:auth/domain/usecases/comment/get_replies_usecase.dart';
 import 'package:auth/domain/usecases/comment/like_comment_usecase.dart';
 import 'package:auth/domain/usecases/comment/mention_users_in_comment_usecase.dart';
 import 'package:auth/domain/usecases/comment/react_to_comment_usecase.dart';
-import 'package:auth/domain/usecases/comment/remove_reaction_from_comment_usecase.dart';
 import 'package:auth/domain/usecases/post/comment_on_post_usecase.dart';
 import 'package:auth/domain/usecases/post/create_post_usecase.dart';
 import 'package:auth/domain/usecases/post/delete_post_usecase.dart';
@@ -27,6 +26,7 @@ import 'package:auth/domain/usecases/post/edit_post_usecase.dart';
 import 'package:auth/domain/usecases/post/fetch_posts_usecase.dart';
 import 'package:auth/domain/usecases/post/fetch_single_post_usecase.dart';
 import 'package:auth/domain/usecases/post/react_to_post_usecase.dart';
+import 'package:auth/domain/usecases/post/remove_reaction_from_post_usecase.dart';
 import 'package:auth/domain/usecases/post/report_post_usecase.dart';
 import 'package:auth/domain/usecases/post/search_post_usecase.dart';
 import 'package:auth/domain/usecases/post/share_post_usecase.dart';
@@ -40,6 +40,8 @@ import 'package:auth/domain/usecases/sign_in/request_otp.dart';
 
 import 'package:auth/domain/usecases/sign_in/signin_usecase.dart';
 import 'package:auth/domain/usecases/sign_in/verify_otp.dart';
+import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
+import 'package:auth/presentation/manager/post_cubit/post_interaction_cubit.dart';
 import 'package:auth/presentation/manager/register_cubit/register_cubit.dart';
 import 'package:auth/presentation/manager/sigin_in_cubit/sign_in_cubit.dart';
 import 'package:flutter/foundation.dart';
@@ -101,13 +103,32 @@ Future<void> init() async {
   sl.registerLazySingleton(() => FetchPostsUseCase(sl()));
   sl.registerLazySingleton(() => FetchSinglePostUseCase(sl()));
   sl.registerLazySingleton(() => ReactToPostUseCase(sl()));
-  sl.registerLazySingleton(() => RemoveReactionFromCommentUseCase(sl()));
+  sl.registerLazySingleton(() => RemoveReactionFromPostUseCase(sl()));
   sl.registerLazySingleton(() => ReportPostUseCase(sl()));
   sl.registerLazySingleton(() => SearchPostsUseCase(sl()));
   sl.registerLazySingleton(() => SharePostUseCase(sl()));
   sl.registerLazySingleton(() => ToggleFollowUserUseCase(sl()));
   sl.registerLazySingleton(() => ToggleSavePostUseCase(sl()));
 
+  sl.registerFactory(
+    () => PostCubit(
+      // fetchPostsUseCase: sl(),
+      //   fetchSinglePostUseCase: sl(),
+    ),
+  );
+  sl.registerFactory(
+    () => PostInteractionCubit(
+      reactToPostUseCase: sl(),
+      sharePostUseCase: sl(),
+      commentOnPostUseCase: sl(),
+      toggleFollowUserUseCase: sl(),
+      toggleSavePostUseCase: sl(),
+      reportPostUseCase: sl(),
+      removeReactionFromPostUseCase: sl(),
+      deletePostUseCase: sl(),
+      editPostUseCase: sl(),
+    ),
+  );
   // comments
   sl.registerLazySingleton<CommentsRemoteDataSource>(
     () => CommentsRemoteDataSourceImpl(
