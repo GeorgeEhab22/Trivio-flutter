@@ -1,6 +1,6 @@
 import 'package:auth/common/basic_app_button.dart';
 import 'package:auth/common/functions/code_box_handlers.dart';
-import 'package:auth/constants/colors';
+import 'package:auth/constants/colors.dart';
 import 'package:auth/core/styels.dart';
 import 'package:auth/presentation/authentication/signIn/forget_password_otp_listener.dart';
 import 'package:auth/presentation/authentication/widgets/change_email_button.dart';

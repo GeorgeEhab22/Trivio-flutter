@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:auth/constants/colors';
+import 'package:auth/constants/colors.dart';
 
 class CommentInputField extends StatelessWidget {
   final TextEditingController controller;

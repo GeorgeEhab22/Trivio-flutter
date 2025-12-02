@@ -1,4 +1,4 @@
-import 'package:auth/constants/colors';
+import 'package:auth/constants/colors.dart';
 import 'package:auth/core/styels.dart';
 import 'package:flutter/material.dart';
 import 'package:auth/common/functions/format_number.dart';

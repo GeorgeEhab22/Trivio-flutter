@@ -1,4 +1,4 @@
-import 'package:auth/constants/colors';
+import 'package:auth/constants/colors.dart';
 import 'package:auth/domain/entities/reaction_type.dart';
 import 'package:auth/presentation/home/widgets/post_action_item.dart';
 import 'package:flutter/material.dart';

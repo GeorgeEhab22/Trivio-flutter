@@ -1,4 +1,4 @@
-import 'package:auth/constants/colors';
+import 'package:auth/constants/colors.dart';
 import 'package:auth/domain/entities/reaction_type.dart';
 import 'package:auth/injection_container.dart' as di;
 import 'package:auth/presentation/home/reactions/reaction_action.dart';
@@ -28,15 +28,15 @@ class CommentItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool isOwner = comment.authorId == currentUserId;
+    // final bool isOwner = comment.authorId == currentUserId;
     final bool isReply = comment.isReply;
 
     final Widget content = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         CommentHeader(
-          isOwner: true,
-          comment: comment, //TODO : later remove true and use isOwner
+          isOwner: true,//TODO : later remove true and use isOwner
+          comment: comment, 
         ),
 
         Padding(

@@ -1,6 +1,6 @@
 import 'package:auth/common/functions/bottom_sheet_manager.dart';
 import 'package:flutter/material.dart';
-import 'package:auth/constants/colors';
+import 'package:auth/constants/colors.dart';
 
 class PrivacySelector extends StatelessWidget {
   final String privacy;

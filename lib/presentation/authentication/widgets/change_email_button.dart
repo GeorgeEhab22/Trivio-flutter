@@ -1,4 +1,4 @@
-import 'package:auth/constants/colors';
+import 'package:auth/constants/colors.dart';
 import 'package:auth/core/app_routes.dart';
 import 'package:auth/presentation/manager/register_cubit/verify_code_cubit.dart';
 import 'package:auth/presentation/manager/register_cubit/verify_code_state.dart';

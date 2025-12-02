@@ -1,5 +1,5 @@
 import 'package:auth/common/functions/copy_to_clipboard.dart';
-import 'package:auth/constants/colors';
+import 'package:auth/constants/colors.dart';
 import 'package:auth/domain/entities/comment.dart';
 import 'package:auth/presentation/authentication/widgets/show_custom_snackbar.dart';
 import 'package:auth/presentation/home/comments/pages/comment_edit_page.dart';

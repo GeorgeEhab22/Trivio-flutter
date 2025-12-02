@@ -1,4 +1,4 @@
-import 'package:auth/constants/colors';
+import 'package:auth/constants/colors.dart';
 import 'package:flutter/material.dart';
 
 class AnimatedSnackBar extends StatefulWidget {

@@ -1,5 +1,5 @@
 import 'package:auth/common/basic_app_button.dart';
-import 'package:auth/constants/colors';
+import 'package:auth/constants/colors.dart';
 import 'package:auth/core/styels.dart';
 import 'package:auth/presentation/authentication/signIn/request_email_listener.dart';
 import 'package:auth/presentation/authentication/widgets/email_field.dart';

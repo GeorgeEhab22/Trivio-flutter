@@ -1,4 +1,4 @@
-import 'package:auth/constants/colors';
+import 'package:auth/constants/colors.dart';
 import 'package:auth/presentation/home/posts_in_timeline/buttom_sheets/report_reasons_buttom_sheet.dart';
 import 'package:auth/presentation/home/posts_in_timeline/buttom_sheets/widgets/list_action_tile.dart';
 import 'package:auth/presentation/home/posts_in_timeline/buttom_sheets/widgets/square_action_button.dart';
