@@ -20,14 +20,31 @@ class PostRepositoryImpl implements PostRepository {
     List<String>? tags,
   }) async {
     try {
-      final model = await remoteDataSource.createPost(
-        userId: userId,
-        content: content,
-        imageUrl: imageUrl,
-        videoUrl: videoUrl,
-        tags: tags,
+
+      // final model = await remoteDataSource.createPost(
+      //   userId: userId,
+      //   content: content,
+      //   imageUrl: imageUrl,
+      //   videoUrl: videoUrl,
+      //   tags: tags,
+      // );
+      // return Right(model.toEntity());
+
+      // for testt after link with cubit
+      await Future.delayed(const Duration(seconds: 1));
+      final mockPost = Post(
+        id: '1',
+        authorId: userId,
+        authorName: "Test User",
+        authorImage: "",
+        createdAt: DateTime.now(),
+        content: "Test Content",
+        isSaved:
+            false,
+        reactions: const [],
+        comments: const [],
       );
-      return Right(model.toEntity());
+      return Right(mockPost);
     } on AuthException catch (e) {
       return Left(AuthFailure(e.message));
     } on ServerException catch (e) {
@@ -35,7 +52,9 @@ class PostRepositoryImpl implements PostRepository {
     } on NetworkException catch (e) {
       return Left(NetworkFailure(e.message));
     } catch (_) {
-      return Left(ServerFailure('An unexpected error occurred while creating post'));
+      return Left(
+        ServerFailure('An unexpected error occurred while creating post'),
+      );
     }
   }
 
@@ -54,9 +73,15 @@ class PostRepositoryImpl implements PostRepository {
   }
 
   @override
-  Future<Either<Failure, List<Post>>> fetchPosts({int page = 1, int limit = 20}) async {
+  Future<Either<Failure, List<Post>>> fetchPosts({
+    int page = 1,
+    int limit = 20,
+  }) async {
     try {
-      final models = await remoteDataSource.fetchPosts(page: page, limit: limit);
+      final models = await remoteDataSource.fetchPosts(
+        page: page,
+        limit: limit,
+      );
       final entities = models.map((m) => m.toEntity()).toList();
       return Right(entities);
     } on ServerException catch (e) {
@@ -78,7 +103,7 @@ class PostRepositoryImpl implements PostRepository {
       final model = await remoteDataSource.reactToPost(
         postId: postId,
         userId: userId,
-        reactionType: comment, 
+        reactionType: comment,
       );
       // If your remoteDataSource.createComment exists and returns PostModel or CommentModel, use it.
       return Right(model.toEntity());

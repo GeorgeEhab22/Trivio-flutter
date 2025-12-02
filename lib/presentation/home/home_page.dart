@@ -62,13 +62,16 @@ class HomePage extends StatelessWidget {
                       shape: const CircleBorder(),
                       backgroundColor: const Color(0xff42C83C),
                       child: const Icon(Icons.add, color: Colors.white),
-                      onPressed: () {
-                        showModalBottomSheet(
+                      onPressed: () async {
+                        final newPost = await showModalBottomSheet(
                           context: context,
                           isScrollControlled: true,
                           backgroundColor: Colors.transparent,
                           builder: (context) => const AddPostBottomSheet(),
                         );
+                        if (newPost != null && context.mounted) {
+                          cubit.addNewPostToFeed(newPost);
+                        }
                       },
                     ),
                   ),

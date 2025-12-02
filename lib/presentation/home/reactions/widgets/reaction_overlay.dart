@@ -17,7 +17,7 @@ OverlayEntry buildReactionsOverlay({
       return StatefulBuilder(
         builder: (context, setOverlayState) {
           return Positioned(
-            // TODO : handle the right position
+            // TODO : handle the right position (very important)
             left: position.dx - 20, 
             top: position.dy - 55, 
             child: MouseRegion(

@@ -2,6 +2,7 @@ import 'package:auth/domain/entities/reaction.dart';
 import 'package:auth/domain/entities/comment.dart';
 import 'package:equatable/equatable.dart';
 
+// TODO : write the acual class after finish the backend in all entities.. filse.. 
 class Post extends Equatable {
   final String id;
   final String authorId;
@@ -14,6 +15,10 @@ class Post extends Equatable {
   final DateTime? editedAt;
   final List<Comment> comments;
   final List<Reaction> reactions;
+  final bool isSaved ;
+  final bool isEdited;
+
+
 
   const Post({
     required this.id,
@@ -27,6 +32,8 @@ class Post extends Equatable {
     this.editedAt,
     this.comments = const [],
     this.reactions = const [],
+    this.isSaved = false,
+    this.isEdited = false,
   });
 
   int get likesCount => reactions.length;
@@ -44,5 +51,7 @@ class Post extends Equatable {
     editedAt,
     comments,
     reactions,
+    isSaved,
+    isEdited,
   ];
 }

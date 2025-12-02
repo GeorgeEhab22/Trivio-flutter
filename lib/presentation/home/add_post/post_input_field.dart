@@ -2,7 +2,13 @@ import 'package:flutter/material.dart';
 
 class PostInputField extends StatelessWidget {
   final TextEditingController controller;
-  const PostInputField({super.key, required this.controller});
+  final ValueChanged<String> onChanged;
+
+  const PostInputField({
+    super.key,
+    required this.controller,
+    required this.onChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -17,6 +23,7 @@ class PostInputField extends StatelessWidget {
         ),
         child: TextField(
           controller: controller,
+          onChanged: onChanged,
           maxLines: 4,
           decoration: const InputDecoration(
             hintText: "What's happening on your mind?",

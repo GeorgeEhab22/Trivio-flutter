@@ -41,7 +41,7 @@ class _ReactionInteractionState extends State<ReactionInteraction> {
     super.dispose();
   }
 
-  // --- Hover Logic ---
+  // Hover Logic
   void _onHoverEnter(bool isHovered) {
     if (!kIsWeb) return; 
 
@@ -58,7 +58,7 @@ class _ReactionInteractionState extends State<ReactionInteraction> {
     }
   }
 
-  // --- Overlay Logic ---
+  //  Overlay Logic
   void _showOverlay() {
     if (_isOverlayOpen) return;
     _removeOverlay();

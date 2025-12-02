@@ -49,13 +49,11 @@ class PostInteractionCubit extends Cubit<PostInteractionState> {
     int newCount = currentCount;
     ReactionType newReaction = currentReaction;
 
-// later add offside logic
+    // TODO:later add offside logic
     if (wasGoal) {
-      // User wants to remove the 'goal' reaction
       newReaction = ReactionType.none;
       newCount = (newCount - 1).clamp(0, 1 << 30);
     } else {
-      // User wants to add 'goal' reaction (or switch to it if he had 'none')
       if (currentReaction == ReactionType.none) {
         newCount = newCount + 1;
       }
@@ -65,20 +63,20 @@ class PostInteractionCubit extends Cubit<PostInteractionState> {
     emit(PostReactionUpdated(reactionType: newReaction, count: newCount));
 
     if (newReaction == ReactionType.none) {
-        await _performRemoveReaction(
-            postId: postId, 
-            userId: userId, 
-            oldReaction: currentReaction, 
-            oldCount: currentCount
-        );
+      await _performRemoveReaction(
+        postId: postId,
+        userId: userId,
+        oldReaction: currentReaction,
+        oldCount: currentCount,
+      );
     } else {
-        await _performReactApiCall(
-            postId: postId,
-            userId: userId,
-            reactionType: newReaction,
-            oldReaction: currentReaction,
-            oldCount: currentCount,
-        );
+      await _performReactApiCall(
+        postId: postId,
+        userId: userId,
+        reactionType: newReaction,
+        oldReaction: currentReaction,
+        oldCount: currentCount,
+      );
     }
   }
 
@@ -122,13 +120,15 @@ class PostInteractionCubit extends Cubit<PostInteractionState> {
 
     result.fold(
       (failure) {
-        emit(ReactToPostError(
-          postId: postId,
-          message: failure.message,
-          errorType: 'server',
-          oldReactionType: oldReaction,
-          oldCount: oldCount,
-        ));
+        emit(
+          ReactToPostError(
+            postId: postId,
+            message: failure.message,
+            errorType: 'server',
+            oldReactionType: oldReaction,
+            oldCount: oldCount,
+          ),
+        );
       },
       (post) {
         emit(ReactToPostSuccess(postId: post.id, reactionType: reactionType));
@@ -137,31 +137,34 @@ class PostInteractionCubit extends Cubit<PostInteractionState> {
   }
 
   Future<void> _performRemoveReaction({
-      required String postId,
-      required String userId,
-      required ReactionType oldReaction,
-      required int oldCount,
+    required String postId,
+    required String userId,
+    required ReactionType oldReaction,
+    required int oldCount,
   }) async {
-      final result = await removeReactionFromPostUseCase(
-          postId: postId, 
-          userId: userId,
-                );
+    final result = await removeReactionFromPostUseCase(
+      postId: postId,
+      userId: userId,
+    );
 
-      result.fold(
-          (failure) {
-            
-              emit(ReactToPostError(
-                  postId: postId,
-                  message: failure.message,
-                  errorType: 'server',
-                  oldReactionType: oldReaction,
-                  oldCount: oldCount,
-              ));
-          },
-          (post) {
-              emit(ReactToPostSuccess(postId: postId, reactionType: ReactionType.none));
-          }
-      );
+    result.fold(
+      (failure) {
+        emit(
+          ReactToPostError(
+            postId: postId,
+            message: failure.message,
+            errorType: 'server',
+            oldReactionType: oldReaction,
+            oldCount: oldCount,
+          ),
+        );
+      },
+      (post) {
+        emit(
+          ReactToPostSuccess(postId: postId, reactionType: ReactionType.none),
+        );
+      },
+    );
   }
 
   // delete post
@@ -258,4 +261,114 @@ class PostInteractionCubit extends Cubit<PostInteractionState> {
 
   String? get shareErrorMessage =>
       state is SharePostError ? (state as SharePostError).message : null;
+
+  // save post
+
+  Future<void> toggleSavePost({
+    required String postId,
+    required String userId,
+    required bool currentSavedStatus,
+  }) async {
+    final newStatus = !currentSavedStatus;
+    emit(PostSaveUpdated(isSaved: newStatus));
+
+    final result = await toggleSavePostUseCase(postId: postId, userId: userId);
+
+    result.fold(
+      (failure) {
+        emit(
+          SavePostError(
+            postId: postId,
+            message: failure.message,
+            oldStatus: currentSavedStatus,
+          ),
+        );
+      },
+      (updatedPost) {
+        emit(SavePostSuccess(postId: postId, isSaved: newStatus));
+      },
+    );
+  }
+
+  // follow user
+  Future<void> toggleFollowUser({
+    required String followerId,
+    required String followeeId,
+    required bool currentFollowStatus,
+  }) async {
+    // 1. Optimistic Update
+    final newStatus = !currentFollowStatus;
+    emit(PostFollowUpdated(isFollowing: newStatus));
+
+    final result = await toggleFollowUserUseCase( 
+      followedUserId: followeeId,
+      followerUserId: followerId,
+    );
+
+    result.fold(
+      (failure) {
+        emit(
+          FollowUserError(
+            message: failure.message,
+            oldStatus: currentFollowStatus,
+          ),
+        );
+      },
+      (_) {
+        emit(FollowUserSuccess(userId: followeeId, isFollowing: newStatus));
+      },
+    );
+  }
+
+  // edit post
+  Future<void> editPost({
+    required String postId,
+    required String userId,
+    required String newContent,
+    String? newImageUrl,
+    String? newVideoUrl,
+  }) async {
+    emit(EditPostLoading(postId: postId));
+
+    final result = await editPostUseCase(
+      postId: postId,
+      userId: userId,
+      newContent: newContent,
+      newImageUrl: newImageUrl,
+      newVideoUrl: newVideoUrl,
+    );
+
+    result.fold(
+      (failure) =>
+          emit(EditPostError(postId: postId, message: failure.message)),
+      (updatedPost) => emit(EditPostSuccess(updatedPost: updatedPost)),
+    );
+  }
+
+  // report post
+
+  Future<void> reportPost({
+    required String postId,
+    required String userId,
+    required String reason,
+  }) async {
+    emit(ReportPostLoading());
+
+    final result = await reportPostUseCase(
+      postId: postId,
+      userId: userId,
+      reason: reason,
+    );
+
+    result.fold(
+      (failure) => emit(ReportPostError(message: failure.message)),
+      (_) =>
+          emit(const ReportPostSuccess(message: "Post reported successfully")),
+    );
+  }
+
+  // Helper to clear states (useful when reusing the cubit)
+  void resetState() {
+    emit(PostInteractionInitial());
+  }
 }

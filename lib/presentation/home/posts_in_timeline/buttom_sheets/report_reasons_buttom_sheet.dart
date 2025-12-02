@@ -83,7 +83,7 @@ class ReportReasonsBottomSheet extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 6),
                       child: Row(
                         children: [
-                          const Icon(Icons.report, size: 20, color: Colors.redAccent),
+                          // const Icon(Icons.report, size: 20, color: Colors.redAccent),
                           const SizedBox(width: 12),
                           Expanded(
                             child: Text(

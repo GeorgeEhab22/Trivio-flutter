@@ -1,8 +1,11 @@
+import 'package:auth/common/functions/copy_to_clipboard.dart';
 import 'package:auth/constants/colors';
+import 'package:auth/domain/entities/comment.dart';
 import 'package:auth/presentation/authentication/widgets/show_custom_snackbar.dart';
-import 'package:auth/presentation/home/comments/comments_buttom_sheet.dart';
+import 'package:auth/presentation/home/comments/pages/comment_edit_page.dart';
+import 'package:auth/presentation/manager/comment_cubit/comment_cubit.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
 class BottomSheetManager {
@@ -30,7 +33,7 @@ class BottomSheetManager {
                   ),
                   title: const Text("Choose from Gallery"),
                   onTap: () {
-                    Navigator.pop(context);
+                    context.pop();
                     pickMedia(
                       isVideo: isVideo,
                       fromCamera: false,
@@ -48,7 +51,7 @@ class BottomSheetManager {
                   ),
                   title: const Text("Use Camera"),
                   onTap: () {
-                    Navigator.pop(context);
+                    context.pop();
                     pickMedia(
                       isVideo: isVideo,
                       fromCamera: true,
@@ -79,7 +82,6 @@ class BottomSheetManager {
         final XFile? pickedVideo = await picker.pickVideo(
           source: fromCamera ? ImageSource.camera : ImageSource.gallery,
         );
-
         if (pickedVideo != null) {
           onPicked([pickedVideo]);
         }
@@ -116,12 +118,12 @@ class BottomSheetManager {
               ListTile(
                 leading: const Icon(Icons.public),
                 title: const Text("Public"),
-                onTap: () => Navigator.pop(context, 'Public'),
+                onTap: () => context.pop('Public'),
               ),
               ListTile(
                 leading: const Icon(Icons.lock),
                 title: const Text("Private"),
-                onTap: () => Navigator.pop(context, 'Private'),
+                onTap: () => context.pop('Private'),
               ),
             ],
           ),
@@ -134,15 +136,13 @@ class BottomSheetManager {
     }
   }
 
+
+// TODO : handle states 
   static void showActions(
     BuildContext context, {
-    required VoidCallback onEdit,
-    required VoidCallback onDelete,
-    required VoidCallback onReply,
-    required VoidCallback onReport,
-    required VoidCallback onHide,
-    required String commentText,
+    required Comment comment,
     required bool isOwner,
+    required CommentCubit cubit,
   }) {
     showModalBottomSheet(
       context: context,
@@ -165,37 +165,24 @@ class BottomSheetManager {
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
-
-              actionTile(
-                icon: Icons.reply_outlined,
-                label: 'Reply',
-                onTap: () {
-                  Navigator.pop(context);
-                  onReply();
-                },
-              ),
-
-              divider(),
-
-              actionTile(
-                icon: Icons.copy_outlined,
-                label: 'Copy comment',
-                onTap: () async {
-                  await Clipboard.setData(ClipboardData(text: commentText));
-                  Navigator.pop(context);
-                  showCustomSnackBar(context, 'Comment copied', true);
-                },
-              ),
-
-              divider(),
-
               if (isOwner) ...[
                 actionTile(
-                  icon: Icons.edit_outlined,
-                  label: 'Edit',
+                  icon: Icons.reply_outlined,
+                  label: 'Reply',
                   onTap: () {
-                    Navigator.pop(context);
-                    onEdit();
+                    context.pop();
+                    cubit.triggerReply(comment);
+                  },
+                ),
+
+                divider(),
+
+                actionTile(
+                  icon: Icons.copy_outlined,
+                  label: 'Copy comment',
+                  onTap: () async {
+                    context.pop();
+                    copyToClipboard(context, comment.text);
                   },
                 ),
 
@@ -207,19 +194,62 @@ class BottomSheetManager {
                   textColor: Colors.redAccent,
                   iconColor: Colors.redAccent,
                   onTap: () {
-                    Navigator.pop(context);
-                    onDelete();
+                    context.pop();
+                    cubit.deleteComment(comment.id);
                   },
                 ),
-              ],
 
+                divider(),
+
+                if (comment.editedAt == null)
+                  actionTile(
+                    icon: Icons.edit_outlined,
+                    label: 'Edit',
+                    onTap: () {
+                      context.pop();
+                      navigateToEditPage(context, comment, cubit);
+                    },
+                  ),
+
+                if (comment.editedAt != null)
+                  actionTile(
+                    icon: Icons.history,
+                    label: 'View Edit History',
+                    onTap: () {
+                      context.pop();
+                      //cubit.showHistory(comment.id);
+                    },
+                  ),
+              ],
+              if (!isOwner) ...[
+                actionTile(
+                  icon: Icons.reply_outlined,
+                  label: 'Reply',
+                  onTap: () {
+                    context.pop();
+                    cubit.triggerReply(comment);
+                  },
+                ),
+
+                divider(),
+
+                actionTile(
+                  icon: Icons.copy_outlined,
+                  label: 'Copy comment',
+                  onTap: () async {
+                    context.pop();
+                    copyToClipboard(context, comment.text);
+                  },
+                ),
+
+                divider(),
 
                 actionTile(
                   icon: Icons.flag_outlined,
                   label: 'Report comment',
                   onTap: () {
-                    Navigator.pop(context);
-                    onReport();
+                    context.pop();
+                    cubit.reportComment(comment.id);
                   },
                 ),
 
@@ -229,12 +259,12 @@ class BottomSheetManager {
                   icon: Icons.hide_source_outlined,
                   label: 'Hide comment',
                   onTap: () {
-                    Navigator.pop(context);
-                    onHide();
+                    context.pop();
+                    cubit.hideComment(comment.id);
                   },
                 ),
               ],
-
+            ],
           ),
         ),
       ),
@@ -246,9 +276,9 @@ class BottomSheetManager {
   static Widget actionTile({
     required IconData icon,
     required String label,
-    required VoidCallback onTap,
     Color? textColor,
     Color? iconColor,
+    VoidCallback? onTap,
   }) {
     return InkWell(
       onTap: onTap,
@@ -268,24 +298,6 @@ class BottomSheetManager {
             ),
           ],
         ),
-      ),
-    );
-  }
-  static void openComments(BuildContext context, {
-    required int reactionsCount,
-    required VoidCallback onCommentAdded,
-    required VoidCallback onCommentDeleted,
-  }) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      barrierColor: Colors.black38,
-      builder: (ctx) => CommentsBottomSheet(
-        
-        reactionsCount: reactionsCount, postId: 'post1', currentUserId: 'user1',
-        // onCommentAdded: onCommentAdded,
-        // onCommentDeleted: onCommentDeleted,
       ),
     );
   }

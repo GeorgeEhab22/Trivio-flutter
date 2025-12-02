@@ -4,7 +4,7 @@ import 'package:dartz/dartz.dart';
 
 abstract class CommentRepository {
 
-  // 9 usecase
+  // 8 usecase
 
   Future<Either<Failure, List<Comment>>> getComments(String postId);
   Future<Either<Failure, Comment>> addComment({
@@ -14,7 +14,6 @@ abstract class CommentRepository {
     String? parentCommentId, // for replies
   });
   Future<Either<Failure, void>> deleteComment(String commentId);
-  Future<Either<Failure, Comment>> likeComment(String commentId , String userId);
   Future<Either<Failure, Comment>> editComment({
     required String commentId,
     required String userId,

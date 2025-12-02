@@ -19,42 +19,32 @@ class PostCubit extends Cubit<PostState> {
   int page = 1;
   bool isLoadingMore = false;
 
-
-
-final List<Post> _dummyPosts = [
-    Post(
-      id: '1',
-      authorId: '101',
+List<Post> _dummyPosts() {
+  return List.generate(3, (index) {
+    return Post(
+      id: '$index',
+      authorId: 'user_1',
       authorName: 'Marcus Rashford',
       authorImage: 'assets/images/player1.png',
       content: "Thrilled with the team's performance today! The energy on the pitch was electric. Great win, and a huge thank you to the fans for their incredible support! ⚽ #ManUtd #FootballIsLife",
       imageUrl: 'assets/images/post1.png',
-      createdAt: DateTime.now().subtract(const Duration(hours: 2)),
-      comments: [], reactions: [],
-    ),
-    Post(
-      id: '2',
-      authorId: '102',
-      authorName: 'LionessPride Official',
-      authorImage: 'assets/images/player2.png',
-      content: "What a spectacular match last night! The determination and skill shown by our squad were truly inspiring. Onwards and upwards! 💪 #WomensFootball",
-      imageUrl: 'assets/images/post2.png',
-      createdAt: DateTime.now().subtract(const Duration(hours: 5)),
-      comments: [], reactions: [],
-    ),
-    Post(
-      id: '3',
-      authorId: '103',
-      authorName: 'Marcus Rashford',
-      authorImage: 'assets/images/player1.png',
-      content: "Thrilled with the team's performance today! The energy on the pitch was electric. Great win...",
-      imageUrl: 'assets/images/post1.png',
-      createdAt: DateTime.now().subtract(const Duration(hours: 8)),
-      comments: [], reactions: [],
-    ),
-  ];
+      createdAt: DateTime.now().subtract(Duration(hours: index)), 
+      comments: const [], 
+      reactions: const [],
+      isSaved: false, 
+      isEdited: false,
+    );
+  });
+}
+// TODO:handle later , will be added to feed after refreshingggg
+void addNewPostToFeed(Post newPost) {
+    posts.insert(0, newPost);
+    
+    emit(PostLoaded(List.from(posts))); 
+  }
 
   Future<void> fetchPosts({bool refresh = false}) async {
+    final dummyPosts = _dummyPosts();
     if (refresh) {
       posts = [];
       page = 1;
@@ -63,9 +53,9 @@ final List<Post> _dummyPosts = [
     await Future.delayed(const Duration(seconds: 1));
 
     if (page == 1) {
-      posts = List.from(_dummyPosts);
+      posts = List.from(dummyPosts);
     } else {
-      posts.addAll(_dummyPosts); 
+      posts.addAll(dummyPosts); 
     }
     
     page++;
@@ -73,13 +63,15 @@ final List<Post> _dummyPosts = [
   }
 
   Future<void> loadMorePosts() async {
+        final dummyPosts = _dummyPosts();
+
     if (isLoadingMore) return;
     isLoadingMore = true;
     emit(PostsLoadingMore(posts));
     
     await Future.delayed(const Duration(seconds: 1)); 
     
-    posts.addAll(_dummyPosts);
+    posts.addAll(dummyPosts);
     page++;
     
     isLoadingMore = false;

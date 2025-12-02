@@ -1,3 +1,4 @@
+import 'package:auth/domain/entities/comment_history.dart';
 import 'package:auth/domain/entities/reaction.dart';
 import 'package:equatable/equatable.dart';
 
@@ -12,6 +13,10 @@ class Comment extends Equatable {
   final DateTime? editedAt;
   final List<Reaction> reactions;
   final String? parentCommentId;
+  final List<Comment>? repliesList;
+  final List<CommentRevision>? history;
+
+
 
   const Comment({
     required this.id,
@@ -24,7 +29,11 @@ class Comment extends Equatable {
     this.editedAt,
     this.reactions = const [],
     this.parentCommentId,
+    this.repliesList = const [],
+    this.history,
   });
+
+  
 
   bool get isReply => parentCommentId != null;
   int get likesCount => reactions.length;
@@ -40,5 +49,7 @@ class Comment extends Equatable {
         createdAt,
         reactions,
         parentCommentId,
+        repliesList  ,
+        history,
       ];
 }

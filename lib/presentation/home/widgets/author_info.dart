@@ -33,16 +33,25 @@ class AuthorInfo extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        CircleAvatar(
-          radius: avatarRadius,
-          backgroundColor: AppColors.iconsColor,
-          backgroundImage: authorImage != null
-              ? NetworkImage(authorImage!)
-              : null,
-          onBackgroundImageError: (_, __) {},
-          child: (authorImage == null)
-              ? Icon(Icons.person, color: AppColors.iconsColor)
-              : null,
+        ClipOval(
+          child: Container(
+            width: avatarRadius * 2,
+            height: avatarRadius * 2,
+            color: AppColors.lightBackground,
+            child: (authorImage != null && authorImage!.isNotEmpty)
+                ? Image.network(
+                    authorImage!,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return const Icon(Icons.person, color: Colors.grey);
+                    },
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return const Icon(Icons.person, color: Colors.grey);
+                    },
+                  )
+                : const Icon(Icons.person, color: Colors.grey),
+          ),
         ),
 
         const SizedBox(width: 10),
@@ -62,7 +71,7 @@ class AuthorInfo extends StatelessWidget {
                     Text(
                       formatTime(createdAt),
                       style: Styles.textStyle14.copyWith(
-                        color: const Color(0xFF888888),
+                        color: AppColors.lightGrey,
                       ),
                     ),
                   ],
@@ -81,7 +90,7 @@ class AuthorInfo extends StatelessWidget {
                       child: Text(
                         formatTime(createdAt),
                         style: Styles.textStyle14.copyWith(
-                          color: const Color(0xFF888888),
+                          color: AppColors.lightGrey,
                           height: 1,
                         ),
                       ),

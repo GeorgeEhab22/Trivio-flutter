@@ -1,11 +1,13 @@
 import 'package:auth/presentation/authentication/widgets/show_custom_snackbar.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../../common/basic_app_button.dart';
 
+// TODO : need to be refactored later (any thing related to share)
 class ShareBottomSheet extends StatefulWidget {
   // final VoidCallback onShare;
 
-  const ShareBottomSheet({super.key, });
+  const ShareBottomSheet({super.key});
 
   @override
   State<ShareBottomSheet> createState() => _ShareBottomSheetState();
@@ -50,7 +52,7 @@ class _ShareBottomSheetState extends State<ShareBottomSheet> {
 
     // Clear the input and close the sheet
     _controller.clear();
-    Navigator.pop(context);
+    context.pop();
   }
 
   @override
@@ -58,7 +60,9 @@ class _ShareBottomSheetState extends State<ShareBottomSheet> {
     // Use AnimatedPadding to follow the keyboard (keeps your original behavior)
     return AnimatedPadding(
       duration: const Duration(milliseconds: 200),
-      padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+      ),
       child: SafeArea(
         top: false,
         child: Container(
@@ -96,7 +100,10 @@ class _ShareBottomSheetState extends State<ShareBottomSheet> {
                     const SizedBox(width: 10),
                     const Text(
                       "User Name", // temporary placeholder
-                      style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
+                      style: TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                     const Spacer(),
                     BasicAppButton(

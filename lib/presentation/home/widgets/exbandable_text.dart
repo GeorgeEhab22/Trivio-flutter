@@ -44,7 +44,8 @@ class _ExpandableTextState extends State<ExpandableText> {
     )..layout(maxWidth: maxWidth);
 
     final overflow = tp.didExceedMaxLines;
-
+    // add dispose
+    tp.dispose();
     // Update cache
     _lastText = text;
     _lastMaxWidth = maxWidth;

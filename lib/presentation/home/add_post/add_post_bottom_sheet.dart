@@ -5,7 +5,11 @@ import 'package:auth/presentation/home/add_post/media_buttons_row.dart';
 import 'package:auth/presentation/home/add_post/post_input_field.dart';
 import 'package:auth/presentation/home/add_post/privacy_selector.dart';
 import 'package:auth/presentation/home/add_post/selected_media_preview.dart';
+import 'package:auth/injection_container.dart' as di;
+import 'package:auth/presentation/manager/post_cubit/create_post_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
 class AddPostBottomSheet extends StatefulWidget {
@@ -18,9 +22,6 @@ class AddPostBottomSheet extends StatefulWidget {
 class _AddPostBottomSheetState extends State<AddPostBottomSheet> {
   final TextEditingController _postController = TextEditingController();
 
-  final List<XFile> _selectedMedia = [];
-  String _privacy = "Public";
-
   @override
   void dispose() {
     _postController.dispose();
@@ -31,77 +32,101 @@ class _AddPostBottomSheetState extends State<AddPostBottomSheet> {
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
     final keyboardHeight = mediaQuery.viewInsets.bottom;
-    final maxHeight = mediaQuery.size.height * 0.95;
+    final maxHeight = mediaQuery.size.height * 0.8;
 
-    return AnimatedPadding(
-      duration: const Duration(milliseconds: 200),
-      padding: EdgeInsets.only(bottom: keyboardHeight),
-      child: Container(
-        height: maxHeight,
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-        ),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              AddPostHeader(
-                onPost: () {
-                  if (_postController.text.trim().isNotEmpty ||
-                      _selectedMedia.isNotEmpty) {
-                    Navigator.pop(context);
-                    showCustomSnackBar(
-                      context,
-                      "Post created successfully!",
-                      true,
-                    );
-                  }
-                },
+    return BlocProvider(
+      create: (context) => di.sl<CreatePostCubit>(),
+      child: BlocConsumer<CreatePostCubit, CreatePostState>(
+        listener: (context, state) {
+          if (state is CreatePostSuccess) {
+            context.pop(state.createdPost);
+            showCustomSnackBar(context, "Post created successfully!", true);
+          }
+          if (state is CreatePostError) {
+            showCustomSnackBar(context, state.message, false);
+          }
+        },
+        builder: (context, state) {
+          final cubit = context.read<CreatePostCubit>();
+
+          List<XFile> currentMedia = cubit.currentMedia;
+          String currentPrivacy = cubit.currentPrivacy;
+          bool isButtonEnabled = false;
+
+          if (state is CreatePostEditing) {
+            currentMedia = state.selectedMedia;
+            currentPrivacy = state.privacy;
+            isButtonEnabled = state.isPostButtonEnabled;
+          }
+
+          return AnimatedPadding(
+            duration: const Duration(milliseconds: 200),
+            padding: EdgeInsets.only(bottom: keyboardHeight),
+            child: Container(
+              height: maxHeight,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
               ),
-              PostInputField(controller: _postController),
-              if (_selectedMedia.isNotEmpty)
-                SelectedMediaPreview(
-                  files: _selectedMedia,
-                  onRemove: (path) {
-                    if (!mounted) return;
-                    setState(() {
-                      _selectedMedia.removeWhere((file) => file.path == path);
-                    });
-                  },
-                ),
-              MediaButtonsRow(
-                onPickImage: () => BottomSheetManager.showMediaSourceSheet(
-                  context,
-                  false,
-                  onPicked: (files) {
-                    if (!mounted) return;
-                    setState(() {
-                      _selectedMedia.addAll(files);
-                    });
-                  },
-                ),
-                onPickVideo: () => BottomSheetManager.showMediaSourceSheet(
-                  context,
-                  true,
-                  onPicked: (files) {
-                    if (!mounted) return;
-                    setState(() {
-                      _selectedMedia.addAll(files);
-                    });
-                  },
-                ),
-              ),
-              PrivacySelector(
-                privacy: _privacy,
-                onChange: (value) {
-                  if (!mounted) return;
-                  setState(() => _privacy = value);
-                },
-              ),
-            ],
-          ),
-        ),
+              child: cubit.isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          AddPostHeader(
+                            isPostEnabled:
+                                isButtonEnabled,
+                            onPost: () {
+                              cubit.submitPost(
+                                userId: "curr_user_id",
+                              );
+                            },
+                          ),
+
+                          PostInputField(
+                            controller: _postController,
+                            onChanged: (text) =>
+                                cubit.updateText(text),
+                          ),
+
+                          if (currentMedia.isNotEmpty)
+                            SelectedMediaPreview(
+                              files: currentMedia,
+                              onRemove: (index) {
+                                cubit.removeMedia(index);
+                              },
+                            ),
+
+                          MediaButtonsRow(
+                            onPickImage: () =>
+                                BottomSheetManager.showMediaSourceSheet(
+                                  context,
+                                  false,
+                                  onPicked: (files) {
+                                    cubit.addMedia(files);
+                                  },
+                                ),
+                            onPickVideo: () =>
+                                BottomSheetManager.showMediaSourceSheet(
+                                  context,
+                                  true,
+                                  onPicked: (files) {
+                                    cubit.addMedia(files);
+                                  },
+                                ),
+                          ),
+
+                          PrivacySelector(
+                            privacy: currentPrivacy,
+                            onChange: (value) => cubit.updatePrivacy(value),
+                          ),
+                        ],
+                      ),
+                    ),
+            ),
+          );
+        },
       ),
     );
   }

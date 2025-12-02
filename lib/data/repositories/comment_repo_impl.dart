@@ -63,25 +63,6 @@ class CommentRepositoryImpl implements CommentRepository {
   }
 
   @override
-  Future<Either<Failure, Comment>> likeComment(String commentId, String userId) async {
-    try {
-      // If your backend has a dedicated like endpoint returning updated comment:
-      final model = await remoteDataSource.reactToComment(
-        commentId: commentId,
-        userId: userId,
-        reactionType: 'like',
-      );
-      return Right(model.toEntity());
-    } on ServerException catch (e) {
-      return Left(ServerFailure(e.message));
-    } on NetworkException catch (e) {
-      return Left(NetworkFailure(e.message));
-    } catch (_) {
-      return Left(ServerFailure('Failed to like comment'));
-    }
-  }
-
-  @override
   Future<Either<Failure, Comment>> editComment({
     required String commentId,
     required String userId,

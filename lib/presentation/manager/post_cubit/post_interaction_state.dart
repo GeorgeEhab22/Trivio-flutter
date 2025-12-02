@@ -18,6 +18,7 @@ class ReactToPostLoading extends PostInteractionState {
 }
 
 class PostReactionUpdated extends PostInteractionState {
+  @override
   final ReactionType reactionType;
   final int count;
   const PostReactionUpdated({required this.reactionType, required this.count});
@@ -28,6 +29,7 @@ class PostReactionUpdated extends PostInteractionState {
 
 class ReactToPostSuccess extends PostInteractionState {
   final String postId;
+  @override
   final ReactionType reactionType;
   const ReactToPostSuccess({required this.postId, required this.reactionType});
 }
@@ -51,7 +53,7 @@ class ReactToPostError extends PostInteractionState {
   List<Object?> get props => [postId, message, errorType, oldReactionType, oldCount];
 }
 
-// remove reaction from post
+// TODO:remove reaction from post later .. does it important?
 
 // delete post
 class DeletePostLoading extends PostInteractionState {
@@ -90,7 +92,6 @@ class DeletePostError extends PostInteractionState {
 
 // share post
 
-// share post states
 class SharePostLoading extends PostInteractionState {
   final String postId;
   const SharePostLoading({required this.postId});
@@ -123,4 +124,89 @@ class SharePostError extends PostInteractionState {
 
   bool get isValidationError => errorType == 'validation';
   bool get isNetworkError => errorType == 'network';
+}
+
+
+
+
+// save post
+
+class PostSaveUpdated extends PostInteractionState {
+  final bool isSaved;
+  const PostSaveUpdated({required this.isSaved});
+  @override
+  List<Object> get props => [isSaved];
+}
+
+class SavePostSuccess extends PostInteractionState {
+  final String postId;
+  final bool isSaved;
+  const SavePostSuccess({required this.postId, required this.isSaved});
+}
+
+class SavePostError extends PostInteractionState {
+  final String postId;
+  final String message;
+  final bool oldStatus;
+  const SavePostError({required this.postId, required this.message, required this.oldStatus});
+}
+
+// follow user
+
+
+class PostFollowUpdated extends PostInteractionState {
+  final bool isFollowing;
+  const PostFollowUpdated({required this.isFollowing});
+  @override
+  List<Object> get props => [isFollowing];
+}
+
+class FollowUserSuccess extends PostInteractionState {
+  final String userId; // Followee ID
+  final bool isFollowing;
+  const FollowUserSuccess({required this.userId, required this.isFollowing});
+}
+
+class FollowUserError extends PostInteractionState {
+  final String message;
+  final bool oldStatus;
+  const FollowUserError({required this.message, required this.oldStatus});
+}
+
+
+ // edit post
+
+class EditPostLoading extends PostInteractionState {
+  final String postId;
+  const EditPostLoading({required this.postId});
+}
+
+class EditPostSuccess extends PostInteractionState {
+  final Post updatedPost;
+  const EditPostSuccess({required this.updatedPost});
+  @override
+  List<Object> get props => [updatedPost];
+}
+
+class EditPostError extends PostInteractionState {
+  final String postId;
+  final String message;
+  const EditPostError({required this.postId, required this.message});
+}
+
+
+
+// report post
+
+
+class ReportPostLoading extends PostInteractionState {}
+
+class ReportPostSuccess extends PostInteractionState {
+  final String message;
+  const ReportPostSuccess({required this.message});
+}
+
+class ReportPostError extends PostInteractionState {
+  final String message;
+  const ReportPostError({required this.message});
 }

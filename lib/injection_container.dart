@@ -16,7 +16,6 @@ import 'package:auth/domain/usecases/comment/delete_comment_usecase.dart';
 import 'package:auth/domain/usecases/comment/edit_comment_usecase.dart';
 import 'package:auth/domain/usecases/comment/get_comments_usecase.dart';
 import 'package:auth/domain/usecases/comment/get_replies_usecase.dart';
-import 'package:auth/domain/usecases/comment/like_comment_usecase.dart';
 import 'package:auth/domain/usecases/comment/mention_users_in_comment_usecase.dart';
 import 'package:auth/domain/usecases/comment/react_to_comment_usecase.dart';
 import 'package:auth/domain/usecases/post/comment_on_post_usecase.dart';
@@ -40,6 +39,8 @@ import 'package:auth/domain/usecases/sign_in/request_otp.dart';
 
 import 'package:auth/domain/usecases/sign_in/signin_usecase.dart';
 import 'package:auth/domain/usecases/sign_in/verify_otp.dart';
+import 'package:auth/presentation/manager/comment_cubit/comment_cubit.dart';
+import 'package:auth/presentation/manager/post_cubit/create_post_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/post_interaction_cubit.dart';
 import 'package:auth/presentation/manager/register_cubit/register_cubit.dart';
@@ -145,7 +146,23 @@ Future<void> init() async {
   sl.registerLazySingleton(() => EditCommentUseCase(sl()));
   sl.registerLazySingleton(() => GetCommentsUseCase(sl()));
   sl.registerLazySingleton(() => GetRepliesUseCase(sl()));
-  sl.registerLazySingleton(() => LikeCommentUseCase(sl()));
   sl.registerLazySingleton(() => MentionUsersInCommentUseCase(sl()));
   sl.registerLazySingleton(() => ReactToCommentUseCase(sl()));
+
+  sl.registerFactory(
+    () => CommentCubit(
+      addCommentUseCase: sl(),
+      deleteCommentUseCase: sl(),
+      editCommentUseCase: sl(),
+      getCommentsUseCase: sl(),
+      getRepliesUseCase: sl(),
+      mentionUsersInCommentUseCase: sl(),
+      reactToCommentUseCase: sl(),
+    ),
+  );
+
+  sl.registerFactory(
+    () => CreatePostCubit(
+      createPostUseCase: sl(),),
+  );
 }
