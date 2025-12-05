@@ -89,37 +89,61 @@ GoRouter createRouter() {
           );
         },
       ),
-      GoRoute(
+           GoRoute(
         path: '/app',
         builder: (context, state) => const SizedBox.shrink(),
         routes: [
-          ShellRoute(
-            builder: (context, state, child) => AuthShell(child: child),
-            routes: [
-              GoRoute(
-                path: 'home',
-                pageBuilder: (context, state) =>
-                    buildAnimatedPage(child: const HomePage(), newIndex: 0),
+          StatefulShellRoute.indexedStack(
+            builder: (context, state, navigationShell) {
+              // Pass the navigationShell into your AuthShell.
+              // navigationShell can be returned/placed directly (it is a widget).
+              return AuthShell(navigationShell: navigationShell);
+            },
+            branches: [
+              StatefulShellBranch(
+                routes: [
+                  GoRoute(
+                    path: 'home',
+                    pageBuilder: (context, state) =>
+                        NoTransitionPage(child: const HomePage()),
+                  ),
+                ],
               ),
-              GoRoute(
-                path: 'reels',
-                pageBuilder: (context, state) =>
-                    buildAnimatedPage(child: const ReelsPage(), newIndex: 1),
+              StatefulShellBranch(
+                routes: [
+                  GoRoute(
+                    path: 'reels',
+                    pageBuilder: (context, state) =>
+                        NoTransitionPage(child: const ReelsPage()),
+                  ),
+                ],
               ),
-              GoRoute(
-                path: 'chatbot',
-                pageBuilder: (context, state) =>
-                    buildAnimatedPage(child: const ChatBotPage(), newIndex: 2),
+              StatefulShellBranch(
+                routes: [
+                  GoRoute(
+                    path: 'chatbot',
+                    pageBuilder: (context, state) =>
+                        NoTransitionPage(child: const ChatBotPage()),
+                  ),
+                ],
               ),
-              GoRoute(
-                path: 'groups',
-                pageBuilder: (context, state) =>
-                    buildAnimatedPage(child: const GroupPage(), newIndex: 3),
+              StatefulShellBranch(
+                routes: [
+                  GoRoute(
+                    path: 'groups',
+                    pageBuilder: (context, state) =>
+                        NoTransitionPage(child: const GroupPage()),
+                  ),
+                ],
               ),
-              GoRoute(
-                path: 'stats',
-                pageBuilder: (context, state) =>
-                    buildAnimatedPage(child: const StatsPage(), newIndex: 4),
+              StatefulShellBranch(
+                routes: [
+                  GoRoute(
+                    path: 'stats',
+                    pageBuilder: (context, state) =>
+                        NoTransitionPage(child: const StatsPage()),
+                  ),
+                ],
               ),
             ],
           ),

@@ -22,7 +22,7 @@ class PostHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -43,7 +43,6 @@ class PostHeader extends StatelessWidget {
                 initialFollowStatus: isFollowing,
               ),
               
-              // Options Button
               IconButton(
                 icon: const Icon(Icons.more_vert, color: AppColors.iconsColor),
                 onPressed: () {

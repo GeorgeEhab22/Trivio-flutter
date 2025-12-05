@@ -1,17 +1,20 @@
+
 // ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:auth/core/app_routes.dart';
+
 
 class GlassmorphismNav extends StatefulWidget {
   final Map<int, String>? routeForIndex;
-  final int currentIndex; // Controlled from AuthShell
+  final int currentIndex;
+  final void Function(int index)? onTapIndex; // <-- NEW optional callback
 
   const GlassmorphismNav({
     super.key,
     this.routeForIndex,
     required this.currentIndex,
+    this.onTapIndex,
   });
 
   @override
@@ -31,11 +34,11 @@ class _GlassmorphismNavState extends State<GlassmorphismNav>
 
     _routeForIndex = widget.routeForIndex ??
         {
-          0: AppRoutes.home,
-          1: AppRoutes.reels,
-          2: AppRoutes.chatbot,
-          3: AppRoutes.groups,
-          4: AppRoutes.stats,
+          0: '/app/home',
+          1: '/app/reels',
+          2: '/app/chatbot',
+          3: '/app/groups',
+          4: '/app/stats',
         };
 
     _pulseController = AnimationController(
@@ -57,10 +60,16 @@ class _GlassmorphismNavState extends State<GlassmorphismNav>
   }
 
   void _onNavItemTapped(int index) {
+    // If shell provided an onTapIndex callback, use it (so it can call navigationShell.goBranch)
+    if (widget.onTapIndex != null) {
+      widget.onTapIndex!(index);
+      return;
+    }
+
+    // Fallback: use route map + GoRouter
     final routeName = _routeForIndex[index];
     if (routeName == null) return;
 
-    // Use go() so route is replaced and URL updates
     GoRouter.of(context).go(routeName);
   }
 

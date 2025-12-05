@@ -1,3 +1,4 @@
+import 'package:auth/presentation/home/share_post/send_post_button.dart';
 import 'package:flutter/material.dart';
 import 'package:auth/domain/entities/post.dart';
 import 'package:auth/domain/entities/reaction_type.dart';
@@ -23,7 +24,7 @@ class PostFooter extends StatelessWidget {
     final double spacing = screenWidth < 350 ? 12 : screenWidth < 600 ? 20 : 28;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Row(
         children: [
           ReactionAction(
@@ -40,7 +41,9 @@ class PostFooter extends StatelessWidget {
           ),
           SizedBox(width: spacing),
           ShareButton(count: 0),
+
           const Spacer(),
+         SendPostButton(postId: post.id),
         ],
       ),
     );
