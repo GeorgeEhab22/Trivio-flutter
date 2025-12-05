@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:auth/core/errors/failure.dart';
 import 'package:auth/domain/entities/post.dart';
 import 'package:auth/domain/entities/reaction_type.dart';
@@ -9,8 +11,8 @@ abstract class PostRepository {
   Future<Either<Failure, Post>> createPost({
     required String userId,
     required String content,
-    String? imageUrl,
-    String? videoUrl,
+    File? image,
+    File? video,
     List<String>? tags,
   });
 Future<Either<Failure, Post>> fetchSinglePost(String postId);

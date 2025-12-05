@@ -51,6 +51,7 @@ class PostHeader extends StatelessWidget {
                   showModalBottomSheet(
                     context: context,
                     backgroundColor: Colors.transparent,
+                    useRootNavigator: true,
                     builder: (ctx) => BlocProvider.value(
                       value: postCubit,
                       child: OptionsBottomSheet(

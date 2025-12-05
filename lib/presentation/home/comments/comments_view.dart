@@ -33,7 +33,6 @@ class _CommentsViewState extends State<CommentsView> {
     });
   }
 
-// dispose controller <=
   @override
   void dispose() {
     _controller.dispose();

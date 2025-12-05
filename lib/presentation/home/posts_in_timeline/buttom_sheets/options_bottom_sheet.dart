@@ -135,6 +135,7 @@ class OptionsBottomSheet extends StatelessWidget {
                 showModalBottomSheet(
                   context: context,
                   backgroundColor: Colors.transparent,
+                  useRootNavigator: true,
                   isScrollControlled: true,
                   builder: (ctx) {
                     return BlocProvider.value(

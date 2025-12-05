@@ -57,6 +57,8 @@ dependencies:
   intl: ^0.20.0
   cached_network_image: 
   skeletonizer: ^2.1.0+1
+  path: ^1.9.1
+  mime: ^1.0.2
 dev_dependencies:
   flutter_test:
     sdk: flutter

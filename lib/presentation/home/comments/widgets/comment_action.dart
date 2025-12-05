@@ -27,6 +27,7 @@ class CommentAction extends StatelessWidget {
         showModalBottomSheet(
           context: context,
           isScrollControlled: true,
+          useRootNavigator: true,
           backgroundColor: Colors.transparent,
           barrierColor: Colors.black38,
           builder: (ctx) => BlocProvider(

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:auth/core/errors/failure.dart';
 import 'package:auth/data/core/error/exceptions.dart';
 import 'package:auth/data/datasource/posts_remote_datasource.dart';
@@ -15,8 +17,8 @@ class PostRepositoryImpl implements PostRepository {
   Future<Either<Failure, Post>> createPost({
     required String userId,
     required String content,
-    String? imageUrl,
-    String? videoUrl,
+    File? image,
+    File? video,
     List<String>? tags,
   }) async {
     try {

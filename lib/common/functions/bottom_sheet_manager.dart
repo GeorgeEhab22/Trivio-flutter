@@ -17,6 +17,7 @@ class BottomSheetManager {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.white,
+      useRootNavigator: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -107,6 +108,7 @@ class BottomSheetManager {
   ) async {
     final String? selected = await showModalBottomSheet<String>(
       context: context,
+      useRootNavigator: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -147,6 +149,7 @@ class BottomSheetManager {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.white,
+      useRootNavigator: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
