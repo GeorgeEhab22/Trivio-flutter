@@ -1,4 +1,3 @@
-import 'package:auth/presentation/home/posts_in_timeline/widgets/post_image.dart';
 import 'package:flutter/material.dart';
 import 'package:auth/domain/entities/post.dart';
 import 'package:auth/presentation/home/widgets/exbandable_text.dart';
@@ -17,15 +16,15 @@ class PostContent extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
           child: ExpandableText(
-            text: post.content,
+            text: post.caption ?? '',
             previewLines: 2,
             canCollapse: true,
           ),
         ),
-        if (post.imageUrl != null) ...[
-          const SizedBox(height: 6),
-          PostImage(), 
-        ],
+        // if (post. != null) ...[
+        //   const SizedBox(height: 6),
+        //   PostImage(), 
+        // ],
       ],
     );
   }

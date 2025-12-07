@@ -12,17 +12,18 @@ class PostsBlocConsumer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dummyPost = Post(
-      id: '10',
+      postID: '10',
       authorId: '0',
-      authorName: 'Loading User...........',
-      authorImage: '',
-      content:
+      //authorName: 'Loading User...........',
+      //authorImage: '',
+      caption:
           'Loading content lines for skeleton effect.\nSecond line for better UI.',
-      createdAt: DateTime.now(),
-      comments: const [],
-      reactions: const [],
-      isSaved: false,
-      isEdited: false,
+      type: 'text',
+      //createdAt: DateTime.now(),
+      //comments: const [],
+      //reactions: const [],
+      //isSaved: false,
+      //isEdited: false,
     );
 
     return BlocConsumer<PostCubit, PostState>(

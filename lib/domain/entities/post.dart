@@ -1,57 +1,38 @@
+import 'package:auth/domain/entities/mentions.dart';
 import 'package:auth/domain/entities/reaction.dart';
-import 'package:auth/domain/entities/comment.dart';
 import 'package:equatable/equatable.dart';
 
-// TODO : write the acual class after finish the backend in all entities.. filse.. 
+// TODO : write the acual class after finish the backend in all entities.. filse..
 class Post extends Equatable {
-  final String id;
-  final String authorId;
-  final String authorName;
-  final String? authorImage;
-  final String content;
-  final String? imageUrl;
-  final String? videoUrl;
-  final DateTime createdAt;
-  final DateTime? editedAt;
-  final List<Comment> comments;
-  final List<Reaction> reactions;
-  final bool isSaved ;
-  final bool isEdited;
-
+  final String? authorId;
+  final String? postID;
+  final String? caption;
+  final String type;
+  final Mentions ? mentions; 
+  final bool? flagged;
+  final List<Reaction>? reactions;
+  final List <String> ? media;
 
 
   const Post({
-    required this.id,
-    required this.authorId,
-    required this.authorName,
-    this.authorImage,
-    required this.content,
-    this.imageUrl,
-    this.videoUrl,
-    required this.createdAt,
-    this.editedAt,
-    this.comments = const [],
-    this.reactions = const [],
-    this.isSaved = false,
-    this.isEdited = false,
+    this.authorId,
+    required this.type,
+    this.postID,
+    this.caption,
+    this.flagged,
+    this.mentions,
+    this.reactions,
+    this.media,
   });
 
-  int get likesCount => reactions.length;
-  int get commentsCount => comments.length;
+  int get likesCount => reactions?.length ?? 0;
+  //int get commentsCount => comments.length;
 
   @override
   List<Object?> get props => [
-    id,
     authorId,
-    authorName,
-    authorImage,
-    content,
-    imageUrl,
-    createdAt,
-    editedAt,
-    comments,
-    reactions,
-    isSaved,
-    isEdited,
+    caption,
+    type,
+    mentions,
   ];
 }

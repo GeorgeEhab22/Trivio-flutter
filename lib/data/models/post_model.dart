@@ -1,106 +1,143 @@
-import 'package:auth/data/models/comment_model.dart';
-import 'package:auth/data/models/reaction_model.dart';
+import 'dart:core';
 import 'package:auth/domain/entities/post.dart';
+import 'package:auth/domain/entities/mentions.dart';
+import 'package:auth/domain/entities/reaction_type.dart';
 
 class PostModel extends Post {
+  final int updateCount;               // maps "__v"
+  final List<String> media;            // server media URLs / filenames
+  final String? location;
+  final int views;
+  final DummyReactionCounter reactionCounts;
+
   const PostModel({
-    required super.id,
-    required super.authorId,
-    required super.authorName,
-    super.authorImage,
-    required super.content,
-    super.imageUrl,
-    super.videoUrl,
-    required super.createdAt,
-    super.editedAt,
-    super.comments = const [],
-    super.reactions = const [],
+    required super.postID,
+    required this.updateCount,
+    required this.reactionCounts,
+    required this.media,
+    required super.authorId,           // from Post entity
+    required super.type,               // from Post entity
+    super.caption,
+    super.mentions,
+    this.location,
+    this.views = 0,
+    super.flagged,
   });
 
+  /// Accepts either the whole response or just the `post` map.
   factory PostModel.fromJson(Map<String, dynamic> json) {
+    final Map<String, dynamic> raw =
+        (json['data'] != null && json['data']['post'] != null)
+            ? json['data']['post'] as Map<String, dynamic>
+            : json;
+
+    // --- reactionCounts ---
+    final Map<String, dynamic> reactionMap =
+        raw['reactionCounts'] as Map<String, dynamic>? ?? {};
+
+    final dummyReactions = DummyReactionCounter(
+      likesCount: (reactionMap['like'] ?? 0) as int,
+      lovesCount: (reactionMap['love'] ?? 0) as int,
+      hahaCount: (reactionMap['haha'] ?? 0) as int,
+      sadCount: (reactionMap['sad'] ?? 0) as int,
+      angryCount: (reactionMap['angry'] ?? 0) as int,
+      wowCount: (reactionMap['wow'] ?? 0) as int,
+    );
+
+    // --- mentions ---
+    final mentionsJson = raw['mentions'] as List<dynamic>? ?? [];
+    final userIds = <String>[];
+    final usernames = <String>[];
+
+    for (final m in mentionsJson) {
+      final map = m as Map<String, dynamic>;
+      userIds.add(map['_id'] as String? ?? '');
+      usernames.add(map['username'] as String? ?? '');
+    }
+
+    final mentions = Mentions(userIds: userIds, usernames: usernames);
+
+    // --- media (list of URLs / filenames coming from backend) ---
+    final mediaList = (raw['media'] as List<dynamic>? ?? [])
+        .map((m) => m as String)
+        .toList();
+
     return PostModel(
-      id: json['_id'] ?? '',
-      authorId: json['authorId'] ?? '',
-      authorName: json['authorName'] ?? '',
-      authorImage: json['authorImage'],
-      content: json['content'] ?? '',
-      imageUrl: json['imageUrl'],
-      videoUrl: json['videoUrl'],
-      createdAt: DateTime.parse(json['createdAt']),
-      editedAt: json['editedAt'] != null
-          ? DateTime.parse(json['editedAt'])
-          : null,
-      comments: (json['comments'] as List<dynamic>? ?? [])
-          .map((c) => CommentModel.fromJson(c).toEntity())
-          .toList(),
-      reactions: (json['reactions'] as List<dynamic>? ?? [])
-          .map((r) => ReactionModel.fromJson(r).toEntity())
-          .toList(),
+      postID: raw['_id'] as String? ?? '',
+      updateCount: (raw['__v'] ?? 0) as int,
+      authorId: raw['authorID'] as String? ?? '',
+      type: raw['type'] as String? ?? 'public',
+      caption: raw['caption'] as String?,
+      mentions: mentions,
+      media: mediaList,
+      location: raw['location'] as String?,
+      views: (raw['views'] ?? 0) as int,
+      flagged: (raw['flagged'] ?? false) as bool,
+      reactionCounts: dummyReactions,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      '_id': id,
-      'authorId': authorId,
-      'authorName': authorName,
-      'authorImage': authorImage,
-      'content': content,
-      'imageUrl': imageUrl,
-      'videoUrl': videoUrl,
-      'createdAt': createdAt.toIso8601String(),
-      'editedAt': editedAt?.toIso8601String(),
-      'comments': comments
-          .map((c) => CommentModel.fromEntity(c).toJson())
-          .toList(),
-      'reactions': reactions
-          .map((r) => ReactionModel.fromEntity(r).toJson())
-          .toList(),
+      '_id': postID,
+      '__v': updateCount,
+      'authorID': authorId,
+      'type': type,
+      'caption': caption,
+      'mentions': [
+        if (mentions != null)
+          for (int i = 0; i < mentions!.userIds.length; i++)
+            {
+              '_id': mentions!.userIds[i],
+              'username': mentions!.usernames[i],
+            }
+      ],
+      'media': media, 
+      'location': location,
+      'views': views,
+      'flagged': flagged,
+      'reactionCounts': {
+        'like': reactionCounts.likesCount,
+        'love': reactionCounts.lovesCount,
+        'haha': reactionCounts.hahaCount,
+        'sad': reactionCounts.sadCount,
+        'angry': reactionCounts.angryCount,
+        'wow': reactionCounts.wowCount,
+      },
     };
   }
 
   Post toEntity() {
     return Post(
-      id: id,
       authorId: authorId,
-      authorName: authorName,
-      authorImage: authorImage,
-      content: content,
-      imageUrl: imageUrl,
-      videoUrl: videoUrl,
-      createdAt: createdAt,
-      editedAt: editedAt,
-      comments: comments,
+      type: type,
+      caption: caption,
+      mentions: mentions,
+      media: media,
+      flagged: flagged,
       reactions: reactions,
+      postID: postID,
+
     );
   }
 
   factory PostModel.fromEntity(Post post) {
     return PostModel(
-      id: post.id,
+      postID: '',             
+      updateCount: 0,           
       authorId: post.authorId,
-      authorName: post.authorName,
-      authorImage: post.authorImage,
-      content: post.content,
-      imageUrl: post.imageUrl,
-      videoUrl: post.videoUrl,
-      createdAt: post.createdAt,
-      editedAt: post.editedAt,
-      comments: post.comments,
-      reactions: post.reactions,
-    );
-  }
-
-  factory PostModel.empty() {
-    return PostModel(
-      id: '',
-      authorId: '',
-      authorName: '',
-      content: '',
-      createdAt: DateTime.now(),
-      editedAt: null,
-      comments: const [],
-      reactions: const [],
+      type: post.type,
+      caption: post.caption,
+      mentions: post.mentions,
+      media: const [],
+      reactionCounts: DummyReactionCounter(
+        likesCount: 0,
+        lovesCount: 0,
+        hahaCount: 0,
+        sadCount: 0,
+        angryCount: 0,
+        wowCount: 0,
+      ),
     );
   }
 }

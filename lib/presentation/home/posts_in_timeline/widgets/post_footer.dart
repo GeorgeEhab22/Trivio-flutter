@@ -28,22 +28,23 @@ class PostFooter extends StatelessWidget {
       child: Row(
         children: [
           ReactionAction(
-            postId: post.id,
+            postId: post.postID??'',
             userId: currentUserId,
             initialReaction: currentReaction ?? ReactionType.none,
-            initialCount: post.reactions.length,
+            initialCount: post.reactions?.length ?? 0,
           ),
           SizedBox(width: spacing),
           CommentAction(
-            postId: post.id,
+            postId: post.postID??'',
             currentUserId: currentUserId,
-            commentsCount: post.comments.length,
+            //TODO : implement comments count later
+            commentsCount:  0,
           ),
           SizedBox(width: spacing),
           ShareButton(count: 0),
 
           const Spacer(),
-         SendPostButton(postId: post.id),
+         SendPostButton(postId: post.postID??''),
         ],
       ),
     );

@@ -6,7 +6,7 @@ import 'package:auth/core/styels.dart';
 class AuthorInfo extends StatelessWidget {
   final String authorName;
   final String? authorImage;
-  final DateTime createdAt;
+  final DateTime? createdAt;
   final bool showTimeInline;
   final double avatarRadius;
   final TextStyle? authorTextStyle;
@@ -14,7 +14,7 @@ class AuthorInfo extends StatelessWidget {
   const AuthorInfo({
     required this.authorName,
     this.authorImage,
-    required this.createdAt,
+    this.createdAt,
     super.key,
     this.showTimeInline = false,
     this.avatarRadius = 22,

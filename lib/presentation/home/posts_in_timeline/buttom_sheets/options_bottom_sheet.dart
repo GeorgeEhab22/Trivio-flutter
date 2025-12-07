@@ -60,7 +60,7 @@ class OptionsBottomSheet extends StatelessWidget {
                           current is SavePostError;
                     },
                     builder: (context, state) {
-                      bool isSaved = post.isSaved;
+                      bool isSaved = post.flagged ?? false;
 
                       if (state is PostSaveUpdated) {
                         isSaved = state.isSaved;
@@ -77,7 +77,7 @@ class OptionsBottomSheet extends StatelessWidget {
                         textColor: Colors.black87,
                         onTap: () {
                           cubit.toggleSavePost(
-                            postId: post.id,
+                            postId: post.postID ?? '',
                             userId: currentUserId,
                             currentSavedStatus: isSaved,
                           );
@@ -92,7 +92,7 @@ class OptionsBottomSheet extends StatelessWidget {
                     backgroundColor: Color(0xFFF5F5F5),
                     onTap: () {
                       //TODO : later copy the right post link..
-                      copyToClipboard(context, post.content);
+                      copyToClipboard(context, post.caption ?? 'No Link');
                     },
                   ),
                 ],
@@ -103,14 +103,14 @@ class OptionsBottomSheet extends StatelessWidget {
             const Divider(height: 1),
 
             // Options List
-            if (post.isEdited)
-              ListActionTile(
-                icon: Icons.history,
-                text: 'View Edit History',
-                onTap: () {
-                  // TODO : go to View Edit History page
-                },
-              ),
+            // if (post.isEdited)
+            //   ListActionTile(
+            //     icon: Icons.history,
+            //     text: 'View Edit History',
+            //     onTap: () {
+            //       // TODO : go to View Edit History page
+            //     },
+            //   ),
 
             ListActionTile(
               icon: Icons.visibility_off_outlined,
@@ -137,7 +137,7 @@ class OptionsBottomSheet extends StatelessWidget {
                       child: ReportReasonsBottomSheet(
                         onReportSelected: (reason) {
                           cubit.reportPost(
-                            postId: post.id,
+                            postId: post.postID??'',
                             userId: currentUserId,
                             reason: reason,
                           );

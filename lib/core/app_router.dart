@@ -95,8 +95,6 @@ GoRouter createRouter() {
         routes: [
           StatefulShellRoute.indexedStack(
             builder: (context, state, navigationShell) {
-              // Pass the navigationShell into your AuthShell.
-              // navigationShell can be returned/placed directly (it is a widget).
               return AuthShell(navigationShell: navigationShell);
             },
             branches: [

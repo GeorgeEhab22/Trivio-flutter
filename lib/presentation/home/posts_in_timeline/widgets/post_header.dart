@@ -28,9 +28,7 @@ class PostHeader extends StatelessWidget {
         children: [
           Expanded(
             child: AuthorInfo(
-              authorName: post.authorName,
-              authorImage: post.authorImage,
-              createdAt: post.createdAt,
+              authorName:"messi",
               showTimeInline: false,
             ),
           ),
@@ -39,7 +37,7 @@ class PostHeader extends StatelessWidget {
             children: [
               FollowButton(
                 currentUserId: currentUserId,
-                authorId: post.authorId,
+                authorId: post.authorId ?? '',
                 initialFollowStatus: isFollowing,
               ),
               

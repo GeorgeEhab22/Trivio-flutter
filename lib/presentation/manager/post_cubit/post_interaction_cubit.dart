@@ -131,7 +131,7 @@ class PostInteractionCubit extends Cubit<PostInteractionState> {
         );
       },
       (post) {
-        emit(ReactToPostSuccess(postId: post.id, reactionType: reactionType));
+        emit(ReactToPostSuccess(postId: post.postID??'', reactionType: reactionType));
       },
     );
   }
@@ -169,12 +169,12 @@ class PostInteractionCubit extends Cubit<PostInteractionState> {
 
   // delete post
   Future<void> deletePost({required Post post}) async {
-    emit(DeletePostLoading(postId: post.id));
+    emit(DeletePostLoading(postId: post.postID??''));
 
-    final result = await deletePostUseCase(post.id);
+    final result = await deletePostUseCase(post.postID??'');
 
     result.fold(
-      (failure) => emit(_mapDeleteFailureToState(failure, post.id)),
+      (failure) => emit(_mapDeleteFailureToState(failure, post.postID??'')),
       (_) => emit(DeletePostSuccess(post: post)),
     );
   }

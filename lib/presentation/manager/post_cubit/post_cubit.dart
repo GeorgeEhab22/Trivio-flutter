@@ -22,17 +22,18 @@ class PostCubit extends Cubit<PostState> {
 List<Post> _dummyPosts() {
   return List.generate(3, (index) {
     return Post(
-      id: '$index',
+      postID: '$index',
       authorId: 'user_1',
-      authorName: 'Marcus Rashford',
-      authorImage: 'assets/images/player1.png',
-      content: "Thrilled with the team's performance today! The energy on the pitch was electric. Great win, and a huge thank you to the fans for their incredible support! ⚽ #ManUtd #FootballIsLife",
-      imageUrl: 'assets/images/post1.png',
-      createdAt: DateTime.now().subtract(Duration(hours: index)), 
-      comments: const [], 
-      reactions: const [],
-      isSaved: false, 
-      isEdited: false,
+      type: 'public',
+      //authorName: 'Marcus Rashford',
+      //authorImage: 'assets/images/player1.png',
+      caption: "Thrilled with the team's performance today! The energy on the pitch was electric. Great win, and a huge thank you to the fans for their incredible support! ⚽ #ManUtd #FootballIsLife",
+      //imageUrl: 'assets/images/post1.png',
+      //createdAt: DateTime.now().subtract(Duration(hours: index)), 
+      //comments: const [], 
+      //reactions: const [],
+      //isSaved: false, 
+      //isEdited: false,
     );
   });
 }

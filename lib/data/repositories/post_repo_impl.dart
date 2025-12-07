@@ -35,16 +35,10 @@ class PostRepositoryImpl implements PostRepository {
       // for testt after link with cubit
       await Future.delayed(const Duration(seconds: 1));
       final mockPost = Post(
-        id: '1',
+        
         authorId: userId,
-        authorName: "Test User",
-        authorImage: "",
-        createdAt: DateTime.now(),
-        content: "Test Content",
-        isSaved:
-            false,
-        reactions: const [],
-        comments: const [],
+        caption: content,
+        type: 'text',
       );
       return Right(mockPost);
     } on AuthException catch (e) {
