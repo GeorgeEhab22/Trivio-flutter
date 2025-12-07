@@ -1,4 +1,5 @@
 import 'package:auth/core/custom_bottom_navigation_bar.dart';
+import 'package:auth/presentation/user/user_profile_settings_view.dart';
 import 'package:auth/presentation/user/user_profile_view.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -152,6 +153,15 @@ GoRouter createRouter() {
                     path: 'profile',
                     pageBuilder: (context, state) =>
                         NoTransitionPage(child: const UserProfileView()),
+                  ),
+                ],
+              ),
+              StatefulShellBranch(
+                routes: [
+                  GoRoute(
+                    path: 'profile_settings',
+                    pageBuilder: (context, state) =>
+                        NoTransitionPage(child: const UserProfileSettings()),
                   ),
                 ],
               ),

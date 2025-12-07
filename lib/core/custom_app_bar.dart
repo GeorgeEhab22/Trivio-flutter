@@ -1,5 +1,6 @@
 import 'package:auth/constants/paths.dart';
 import 'package:auth/core/app_routes.dart';
+import 'package:auth/core/home_appbar_logo_and_searchbox.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -20,54 +21,8 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
         padding: const EdgeInsets.symmetric(horizontal: 12),
         child: Row(
           children: [
-            Flexible(
-              child: Row(
-                children: [
-                  const Text(
-                    'Trivio',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.w800,
-                      fontSize: 25,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(width: 12),
-                  ConstrainedBox(
-                    constraints: const BoxConstraints(
-                      maxWidth: 110, 
-                      minWidth: 80,
-                      maxHeight: 36,
-                    ),
-                    child: Container(
-                      height: 36,
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade200,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.search, color: AppColors.iconsColor, size: 20),
-                          const SizedBox(width: 6),
-                          // allow text to ellipsize
-                          const Flexible(
-                            child: Text(
-                              'Search',
-                              style: TextStyle(color: Color(0xFF565d6d), fontSize: 14),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(width: 8),
+            HomeAppBarLogoAndSearchBox(),
+            // const SizedBox(width: 8),
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [

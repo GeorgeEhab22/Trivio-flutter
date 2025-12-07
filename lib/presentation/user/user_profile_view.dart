@@ -1,9 +1,12 @@
-
-import 'package:auth/constants/colors.dart';
+import 'package:auth/core/app_routes.dart';
+import 'package:auth/core/home_appbar_logo_and_searchbox.dart';
 import 'package:auth/core/styels.dart';
-import 'package:auth/presentation/user/profile_widgets.dart';
+import 'package:auth/presentation/user/custom_profile_filled_button.dart';
+import 'package:auth/presentation/user/profile_info_box.dart';
+import 'package:auth/presentation/user/profile_social_info.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:auth/constants/colors.dart';
+import 'package:go_router/go_router.dart';
 
 class UserProfileView extends StatelessWidget {
   const UserProfileView({super.key});
@@ -12,64 +15,58 @@ class UserProfileView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Center(child: Text("My Profile", style: Styles.textStyle30)),
-        shape: Border(
-          bottom: BorderSide(color: AppColors.lightGrey, width: 2),
-        ),
-      ),
-      body: Padding(
-        padding: EdgeInsets.all(MediaQuery.widthOf(context) * 0.025),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
+        title: Row(
           children: [
-            profileInfoBox(context),
-            SizedBox(height: 30),
-            profileSocialInfo(),
-            SizedBox(height: 30),
-            customProfileFilledButton(
-              () {},
-              "Edit Profile",
-              FontAwesomeIcons.userPen,
-              color: AppColors.primary,
+            const HomeAppBarLogoAndSearchBox(),
+            Spacer(),
+            IconButton(
+              onPressed: () {
+                //share profile
+              }, 
+            icon: Icon(Icons.share)
             ),
-            SizedBox(height: 10),
-            customProfileFilledButton(
-              () {},
-              "Share Profile",
-              Icons.share_outlined,
-            ),
-            SizedBox(height: 30),
-            Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: AppColors.lightGrey, 
-                    width: 2, 
-                  ),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: ListView(
-                  physics: BouncingScrollPhysics(),
-                  children: [
-                    settingsRow(title: "Account Settings", subtitle: "Manage your account details and preferences.", onpressed: (){}),
-                    Divider(color: AppColors.lightGrey),
-                    settingsRow(title: "Privacy Settings", subtitle: "Control who sees your posts and activity.", onpressed: (){}),
-                    Divider(color: AppColors.lightGrey),
-                    settingsRow(title: "Notification Preferences", subtitle: "Customize your notification alerts.", onpressed: (){}),
-                    Divider(color: AppColors.lightGrey),
-                    settingsRow(title: "App Preferences", subtitle: "Adjust language, theme, and data usage", onpressed: (){}),
-                    Divider(color: AppColors.lightGrey),
-                    settingsRow(title: "Require Foloow Requests", subtitle: "Manually approve followers", onpressed: (){}, isToggle: true),
-                    Divider(color: AppColors.lightGrey),
-                    settingsRow(title: "Searchable Profile", subtitle: "Allow your profile to appear in search results", onpressed: (){}, isToggle: true),
-                  ],
-                ),
-              ),
+
+            IconButton(
+              onPressed: () {
+                GoRouter.of(context).push(AppRoutes.userProfileSettings);
+              },
+              icon: Icon(Icons.menu),
             ),
           ],
         ),
+        shape: Border(bottom: BorderSide(color: AppColors.lightGrey, width: 2)),
+      ),
+      body: ListView(
+        
+        children: [
+          ProfileInfoBox(),
+          SizedBox(height: 10,),
+          ProfileSocialInfo(),
+          SizedBox(height: 10,),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
+            child: CustomProfileFilledButton(
+              onpressed: () {
+              
+              }, 
+            displayText: "Follow", 
+            icon: Icons.person_add_alt_1_outlined
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12),
+            child: Align(
+              alignment: Alignment.topLeft,
+              child: Text(
+                "Posts",
+                style: Styles.textStyle30,
+              ),
+            ),
+            // posts here
+          )
+
+        ],
       ),
     );
   }
 }
-
