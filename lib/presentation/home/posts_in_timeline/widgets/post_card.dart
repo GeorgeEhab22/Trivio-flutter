@@ -56,8 +56,7 @@ class PostCard extends StatelessWidget {
                   child: Card(
                     margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                     color: Colors.white,
-                    elevation: 0.1,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    elevation: 0.2,
                     child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 6),
                       child: Column(

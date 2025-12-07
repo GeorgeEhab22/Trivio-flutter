@@ -68,7 +68,7 @@ Widget profileInfoBox(
 }) {
   return Container(
     decoration: BoxDecoration(
-      border: Border.all(color: AppColors.lightGrey, width: 2),
+      //border: Border.all(color: AppColors.lightGrey, width: 2),
       borderRadius: BorderRadius.circular(15),
     ),
     child: Center(
@@ -115,8 +115,10 @@ Widget profileSocialInfo({
   int numberOfPosts = 0,
 }) {
   return Container(
+    
     decoration: BoxDecoration(
-      border: Border.all(color: AppColors.lightGrey, width: 2),
+      //border: Border.all(color: AppColors.lightGrey, width: 2),
+
       borderRadius: BorderRadius.circular(15),
     ),
     child: Padding(

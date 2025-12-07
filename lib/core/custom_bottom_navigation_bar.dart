@@ -37,8 +37,8 @@ class _GlassmorphismNavState extends State<GlassmorphismNav>
           0: '/app/home',
           1: '/app/reels',
           2: '/app/chatbot',
-          3: '/app/groups',
-          4: '/app/stats',
+          3: '/app/stats',
+          4: '/app/profile',
         };
 
     _pulseController = AnimationController(
@@ -60,13 +60,11 @@ class _GlassmorphismNavState extends State<GlassmorphismNav>
   }
 
   void _onNavItemTapped(int index) {
-    // If shell provided an onTapIndex callback, use it (so it can call navigationShell.goBranch)
     if (widget.onTapIndex != null) {
       widget.onTapIndex!(index);
       return;
     }
 
-    // Fallback: use route map + GoRouter
     final routeName = _routeForIndex[index];
     if (routeName == null) return;
 
@@ -109,8 +107,8 @@ class _GlassmorphismNavState extends State<GlassmorphismNav>
               _buildGlassNavItem(Icons.home_rounded, 0),
               _buildGlassNavItem(Icons.play_circle_filled, 1),
               _buildGlassNavItem(Icons.smart_toy_rounded, 2),
-              _buildGlassNavItem(Icons.people_rounded, 3),
-              _buildGlassNavItem(Icons.bar_chart_rounded, 4),
+              _buildGlassNavItem(Icons.bar_chart_rounded, 3),
+              _buildGlassNavItem(Icons.person_rounded, 4),
             ],
           ),
         ),
@@ -188,15 +186,15 @@ class ReelsPage extends StatelessWidget {
   }
 }
 
-class GroupPage extends StatelessWidget {
-  const GroupPage({super.key});
+class ProfilePage extends StatelessWidget {
+  const ProfilePage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       color: Colors.white,
       child: const Center(
-        child: Text("👥 Group Page", style: TextStyle(fontSize: 24)),
+        child: Text("👥 Profile Page", style: TextStyle(fontSize: 24)),
       ),
     );
   }

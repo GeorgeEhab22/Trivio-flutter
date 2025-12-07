@@ -4,7 +4,6 @@ import 'package:auth/presentation/home/posts_in_timeline/buttom_sheets/widgets/l
 import 'package:auth/presentation/home/posts_in_timeline/buttom_sheets/widgets/square_action_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:auth/domain/entities/post.dart';
 import 'package:auth/presentation/manager/post_cubit/post_interaction_cubit.dart';
 import 'package:auth/common/functions/copy_to_clipboard.dart';
@@ -82,7 +81,6 @@ class OptionsBottomSheet extends StatelessWidget {
                             userId: currentUserId,
                             currentSavedStatus: isSaved,
                           );
-                          context.pop();
                         },
                       );
                     },
@@ -93,7 +91,6 @@ class OptionsBottomSheet extends StatelessWidget {
                     icon: Icons.link_outlined,
                     backgroundColor: Color(0xFFF5F5F5),
                     onTap: () {
-                      context.pop();
                       //TODO : later copy the right post link..
                       copyToClipboard(context, post.content);
                     },
@@ -111,7 +108,6 @@ class OptionsBottomSheet extends StatelessWidget {
                 icon: Icons.history,
                 text: 'View Edit History',
                 onTap: () {
-                  context.pop();
                   // TODO : go to View Edit History page
                 },
               ),
@@ -120,7 +116,6 @@ class OptionsBottomSheet extends StatelessWidget {
               icon: Icons.visibility_off_outlined,
               text: 'Not Interested',
               onTap: () {
-                context.pop();
                 // TODO use the cubit to mark the post as not interested
               },
             ),
@@ -131,7 +126,6 @@ class OptionsBottomSheet extends StatelessWidget {
               text: 'Report',
               color: Colors.redAccent,
               onTap: () {
-                context.pop();
                 showModalBottomSheet(
                   context: context,
                   backgroundColor: Colors.transparent,
@@ -142,7 +136,6 @@ class OptionsBottomSheet extends StatelessWidget {
                       value: cubit,
                       child: ReportReasonsBottomSheet(
                         onReportSelected: (reason) {
-                          ctx.pop();
                           cubit.reportPost(
                             postId: post.id,
                             userId: currentUserId,
@@ -162,7 +155,6 @@ class OptionsBottomSheet extends StatelessWidget {
                 text: 'Delete Post',
                 color: Colors.red,
                 onTap: () {
-                  context.pop();
                   cubit.deletePost(post: post);
                 },
               ),

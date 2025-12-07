@@ -1,5 +1,4 @@
 import 'package:auth/core/custom_bottom_navigation_bar.dart';
-import 'package:auth/presentation/user/user_profile_view.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -128,16 +127,7 @@ GoRouter createRouter() {
                   ),
                 ],
               ),
-              StatefulShellBranch(
-                routes: [
-                  GoRoute(
-                    path: 'groups',
-                    pageBuilder: (context, state) =>
-                        NoTransitionPage(child: const GroupPage()),
-                  ),
-                ],
-              ),
-              StatefulShellBranch(
+               StatefulShellBranch(
                 routes: [
                   GoRoute(
                     path: 'stats',
@@ -151,7 +141,7 @@ GoRouter createRouter() {
                   GoRoute(
                     path: 'profile',
                     pageBuilder: (context, state) =>
-                        NoTransitionPage(child: const UserProfileView()),
+                        NoTransitionPage(child: const ProfilePage()),
                   ),
                 ],
               ),

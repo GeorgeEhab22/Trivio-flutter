@@ -94,7 +94,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                 const SizedBox(width: 8),
                 IconButton(
                   onPressed: () {
-                    GoRouter.of(context).push(AppRoutes.userProfile);
+                    GoRouter.of(context).push(AppRoutes.settings);
                   },
                   icon: const Icon(
                     Icons.menu,
