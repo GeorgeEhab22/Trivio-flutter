@@ -1,4 +1,4 @@
-import 'package:auth/presentation/user/custom_column_for_profile_info.dart';
+import 'package:auth/presentation/user/widgets/custom_column_for_profile_info.dart';
 import 'package:flutter/material.dart';
 import 'package:auth/constants/colors.dart';
 

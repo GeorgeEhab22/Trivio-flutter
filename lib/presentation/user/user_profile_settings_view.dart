@@ -1,10 +1,11 @@
 import 'package:auth/constants/colors.dart';
 import 'package:auth/core/styels.dart';
+import 'package:auth/presentation/user/widgets/custom_profile_filled_button.dart';
+import 'package:auth/presentation/user/widgets/profile_info_box.dart';
+import 'package:auth/presentation/user/widgets/settings_row.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'custom_profile_filled_button.dart';
-import 'profile_info_box.dart';
-import 'settings_row.dart';
+
 
 class UserProfileSettings extends StatelessWidget {
   const UserProfileSettings({super.key});

@@ -1,9 +1,9 @@
 import 'package:auth/core/app_routes.dart';
 import 'package:auth/core/home_appbar_logo_and_searchbox.dart';
 import 'package:auth/core/styels.dart';
-import 'package:auth/presentation/user/custom_profile_filled_button.dart';
-import 'package:auth/presentation/user/profile_info_box.dart';
-import 'package:auth/presentation/user/profile_social_info.dart';
+import 'package:auth/presentation/user/widgets/custom_profile_filled_button.dart';
+import 'package:auth/presentation/user/widgets/profile_info_box.dart';
+import 'package:auth/presentation/user/widgets/profile_social_info.dart';
 import 'package:flutter/material.dart';
 import 'package:auth/constants/colors.dart';
 import 'package:go_router/go_router.dart';
