@@ -16,33 +16,35 @@ class ProfileSocialInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      child: Container(
+    return Container(
         decoration: BoxDecoration(
-          border: Border.all(color: AppColors.customGrey, width: 2),
-          borderRadius: BorderRadius.circular(30),
+          border: Border.all(color: AppColors.customGrey, width: 1.5),
+          borderRadius: BorderRadius.circular(15),
         ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10),
-          child: Row(
-            children: [
-              CustomColumnForProfileInfo(
+
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            Expanded(
+              child: CustomColumnForProfileInfo(
                 number: numberOfFollowers.toString(),
                 thing: "followers",
               ),
-              CustomColumnForProfileInfo(
+            ),
+            Expanded(
+              child: CustomColumnForProfileInfo(
                 number: numberOfFollowing.toString(),
                 thing: "following",
               ),
-              CustomColumnForProfileInfo(
+            ),
+            Expanded(
+              child: CustomColumnForProfileInfo(
                 number: numberOfPosts.toString(),
                 thing: "posts",
               ),
-            ],
-          ),
+            ),
+          ],
         ),
-      ),
-    );
+      );
   }
 }

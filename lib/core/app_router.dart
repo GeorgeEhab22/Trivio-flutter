@@ -49,7 +49,7 @@ CustomTransitionPage buildAnimatedPage({
 
 GoRouter createRouter() {
   return GoRouter(
-    initialLocation: '/app/home',
+    initialLocation: '/app/profile',
     routes: [
       GoRoute(
         path: AppRoutes.signIn,

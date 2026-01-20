@@ -18,7 +18,7 @@ class UserProfileSettings extends StatelessWidget {
         shape: Border(bottom: BorderSide(color: AppColors.lightGrey, width: 2)),
       ),
       body: Padding(
-        padding: EdgeInsets.all(MediaQuery.widthOf(context) * 0.025),
+        padding: EdgeInsets.all(MediaQuery.widthOf(context) * 0.02),
         child: SingleChildScrollView(
           physics: BouncingScrollPhysics(),
           child: Column(

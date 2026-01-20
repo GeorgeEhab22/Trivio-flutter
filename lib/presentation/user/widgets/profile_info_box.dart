@@ -1,6 +1,7 @@
+import 'package:auth/constants/colors.dart';
 import 'package:auth/core/styels.dart';
+import 'package:auth/presentation/user/widgets/profile_social_info.dart';
 import 'package:flutter/material.dart';
-
 
 class ProfileInfoBox extends StatelessWidget {
   final String username;
@@ -10,61 +11,116 @@ class ProfileInfoBox extends StatelessWidget {
   const ProfileInfoBox({
     super.key,
     this.username = "Username",
-    this.userAbout = "About",
+    this.userAbout = "about",
     this.avatarUrl,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        padding: const EdgeInsets.all(10),
+    final double avatarSize = MediaQuery.of(context).size.height * 0.12;
 
-        child: Row(
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SizedBox(
-                  width: MediaQuery.of(context).size.height * 0.14,
-                  height: MediaQuery.of(context).size.height * 0.14,
-                  child: CircleAvatar(
-                    backgroundColor: Colors.black,
-                    backgroundImage: avatarUrl != null && avatarUrl!.isNotEmpty
-                        ? NetworkImage(avatarUrl!)
-                        : null,
-                    child: (avatarUrl == null || avatarUrl!.isEmpty)
-                        ? Center(
-                          child: Text(
+    return Container(
+      padding: const EdgeInsets.all(12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          /// Avatar + Username (top aligned)
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                width: avatarSize,
+                height: avatarSize,
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    /// Avatar
+                    CircleAvatar(
+                      radius: avatarSize / 2,
+                      backgroundColor: Colors.black,
+                      backgroundImage:
+                          avatarUrl != null && avatarUrl!.isNotEmpty
+                          ? NetworkImage(avatarUrl!)
+                          : null,
+                      child: (avatarUrl == null || avatarUrl!.isEmpty)
+                          ? Text(
                               username[0].toUpperCase(),
                               style: Styles.textStyle25.copyWith(
                                 color: Colors.white,
                               ),
+                            )
+                          : null,
+                    ),
+
+                    /// Small circular button
+                    Positioned(
+                      bottom: -2,
+                      right: -2,
+                      child: Material(
+                        color: AppColors.primary,
+                        shape: const CircleBorder(),
+                        elevation: 2,
+                        child: InkWell(
+                          customBorder: const CircleBorder(),
+                          onTap: () {
+                            // TODO: handle follow of the profile
+                          },
+                          child: const SizedBox(
+                            width: 32,
+                            height: 32,
+                            child: Icon(
+                              Icons.add,
+                              size: 18,
+                              color: Colors.white,
                             ),
-                        )
-                        : null,
-                  ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                 Text(
-                    username.length > 12 ? username.substring(0, 12): username, //preferably just make the username limited?
-                    style: username.length <= 8
-                      ? Styles.textStyle25
-                      : Styles.textStyle20,
-                  ),
-              ],
-            ),
-            const SizedBox(width: 20),
-            Expanded(
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  userAbout, 
-                  style: TextStyle(fontSize: 20),
-                  maxLines: 6,
-                  overflow: TextOverflow.ellipsis,),
               ),
+
+              const SizedBox(width: 16),
+
+              /// Username aligned to top of avatar
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      child: Text(
+                        username.length > 16
+                            ? username.substring(0, 16)
+                            : username,
+                        style: username.length <= 10
+                            ? Styles.textStyle25
+                            : Styles.textStyle20,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    ProfileSocialInfo(),
+                  ],
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 12),
+
+          /// About text (under both)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 5.0),
+            child: Text(
+              userAbout,
+              style: const TextStyle(fontSize: 18),
+              maxLines: 4,
+              overflow: TextOverflow.ellipsis,
             ),
-          ],
-        ),
+          ),
+        ],
+      ),
     );
   }
 }
