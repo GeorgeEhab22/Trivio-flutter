@@ -19,7 +19,7 @@ class PostInputField extends StatelessWidget {
         decoration: BoxDecoration(
           border: Border.all(color: Colors.black12),
           borderRadius: BorderRadius.circular(12),
-          color: Colors.white,
+          color: Theme.of( context).cardColor,
         ),
         child: TextField(
           controller: controller,

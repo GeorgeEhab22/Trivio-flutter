@@ -1,4 +1,3 @@
-import 'package:auth/constants/colors.dart';
 import 'package:auth/injection_container.dart' as di;
 import 'package:auth/presentation/home/comments/comments_view.dart';
 import 'package:auth/presentation/manager/comment_cubit/comment_cubit.dart';

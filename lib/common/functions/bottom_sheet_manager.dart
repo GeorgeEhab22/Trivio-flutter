@@ -17,7 +17,7 @@ class BottomSheetManager {
   }) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -28,11 +28,12 @@ class BottomSheetManager {
             child: Wrap(
               children: [
                 ListTile(
-                  leading: const Icon(
+                  leading: Icon(
                     Icons.photo_library,
-                    color: AppColors.iconsColor,
+                    color: Theme.of(context).iconTheme.color,
                   ),
                   title: const Text("Choose from Gallery"),
+                  textColor: Theme.of(context).textTheme.bodyMedium?.color,
                   onTap: () {
                     context.pop();
                     pickMedia(
@@ -46,11 +47,12 @@ class BottomSheetManager {
                   },
                 ),
                 ListTile(
-                  leading: const Icon(
+                  leading: Icon(
                     Icons.camera_alt,
-                    color: AppColors.iconsColor,
+                    color: Theme.of(context).iconTheme.color,
                   ),
                   title: const Text("Use Camera"),
+                  textColor: Theme.of(context).textTheme.bodyMedium?.color,
                   onTap: () {
                     context.pop();
                     pickMedia(
@@ -120,11 +122,15 @@ class BottomSheetManager {
                 leading: const Icon(Icons.public),
                 title: const Text("Public"),
                 onTap: () => context.pop('Public'),
+                iconColor: Theme.of(context).iconTheme.color,
+                textColor: Theme.of(context).textTheme.bodyMedium?.color,
               ),
               ListTile(
                 leading: const Icon(Icons.lock),
                 title: const Text("Private"),
                 onTap: () => context.pop('Private'),
+                iconColor: Theme.of(context).iconTheme.color,
+                textColor: Theme.of(context).textTheme.bodyMedium?.color,
               ),
             ],
           ),

@@ -1,4 +1,3 @@
-import 'package:auth/constants/colors.dart';
 import 'package:flutter/material.dart';
 
 class ExpandableText extends StatefulWidget {

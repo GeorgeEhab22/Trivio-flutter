@@ -64,8 +64,8 @@ class _AddPostBottomSheetState extends State<AddPostBottomSheet> {
             padding: EdgeInsets.only(bottom: keyboardHeight),
             child: Container(
               height: maxHeight,
-              decoration: const BoxDecoration(
-                color: Colors.white,
+              decoration:  BoxDecoration(
+                color:Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
               ),
               child: cubit.isLoading

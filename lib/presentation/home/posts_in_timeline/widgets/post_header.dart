@@ -1,7 +1,6 @@
 import 'package:auth/presentation/home/posts_in_timeline/widgets/follow_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:auth/constants/colors.dart';
 import 'package:auth/domain/entities/post.dart';
 import 'package:auth/presentation/home/widgets/author_info.dart';
 import 'package:auth/presentation/home/posts_in_timeline/buttom_sheets/options_bottom_sheet.dart';
