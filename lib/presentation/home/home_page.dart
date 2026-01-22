@@ -20,7 +20,7 @@ class HomePage extends StatelessWidget {
           
           return SafeArea(
             child: Scaffold(
-              backgroundColor: Colors.white,
+              // backgroundColor: Colors.white,
               body: Stack(
                 children: [
                   NotificationListener<ScrollNotification>(
@@ -42,7 +42,6 @@ class HomePage extends StatelessWidget {
                             floating: true,
                             snap: true,
                             pinned: false,
-                            backgroundColor: Colors.white,
                             automaticallyImplyLeading: false,
                             title: const HomeAppBar(),
                           ),

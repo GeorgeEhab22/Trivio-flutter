@@ -28,7 +28,6 @@ class _ExpandableTextState extends State<ExpandableText> {
   static const TextStyle _textStyle = TextStyle(
     fontSize: 16,
     fontWeight: FontWeight.w500,
-    color: AppColors.iconsColor,
   );
 
   bool _didOverflow(String text, double maxWidth) {

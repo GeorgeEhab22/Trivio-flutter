@@ -1,4 +1,3 @@
-import 'package:auth/constants/colors.dart';
 import 'package:auth/presentation/home/posts_in_timeline/buttom_sheets/report_reasons_buttom_sheet.dart';
 import 'package:auth/presentation/home/posts_in_timeline/buttom_sheets/widgets/list_action_tile.dart';
 import 'package:auth/presentation/home/posts_in_timeline/buttom_sheets/widgets/square_action_button.dart';
@@ -21,13 +20,14 @@ class OptionsBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final grey300 = Colors.grey[300] ?? const Color(0xFFD6D6D6);
-
+    final handleBarColor = Theme.of(context).brightness == Brightness.dark
+        ? Colors.grey[700]
+        : Colors.grey[300];
     final cubit = context.read<PostInteractionCubit>();
 
     return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
+      decoration: BoxDecoration(
+        color: Theme.of(context).appBarTheme.backgroundColor,
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       padding: const EdgeInsets.only(top: 10, bottom: 20),
@@ -42,7 +42,7 @@ class OptionsBottomSheet extends StatelessWidget {
               height: 5,
               margin: const EdgeInsets.only(bottom: 12),
               decoration: BoxDecoration(
-                color: grey300,
+                color: handleBarColor,
                 borderRadius: BorderRadius.circular(3),
               ),
             ),
@@ -73,9 +73,12 @@ class OptionsBottomSheet extends StatelessWidget {
                       return SquareActionButton(
                         label: isSaved ? 'Saved' : 'Save',
                         icon: isSaved ? Icons.bookmark : Icons.bookmark_border,
-                        backgroundColor: Color(0xFFF5F5F5),
-                        iconColor: AppColors.iconsColor,
-                        textColor: Colors.black87,
+                        backgroundColor:
+                           Theme.of(context).cardColor,
+                        iconColor: Theme.of(context).iconTheme.color,
+                        textColor: Theme.of(
+                          context,
+                        ).textTheme.bodyMedium?.color,
                         onTap: () {
                           cubit.toggleSavePost(
                             postId: post.id,
@@ -91,7 +94,12 @@ class OptionsBottomSheet extends StatelessWidget {
                   SquareActionButton(
                     label: 'Copy Link',
                     icon: Icons.link_outlined,
-                    backgroundColor: Color(0xFFF5F5F5),
+                    backgroundColor:
+                        Theme.of(context).brightness == Brightness.dark
+                        ? Colors.white10
+                        : const Color(0xFFF5F5F5),
+                    iconColor: Theme.of(context).iconTheme.color,
+                    textColor: Theme.of(context).textTheme.bodyMedium?.color,
                     onTap: () {
                       context.pop();
                       //TODO : later copy the right post link..
@@ -110,6 +118,7 @@ class OptionsBottomSheet extends StatelessWidget {
               ListActionTile(
                 icon: Icons.history,
                 text: 'View Edit History',
+                color: Theme.of(context).iconTheme.color!,
                 onTap: () {
                   context.pop();
                   // TODO : go to View Edit History page
@@ -119,6 +128,7 @@ class OptionsBottomSheet extends StatelessWidget {
             ListActionTile(
               icon: Icons.visibility_off_outlined,
               text: 'Not Interested',
+              color: Theme.of(context).iconTheme.color!,
               onTap: () {
                 context.pop();
                 // TODO use the cubit to mark the post as not interested

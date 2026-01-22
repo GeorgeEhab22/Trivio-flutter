@@ -13,7 +13,7 @@ class ShareButton extends StatelessWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).cardColor,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -27,6 +27,7 @@ class ShareButton extends StatelessWidget {
     return PostActionItem(
       icon: const FaIcon(FontAwesomeIcons.arrowUpFromBracket, size: 22),
       count: count,
+      color: Theme.of(context).iconTheme.color,
       onTap: () => _openShareSheet(context),
     );
   }

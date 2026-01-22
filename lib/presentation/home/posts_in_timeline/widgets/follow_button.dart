@@ -50,7 +50,7 @@ class FollowButton extends StatelessWidget {
             style: TextButton.styleFrom(
               backgroundColor: isFollowing ? Colors.transparent : const Color(0xFFF5F5F5),
               side: isFollowing
-                  ? BorderSide(color: AppColors.iconsColor)
+                  ? BorderSide(color:Theme.of(context).iconTheme.color!)
                   : BorderSide.none,
               padding: EdgeInsets.symmetric(horizontal: isFollowing ? 18 : 14),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
@@ -58,7 +58,7 @@ class FollowButton extends StatelessWidget {
             child: Text(
               isFollowing ? 'Following' : 'Follow',
               style: Styles.textStyle14.copyWith(
-                color: AppColors.iconsColor,
+                color: isFollowing ? Theme.of(context).iconTheme.color : AppColors.iconsColor,
                 fontWeight: FontWeight.w600,
               ),
             ),

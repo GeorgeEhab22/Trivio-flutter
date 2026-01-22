@@ -27,7 +27,7 @@ class AuthorInfo extends StatelessWidget {
   Widget build(BuildContext context) {
     final defaultAuthorStyle = Styles.textStyle16.copyWith(
       fontWeight: FontWeight.w600,
-      color: AppColors.iconsColor,
+      color: Theme.of(context).textTheme.bodyMedium?.color,
     );
 
     return Row(

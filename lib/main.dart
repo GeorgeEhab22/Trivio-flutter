@@ -48,13 +48,22 @@ class MyApp extends StatelessWidget {
               appBarTheme: const AppBarTheme(backgroundColor: Colors.white),
               cardColor: Colors.grey.shade100,
               iconTheme: const IconThemeData(color: AppColors.iconsColor),
+              textTheme: const TextTheme(
+                bodyMedium: TextStyle(color: Colors.black87),
+              ),
+              
             ),
             darkTheme: ThemeData(
               brightness: Brightness.dark,
               useMaterial3: true,
-              scaffoldBackgroundColor: const Color(0xFF121212),
-              appBarTheme: const AppBarTheme(backgroundColor: Color(0xFF1E1E1E)),
-              cardColor: const Color(0xFF1E1E1E),
+              scaffoldBackgroundColor: const Color(0xFF18191a),
+              appBarTheme: const AppBarTheme(backgroundColor: Color(0xFF18191a)),
+              iconTheme: const IconThemeData(color: Colors.white),
+              cardColor: Colors.grey[850],
+              textTheme: const TextTheme(
+                bodyMedium: TextStyle(color: Colors.white),
+              ),
+              
             ),
             routerConfig: router,
           );

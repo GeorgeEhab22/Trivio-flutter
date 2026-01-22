@@ -45,7 +45,7 @@ class PostHeader extends StatelessWidget {
               
               // Options Button
               IconButton(
-                icon: const Icon(Icons.more_vert, color: AppColors.iconsColor),
+                icon: Icon(Icons.more_vert, color: Theme.of(context).iconTheme.color),
                 onPressed: () {
                   final postCubit = context.read<PostInteractionCubit>();
                   showModalBottomSheet(

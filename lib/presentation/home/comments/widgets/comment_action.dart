@@ -1,3 +1,4 @@
+import 'package:auth/constants/colors.dart';
 import 'package:auth/injection_container.dart' as di;
 import 'package:auth/presentation/home/comments/comments_view.dart';
 import 'package:auth/presentation/manager/comment_cubit/comment_cubit.dart';
@@ -23,6 +24,7 @@ class CommentAction extends StatelessWidget {
     return PostActionItem(
       icon: const FaIcon(FontAwesomeIcons.comment, size: 22),
       count: commentsCount,
+      color: Theme.of(context).iconTheme.color,
       onTap: () {
         showModalBottomSheet(
           context: context,

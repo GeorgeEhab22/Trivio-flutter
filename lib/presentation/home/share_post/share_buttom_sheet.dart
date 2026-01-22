@@ -57,6 +57,9 @@ class _ShareBottomSheetState extends State<ShareBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final handleBarColor = Theme.of(context).brightness == Brightness.dark
+        ? Colors.grey[700]
+        : Colors.grey[300];
     // Use AnimatedPadding to follow the keyboard (keeps your original behavior)
     return AnimatedPadding(
       duration: const Duration(milliseconds: 200),
@@ -66,8 +69,8 @@ class _ShareBottomSheetState extends State<ShareBottomSheet> {
       child: SafeArea(
         top: false,
         child: Container(
-          decoration: const BoxDecoration(
-            color: Colors.white,
+          decoration: BoxDecoration(
+            color: Theme.of(context).scaffoldBackgroundColor,
             borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
@@ -83,7 +86,7 @@ class _ShareBottomSheetState extends State<ShareBottomSheet> {
                     height: 5,
                     margin: const EdgeInsets.only(bottom: 16),
                     decoration: BoxDecoration(
-                      color: Colors.grey[300],
+                      color: handleBarColor,
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
@@ -124,7 +127,7 @@ class _ShareBottomSheetState extends State<ShareBottomSheet> {
                   decoration: InputDecoration(
                     hintText: "Say something about this post...",
                     filled: true,
-                    fillColor: Colors.grey[100],
+                    fillColor: Theme.of(context).cardColor,
                     contentPadding: const EdgeInsets.all(14),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),

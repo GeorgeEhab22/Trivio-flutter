@@ -1,6 +1,6 @@
+import 'package:auth/presentation/manager/theme_cubit/theme_cubit.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:auth/constants/colors.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   const HomeAppBar({super.key});
@@ -8,18 +8,17 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: Colors.white,
       elevation: 0,
       automaticallyImplyLeading: false,
       titleSpacing: 0,
       title: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12),
+        padding: const EdgeInsets.only(left: 10),
         child: Row(
           children: [
-            const Text(
+            Text(
               'Trivio',
               style: TextStyle(
-                color: Colors.black,
+                color:Theme.of(context).textTheme.bodyMedium?.color,
                 fontWeight: FontWeight.w800,
                 fontSize: 25,
               ),
@@ -29,17 +28,17 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
               height: 36,
               width: 100,
               decoration: BoxDecoration(
-                color: Colors.grey.shade200,
+                color:Theme.of(context).cardColor,
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.search, color: AppColors.iconsColor, size: 20),
+                  Icon(Icons.search, color:Theme.of(context).iconTheme.color, size: 20),
                   const SizedBox(width: 6),
-                  const Text(
+                  Text(
                     'Search',
-                    style: TextStyle(color: Color(0xFF565d6d), fontSize: 14),
+                    style: TextStyle(color:Theme.of(context).textTheme.bodyMedium?.color, fontWeight: FontWeight.w500, fontSize: 14),
                   ),
                 ],
               ),
@@ -48,11 +47,23 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(FontAwesomeIcons.message, color: AppColors.iconsColor),
-                const SizedBox(width: 16),
-                Icon(FontAwesomeIcons.bell, color: AppColors.iconsColor),
-                const SizedBox(width: 16),
-                Icon(Icons.menu, color: AppColors.iconsColor),
+                IconButton(
+                  onPressed: () {
+    
+                  },
+                  icon: Icon(Icons.messenger_outline_rounded, color:Theme.of(context).iconTheme.color,size: 26,),
+                ),
+                IconButton(
+                  onPressed: () {
+                  },
+                  icon: Icon(Icons.notifications_none, color:Theme.of(context).iconTheme.color, size: 26,),
+                ),
+                IconButton(
+                  onPressed: () {
+                    context.read<ThemeCubit>().toggleTheme();
+                  },
+                  icon: Icon(Icons.menu, color:Theme.of(context).iconTheme.color, size: 28,),
+                ),
               ],
             ),
           ],
@@ -64,4 +75,3 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }
-
