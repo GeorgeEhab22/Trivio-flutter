@@ -14,7 +14,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
       automaticallyImplyLeading: false,
       titleSpacing: 0,
       title: Padding(
-        padding: const EdgeInsets.only(left: 10),
+        padding: const EdgeInsets.only(left: 8),
         child: Row(
           children: [
             Text(
@@ -25,35 +25,36 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                 fontSize: 25,
               ),
             ),
-            const SizedBox(width: 12),
-            Container(
-              height: 36,
-              width: 100,
-              decoration: BoxDecoration(
-                color: Theme.of(context).cardColor,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.search,
-                    color: Theme.of(context).iconTheme.color,
-                    size: 20,
-                  ),
-                  const SizedBox(width: 6),
-                  Text(
-                    'Search',
-                    style: TextStyle(
-                      color: Theme.of(context).textTheme.bodyMedium?.color,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 14,
+            const SizedBox(width: 10),
+            Expanded(
+              child: Container(
+                height: 36,
+                // width: 100,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).cardColor,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.search,
+                      color: Theme.of(context).iconTheme.color,
+                      size: 20,
                     ),
-                  ),
-                ],
+                    const SizedBox(width: 6),
+                    Text(
+                      'Search',
+                      style: TextStyle(
+                        color: Theme.of(context).textTheme.bodyMedium?.color,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-            const Spacer(),
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -64,7 +65,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                   icon: Icon(
                     Icons.messenger_outline_rounded,
                     color: Theme.of(context).iconTheme.color,
-                    size: 26,
+                    size: 22,
                   ),
                 ),
                 IconButton(
@@ -72,7 +73,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                   icon: Icon(
                     Icons.notifications_none,
                     color: Theme.of(context).iconTheme.color,
-                    size: 26,
+                    size: 22,
                   ),
                 ),
                 IconButton(
@@ -82,7 +83,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                   icon: Icon(
                     Icons.menu,
                     color: Theme.of(context).iconTheme.color,
-                    size: 28,
+                    size: 22,
                   ),
                 ),
               ],
