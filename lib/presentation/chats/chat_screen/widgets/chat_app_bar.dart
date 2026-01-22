@@ -1,5 +1,6 @@
 import 'package:auth/common/functions/show_custom_dialog.dart';
 import 'package:auth/constants/colors.dart';
+import 'package:auth/core/app_routes.dart';
 import 'package:auth/core/styels.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -70,6 +71,7 @@ class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
         IconButton(
           icon: const Icon(Icons.info, color: AppColors.primary, size: 26),
           onPressed: () {
+            context.push(AppRoutes.chatInfo);
           },
         ),
         const SizedBox(width: 8),
