@@ -1,6 +1,8 @@
+import 'package:auth/core/app_routes.dart';
 import 'package:auth/presentation/manager/theme_cubit/theme_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   const HomeAppBar({super.key});
@@ -18,7 +20,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
             Text(
               'Trivio',
               style: TextStyle(
-                color:Theme.of(context).textTheme.bodyMedium?.color,
+                color: Theme.of(context).textTheme.bodyMedium?.color,
                 fontWeight: FontWeight.w800,
                 fontSize: 25,
               ),
@@ -28,17 +30,25 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
               height: 36,
               width: 100,
               decoration: BoxDecoration(
-                color:Theme.of(context).cardColor,
+                color: Theme.of(context).cardColor,
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.search, color:Theme.of(context).iconTheme.color, size: 20),
+                  Icon(
+                    Icons.search,
+                    color: Theme.of(context).iconTheme.color,
+                    size: 20,
+                  ),
                   const SizedBox(width: 6),
                   Text(
                     'Search',
-                    style: TextStyle(color:Theme.of(context).textTheme.bodyMedium?.color, fontWeight: FontWeight.w500, fontSize: 14),
+                    style: TextStyle(
+                      color: Theme.of(context).textTheme.bodyMedium?.color,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 14,
+                    ),
                   ),
                 ],
               ),
@@ -49,20 +59,31 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
               children: [
                 IconButton(
                   onPressed: () {
-    
+                    context.push(AppRoutes.messages);
                   },
-                  icon: Icon(Icons.messenger_outline_rounded, color:Theme.of(context).iconTheme.color,size: 26,),
+                  icon: Icon(
+                    Icons.messenger_outline_rounded,
+                    color: Theme.of(context).iconTheme.color,
+                    size: 26,
+                  ),
                 ),
                 IconButton(
-                  onPressed: () {
-                  },
-                  icon: Icon(Icons.notifications_none, color:Theme.of(context).iconTheme.color, size: 26,),
+                  onPressed: () {},
+                  icon: Icon(
+                    Icons.notifications_none,
+                    color: Theme.of(context).iconTheme.color,
+                    size: 26,
+                  ),
                 ),
                 IconButton(
                   onPressed: () {
                     context.read<ThemeCubit>().toggleTheme();
                   },
-                  icon: Icon(Icons.menu, color:Theme.of(context).iconTheme.color, size: 28,),
+                  icon: Icon(
+                    Icons.menu,
+                    color: Theme.of(context).iconTheme.color,
+                    size: 28,
+                  ),
                 ),
               ],
             ),
