@@ -70,7 +70,7 @@ class _GlassmorphismNavState extends State<GlassmorphismNav>
       margin: const EdgeInsets.all(20),
       height: 70,
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.2),
+        color: Theme.of(context).scaffoldBackgroundColor.withOpacity(0.2),
         borderRadius: BorderRadius.circular(35),
         border: Border.all(color: Colors.white.withOpacity(0.3), width: 1.5),
         boxShadow: [
@@ -143,7 +143,7 @@ class StatsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.white,
+      color:Theme.of( context).scaffoldBackgroundColor,
       child: const Center(
         child: Text("📊 Stats Page", style: TextStyle(fontSize: 24)),
       ),
@@ -157,7 +157,7 @@ class ChatBotPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.white,
+      color: Theme.of(context).scaffoldBackgroundColor,
       child: const Center(
         child: Text("🤖 ChatBot Page", style: TextStyle(fontSize: 24)),
       ),
@@ -171,7 +171,7 @@ class ReelsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.white,
+      color: Theme.of(context).scaffoldBackgroundColor,
       child: const Center(
         child: Text("🎬 Reels Page", style: TextStyle(fontSize: 24)),
       ),
@@ -185,7 +185,7 @@ class GroupPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.white,
+      color: Theme.of(context).scaffoldBackgroundColor,
       child: const Center(
         child: Text("👥 Group Page", style: TextStyle(fontSize: 24)),
       ),

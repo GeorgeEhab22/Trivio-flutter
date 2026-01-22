@@ -48,7 +48,7 @@ class FollowButton extends StatelessWidget {
                   );
             },
             style: TextButton.styleFrom(
-              backgroundColor: isFollowing ? Colors.transparent : const Color(0xFFF5F5F5),
+              backgroundColor: isFollowing ? Colors.transparent : Theme.of(context).cardColor,
               side: isFollowing
                   ? BorderSide(color:Theme.of(context).iconTheme.color!)
                   : BorderSide.none,
@@ -58,7 +58,7 @@ class FollowButton extends StatelessWidget {
             child: Text(
               isFollowing ? 'Following' : 'Follow',
               style: Styles.textStyle14.copyWith(
-                color: isFollowing ? Theme.of(context).iconTheme.color : AppColors.iconsColor,
+                color: isFollowing ? Theme.of(context).iconTheme.color : Theme.of(context).textTheme.bodyMedium?.color,
                 fontWeight: FontWeight.w600,
               ),
             ),
