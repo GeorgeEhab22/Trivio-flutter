@@ -1,4 +1,5 @@
 import 'package:auth/core/custom_bottom_navigation_bar.dart';
+import 'package:auth/presentation/chats/chat_screen/chat_info_view.dart';
 import 'package:auth/presentation/chats/chat_screen/chat_view.dart';
 import 'package:auth/presentation/chats/messages_screen/messages_view.dart';
 import 'package:flutter/material.dart';
@@ -132,6 +133,12 @@ GoRouter createRouter() {
               GoRoute(
                 path: 'chat',
                 builder: (context, state) => const ChatView(),
+                routes: [
+                  GoRoute(
+                    path: 'chat_info',
+                    builder: (context, state) => const ChatInfoView(),
+                  ),
+                ],
               ),
             ],
           ),

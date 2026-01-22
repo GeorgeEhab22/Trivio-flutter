@@ -1,5 +1,6 @@
 import 'package:auth/common/functions/show_custom_dialog.dart';
 import 'package:auth/constants/colors.dart';
+import 'package:auth/core/app_routes.dart';
 import 'package:auth/core/styels.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -56,7 +57,7 @@ class MessagesItem extends StatelessWidget {
       //TODO: change all actual data later
       child: ListTile(
         onTap: () {
-          context.push('/app/messages/chat');
+          context.push(AppRoutes.chat);
         },
         leading: Stack(
           children: [
