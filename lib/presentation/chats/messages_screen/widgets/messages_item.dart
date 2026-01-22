@@ -3,6 +3,7 @@ import 'package:auth/constants/colors.dart';
 import 'package:auth/core/styels.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:go_router/go_router.dart';
 
 class MessagesItem extends StatelessWidget {
   final int index;
@@ -54,7 +55,9 @@ class MessagesItem extends StatelessWidget {
       ),
       //TODO: change all actual data later
       child: ListTile(
-        onTap: () {},
+        onTap: () {
+          context.push('/app/messages/chat');
+        },
         leading: Stack(
           children: [
             CircleAvatar(

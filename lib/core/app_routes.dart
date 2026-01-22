@@ -16,4 +16,5 @@ class AppRoutes {
   static const String chatbot = '/app/chatbot';
   static const String groups = '/app/groups';
   static const String messages = '/app/messages';
+  static const String chat = '/app/messages/chat';
 }
