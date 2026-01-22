@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 class AnimatedSnackBar extends StatefulWidget {
   final String message;
-  final Duration displayDuration; 
+  final Duration displayDuration;
   final bool success;
   final VoidCallback? onDismissed;
 
@@ -37,10 +37,7 @@ class _AnimatedSnackBarState extends State<AnimatedSnackBar>
     _offsetAnimation = Tween<Offset>(
       begin: const Offset(0.0, 1.0),
       end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeInOut,
-    ));
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
 
     _controller.forward();
 
@@ -60,10 +57,14 @@ class _AnimatedSnackBarState extends State<AnimatedSnackBar>
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final Color backgroundColor = isDark
+        ? (widget.success ? Theme.of(context).cardColor : Colors.red)
+        : (widget.success ? AppColors.primary : Colors.red);
     return SlideTransition(
       position: _offsetAnimation,
       child: Material(
-        color: widget.success ? AppColors.primary : Colors.red,
+        color: backgroundColor,
         elevation: 6,
         borderRadius: BorderRadius.circular(10),
         child: Padding(
