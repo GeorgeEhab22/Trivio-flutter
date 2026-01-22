@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:auth/core/styels.dart';
-import 'package:auth/constants/colors.dart';
 import 'package:auth/presentation/manager/post_cubit/post_interaction_cubit.dart';
 
 class FollowButton extends StatelessWidget {
