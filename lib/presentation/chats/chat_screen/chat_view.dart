@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'widgets/chat_bubble.dart';
+import 'widgets/chat_input_field.dart';
+import 'widgets/chat_app_bar.dart';
 
 class ChatView extends StatelessWidget {
   const ChatView({super.key});
@@ -6,18 +9,27 @@ class ChatView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        surfaceTintColor: Colors.transparent,
-        automaticallyImplyLeading: false,
-        title: const Text(
-          "Chat",
-          style: TextStyle(fontWeight: FontWeight.w800, fontSize: 25),
-        ),
-      ),
-      body: const Center(
-        child: Text("Chat Screen"),
+      appBar: const ChatAppBar(),
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              padding: const EdgeInsets.all(16),
+              reverse: true,
+              itemCount: 20,
+              itemBuilder: (context, index) {
+                return ChatBubble(
+                  isMe: index % 2 == 0,
+                  message: index % 2 == 0
+                      ? "from me"
+                      : "message from my friend...",
+                );
+              },
+            ),
+          ),
+          const ChatInputField(),
+        ],
       ),
     );
-  
   }
 }
