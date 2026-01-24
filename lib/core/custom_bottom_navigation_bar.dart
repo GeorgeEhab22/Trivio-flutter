@@ -146,19 +146,19 @@ class _GlassmorphismNavState extends State<GlassmorphismNav>
 
 
 // ----------------- Dummy pages (you already had these) -----------------
-class StatsPage extends StatelessWidget {
-  const StatsPage({super.key});
+// class StatsPage extends StatelessWidget {
+//   const StatsPage({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: Colors.white,
-      child: const Center(
-        child: Text("📊 Stats Page", style: TextStyle(fontSize: 24)),
-      ),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       color: Colors.white,
+//       child: const Center(
+//         child: Text("📊 Stats Page", style: TextStyle(fontSize: 24)),
+//       ),
+//     );
+//   }
+// }
 
 class ChatBotPage extends StatelessWidget {
   const ChatBotPage({super.key});

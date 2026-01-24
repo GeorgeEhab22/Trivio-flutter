@@ -1,4 +1,5 @@
 import 'package:auth/core/custom_bottom_navigation_bar.dart';
+import 'package:auth/presentation/stats/stats_view.dart';
 import 'package:auth/presentation/user/user_profile_view.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -48,7 +49,7 @@ CustomTransitionPage buildAnimatedPage({
 
 GoRouter createRouter() {
   return GoRouter(
-    initialLocation: '/app/home',
+    initialLocation: '/app/stats',
     routes: [
       GoRoute(
         path: AppRoutes.signIn,
@@ -142,7 +143,7 @@ GoRouter createRouter() {
                   GoRoute(
                     path: 'stats',
                     pageBuilder: (context, state) =>
-                        NoTransitionPage(child: const StatsPage()),
+                        NoTransitionPage(child: const StatsScreenView()),
                   ),
                 ],
               ),
