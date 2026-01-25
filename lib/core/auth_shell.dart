@@ -50,6 +50,9 @@ class AuthShell extends StatelessWidget {
     final location = GoRouterState.of(context).uri.toString();
     final currentIndex = locationToIndex(location);
 
+
+
+    final isReel = currentIndex == 1;
     // Gesture detection:
     // - Use DragEnd velocity primarily (fast swipes)
     // - Fallback to DragUpdate distance (slow swipe but intentional)
@@ -59,7 +62,10 @@ class AuthShell extends StatelessWidget {
     double dragDelta = 0.0; // accumulates horizontal movement during the drag
 
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: 
+      isReel
+          ? const Color(0xFF18191a)
+          : Theme.of(context).scaffoldBackgroundColor,
       body: RawGestureDetector(
         gestures: {
           // Use a HorizontalDragGestureRecognizer so it doesn't fight with vertical scrolls
