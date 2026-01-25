@@ -31,14 +31,16 @@ class _AddPostBottomSheetState extends State<AddPostBottomSheet> {
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
+    // Handle keyboard overlap
     final keyboardHeight = mediaQuery.viewInsets.bottom;
-    final maxHeight = mediaQuery.size.height * 0.8;
+    final maxHeight = mediaQuery.size.height * 0.9; // Increased slightly for better view
 
     return BlocProvider(
       create: (context) => di.sl<CreatePostCubit>(),
       child: BlocConsumer<CreatePostCubit, CreatePostState>(
         listener: (context, state) {
           if (state is CreatePostSuccess) {
+            // Close the bottom sheet and return the new post
             context.pop(state.createdPost);
             showCustomSnackBar(context, "Post created successfully!", true);
           }
@@ -49,47 +51,49 @@ class _AddPostBottomSheetState extends State<AddPostBottomSheet> {
         builder: (context, state) {
           final cubit = context.read<CreatePostCubit>();
 
+          // Default values
           List<XFile> currentMedia = cubit.currentMedia;
           String currentPrivacy = cubit.currentPrivacy;
           bool isButtonEnabled = false;
 
+          // Update values if state is Editing
           if (state is CreatePostEditing) {
             currentMedia = state.selectedMedia;
             currentPrivacy = state.privacy;
             isButtonEnabled = state.isPostButtonEnabled;
           }
 
-          return AnimatedPadding(
-            duration: const Duration(milliseconds: 200),
+          return Padding(
             padding: EdgeInsets.only(bottom: keyboardHeight),
             child: Container(
-              height: maxHeight,
+              constraints: BoxConstraints(
+                maxHeight: maxHeight,
+              ),
               decoration: const BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
               ),
               child: cubit.isLoading
-                  ? const Center(child: CircularProgressIndicator())
+                  ? const SizedBox(
+                      height: 200,
+                      child: Center(child: CircularProgressIndicator()),
+                    )
                   : SingleChildScrollView(
+                      physics: const BouncingScrollPhysics(),
                       child: Column(
+                        mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           AddPostHeader(
-                            isPostEnabled:
-                                isButtonEnabled,
+                            isPostEnabled: isButtonEnabled,
                             onPost: () {
-                              cubit.submitPost(
-                                userId: "curr_user_id",
-                              );
+                              cubit.submitPost(userId: "curr_user_id");
                             },
                           ),
-
                           PostInputField(
                             controller: _postController,
-                            onChanged: (text) =>
-                                cubit.updateText(text),
+                            onChanged: (text) => cubit.updateText(text),
                           ),
-
                           if (currentMedia.isNotEmpty)
                             SelectedMediaPreview(
                               files: currentMedia,
@@ -97,30 +101,29 @@ class _AddPostBottomSheetState extends State<AddPostBottomSheet> {
                                 cubit.removeMedia(index);
                               },
                             ),
-
                           MediaButtonsRow(
                             onPickImage: () =>
                                 BottomSheetManager.showMediaSourceSheet(
-                                  context,
-                                  false,
-                                  onPicked: (files) {
-                                    cubit.addMedia(files);
-                                  },
-                                ),
+                              context,
+                              false, // isVideo = false
+                              onPicked: (files) {
+                                cubit.addMedia(files);
+                              },
+                            ),
                             onPickVideo: () =>
                                 BottomSheetManager.showMediaSourceSheet(
-                                  context,
-                                  true,
-                                  onPicked: (files) {
-                                    cubit.addMedia(files);
-                                  },
-                                ),
+                              context,
+                              true, // isVideo = true
+                              onPicked: (files) {
+                                cubit.addMedia(files);
+                              },
+                            ),
                           ),
-
                           PrivacySelector(
                             privacy: currentPrivacy,
                             onChange: (value) => cubit.updatePrivacy(value),
                           ),
+                          const SizedBox(height: 20),
                         ],
                       ),
                     ),

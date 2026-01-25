@@ -1,4 +1,3 @@
-
 import 'package:auth/core/errors/failure.dart';
 import 'package:auth/domain/entities/post.dart';
 import 'package:auth/domain/usecases/post/create_post_usecase.dart';
@@ -12,18 +11,26 @@ class CreatePostCubit extends Cubit<CreatePostState> {
   final CreatePostUseCase createPostUseCase;
 
   List<XFile> _media = [];
-  String _privacy = "Public";
-  String _text = "";
+  String type = "Public";
+  String caption = "";
 
   CreatePostCubit({required this.createPostUseCase})
       : super(const CreatePostInitial());
 
+  // --- UI Helpers ---
+
+  bool get isLoading => state is CreatePostLoading;
+  bool get isSuccess => state is CreatePostSuccess;
+  List<XFile> get currentMedia => _media;
+  String get currentPrivacy => type;
+
+  // --- Event Handlers ---
+
   void updateText(String text) {
-    _text = text;
+    caption = text;
     _emitEditingState();
   }
 
-  /// Add picked media (no validation here — validation will be done in the use case)
   void addMedia(List<XFile> files) {
     _media.addAll(files);
     _emitEditingState();
@@ -36,62 +43,45 @@ class CreatePostCubit extends Cubit<CreatePostState> {
   }
 
   void updatePrivacy(String newPrivacy) {
-    _privacy = newPrivacy;
+    type = newPrivacy;
     _emitEditingState();
   }
 
   void _emitEditingState() {
-    final bool isEnabled = _text.trim().isNotEmpty || _media.isNotEmpty;
+    // Enable button if there is text OR media
+    final bool isEnabled = caption.trim().isNotEmpty || _media.isNotEmpty;
 
     emit(CreatePostEditing(
       selectedMedia: List.from(_media),
-      privacy: _privacy,
+      privacy: type,
       isPostButtonEnabled: isEnabled,
       lastUpdated: DateTime.now().toIso8601String(),
     ));
   }
 
-  /// Submit post — split media into images and videos, then pass them to the use case.
+  void resetState() {
+    _resetForm();
+    emit(const CreatePostInitial());
+  }
+
+  void _resetForm() {
+    _media = [];
+    caption = "";
+    type = "Public";
+  }
+
+  // --- Submission Logic ---
+
   Future<void> submitPost({required String userId}) async {
-    if (_text.trim().isEmpty && _media.isEmpty) return;
+    if (caption.trim().isEmpty && _media.isEmpty) return;
 
     emit(const CreatePostLoading());
 
-    // classify media by extension
-    final imageExts = <String>{
-      'jpg', 'jpeg', 'png', 'gif', 'webp', 'heic', 'heif', 'bmp'
-    };
-    final videoExts = <String>{
-      'mp4', 'mov', 'avi', 'mkv', 'flv', 'webm', 'm4v', '3gp'
-    };
-
-    List<XFile> imageFiles = [];
-    List<XFile> videoFiles = [];
-
-    for (final xfile in _media) {
-      final path = xfile.path;
-      final ext = _extractExtension(path);
-
-      if (ext.isEmpty) {
-        // unknown: you can choose to treat as image or skip; here we skip
-        continue;
-      }
-
-      if (imageExts.contains(ext)) {
-        imageFiles.add(xfile);
-      } else if (videoExts.contains(ext)) {
-        videoFiles.add(xfile);
-      } else {
-        // unknown extension: skip (leave validation/uploading to use case)
-      }
-    }
-
-    
+   
     final result = await createPostUseCase(
-      userId: userId,
-      content: _text,
-      media: _media,  
-      tags: [],
+      caption: caption,
+      media: _media, 
+      type: type,
     );
 
     result.fold(
@@ -110,37 +100,11 @@ class CreatePostCubit extends Cubit<CreatePostState> {
         errorType: 'validation',
       );
     } else if (failure is NetworkFailure) {
-      return CreatePostError(message: failure.message, errorType: 'network');
+      return CreatePostError(
+          message: failure.message, errorType: 'network');
     } else {
-      return CreatePostError(message: failure.message, errorType: 'server');
-    }
-  }
-
-  void _resetForm() {
-    _media = [];
-    _text = "";
-    _privacy = "Public";
-  }
-
-  void resetState() {
-    _resetForm();
-    emit(const CreatePostInitial());
-  }
-
-  bool get isLoading => state is CreatePostLoading;
-  bool get isSuccess => state is CreatePostSuccess;
-
-  List<XFile> get currentMedia => _media;
-  String get currentPrivacy => _privacy;
-
-  // Helper: extract lowercase extension without leading dot, or empty string
-  static String _extractExtension(String path) {
-    try {
-      final parts = path.split('.');
-      if (parts.length < 2) return '';
-      return parts.last.toLowerCase();
-    } catch (_) {
-      return '';
+      return CreatePostError(
+          message: failure.message, errorType: 'server');
     }
   }
 }

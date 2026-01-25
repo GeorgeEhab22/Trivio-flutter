@@ -1,23 +1,18 @@
-import 'dart:io';
-
 import 'package:auth/core/errors/failure.dart';
 import 'package:auth/domain/entities/post.dart';
 import 'package:auth/domain/entities/reaction_type.dart';
 import 'package:dartz/dartz.dart';
+import 'package:image_picker/image_picker.dart';
 
 abstract class PostRepository {
-  // 13 use case untill now
-
   Future<Either<Failure, Post>> createPost({
-    required String userId,
-    required String content,
-    File? image,
-    File? video,
-    List<String>? tags,
+    String? caption,
+    List<XFile>? media, 
+    required String type,
   });
-Future<Either<Failure, Post>> fetchSinglePost(String postId);
-  
-  // limit ??
+
+  Future<Either<Failure, Post>> fetchSinglePost(String postId);
+
   Future<Either<Failure, List<Post>>> fetchPosts({int page = 1, int limit = 20});
 
   Future<Either<Failure, Post>> commentOnPost({
@@ -45,22 +40,21 @@ Future<Either<Failure, Post>> fetchSinglePost(String postId);
     required String postId,
     required String userId,
   });
-  
+
   Future<Either<Failure, void>> reportPost({
     required String postId,
     required String userId,
     required String reason,
-   // required String reason,
   });
-Future<Either<Failure, void>> toggleFollowUser({
+
+  Future<Either<Failure, void>> toggleFollowUser({
     required String followerId,
     required String followeeId,
   });
-    
 
   Future<Either<Failure, void>> deletePost(String postId);
 
-    Future<Either<Failure, Post>> reactToPost({
+  Future<Either<Failure, Post>> reactToPost({
     required String postId,
     required String userId,
     required ReactionType reactionType,
@@ -70,5 +64,6 @@ Future<Either<Failure, void>> toggleFollowUser({
     required String postId,
     required String userId,
   });
+
   Future<Either<Failure, List<Post>>> searchPosts(String query);
 }

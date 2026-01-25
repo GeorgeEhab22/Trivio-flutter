@@ -45,9 +45,9 @@ CustomTransitionPage buildAnimatedPage({
   );
 }
 
-GoRouter createRouter() {
+GoRouter createRouter( bool isLoggedIn) {
   return GoRouter(
-    initialLocation: '/app/home',
+    initialLocation:isLoggedIn ? '/app/home' : '/signin',
     routes: [
       GoRoute(
         path: AppRoutes.signIn,

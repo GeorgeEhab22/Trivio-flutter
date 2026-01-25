@@ -16,25 +16,70 @@ class ApiService {
               },
             ));
 
-  Future<Map<String, dynamic>> get(String endPoint, {Map<String, dynamic>? query}) async {
-    final res = await _dio.get(endPoint, queryParameters: query);
+  // 1. Added 'options' parameter
+  Future<Map<String, dynamic>> get(
+    String endPoint, {
+    Map<String, dynamic>? query,
+    Options? options, 
+  }) async {
+    final res = await _dio.get(
+      endPoint,
+      queryParameters: query,
+      options: options, // Pass it to Dio
+    );
     return res.data;
   }
 
-  Future<Map<String, dynamic>> post(String endPoint, {Map<String, dynamic>? data}) async {
-    final res = await _dio.post(endPoint, data: data);
+  // 2. Changed 'data' to dynamic (to accept FormData) AND added 'options'
+  Future<Map<String, dynamic>> post(
+    String endPoint, {
+    dynamic data, 
+    Options? options,
+  }) async {
+    final res = await _dio.post(
+      endPoint,
+      data: data,
+      options: options,
+    );
     return res.data;
   }
-   Future<Map<String, dynamic>> patch(String endPoint, {Map<String, dynamic>? data}) async {
-    final res = await _dio.patch(endPoint, data: data);
+
+  Future<Map<String, dynamic>> patch(
+    String endPoint, {
+    dynamic data, // Changed to dynamic
+    Options? options, // Added options
+  }) async {
+    final res = await _dio.patch(
+      endPoint,
+      data: data,
+      options: options,
+    );
     return res.data;
   }
-  Future<Map<String, dynamic>> delete(String endPoint, {Map<String, dynamic>? data}) async {
-    final res = await _dio.delete(endPoint, data: data);
+
+  Future<Map<String, dynamic>> delete(
+    String endPoint, {
+    dynamic data, // Changed to dynamic
+    Options? options, // Added options
+  }) async {
+    final res = await _dio.delete(
+      endPoint,
+      data: data,
+      options: options,
+    );
     return res.data;
   }
-  Future<Map<String, dynamic>> put(String endPoint, {Map<String, dynamic>? data}) async {
-    final res = await _dio.put(endPoint, data: data);
+
+  Future<Map<String, dynamic>> put(
+    String endPoint, {
+    dynamic data, // Changed to dynamic
+    Options? options, // Added options
+  }) async {
+    final res = await _dio.put(
+      endPoint,
+      data: data,
+      options: options,
+    );
     return res.data;
   }
 }

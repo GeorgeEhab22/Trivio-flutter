@@ -32,6 +32,7 @@ abstract class AuthRemoteDataSource {
     required String email,
     required String password,
   });
+  Future <String?> getToken();
 
 
   Future<UserModel> signInAndRegisterWithGoogle({required String idToken});
@@ -47,8 +48,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required this.prefs,
     required this.errorHandler,
   });
-
-  Future<String?> _getToken() async => prefs.getString('auth_token');
+  @override
+  Future<String?> getToken() async => prefs.getString('auth_token');
   Future<void> _storeToken(String token) async =>
       prefs.setString('auth_token', token);
   Future<void> _clearToken() async => prefs.remove('auth_token');
@@ -73,6 +74,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
       if (token != null) {
         await _storeToken(token);
+        print ('Token stored: $token');
       } else {
         throw AuthException('Token not found in response');
       }
@@ -182,7 +184,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<void> signOut() async {
     try {
-      final token = await _getToken();
+      final token = await getToken();
       if (token != null) {
         await api.post(ApiEndpoints.signout, data: {});
       }
@@ -195,7 +197,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<UserModel?> getCurrentUser() async {
     try {
-      final token = await _getToken();
+      final token = await getToken();
       if (token == null) return null;
 
       final response = await api.get(ApiEndpoints.me);

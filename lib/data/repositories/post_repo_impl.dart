@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:auth/core/errors/failure.dart';
 import 'package:auth/data/core/error/exceptions.dart';
 import 'package:auth/data/datasource/posts_remote_datasource.dart';
@@ -7,6 +5,7 @@ import 'package:auth/domain/entities/post.dart';
 import 'package:auth/domain/entities/reaction_type.dart';
 import 'package:auth/domain/repositories/post_repo.dart';
 import 'package:dartz/dartz.dart';
+import 'package:image_picker/image_picker.dart';
 
 class PostRepositoryImpl implements PostRepository {
   final PostsRemoteDataSource remoteDataSource;
@@ -15,32 +14,20 @@ class PostRepositoryImpl implements PostRepository {
 
   @override
   Future<Either<Failure, Post>> createPost({
-    required String userId,
-    required String content,
-    File? image,
-    File? video,
-    List<String>? tags,
+    String? caption,
+    List<XFile>? media, // Updated parameter
+    required String type,
   }) async {
     try {
-
-      // final model = await remoteDataSource.createPost(
-      //   userId: userId,
-      //   content: content,
-      //   imageUrl: imageUrl,
-      //   videoUrl: videoUrl,
-      //   tags: tags,
-      // );
-      // return Right(model.toEntity());
-
-      // for testt after link with cubit
-      await Future.delayed(const Duration(seconds: 1));
-      final mockPost = Post(
-        
-        authorId: userId,
-        caption: content,
-        type: 'text',
+      // Pass the list of paths to the data source
+      // Ensure your RemoteDataSource method (createPost) accepts 'filePaths'
+      final model = await remoteDataSource.createPost(
+        caption: caption,
+        media: media ?? [], // Pass empty list if null
+        type: type,
       );
-      return Right(mockPost);
+      
+      return Right(model.toEntity());
     } on AuthException catch (e) {
       return Left(AuthFailure(e.message));
     } on ServerException catch (e) {
@@ -54,6 +41,8 @@ class PostRepositoryImpl implements PostRepository {
     }
   }
 
+  // ... (Rest of the file remains exactly the same)
+  
   @override
   Future<Either<Failure, Post>> fetchSinglePost(String postId) async {
     try {
@@ -101,7 +90,6 @@ class PostRepositoryImpl implements PostRepository {
         userId: userId,
         reactionType: comment,
       );
-      // If your remoteDataSource.createComment exists and returns PostModel or CommentModel, use it.
       return Right(model.toEntity());
     } on AuthException catch (e) {
       return Left(AuthFailure(e.message));
