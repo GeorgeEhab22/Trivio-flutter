@@ -3,6 +3,7 @@ import 'package:auth/presentation/chats/chat_info_button/chat_info_view.dart';
 import 'package:auth/presentation/chats/chat_screen/chat_view.dart';
 import 'package:auth/presentation/chats/messages_screen/messages_view.dart';
 import 'package:auth/presentation/reels/reels_page.dart';
+import 'package:auth/presentation/user/user_profile_settings_view.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -138,15 +139,15 @@ GoRouter createRouter( bool isLoggedIn) {
                   ),
                 ],
               ),
-              // StatefulShellBranch(
-              //   routes: [
-              //     GoRoute(
-              //       path: 'profile',
-              //       pageBuilder: (context, state) =>
-              //           NoTransitionPage(child: const ProfilePage()),
-              //     ),
-              //   ],
-              // ),
+              StatefulShellBranch(
+                routes: [
+                  GoRoute(
+                    path: 'profile',
+                    pageBuilder: (context, state) =>
+                        NoTransitionPage(child: const UserProfileSettings()),
+                  ),
+                ],
+              ),
             ],
           ),
           GoRoute(
@@ -163,6 +164,7 @@ GoRouter createRouter( bool isLoggedIn) {
                   ),
                 ],
               ),
+              
             ],
           ),
         ],

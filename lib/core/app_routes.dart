@@ -21,4 +21,6 @@ class AppRoutes {
   static const String messages = '/app/messages';
   static const String chat = '/app/messages/chat';
   static const String chatInfo = '/app/messages/chat/chat_info';
+  static const String userProfileSettings = '/app/profile_settings';
+
 }
