@@ -45,6 +45,7 @@ import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/post_interaction_cubit.dart';
 import 'package:auth/presentation/manager/register_cubit/register_cubit.dart';
 import 'package:auth/presentation/manager/sigin_in_cubit/sign_in_cubit.dart';
+import 'package:auth/presentation/manager/theme_cubit/theme_cubit.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
@@ -165,4 +166,5 @@ Future<void> init() async {
     () => CreatePostCubit(
       createPostUseCase: sl(),),
   );
+   sl.registerFactory(() => ThemeCubit());
 }

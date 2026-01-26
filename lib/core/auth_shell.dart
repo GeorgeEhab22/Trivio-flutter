@@ -94,6 +94,8 @@ class AuthShell extends StatelessWidget {
       currentIndex = locationToIndex(GoRouterState.of(context).uri.toString());
     }
 
+    final isReel = currentIndex == 1;
+    
     // swipe detection thresholds
     const velocityThreshold = 500.0;
     const distanceThreshold = 80.0;
@@ -103,7 +105,10 @@ class AuthShell extends StatelessWidget {
         navigationShell != null ? (navigationShell as Widget) : (child ?? const SizedBox.shrink());
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: 
+      isReel
+          ? const Color(0xFF18191a)
+          : Theme.of(context).scaffoldBackgroundColor,
       body: RawGestureDetector(
         gestures: {
           HorizontalDragGestureRecognizer:

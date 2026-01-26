@@ -18,7 +18,6 @@ class CommentInputField extends StatelessWidget {
   });
 
   @override
-  
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -29,14 +28,16 @@ class CommentInputField extends StatelessWidget {
 
           if (replyingToUser != null)
             Container(
-              color: Colors.grey[100],
+              color: Theme.of(context).appBarTheme.backgroundColor,
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: Row(
                 children: [
                   Expanded(
                     child: Text(
                       "Replying to $replyingToUser",
-                      style: const TextStyle(color: AppColors.primary),
+                      style: TextStyle(
+                        color: Theme.of(context).textTheme.bodyMedium?.color,
+                      ),
                     ),
                   ),
                   GestureDetector(
@@ -72,7 +73,7 @@ class CommentInputField extends StatelessWidget {
                         borderSide: BorderSide.none,
                       ),
                       filled: true,
-                      fillColor: Colors.grey[200],
+                      fillColor:Theme.of(context).cardColor,
                       contentPadding: const EdgeInsets.symmetric(
                         horizontal: 16,
                         vertical: 8,

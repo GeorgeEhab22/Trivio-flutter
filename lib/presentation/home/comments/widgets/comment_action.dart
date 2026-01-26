@@ -23,6 +23,7 @@ class CommentAction extends StatelessWidget {
     return PostActionItem(
       icon: const FaIcon(FontAwesomeIcons.comment, size: 22),
       count: commentsCount,
+      color: Theme.of(context).iconTheme.color,
       onTap: () {
         showModalBottomSheet(
           context: context,

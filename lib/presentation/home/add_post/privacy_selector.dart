@@ -11,41 +11,46 @@ class PrivacySelector extends StatelessWidget {
     required this.onChange,
   });
 
- 
-
   @override
   Widget build(BuildContext context) {
     final bool isPublic = privacy == "Public";
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
         decoration: BoxDecoration(
           border: Border.all(color: AppColors.lightGrey),
           borderRadius: BorderRadius.circular(30),
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
+        child: InkWell(
+          onTap: () => BottomSheetManager.showPrivacyOptions(context, onChange),
+          borderRadius: BorderRadius.circular(30),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Icon(
-                  isPublic ? Icons.public : Icons.lock,
-                  color: AppColors.iconsColor,
+                Row(
+                  children: [
+                    Icon(
+                      isPublic ? Icons.public : Icons.lock,
+                      color: Theme.of(context).iconTheme.color,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      privacy,
+                      style: TextStyle(
+                        color: Theme.of(context).textTheme.bodyLarge?.color,
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 8),
-                Text(privacy),
+                Icon(
+                  Icons.arrow_drop_down,
+                  color: Theme.of(context).iconTheme.color,
+                ),
               ],
             ),
-            InkWell(
-              onTap: () => BottomSheetManager.showPrivacyOptions(context, onChange),
-              borderRadius: BorderRadius.circular(20),
-              child: const Padding(
-                padding: EdgeInsets.all(4.0),
-                child: Icon(Icons.arrow_drop_down, color: AppColors.iconsColor),
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );

@@ -32,7 +32,8 @@ class _GlassmorphismNavState extends State<GlassmorphismNav>
   void initState() {
     super.initState();
 
-    _routeForIndex = widget.routeForIndex ??
+    _routeForIndex =
+        widget.routeForIndex ??
         {
           0: '/app/home',
           1: '/app/reels',
@@ -73,11 +74,14 @@ class _GlassmorphismNavState extends State<GlassmorphismNav>
 
   @override
   Widget build(BuildContext context) {
+    final isReel = widget.currentIndex == 1;
     return Container(
       margin: const EdgeInsets.all(20),
       height: 70,
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.2),
+        color: isReel
+            ? const Color(0xFF18191a)
+            : Theme.of(context).scaffoldBackgroundColor.withOpacity(0.2),
         borderRadius: BorderRadius.circular(35),
         border: Border.all(color: Colors.white.withOpacity(0.3), width: 1.5),
         boxShadow: [
@@ -125,8 +129,9 @@ class _GlassmorphismNavState extends State<GlassmorphismNav>
         duration: const Duration(milliseconds: 300),
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color:
-              isSelected ? Colors.white.withOpacity(0.3) : Colors.transparent,
+          color: isSelected
+              ? Colors.white.withOpacity(0.3)
+              : Colors.transparent,
           shape: BoxShape.circle,
           border: isSelected
               ? Border.all(color: Colors.white.withOpacity(0.5), width: 2)
@@ -142,7 +147,6 @@ class _GlassmorphismNavState extends State<GlassmorphismNav>
   }
 }
 
-
 // ----------------- Dummy pages (you already had these) -----------------
 class StatsPage extends StatelessWidget {
   const StatsPage({super.key});
@@ -150,7 +154,7 @@ class StatsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.white,
+      color: Theme.of(context).scaffoldBackgroundColor,
       child: const Center(
         child: Text("📊 Stats Page", style: TextStyle(fontSize: 24)),
       ),
@@ -164,7 +168,7 @@ class ChatBotPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.white,
+      color: Theme.of(context).scaffoldBackgroundColor,
       child: const Center(
         child: Text("🤖 ChatBot Page", style: TextStyle(fontSize: 24)),
       ),
@@ -172,27 +176,13 @@ class ChatBotPage extends StatelessWidget {
   }
 }
 
-class ReelsPage extends StatelessWidget {
-  const ReelsPage({super.key});
+class GroupPage extends StatelessWidget {
+  const GroupPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.white,
-      child: const Center(
-        child: Text("🎬 Reels Page", style: TextStyle(fontSize: 24)),
-      ),
-    );
-  }
-}
-
-class ProfilePage extends StatelessWidget {
-  const ProfilePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: Colors.white,
+      color: Theme.of(context).scaffoldBackgroundColor,
       child: const Center(
         child: Text("👥 Profile Page", style: TextStyle(fontSize: 24)),
       ),

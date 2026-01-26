@@ -1,4 +1,3 @@
-import 'package:auth/constants/colors.dart';
 import 'package:auth/domain/entities/reaction_type.dart';
 import 'package:auth/presentation/home/widgets/post_action_item.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +15,7 @@ class ReactionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final type = reactionType ?? ReactionType.none;
-    final color = _getColor(type);
+    final color = _getColor(context,type);
     final iconData = _getIcon(type);
     
     return PostActionItem(
@@ -26,11 +25,11 @@ class ReactionButton extends StatelessWidget {
     );
   }
 
-  Color _getColor(ReactionType type) {
+  Color _getColor(BuildContext context, ReactionType type) {
     switch (type) {
       case ReactionType.goal: return Colors.green;
       case ReactionType.offside: return Colors.red;
-      default: return AppColors.iconsColor;
+      default: return Theme.of(context).iconTheme.color !;
     }
   }
 

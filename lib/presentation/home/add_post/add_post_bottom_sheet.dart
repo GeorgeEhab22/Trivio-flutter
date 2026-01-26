@@ -33,7 +33,8 @@ class _AddPostBottomSheetState extends State<AddPostBottomSheet> {
     final mediaQuery = MediaQuery.of(context);
     // Handle keyboard overlap
     final keyboardHeight = mediaQuery.viewInsets.bottom;
-    final maxHeight = mediaQuery.size.height * 0.9; // Increased slightly for better view
+    final maxHeight =
+        mediaQuery.size.height * 0.9; // Increased slightly for better view
 
     return BlocProvider(
       create: (context) => di.sl<CreatePostCubit>(),
@@ -66,11 +67,9 @@ class _AddPostBottomSheetState extends State<AddPostBottomSheet> {
           return Padding(
             padding: EdgeInsets.only(bottom: keyboardHeight),
             child: Container(
-              constraints: BoxConstraints(
-                maxHeight: maxHeight,
-              ),
-              decoration: const BoxDecoration(
-                color: Colors.white,
+              constraints: BoxConstraints(maxHeight: maxHeight),
+              decoration: BoxDecoration(
+                color: Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
               ),
               child: cubit.isLoading
@@ -104,20 +103,20 @@ class _AddPostBottomSheetState extends State<AddPostBottomSheet> {
                           MediaButtonsRow(
                             onPickImage: () =>
                                 BottomSheetManager.showMediaSourceSheet(
-                              context,
-                              false, // isVideo = false
-                              onPicked: (files) {
-                                cubit.addMedia(files);
-                              },
-                            ),
+                                  context,
+                                  false, // isVideo = false
+                                  onPicked: (files) {
+                                    cubit.addMedia(files);
+                                  },
+                                ),
                             onPickVideo: () =>
                                 BottomSheetManager.showMediaSourceSheet(
-                              context,
-                              true, // isVideo = true
-                              onPicked: (files) {
-                                cubit.addMedia(files);
-                              },
-                            ),
+                                  context,
+                                  true, // isVideo = true
+                                  onPicked: (files) {
+                                    cubit.addMedia(files);
+                                  },
+                                ),
                           ),
                           PrivacySelector(
                             privacy: currentPrivacy,

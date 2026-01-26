@@ -9,6 +9,7 @@ import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
 class BottomSheetManager {
+  
   static void showMediaSourceSheet(
     BuildContext context,
     bool isVideo, {
@@ -16,8 +17,8 @@ class BottomSheetManager {
   }) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.white,
       useRootNavigator: true,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -28,11 +29,12 @@ class BottomSheetManager {
             child: Wrap(
               children: [
                 ListTile(
-                  leading: const Icon(
+                  leading: Icon(
                     Icons.photo_library,
-                    color: AppColors.iconsColor,
+                    color: Theme.of(context).iconTheme.color,
                   ),
                   title: const Text("Choose from Gallery"),
+                  textColor: Theme.of(context).textTheme.bodyMedium?.color,
                   onTap: () {
                     context.pop();
                     pickMedia(
@@ -46,11 +48,12 @@ class BottomSheetManager {
                   },
                 ),
                 ListTile(
-                  leading: const Icon(
+                  leading: Icon(
                     Icons.camera_alt,
-                    color: AppColors.iconsColor,
+                    color: Theme.of(context).iconTheme.color,
                   ),
                   title: const Text("Use Camera"),
+                  textColor: Theme.of(context).textTheme.bodyMedium?.color,
                   onTap: () {
                     context.pop();
                     pickMedia(
@@ -121,11 +124,15 @@ class BottomSheetManager {
                 leading: const Icon(Icons.public),
                 title: const Text("Public"),
                 onTap: () => context.pop('Public'),
+                iconColor: Theme.of(context).iconTheme.color,
+                textColor: Theme.of(context).textTheme.bodyMedium?.color,
               ),
               ListTile(
                 leading: const Icon(Icons.lock),
                 title: const Text("Private"),
                 onTap: () => context.pop('Private'),
+                iconColor: Theme.of(context).iconTheme.color,
+                textColor: Theme.of(context).textTheme.bodyMedium?.color,
               ),
             ],
           ),
@@ -146,10 +153,13 @@ class BottomSheetManager {
     required bool isOwner,
     required CommentCubit cubit,
   }) {
+    final handleBarColor = Theme.of(context).brightness == Brightness.dark
+        ? Colors.grey[700]
+        : Colors.grey[300];
     showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.white,
       useRootNavigator: true,
+      backgroundColor:Theme.of( context).scaffoldBackgroundColor,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -164,7 +174,7 @@ class BottomSheetManager {
                 height: 4,
                 margin: const EdgeInsets.only(bottom: 10),
                 decoration: BoxDecoration(
-                  color: Colors.grey[300],
+                  color:handleBarColor,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -172,6 +182,7 @@ class BottomSheetManager {
                 actionTile(
                   icon: Icons.reply_outlined,
                   label: 'Reply',
+                  textColor: Theme.of(context).textTheme.bodyMedium?.color,
                   onTap: () {
                     context.pop();
                     cubit.triggerReply(comment);
@@ -183,6 +194,7 @@ class BottomSheetManager {
                 actionTile(
                   icon: Icons.copy_outlined,
                   label: 'Copy comment',
+                  textColor: Theme.of(context).textTheme.bodyMedium?.color,
                   onTap: () async {
                     context.pop();
                     copyToClipboard(context, comment.text);
@@ -194,7 +206,7 @@ class BottomSheetManager {
                 actionTile(
                   icon: Icons.delete_outline,
                   label: 'Delete',
-                  textColor: Colors.redAccent,
+                  textColor: Theme.of(context).textTheme.bodyMedium?.color,
                   iconColor: Colors.redAccent,
                   onTap: () {
                     context.pop();
@@ -208,6 +220,7 @@ class BottomSheetManager {
                   actionTile(
                     icon: Icons.edit_outlined,
                     label: 'Edit',
+                    textColor: Theme.of(context).textTheme.bodyMedium?.color,
                     onTap: () {
                       context.pop();
                       navigateToEditPage(context, comment, cubit);
@@ -218,6 +231,7 @@ class BottomSheetManager {
                   actionTile(
                     icon: Icons.history,
                     label: 'View Edit History',
+                    textColor: Theme.of(context).textTheme.bodyMedium?.color,
                     onTap: () {
                       context.pop();
                       //cubit.showHistory(comment.id);
@@ -228,6 +242,7 @@ class BottomSheetManager {
                 actionTile(
                   icon: Icons.reply_outlined,
                   label: 'Reply',
+                  textColor: Theme.of(context).textTheme.bodyMedium?.color,
                   onTap: () {
                     context.pop();
                     cubit.triggerReply(comment);
@@ -239,6 +254,7 @@ class BottomSheetManager {
                 actionTile(
                   icon: Icons.copy_outlined,
                   label: 'Copy comment',
+                  textColor: Theme.of(context).textTheme.bodyMedium?.color,
                   onTap: () async {
                     context.pop();
                     copyToClipboard(context, comment.text);
@@ -250,6 +266,7 @@ class BottomSheetManager {
                 actionTile(
                   icon: Icons.flag_outlined,
                   label: 'Report comment',
+                  textColor: Theme.of(context).textTheme.bodyMedium?.color,
                   onTap: () {
                     context.pop();
                     cubit.reportComment(comment.id);
@@ -261,6 +278,7 @@ class BottomSheetManager {
                 actionTile(
                   icon: Icons.hide_source_outlined,
                   label: 'Hide comment',
+                  textColor: Theme.of(context).textTheme.bodyMedium?.color,
                   onTap: () {
                     context.pop();
                     cubit.hideComment(comment.id);
