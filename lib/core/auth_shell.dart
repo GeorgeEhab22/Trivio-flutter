@@ -49,9 +49,6 @@ class AuthShell extends StatelessWidget {
     // current full uri, e.g. "/app/home"
     final location = GoRouterState.of(context).uri.toString();
     final currentIndex = locationToIndex(location);
-
-
-
     final isReel = currentIndex == 1;
     // Gesture detection:
     // - Use DragEnd velocity primarily (fast swipes)
