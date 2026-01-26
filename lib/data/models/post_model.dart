@@ -5,6 +5,7 @@ import 'package:auth/domain/entities/reaction_type.dart';
 
 class PostModel extends Post {
   final int updateCount;               // maps "__v"
+  @override
   final List<String> media;            // server media URLs / filenames
   final String? location;
   final int views;
