@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class PostImage extends StatelessWidget {
   final String? imageUrl;
-  final double? originalWidth; // Original image width
-  final double? originalHeight; // Original image height
+  final double? originalWidth;
+  final double? originalHeight;
 
   const PostImage({
     super.key,
@@ -14,42 +15,35 @@ class PostImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (imageUrl == null) {
-      return SizedBox();
-    }
-    final screenWidth = MediaQuery.of(context).size.width;
-    final imageWidth =
-        screenWidth * 0.9; // Display image at 90% of screen width
-    double imageHeight;
+    if (imageUrl == null || imageUrl!.isEmpty) return const SizedBox.shrink();
 
-    if (originalWidth != null && originalHeight != null) {
-      // Keep aspect ratio based on original image size
-      imageHeight = (originalHeight! / originalWidth!) * imageWidth;
-    } else {
-      // Default height when no original size is provided
-      imageHeight = screenWidth * 0.5;
-    }
-
-    // Set a maximum height for tall images
-    final maxHeight = MediaQuery.of(context).size.height * 0.65;
-    if (imageHeight > maxHeight) imageHeight = maxHeight;
+    final maxHeight = MediaQuery.of(context).size.height * 0.55;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16), 
         child: Container(
-          width: imageWidth,
-          height: imageHeight,
-          color: Colors.grey[200],
-          child: imageUrl != null
-              ? Image.network(
-                  imageUrl!,
-                  width: imageWidth,
-                  height: imageHeight,
-                  fit: BoxFit.cover,
-                )
-              : SizedBox()
+          width: double.infinity,
+          constraints: BoxConstraints(
+            maxHeight: maxHeight, 
+          ),
+          color: Colors.grey[100],
+          child: CachedNetworkImage(
+            imageUrl: imageUrl!,
+            fit: BoxFit.fitWidth, 
+            alignment: Alignment.topCenter, 
+            placeholder: (context, url) => Container(
+              height: 200,
+              color: Colors.grey[200],
+              child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),
+            ),
+            errorWidget: (context, url, error) => Container(
+              height: 200,
+              color: Colors.grey[100],
+              child: const Icon(Icons.broken_image, color: Colors.grey, size: 40),
+            ),
+          ),
         ),
       ),
     );
