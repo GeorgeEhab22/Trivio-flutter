@@ -5,7 +5,6 @@ import 'package:auth/presentation/user/widgets/profile_info_box.dart';
 import 'package:flutter/material.dart';
 import 'package:auth/constants/colors.dart';
 import 'package:go_router/go_router.dart';
-import 'package:path/path.dart';
 
 class UserProfileView extends StatelessWidget {
   const UserProfileView({super.key});
@@ -13,9 +12,7 @@ class UserProfileView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
         title: Row(
           children: [
             const HomeAppBarLogoAndSearchBox(),

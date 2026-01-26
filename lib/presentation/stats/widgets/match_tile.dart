@@ -31,11 +31,24 @@ class MatchTile extends StatelessWidget {
           // League row
           Row(
             children: [
-              SizedBox(width: 75, child: match.leagueIcon),
+              SizedBox(
+                width: 75,
+                child: ColorFiltered(
+                  colorFilter: ColorFilter.mode(
+                   Theme.of(context).iconTheme.color ?? Colors.black, 
+                    BlendMode.srcIn,
+                  ),
+                  child: match.leagueIcon,
+                ),
+              ),
               Text("Soccer ", style: Styles.textStyle15),
               Text(
                 '‣ ${match.country} ‣ ${match.league}',
-                style: Styles.textStyle14.copyWith(color: AppColors.darkGrey),
+                style: Styles.textStyle14.copyWith(
+                  color: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.color?.withValues(alpha: 0.4),
+                ),
               ),
             ],
           ),
@@ -54,13 +67,15 @@ class MatchTile extends StatelessWidget {
                         Text(
                           match.time,
                           style: Styles.textStyle14.copyWith(
-                            color: AppColors.lightGrey,
+                            color: Theme.of(context).textTheme.bodyMedium?.color
+                                ?.withValues(alpha: 0.7),
                           ),
                         ),
                         Text(
                           match.status,
-                          style: const TextStyle(
-                            color: AppColors.lightGrey,
+                          style: TextStyle(
+                            color: Theme.of(context).textTheme.bodyMedium?.color
+                                ?.withValues(alpha: 0.7),
                             fontSize: 12,
                           ),
                         ),
@@ -83,9 +98,9 @@ class MatchTile extends StatelessWidget {
                     children: [
                       CustomTeamRow(
                         match.homeTeamIcon ??
-                            const Icon(
+                            Icon(
                               Icons.sports_soccer,
-                              color: Colors.black,
+                              color: Theme.of(context).iconTheme.color,
                             ),
                         match.homeTeam,
                         match.homeScore,
@@ -93,9 +108,9 @@ class MatchTile extends StatelessWidget {
                       ),
                       CustomTeamRow(
                         match.awayTeamIcon ??
-                            const Icon(
+                            Icon(
                               Icons.sports_soccer,
-                              color: Colors.black,
+                              color: Theme.of(context).iconTheme.color,
                             ),
                         match.awayTeam,
                         match.awayScore,
@@ -121,5 +136,3 @@ class MatchTile extends StatelessWidget {
     );
   }
 }
-
-
