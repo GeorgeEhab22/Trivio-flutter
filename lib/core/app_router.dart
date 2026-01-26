@@ -4,6 +4,7 @@ import 'package:auth/presentation/chats/chat_screen/chat_view.dart';
 import 'package:auth/presentation/chats/messages_screen/messages_view.dart';
 import 'package:auth/presentation/reels/reels_page.dart';
 import 'package:auth/presentation/user/user_profile_settings_view.dart';
+import 'package:auth/presentation/stats/stats_view.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -135,7 +136,7 @@ GoRouter createRouter( bool isLoggedIn) {
                   GoRoute(
                     path: 'stats',
                     pageBuilder: (context, state) =>
-                        NoTransitionPage(child: const StatsPage()),
+                        NoTransitionPage(child: const StatsScreenView()),
                   ),
                 ],
               ),
