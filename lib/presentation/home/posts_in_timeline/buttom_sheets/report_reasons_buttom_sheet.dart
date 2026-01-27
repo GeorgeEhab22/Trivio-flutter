@@ -8,6 +8,9 @@ class ReportReasonsBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final handleBarColor = Theme.of(context).brightness == Brightness.dark
+        ? Colors.grey[700]
+        : Colors.grey[300];
     final reasons = [
       "Spam or irrelevant content",
       "Toxic or offensive behavior",
@@ -16,16 +19,13 @@ class ReportReasonsBottomSheet extends StatelessWidget {
       "Other",
     ];
 
-    final grey300 = Colors.grey[300] ?? const Color(0xFFD6D6D6);
-
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
         boxShadow: const [
           BoxShadow(
-            color: Colors.black26,
             blurRadius: 10,
             offset: Offset(0, -5),
           ),
@@ -42,7 +42,7 @@ class ReportReasonsBottomSheet extends StatelessWidget {
                 height: 5,
                 margin: const EdgeInsets.only(bottom: 16),
                 decoration: BoxDecoration(
-                  color: grey300,
+                  color: handleBarColor,
                   borderRadius: BorderRadius.circular(3),
                 ),
               ),

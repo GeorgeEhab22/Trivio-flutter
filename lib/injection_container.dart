@@ -113,11 +113,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => ToggleSavePostUseCase(sl()));
 
   sl.registerFactory(
-    () => PostCubit(
-      // fetchPostsUseCase: sl(),
-      //   fetchSinglePostUseCase: sl(),
-    ),
-  );
+    () => PostCubit(sl()),);
   sl.registerFactory(
     () => PostInteractionCubit(
       reactToPostUseCase: sl(),

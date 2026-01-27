@@ -31,6 +31,15 @@ class PostsBlocConsumer extends StatelessWidget {
         if (state is PostsLoadingMoreError) {
           showCustomSnackBar(context, state.message, false);
         }
+        if (state is DeletePostSuccess) {
+          showCustomSnackBar(context, 'Post deleted successfully', true);
+        }
+        if (state is DeletePostError) {
+          showCustomSnackBar(context, state.message, false);
+        }
+        if (state is PostsLoadingMoreError) {
+          showCustomSnackBar(context, state.message, false);
+        }
       },
       builder: (context, state) {
         final cubit = context.read<PostCubit>();
@@ -72,7 +81,7 @@ class PostsBlocConsumer extends StatelessWidget {
               currentUserId: '1',
               isFollowing: false,
             );
-            
+
             // num of posts that will show in timeline
           }, childCount: posts.length + (state is PostsLoadingMore ? 1 : 0)),
         );

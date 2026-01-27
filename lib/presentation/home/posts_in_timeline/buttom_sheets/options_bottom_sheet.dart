@@ -1,11 +1,14 @@
+import 'package:auth/common/functions/show_custom_dialog.dart';
 import 'package:auth/presentation/home/posts_in_timeline/buttom_sheets/report_reasons_buttom_sheet.dart';
 import 'package:auth/presentation/home/posts_in_timeline/buttom_sheets/widgets/list_action_tile.dart';
 import 'package:auth/presentation/home/posts_in_timeline/buttom_sheets/widgets/square_action_button.dart';
+import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:auth/domain/entities/post.dart';
 import 'package:auth/presentation/manager/post_cubit/post_interaction_cubit.dart';
 import 'package:auth/common/functions/copy_to_clipboard.dart';
+import 'package:go_router/go_router.dart';
 
 class OptionsBottomSheet extends StatelessWidget {
   final Post post;
@@ -72,8 +75,7 @@ class OptionsBottomSheet extends StatelessWidget {
                       return SquareActionButton(
                         label: isSaved ? 'Saved' : 'Save',
                         icon: isSaved ? Icons.bookmark : Icons.bookmark_border,
-                        backgroundColor:
-                           Theme.of(context).cardColor,
+                        backgroundColor: Theme.of(context).cardColor,
                         iconColor: Theme.of(context).iconTheme.color,
                         textColor: Theme.of(
                           context,
@@ -160,15 +162,26 @@ class OptionsBottomSheet extends StatelessWidget {
               },
             ),
 
-            if (post.authorId == currentUserId)
-              ListActionTile(
-                icon: Icons.delete_outline,
-                text: 'Delete Post',
-                color: Colors.red,
-                onTap: () {
-                  cubit.deletePost(post: post);
-                },
-              ),
+            // if (post.authorId == currentUserId)
+            ListActionTile(
+              icon: Icons.delete_rounded,
+              text: 'Delete',
+              color: Colors.red,
+              onTap: () {
+                final postCubit = context.read<PostCubit>();
+                context.pop();
+                showCustomDialog(
+                  context: context,
+                  title: "Delete Post",
+                  content: "Are you sure you want to delete this post?",
+                  confirmText: "Delete",
+                  confirmTextColor: Colors.red,
+                  onConfirm: () {
+                    postCubit.deletePost(post: post);
+                  },
+                );
+              },
+            ),
           ],
         ),
       ),

@@ -1,4 +1,5 @@
 import 'package:auth/presentation/home/posts_in_timeline/widgets/follow_button.dart';
+import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:auth/domain/entities/post.dart';
@@ -43,13 +44,17 @@ class PostHeader extends StatelessWidget {
               IconButton(
                 icon: Icon(Icons.more_vert, color: Theme.of(context).iconTheme.color),
                 onPressed: () {
-                  final postCubit = context.read<PostInteractionCubit>();
+                  final postInteractionCubit = context.read<PostInteractionCubit>();
+                  final postCubit = context.read<PostCubit>();
                   showModalBottomSheet(
                     context: context,
                     backgroundColor: Colors.transparent,
                     useRootNavigator: true,
-                    builder: (ctx) => BlocProvider.value(
-                      value: postCubit,
+                    builder: (ctx) => MultiBlocProvider(
+                      providers: [
+                        BlocProvider.value(value: postInteractionCubit),
+                        BlocProvider.value(value: postCubit),
+                      ],
                       child: OptionsBottomSheet(
                         post: post,
                         currentUserId: currentUserId,

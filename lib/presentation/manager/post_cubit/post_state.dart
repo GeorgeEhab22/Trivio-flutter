@@ -60,3 +60,39 @@ class PostError extends PostState {
   List<Object?> get props => [message];
 }
 
+// delete post
+
+// delete post
+class DeletePostLoading extends PostState {
+  final String postId;
+  const DeletePostLoading({required this.postId});
+
+  @override
+  List<Object> get props => [postId];
+}
+
+class DeletePostSuccess extends PostState {
+  final Post post;
+  const DeletePostSuccess({required this.post});
+
+  @override
+  List<Object> get props => [post];
+}
+
+class DeletePostError extends PostState {
+  final String postId;
+  final String message;
+  final String? errorType;
+
+  const DeletePostError({
+    required this.postId,
+    required this.message,
+    this.errorType,
+  });
+
+  @override
+  List<Object?> get props => [postId, message, errorType];
+
+  bool get isValidationError => errorType == 'validation';
+  bool get isNetworkError => errorType == 'network';
+}

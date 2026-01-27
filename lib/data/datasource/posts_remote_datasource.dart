@@ -203,7 +203,7 @@ class PostsRemoteDataSourceImpl implements PostsRemoteDataSource {
   Future<void> deletePost(String postId) async {
     try {
       await api.delete(
-        "${ApiEndpoints.deletePost}$postId",
+        "${ApiEndpoints.deletePost}/$postId",
         options: _getAuthOptions(), // Added Auth
       );
     } catch (e) {

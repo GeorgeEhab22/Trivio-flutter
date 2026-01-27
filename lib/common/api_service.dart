@@ -57,7 +57,7 @@ class ApiService {
     return res.data;
   }
 
-  Future<Map<String, dynamic>> delete(
+  Future< dynamic> delete(
     String endPoint, {
     dynamic data, // Changed to dynamic
     Options? options, // Added options
@@ -67,6 +67,9 @@ class ApiService {
       data: data,
       options: options,
     );
+    if (res.data == null || res.data == "") {
+    return <String, dynamic>{}; 
+  }
     return res.data;
   }
 

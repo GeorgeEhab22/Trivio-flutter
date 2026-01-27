@@ -167,49 +167,6 @@ class PostInteractionCubit extends Cubit<PostInteractionState> {
     );
   }
 
-  // delete post
-  Future<void> deletePost({required Post post}) async {
-    emit(DeletePostLoading(postId: post.postID??''));
-
-    final result = await deletePostUseCase(post.postID??'');
-
-    result.fold(
-      (failure) => emit(_mapDeleteFailureToState(failure, post.postID??'')),
-      (_) => emit(DeletePostSuccess(post: post)),
-    );
-  }
-
-  DeletePostError _mapDeleteFailureToState(Failure failure, String postId) {
-    switch (failure.runtimeType) {
-      case const (ValidationFailure):
-        return DeletePostError(
-          postId: postId,
-          message: failure.message,
-          errorType: 'validation',
-        );
-      case const (NetworkFailure):
-        return DeletePostError(
-          postId: postId,
-          message: failure.message,
-          errorType: 'network',
-        );
-      default:
-        return DeletePostError(
-          postId: postId,
-          message: failure.message,
-          errorType: 'server',
-        );
-    }
-  }
-
-  void resetDeleteState() => emit(PostInteractionInitial());
-  bool get isDeleteLoading => state is DeletePostLoading;
-  bool get isDeleteSuccess => state is DeletePostSuccess;
-  bool get isDeleteFailure => state is DeletePostError;
-  bool get isDeleteInitial => state is PostInteractionInitial;
-
-  String? get deleteErrorMessage =>
-      state is DeletePostError ? (state as DeletePostError).message : null;
 
   Future<void> sharePost({
     required String postId,
