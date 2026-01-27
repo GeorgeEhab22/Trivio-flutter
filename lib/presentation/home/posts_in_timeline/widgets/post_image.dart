@@ -17,7 +17,7 @@ class PostImage extends StatelessWidget {
   Widget build(BuildContext context) {
     if (imageUrl == null || imageUrl!.isEmpty) return const SizedBox.shrink();
 
-    final maxHeight = MediaQuery.of(context).size.height * 0.55;
+    // final maxHeight = MediaQuery.of(context).size.height * 0.55;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
@@ -25,14 +25,17 @@ class PostImage extends StatelessWidget {
         borderRadius: BorderRadius.circular(16), 
         child: Container(
           width: double.infinity,
-          constraints: BoxConstraints(
-            maxHeight: maxHeight, 
-          ),
+          height: double.infinity,
+          // constraints: BoxConstraints(
+          //   maxHeight: maxHeight, 
+          // ),
           color: Colors.grey[100],
           child: CachedNetworkImage(
             imageUrl: imageUrl!,
-            fit: BoxFit.fitWidth, 
-            alignment: Alignment.topCenter, 
+            fit: BoxFit.cover, 
+            memCacheHeight: 800,
+            memCacheWidth: 800,
+            alignment: Alignment.center, 
             placeholder: (context, url) => Container(
               height: 200,
               color: Colors.grey[200],
