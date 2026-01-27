@@ -1,42 +1,26 @@
 import 'package:auth/domain/entities/post.dart';
 import 'package:auth/presentation/authentication/widgets/show_custom_snackbar.dart';
+import 'package:auth/presentation/home/posts_in_timeline/widgets/post_card.dart';
 import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:skeletonizer/skeletonizer.dart';
-import 'widgets/post_card.dart';
 
-class PostsBlocConsumer extends StatelessWidget {
-  const PostsBlocConsumer({super.key});
+class TimelineListView extends StatelessWidget {
+  const TimelineListView({super.key});
 
   @override
   Widget build(BuildContext context) {
     final dummyPost = Post(
       postID: '10',
       authorId: '0',
-      //authorName: 'Loading User...........',
-      //authorImage: '',
       caption:
           'Loading content lines for skeleton effect.\nSecond line for better UI.',
       type: 'text',
-      //createdAt: DateTime.now(),
-      //comments: const [],
-      //reactions: const [],
-      //isSaved: false,
-      //isEdited: false,
     );
 
     return BlocConsumer<PostCubit, PostState>(
       listener: (context, state) {
-        if (state is PostsLoadingMoreError) {
-          showCustomSnackBar(context, state.message, false);
-        }
-        if (state is DeletePostSuccess) {
-          showCustomSnackBar(context, 'Post deleted successfully', true);
-        }
-        if (state is DeletePostError) {
-          showCustomSnackBar(context, state.message, false);
-        }
         if (state is PostsLoadingMoreError) {
           showCustomSnackBar(context, state.message, false);
         }
@@ -81,8 +65,6 @@ class PostsBlocConsumer extends StatelessWidget {
               currentUserId: '1',
               isFollowing: false,
             );
-
-            // num of posts that will show in timeline
           }, childCount: posts.length + (state is PostsLoadingMore ? 1 : 0)),
         );
       },

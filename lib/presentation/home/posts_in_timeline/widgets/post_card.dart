@@ -1,6 +1,7 @@
 import 'package:auth/presentation/home/posts_in_timeline/widgets/post_content.dart';
 import 'package:auth/presentation/home/posts_in_timeline/widgets/post_footer.dart';
 import 'package:auth/presentation/home/posts_in_timeline/widgets/post_header.dart';
+import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:auth/injection_container.dart' as di;
@@ -46,8 +47,11 @@ class PostCard extends StatelessWidget {
                 return const SizedBox.shrink();
               }
 
+              final postCubitState = context.watch<PostCubit>().state;
+              final isDeleting = postCubitState is DeletePostLoading && postCubitState.postId == post.postID;
+
               return Opacity(
-                opacity: state is ReportPostLoading ? 0.5 : 1,
+                opacity: (isDeleting || state is ReportPostLoading) ? 0.5 : 1,
                 child: InkWell(
                   onTap: () {
                     // TODO : fetch single post
@@ -55,9 +59,8 @@ class PostCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(16),
                   child: Card(
                     margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                    color:Theme.of(context).appBarTheme.backgroundColor,
+                    color: Theme.of(context).appBarTheme.backgroundColor,
                     elevation: 0.2,
-                    // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 6),
                       child: Column(
@@ -68,9 +71,7 @@ class PostCard extends StatelessWidget {
                             currentUserId: currentUserId,
                             isFollowing: isFollowing,
                           ),
-
                           PostContent(post: post),
-
                           const SizedBox(height: 8),
                           const Divider(
                             height: 1,
@@ -79,7 +80,6 @@ class PostCard extends StatelessWidget {
                             indent: 12,
                             endIndent: 12,
                           ),
-
                           PostFooter(
                             post: post,
                             currentUserId: currentUserId,
