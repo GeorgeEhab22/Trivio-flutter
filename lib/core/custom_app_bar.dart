@@ -3,8 +3,6 @@ import 'package:auth/core/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:auth/presentation/manager/theme_cubit/theme_cubit.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -108,9 +106,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                 const SizedBox(width: 8),
                 IconButton(
                   onPressed: () {
-                    context.read<ThemeCubit>().toggleTheme();
-
-                    // GoRouter.of(context).push(AppRoutes.settings);
+                    context.push(AppRoutes.settings);
                   },
                   icon: Icon(
                     Icons.menu,

@@ -1,7 +1,7 @@
 import 'package:auth/common/functions/show_custom_dialog.dart';
 import 'package:auth/presentation/home/posts_in_timeline/buttom_sheets/report_reasons_buttom_sheet.dart';
-import 'package:auth/presentation/home/posts_in_timeline/buttom_sheets/widgets/list_action_tile.dart';
-import 'package:auth/presentation/home/posts_in_timeline/buttom_sheets/widgets/square_action_button.dart';
+import 'package:auth/common/functions/custom_list_tile.dart';
+import 'package:auth/common/functions/custom_square_button.dart';
 import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -72,14 +72,10 @@ class OptionsBottomSheet extends StatelessWidget {
                       } else if (state is SavePostError) {
                         isSaved = state.oldStatus;
                       }
-                      return SquareActionButton(
+                      return CustomSquareButton(
                         label: isSaved ? 'Saved' : 'Save',
                         icon: isSaved ? Icons.bookmark : Icons.bookmark_border,
                         backgroundColor: Theme.of(context).cardColor,
-                        iconColor: Theme.of(context).iconTheme.color,
-                        textColor: Theme.of(
-                          context,
-                        ).textTheme.bodyMedium?.color,
                         onTap: () {
                           cubit.toggleSavePost(
                             postId: post.postID ?? '',
@@ -91,15 +87,10 @@ class OptionsBottomSheet extends StatelessWidget {
                     },
                   ),
                   const SizedBox(width: 8),
-                  SquareActionButton(
+                  CustomSquareButton(
                     label: 'Copy Link',
                     icon: Icons.link_outlined,
-                    backgroundColor:
-                        Theme.of(context).brightness == Brightness.dark
-                        ? Colors.white10
-                        : const Color(0xFFF5F5F5),
-                    iconColor: Theme.of(context).iconTheme.color,
-                    textColor: Theme.of(context).textTheme.bodyMedium?.color,
+                    backgroundColor: Theme.of(context).cardColor,
                     onTap: () {
                       //TODO : later copy the right post link..
                       copyToClipboard(context, post.caption ?? 'No Link');
@@ -123,21 +114,19 @@ class OptionsBottomSheet extends StatelessWidget {
             //       // TODO : go to View Edit History page
             //     },
             //   ),
-
-            ListActionTile(
+            CustomListTile(
               icon: Icons.visibility_off_outlined,
               text: 'Not Interested',
-              color: Theme.of(context).iconTheme.color!,
               onTap: () {
                 // TODO use the cubit to mark the post as not interested
               },
             ),
 
             // report => doneeeeeeeee
-            ListActionTile(
+            CustomListTile(
               icon: Icons.report_gmailerrorred_outlined,
               text: 'Report',
-              color: Colors.redAccent,
+              redColor: true,
               onTap: () {
                 showModalBottomSheet(
                   context: context,
@@ -150,7 +139,7 @@ class OptionsBottomSheet extends StatelessWidget {
                       child: ReportReasonsBottomSheet(
                         onReportSelected: (reason) {
                           cubit.reportPost(
-                            postId: post.postID??'',
+                            postId: post.postID ?? '',
                             userId: currentUserId,
                             reason: reason,
                           );
@@ -163,10 +152,10 @@ class OptionsBottomSheet extends StatelessWidget {
             ),
 
             // if (post.authorId == currentUserId)
-            ListActionTile(
+            CustomListTile(
               icon: Icons.delete_rounded,
               text: 'Delete',
-              color: Colors.red,
+              redColor: true,
               onTap: () {
                 final postCubit = context.read<PostCubit>();
                 context.pop();

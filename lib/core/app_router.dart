@@ -3,6 +3,8 @@ import 'package:auth/presentation/chats/chat_info_button/chat_info_view.dart';
 import 'package:auth/presentation/chats/chat_screen/chat_view.dart';
 import 'package:auth/presentation/chats/messages_screen/messages_view.dart';
 import 'package:auth/presentation/reels/reels_page.dart';
+import 'package:auth/presentation/settings/settings_view.dart';
+import 'package:auth/presentation/settings/theme_view.dart';
 import 'package:auth/presentation/user/user_profile_settings_view.dart';
 import 'package:auth/presentation/stats/stats_view.dart';
 import 'package:flutter/material.dart';
@@ -166,6 +168,16 @@ GoRouter createRouter( bool isLoggedIn) {
                 ],
               ),
               
+            ],
+          ),
+          GoRoute(
+            path: 'settings',
+            builder: (context, state) => const SettingsView(),
+            routes: [
+              GoRoute(
+                path: 'theme',
+                builder: (context, state) => const ThemeView(),
+              ),
             ],
           ),
         ],
