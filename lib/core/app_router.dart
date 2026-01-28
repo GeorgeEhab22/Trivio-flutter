@@ -2,6 +2,7 @@ import 'package:auth/core/custom_bottom_navigation_bar.dart';
 import 'package:auth/presentation/chats/chat_info_button/chat_info_view.dart';
 import 'package:auth/presentation/chats/chat_screen/chat_view.dart';
 import 'package:auth/presentation/chats/messages_screen/messages_view.dart';
+import 'package:auth/presentation/groups/groups_view.dart';
 import 'package:auth/presentation/reels/reels_page.dart';
 import 'package:auth/presentation/settings/settings_view.dart';
 import 'package:auth/presentation/settings/theme_view.dart';
@@ -177,6 +178,10 @@ GoRouter createRouter( bool isLoggedIn) {
               GoRoute(
                 path: 'theme',
                 builder: (context, state) => const ThemeView(),
+              ),
+              GoRoute(
+                path: 'groups',
+                builder: (context, state) => const GroupsView(),
               ),
             ],
           ),
