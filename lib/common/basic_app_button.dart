@@ -6,6 +6,8 @@ class BasicAppButton extends StatelessWidget {
   final String title;
   final double? height;
   final double? width;
+  final Color? backgroundColor;
+  final Color? textColor;
   final bool isLoading;
 
   const BasicAppButton({
@@ -14,6 +16,8 @@ class BasicAppButton extends StatelessWidget {
     required this.title,
     this.height,
     this.width,
+    this.backgroundColor,
+    this.textColor,
     this.isLoading = false,
   });
 
@@ -25,10 +29,10 @@ class BasicAppButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: isLoading ? null : onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primary,
-          foregroundColor: Colors.white,
-          disabledBackgroundColor: AppColors.primary,
-          disabledForegroundColor: Colors.white,
+          backgroundColor: backgroundColor ?? AppColors.primary,
+          foregroundColor: textColor ?? Colors.white,
+          disabledBackgroundColor: backgroundColor ?? AppColors.primary,
+          disabledForegroundColor: textColor ?? Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
