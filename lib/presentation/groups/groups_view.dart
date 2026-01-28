@@ -41,7 +41,7 @@ class GroupsView extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-
+          //TODO: Add posts from user's groups
         ],
       ),
     );
