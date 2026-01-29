@@ -3,8 +3,9 @@ import 'package:auth/core/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-class SuggestedGroupAppBar extends StatelessWidget implements PreferredSizeWidget{
-  const SuggestedGroupAppBar({super.key});
+class GroupPreviewAppBar extends StatelessWidget
+    implements PreferredSizeWidget {
+  const GroupPreviewAppBar({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +24,11 @@ class SuggestedGroupAppBar extends StatelessWidget implements PreferredSizeWidge
       ),
       actions: [
         IconButton(
-          icon: Icon(Icons.search, color: Theme.of(context).iconTheme.color,size: 28,),
+          icon: Icon(
+            Icons.search,
+            color: Theme.of(context).iconTheme.color,
+            size: 28,
+          ),
           onPressed: () {
             context.push(AppRoutes.search);
           },
@@ -75,7 +80,7 @@ class SuggestedGroupAppBar extends StatelessWidget implements PreferredSizeWidge
       ],
     );
   }
-  
+
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }

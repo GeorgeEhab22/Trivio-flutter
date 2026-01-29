@@ -24,7 +24,8 @@ class AppRoutes {
 
 // groups
   static const String groups = '/app/settings/groups';
-  static const String suggestedGroup = '/app/settings/groups/suggested_group';
+  static const String groupPreview = '/app/settings/groups/group_preview';
+  static const String groupFeed = '/app/settings/groups/group_feed';
 
 // chats
   static const String messages = '/app/messages';

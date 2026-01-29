@@ -2,8 +2,9 @@ import 'package:auth/core/custom_bottom_navigation_bar.dart';
 import 'package:auth/presentation/chats/chat_info_button/chat_info_view.dart';
 import 'package:auth/presentation/chats/chat_screen/chat_view.dart';
 import 'package:auth/presentation/chats/messages_screen/messages_view.dart';
+import 'package:auth/presentation/groups/group_feed/group_feed_view.dart';
 import 'package:auth/presentation/groups/groups_view.dart';
-import 'package:auth/presentation/groups/suggested_groups/suggested_group_view.dart';
+import 'package:auth/presentation/groups/group_preview/group_preview_view.dart';
 import 'package:auth/presentation/reels/reels_page.dart';
 import 'package:auth/presentation/settings/settings_view.dart';
 import 'package:auth/presentation/settings/theme_view.dart';
@@ -26,7 +27,6 @@ import 'package:auth/core/app_routes.dart';
 import 'package:auth/core/auth_shell.dart';
 import 'package:auth/injection_container.dart' as di;
 
-
 int previousTabIndex = 0;
 
 CustomTransitionPage buildAnimatedPage({
@@ -44,20 +44,20 @@ CustomTransitionPage buildAnimatedPage({
       final begin = Offset(leftToRight ? 1.0 : -1.0, 0.0);
       const end = Offset.zero;
       final curve = Curves.easeInOut;
-      final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+      final tween = Tween(
+        begin: begin,
+        end: end,
+      ).chain(CurveTween(curve: curve));
 
-      return SlideTransition(
-        position: animation.drive(tween),
-        child: child,
-      );
+      return SlideTransition(position: animation.drive(tween), child: child);
     },
     transitionDuration: const Duration(milliseconds: 300),
   );
 }
 
-GoRouter createRouter( bool isLoggedIn) {
+GoRouter createRouter(bool isLoggedIn) {
   return GoRouter(
-    initialLocation:'/app/settings/groups',
+    initialLocation: '/app/settings/groups',
     // initialLocation:isLoggedIn ? '/app/home' : '/signin',
     routes: [
       GoRoute(
@@ -100,7 +100,7 @@ GoRouter createRouter( bool isLoggedIn) {
           );
         },
       ),
-           GoRoute(
+      GoRoute(
         path: '/app',
         builder: (context, state) => const SizedBox.shrink(),
         routes: [
@@ -136,7 +136,7 @@ GoRouter createRouter( bool isLoggedIn) {
                   ),
                 ],
               ),
-               StatefulShellBranch(
+              StatefulShellBranch(
                 routes: [
                   GoRoute(
                     path: 'stats',
@@ -170,7 +170,6 @@ GoRouter createRouter( bool isLoggedIn) {
                   ),
                 ],
               ),
-              
             ],
           ),
           GoRoute(
@@ -186,8 +185,12 @@ GoRouter createRouter( bool isLoggedIn) {
                 builder: (context, state) => const GroupsView(),
                 routes: [
                   GoRoute(
-                    path: 'suggested_group', 
-                    builder: (context, state) => const SuggestedGroupView(),
+                    path: 'group_preview',
+                    builder: (context, state) => const GroupPreviewView(),
+                  ),
+                  GoRoute(
+                    path: 'group_feed',
+                    builder: (context, state) => const GroupFeedView(),
                   ),
                 ],
               ),

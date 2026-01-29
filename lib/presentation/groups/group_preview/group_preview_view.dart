@@ -2,18 +2,18 @@ import 'package:auth/common/functions/custom_square_button.dart';
 import 'package:auth/common/functions/format_number.dart';
 import 'package:auth/constants/colors.dart';
 import 'package:auth/core/styels.dart';
-import 'package:auth/presentation/groups/suggested_groups/widgets/suggested_group_app_bar.dart';
+import 'package:auth/presentation/groups/group_preview/widgets/group_preview_app_bar.dart';
 import 'package:auth/presentation/home/widgets/exbandable_text.dart';
 import 'package:flutter/material.dart';
 
-class SuggestedGroupView extends StatelessWidget {
-  const SuggestedGroupView({super.key});
+class GroupPreviewView extends StatelessWidget {
+  const GroupPreviewView({super.key});
 
   @override
   Widget build(BuildContext context) {
     final int numOfMembers = 5400;
     return Scaffold(
-      appBar: const SuggestedGroupAppBar(),
+      appBar: const GroupPreviewAppBar(),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,

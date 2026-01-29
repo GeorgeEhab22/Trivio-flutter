@@ -1,3 +1,4 @@
+import 'package:auth/core/app_routes.dart';
 import 'package:auth/core/styels.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -16,7 +17,7 @@ class YourGroupItem extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
         child: GestureDetector(
           onTap: () {
-            context.push('get_group_by_id');
+            context.push(AppRoutes.groupFeed);
           },
           child: Column(
             children: [

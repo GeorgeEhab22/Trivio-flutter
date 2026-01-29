@@ -22,7 +22,7 @@ class SuggestedGroupsListView extends StatelessWidget {
             description: "group description",
             imageUrl: "https://picsum.photos/500",
             onTap: () {
-              context.push(AppRoutes.suggestedGroup);
+              context.push(AppRoutes.groupPreview);
             },
           );
         },
