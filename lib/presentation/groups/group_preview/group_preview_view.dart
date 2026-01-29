@@ -2,6 +2,7 @@ import 'package:auth/common/functions/custom_square_button.dart';
 import 'package:auth/common/functions/format_number.dart';
 import 'package:auth/constants/colors.dart';
 import 'package:auth/core/styels.dart';
+import 'package:auth/presentation/groups/group_preview/widgets/group_image.dart';
 import 'package:auth/presentation/groups/group_preview/widgets/group_preview_app_bar.dart';
 import 'package:auth/presentation/home/widgets/exbandable_text.dart';
 import 'package:flutter/material.dart';
@@ -18,13 +19,7 @@ class GroupPreviewView extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Image.network(
-              'https://picsum.photos/500',
-              height: 200,
-              width: double.infinity,
-              fit: BoxFit.cover,
-            ),
-
+            GroupImage(),
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
@@ -42,7 +37,9 @@ class GroupPreviewView extends StatelessWidget {
                     width: double.infinity,
                     child: CustomSquareButton(
                       label: "Join group",
-                      onTap: () {},
+                      onTap: () {
+                        //  TODO :  send request and update the button
+                      },
                       backgroundColor: AppColors.primary,
                       isExpanded: false,
                       textColor: Colors.white,

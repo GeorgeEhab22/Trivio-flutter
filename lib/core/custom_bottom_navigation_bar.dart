@@ -176,16 +176,3 @@ class ChatBotPage extends StatelessWidget {
   }
 }
 
-class GroupPage extends StatelessWidget {
-  const GroupPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: Theme.of(context).scaffoldBackgroundColor,
-      child: const Center(
-        child: Text("👥 Profile Page", style: TextStyle(fontSize: 24)),
-      ),
-    );
-  }
-}

@@ -14,23 +14,23 @@ class AppRoutes {
   static const String stats = '/app/stats';
   static const String profile = '/app/profile';
 
-  static const String settings = '/app/settings';
-  static const String notifications = '/app/notifications';
-  static const String theme = '/app/settings/theme';
-  static const String blocked = '/app/settings/blocked';
-  static const String activeStates = '/app/settings/active_states';
-  static const String saved = '/app/settings/saved';
-  static const String search = '/app/search';
+  static const String settings = '/app/home/settings';
+  static const String notifications = '/app/home/settings/notifications';
+  static const String theme = '/app/home/settings/theme';
+  static const String blocked = '/app/home/settings/blocked';
+  static const String activeStates = '/app/home/settings/active_states';
+  static const String saved = '/app/home/settings/saved';
+  static const String search = '/app/home/search';
 
 // groups
-  static const String groups = '/app/settings/groups';
-  static const String groupPreview = '/app/settings/groups/group_preview';
-  static const String groupFeed = '/app/settings/groups/group_feed';
+  static const String groups = '/app/home/settings/groups';
+  static const String groupPreview = '/app/home/settings/groups/group_preview';
+  static const String groupFeed = '/app/home/settings/groups/group_feed';
 
 // chats
-  static const String messages = '/app/messages';
-  static const String chat = '/app/messages/chat';
-  static const String chatInfo = '/app/messages/chat/chat_info';
+  static const String messages = '/app/home/messages';
+  static const String chat = '/app/home/messages/chat';
+  static const String chatInfo = '/app/home/messages/chat/chat_info';
 
   //profile
   static const String userProfileSettings = '/app/profile_settings';

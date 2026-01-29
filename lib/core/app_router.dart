@@ -57,7 +57,7 @@ CustomTransitionPage buildAnimatedPage({
 
 GoRouter createRouter(bool isLoggedIn) {
   return GoRouter(
-    initialLocation: '/app/settings/groups',
+    initialLocation: '/app/home/settings/groups',
     // initialLocation:isLoggedIn ? '/app/home' : '/signin',
     routes: [
       GoRoute(
@@ -115,6 +115,51 @@ GoRouter createRouter(bool isLoggedIn) {
                     path: 'home',
                     pageBuilder: (context, state) =>
                         NoTransitionPage(child: const HomePage()),
+                    routes: [
+                      GoRoute(
+                        path: 'messages',
+                        builder: (context, state) => const MessagesView(),
+                        routes: [
+                          GoRoute(
+                            path: 'chat',
+                            builder: (context, state) => const ChatView(),
+                            routes: [
+                              GoRoute(
+                                path: 'chat_info',
+                                builder: (context, state) =>
+                                    const ChatInfoView(),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      GoRoute(
+                        path: 'settings',
+                        builder: (context, state) => const SettingsView(),
+                        routes: [
+                          GoRoute(
+                            path: 'theme',
+                            builder: (context, state) => const ThemeView(),
+                          ),
+                          GoRoute(
+                            path: 'groups',
+                            builder: (context, state) => const GroupsView(),
+                            routes: [
+                              GoRoute(
+                                path: 'group_preview',
+                                builder: (context, state) =>
+                                    const GroupPreviewView(),
+                              ),
+                              GoRoute(
+                                path: 'group_feed',
+                                builder: (context, state) =>
+                                    const GroupFeedView(),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -151,46 +196,6 @@ GoRouter createRouter(bool isLoggedIn) {
                     path: 'profile',
                     pageBuilder: (context, state) =>
                         NoTransitionPage(child: const UserProfileSettings()),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          GoRoute(
-            path: 'messages',
-            builder: (context, state) => const MessagesView(),
-            routes: [
-              GoRoute(
-                path: 'chat',
-                builder: (context, state) => const ChatView(),
-                routes: [
-                  GoRoute(
-                    path: 'chat_info',
-                    builder: (context, state) => const ChatInfoView(),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          GoRoute(
-            path: 'settings',
-            builder: (context, state) => const SettingsView(),
-            routes: [
-              GoRoute(
-                path: 'theme',
-                builder: (context, state) => const ThemeView(),
-              ),
-              GoRoute(
-                path: 'groups',
-                builder: (context, state) => const GroupsView(),
-                routes: [
-                  GoRoute(
-                    path: 'group_preview',
-                    builder: (context, state) => const GroupPreviewView(),
-                  ),
-                  GoRoute(
-                    path: 'group_feed',
-                    builder: (context, state) => const GroupFeedView(),
                   ),
                 ],
               ),
