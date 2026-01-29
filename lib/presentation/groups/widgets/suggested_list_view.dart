@@ -17,8 +17,8 @@ class SuggestedGroupsListView extends StatelessWidget {
         itemBuilder: (context, index) {
           //TODO: replace with real group data
           return SuggestCard(
-            userName: "Group1 suggestion",
-            caption: "group description",
+            groupName: "Group1 suggestion",
+            description: "group description",
             imageUrl: "https://picsum.photos/500",
             onTap: () {
               context.push('/get_group_by_id');

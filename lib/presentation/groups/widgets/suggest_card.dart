@@ -4,8 +4,8 @@ import 'package:auth/core/styels.dart';
 import 'package:flutter/material.dart';
 
 class SuggestCard extends StatelessWidget {
-  final String userName;
-  final String? caption;
+  final String groupName;
+  final String? description;
   final String? imageUrl;
   final VoidCallback? onJoinGroup;
   final VoidCallback? onRemoveSuggestion;
@@ -13,8 +13,8 @@ class SuggestCard extends StatelessWidget {
 
   const SuggestCard({
     super.key,
-    required this.userName,
-    this.caption,
+    required this.groupName,
+    this.description,
     this.imageUrl,
     this.onJoinGroup,
     this.onRemoveSuggestion,
@@ -64,14 +64,14 @@ class SuggestCard extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          userName,
+                          groupName,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: Styles.textStyle17,
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          caption ?? '',
+                          description ?? '',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: Styles.textStyle14,

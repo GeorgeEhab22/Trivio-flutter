@@ -14,22 +14,19 @@ class GroupsView extends StatelessWidget {
     return Scaffold(
       appBar: const GroupsAppBar(),
       body: ListView(
-        padding: const EdgeInsets.symmetric(vertical: 16),
+        padding: const EdgeInsets.only(top: 8,left: 8.0,),
         children: [
           SeeAllHeader(
             title: "Your groups",
             onSeeAll: () => context.push('/your_groups'),
           ),
-          const SizedBox(height: 8),
           const YourGroupsListView(),
 
-          const SizedBox(height: 20),
 
           SeeAllHeader(
             title: "Suggested groups",
             onSeeAll: () => context.push('/suggested_groups'),
           ),
-          const SizedBox(height: 8),
           const SuggestedGroupsListView(),
           const SizedBox(height: 20),
 

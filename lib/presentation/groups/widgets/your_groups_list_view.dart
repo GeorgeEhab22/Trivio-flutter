@@ -7,11 +7,11 @@ class YourGroupsListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 125,
+      height: 110,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: 12,
-        separatorBuilder: (context, index) => const SizedBox(width: 12),
+        separatorBuilder: (context, index) => const SizedBox(width: 0),
         itemBuilder: (context, index) {
           //TODO: replace with real group data
           return const YourGroupItem(
