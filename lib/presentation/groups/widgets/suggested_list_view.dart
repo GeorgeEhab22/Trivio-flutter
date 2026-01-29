@@ -1,3 +1,4 @@
+import 'package:auth/core/app_routes.dart';
 import 'package:auth/presentation/groups/widgets/suggest_card.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -21,7 +22,7 @@ class SuggestedGroupsListView extends StatelessWidget {
             description: "group description",
             imageUrl: "https://picsum.photos/500",
             onTap: () {
-              context.push('/get_group_by_id');
+              context.push(AppRoutes.suggestedGroup);
             },
           );
         },

@@ -21,10 +21,17 @@ class AppRoutes {
   static const String activeStates = '/app/settings/active_states';
   static const String saved = '/app/settings/saved';
   static const String search = '/app/search';
+
+// groups
   static const String groups = '/app/settings/groups';
+  static const String suggestedGroup = '/app/settings/groups/suggested_group';
+
+// chats
   static const String messages = '/app/messages';
   static const String chat = '/app/messages/chat';
   static const String chatInfo = '/app/messages/chat/chat_info';
+
+  //profile
   static const String userProfileSettings = '/app/profile_settings';
 
 }

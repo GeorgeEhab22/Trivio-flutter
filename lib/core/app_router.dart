@@ -3,6 +3,7 @@ import 'package:auth/presentation/chats/chat_info_button/chat_info_view.dart';
 import 'package:auth/presentation/chats/chat_screen/chat_view.dart';
 import 'package:auth/presentation/chats/messages_screen/messages_view.dart';
 import 'package:auth/presentation/groups/groups_view.dart';
+import 'package:auth/presentation/groups/suggested_groups/suggested_group_view.dart';
 import 'package:auth/presentation/reels/reels_page.dart';
 import 'package:auth/presentation/settings/settings_view.dart';
 import 'package:auth/presentation/settings/theme_view.dart';
@@ -56,7 +57,8 @@ CustomTransitionPage buildAnimatedPage({
 
 GoRouter createRouter( bool isLoggedIn) {
   return GoRouter(
-    initialLocation:isLoggedIn ? '/app/home' : '/signin',
+    initialLocation:'/app/settings/groups',
+    // initialLocation:isLoggedIn ? '/app/home' : '/signin',
     routes: [
       GoRoute(
         path: AppRoutes.signIn,
@@ -182,6 +184,12 @@ GoRouter createRouter( bool isLoggedIn) {
               GoRoute(
                 path: 'groups',
                 builder: (context, state) => const GroupsView(),
+                routes: [
+                  GoRoute(
+                    path: 'suggested_group', 
+                    builder: (context, state) => const SuggestedGroupView(),
+                  ),
+                ],
               ),
             ],
           ),
