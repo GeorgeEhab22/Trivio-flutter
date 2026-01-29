@@ -8,6 +8,7 @@ class CustomSquareButton extends StatelessWidget {
   final Color? borderColor;
   final Color? iconColor;
   final Color? textColor;
+  final TextStyle? textStyle;
   final CrossAxisAlignment alignment;
   final bool isExpanded;
 
@@ -20,6 +21,7 @@ class CustomSquareButton extends StatelessWidget {
     this.borderColor,
     this.iconColor,
     this.textColor,
+    this.textStyle,
     this.alignment = CrossAxisAlignment.center,
     this.isExpanded = true,
   });
@@ -60,7 +62,7 @@ class CustomSquareButton extends StatelessWidget {
                   color:
                       textColor ??
                       Theme.of(context).textTheme.bodyMedium?.color,
-                ),
+                ).merge(textStyle),
               ),
             ],
           ),

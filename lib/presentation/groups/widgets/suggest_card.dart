@@ -84,6 +84,7 @@ class SuggestCard extends StatelessWidget {
                               onTap: onJoinGroup ?? () {},
                               backgroundColor: AppColors.primary,
                               isExpanded: true,
+                              textColor: Colors.white,
                             ),
                             const SizedBox(width: 8),
                             CustomSquareButton(
