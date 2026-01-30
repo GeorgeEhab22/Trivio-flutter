@@ -2,6 +2,7 @@ import 'package:auth/core/custom_bottom_navigation_bar.dart';
 import 'package:auth/presentation/chats/chat_info_button/chat_info_view.dart';
 import 'package:auth/presentation/chats/chat_screen/chat_view.dart';
 import 'package:auth/presentation/chats/messages_screen/messages_view.dart';
+import 'package:auth/presentation/home/widgets/edit_page.dart';
 import 'package:auth/presentation/reels/reels_page.dart';
 import 'package:auth/presentation/user/user_profile_settings_view.dart';
 import 'package:auth/presentation/stats/stats_view.dart';
@@ -22,7 +23,6 @@ import 'package:auth/core/app_routes.dart';
 import 'package:auth/core/auth_shell.dart';
 import 'package:auth/injection_container.dart' as di;
 
-
 int previousTabIndex = 0;
 
 CustomTransitionPage buildAnimatedPage({
@@ -40,20 +40,20 @@ CustomTransitionPage buildAnimatedPage({
       final begin = Offset(leftToRight ? 1.0 : -1.0, 0.0);
       const end = Offset.zero;
       final curve = Curves.easeInOut;
-      final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+      final tween = Tween(
+        begin: begin,
+        end: end,
+      ).chain(CurveTween(curve: curve));
 
-      return SlideTransition(
-        position: animation.drive(tween),
-        child: child,
-      );
+      return SlideTransition(position: animation.drive(tween), child: child);
     },
     transitionDuration: const Duration(milliseconds: 300),
   );
 }
 
-GoRouter createRouter( bool isLoggedIn) {
+GoRouter createRouter(bool isLoggedIn) {
   return GoRouter(
-    initialLocation:isLoggedIn ? '/app/home' : '/signin',
+    initialLocation: isLoggedIn ? '/app/home' : '/signin',
     routes: [
       GoRoute(
         path: AppRoutes.signIn,
@@ -95,7 +95,7 @@ GoRouter createRouter( bool isLoggedIn) {
           );
         },
       ),
-           GoRoute(
+      GoRoute(
         path: '/app',
         builder: (context, state) => const SizedBox.shrink(),
         routes: [
@@ -110,6 +110,22 @@ GoRouter createRouter( bool isLoggedIn) {
                     path: 'home',
                     pageBuilder: (context, state) =>
                         NoTransitionPage(child: const HomePage()),
+                    routes: [
+                      //TODO: move this router int profile page and refactor edit page
+                      GoRoute(
+                        path: 'edit',
+                        builder: (context, state) {
+                          final args =
+                              state.extra as Map<String, dynamic>? ?? {};
+
+                          return EditPage(
+                            initialText: args['initialText'],
+                            title: args['title'],
+                            onSave: args['onSave'],
+                          );
+                        },
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -131,7 +147,7 @@ GoRouter createRouter( bool isLoggedIn) {
                   ),
                 ],
               ),
-               StatefulShellBranch(
+              StatefulShellBranch(
                 routes: [
                   GoRoute(
                     path: 'stats',
@@ -165,7 +181,6 @@ GoRouter createRouter( bool isLoggedIn) {
                   ),
                 ],
               ),
-              
             ],
           ),
         ],

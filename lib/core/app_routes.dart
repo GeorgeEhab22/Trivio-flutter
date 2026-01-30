@@ -14,6 +14,11 @@ class AppRoutes {
   static const String stats = '/app/stats';
   static const String profile = '/app/profile';
 
+
+// edit pge
+  static const String editCaption = '/app/home/edit';
+
+
   static const String settings = '/app/settings';
   static const String notifications = '/app/notifications';
   static const String search = '/app/search';

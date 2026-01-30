@@ -23,11 +23,8 @@ abstract class PostRepository {
 
   Future<Either<Failure, Post>> editPost({
     required String postId,
-    required String userId,
-    required String newContent,
-    String? newImageUrl,
-    String? newVideoUrl,
-    List<String>? newTags,
+    String? newCaption,
+    String? newType,
   });
 
   Future<Either<Failure, Post>> sharePost({

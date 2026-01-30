@@ -1,15 +1,14 @@
 import 'package:auth/common/functions/copy_to_clipboard.dart';
 import 'package:auth/constants/colors.dart';
+import 'package:auth/core/app_routes.dart';
 import 'package:auth/domain/entities/comment.dart';
 import 'package:auth/presentation/authentication/widgets/show_custom_snackbar.dart';
-import 'package:auth/presentation/home/comments/pages/comment_edit_page.dart';
 import 'package:auth/presentation/manager/comment_cubit/comment_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
 class BottomSheetManager {
-  
   static void showMediaSourceSheet(
     BuildContext context,
     bool isVideo, {
@@ -145,8 +144,7 @@ class BottomSheetManager {
     }
   }
 
-
-// TODO : handle states 
+  // TODO : handle states
   static void showActions(
     BuildContext context, {
     required Comment comment,
@@ -159,7 +157,7 @@ class BottomSheetManager {
     showModalBottomSheet(
       context: context,
       useRootNavigator: true,
-      backgroundColor:Theme.of( context).scaffoldBackgroundColor,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -174,7 +172,7 @@ class BottomSheetManager {
                 height: 4,
                 margin: const EdgeInsets.only(bottom: 10),
                 decoration: BoxDecoration(
-                  color:handleBarColor,
+                  color: handleBarColor,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -223,7 +221,7 @@ class BottomSheetManager {
                     textColor: Theme.of(context).textTheme.bodyMedium?.color,
                     onTap: () {
                       context.pop();
-                      navigateToEditPage(context, comment, cubit);
+                      context.push(AppRoutes.editCaption);
                     },
                   ),
 

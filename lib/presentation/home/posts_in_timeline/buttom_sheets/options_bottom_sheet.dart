@@ -1,4 +1,5 @@
 import 'package:auth/common/functions/show_custom_dialog.dart';
+import 'package:auth/core/app_routes.dart';
 import 'package:auth/presentation/home/posts_in_timeline/buttom_sheets/report_reasons_buttom_sheet.dart';
 import 'package:auth/presentation/home/posts_in_timeline/buttom_sheets/widgets/list_action_tile.dart';
 import 'package:auth/presentation/home/posts_in_timeline/buttom_sheets/widgets/square_action_button.dart';
@@ -26,6 +27,7 @@ class OptionsBottomSheet extends StatelessWidget {
         ? Colors.grey[700]
         : Colors.grey[300];
     final cubit = context.read<PostInteractionCubit>();
+    final postCubit = context.read<PostCubit>();
 
     return Container(
       decoration: BoxDecoration(
@@ -123,11 +125,32 @@ class OptionsBottomSheet extends StatelessWidget {
             //       // TODO : go to View Edit History page
             //     },
             //   ),
+            if (post.authorId == currentUserId)
+            ListActionTile(
+              icon: Icons.edit,
+              text: 'Edit post',
+              // color: Theme.of(context).iconTheme.color!,
+              onTap: () {
+                context.pop();
 
+                context.push(
+                  AppRoutes.editCaption,
+                  extra: {
+                    'initialText': post.caption,
+                    'title': 'Edit post',
+                    'onSave': (String newText) {
+                      postCubit.editPost(
+                        postId: post.postID ?? '',
+                        newCaption: newText,
+                      );
+                    },
+                  },
+                );
+              },
+            ),
             ListActionTile(
               icon: Icons.visibility_off_outlined,
               text: 'Not Interested',
-              color: Theme.of(context).iconTheme.color!,
               onTap: () {
                 // TODO use the cubit to mark the post as not interested
               },
@@ -162,26 +185,25 @@ class OptionsBottomSheet extends StatelessWidget {
               },
             ),
 
-            // if (post.authorId == currentUserId)
-            ListActionTile(
-              icon: Icons.delete_rounded,
-              text: 'Delete',
-              color: Colors.red,
-              onTap: () {
-                final postCubit = context.read<PostCubit>();
-                context.pop();
-                showCustomDialog(
-                  context: context,
-                  title: "Delete Post",
-                  content: "Are you sure you want to delete this post?",
-                  confirmText: "Delete",
-                  confirmTextColor: Colors.red,
-                  onConfirm: () {
-                    postCubit.deletePost(post: post);
-                  },
-                );
-              },
-            ),
+            if (post.authorId == currentUserId)
+              ListActionTile(
+                icon: Icons.delete_rounded,
+                text: 'Delete',
+                color: Colors.red,
+                onTap: () {
+                  context.pop();
+                  showCustomDialog(
+                    context: context,
+                    title: "Delete Post",
+                    content: "Are you sure you want to delete this post?",
+                    confirmText: "Delete",
+                    confirmTextColor: Colors.red,
+                    onConfirm: () {
+                      postCubit.deletePost(post: post);
+                    },
+                  );
+                },
+              ),
           ],
         ),
       ),

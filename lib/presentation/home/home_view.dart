@@ -21,6 +21,12 @@ class HomeView extends StatelessWidget {
         if (state is DeletePostError) {
           showCustomSnackBar(context, state.message, false);
         }
+        if (state is EditPostSuccess) {
+          showCustomSnackBar(context, 'Post updated successfully', true);
+        }
+        if (state is EditPostError) {
+          showCustomSnackBar(context, state.message, false);
+        }
       },
       child: Scaffold(
         body: SafeArea(

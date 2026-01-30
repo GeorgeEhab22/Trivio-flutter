@@ -60,7 +60,27 @@ class PostError extends PostState {
   List<Object?> get props => [message];
 }
 
-// delete post
+ // edit post
+
+class EditPostLoading extends PostState {
+  final String postId;
+  const EditPostLoading({required this.postId});
+}
+
+class EditPostSuccess extends PostState {
+  final Post updatedPost;
+  const EditPostSuccess({required this.updatedPost});
+  @override
+  List<Object> get props => [updatedPost];
+}
+
+class EditPostError extends PostState {
+  final String postId;
+  final String message;
+  const EditPostError({required this.postId, required this.message});
+  @override
+  List<Object> get props => [postId, message];
+}
 
 // delete post
 class DeletePostLoading extends PostState {

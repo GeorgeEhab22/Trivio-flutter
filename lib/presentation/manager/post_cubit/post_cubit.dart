@@ -1,13 +1,17 @@
 import 'package:auth/core/errors/failure.dart';
 import 'package:auth/domain/entities/post.dart';
 import 'package:auth/domain/usecases/post/delete_post_usecase.dart';
+import 'package:auth/domain/usecases/post/edit_post_usecase.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 part 'post_state.dart';
 
 class PostCubit extends Cubit<PostState> {
   final DeletePostUseCase deletePostUseCase;
-  PostCubit(this.deletePostUseCase) : super(PostInitial());
+  final EditPostUseCase editPostUseCase;
+
+  PostCubit(this.deletePostUseCase, this.editPostUseCase)
+    : super(PostInitial());
 
   List<Post> posts = [];
   int page = 1;
@@ -113,6 +117,36 @@ class PostCubit extends Cubit<PostState> {
         );
     }
   }
+
+  // edit post
+  Future<void> editPost({
+    required String postId,
+    String? newCaption,
+    String? newType,
+  }) async {
+    emit(EditPostLoading(postId: postId));
+
+    final result = await editPostUseCase(
+      postId: postId,
+      caption: newCaption,
+    );
+
+    result.fold(
+      (failure) =>
+          emit(EditPostError(postId: postId, message: failure.message)),
+      (updatedPost) {
+        final index = posts.indexWhere((p) => p.postID == postId);
+        if (index != -1) {
+          posts[index] = updatedPost;
+        }
+
+        emit(PostLoaded(List.from(posts)));
+
+        emit(EditPostSuccess(updatedPost: updatedPost));
+      },
+    );
+  }
+
   // up is dummy data , down is original code for now
 
   // Future<void> fetchPosts({bool refresh = false}) async {

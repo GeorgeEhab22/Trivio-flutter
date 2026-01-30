@@ -112,8 +112,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => ToggleFollowUserUseCase(sl()));
   sl.registerLazySingleton(() => ToggleSavePostUseCase(sl()));
 
-  sl.registerFactory(
-    () => PostCubit(sl()),);
+  sl.registerFactory(() => PostCubit(sl(),sl()));
   sl.registerFactory(
     () => PostInteractionCubit(
       reactToPostUseCase: sl(),
@@ -123,8 +122,6 @@ Future<void> init() async {
       toggleSavePostUseCase: sl(),
       reportPostUseCase: sl(),
       removeReactionFromPostUseCase: sl(),
-      deletePostUseCase: sl(),
-      editPostUseCase: sl(),
     ),
   );
   // comments
@@ -159,8 +156,7 @@ Future<void> init() async {
   );
 
   sl.registerFactory(
-    () => CreatePostCubit(
-      createPostUseCase: sl(),),
+    () => CreatePostCubit(createPostUseCase: sl()),
   );
-   sl.registerFactory(() => ThemeCubit());
+  sl.registerFactory(() => ThemeCubit());
 }
