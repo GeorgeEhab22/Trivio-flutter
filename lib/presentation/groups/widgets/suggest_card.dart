@@ -10,6 +10,7 @@ class SuggestCard extends StatelessWidget {
   final VoidCallback? onJoinGroup;
   final VoidCallback? onRemoveSuggestion;
   final VoidCallback? onTap;
+  final bool isRow; 
 
   const SuggestCard({
     super.key,
@@ -19,19 +20,17 @@ class SuggestCard extends StatelessWidget {
     this.onJoinGroup,
     this.onRemoveSuggestion,
     this.onTap,
+    this.isRow = true, 
   });
 
   @override
   Widget build(BuildContext context) {
-    double cardWidth = (MediaQuery.of(context).size.width * (2 / 3)).clamp(
-      250,
-      300,
-    );
+    double cardWidth = (MediaQuery.of(context).size.width * (2 / 3)).clamp(250, 300);
 
     return Padding(
       padding: const EdgeInsets.only(right: 8.0, top: 8.0, bottom: 8.0),
       child: Container(
-        width: cardWidth,
+        width: isRow ? cardWidth : null, 
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
@@ -43,17 +42,15 @@ class SuggestCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           child: Material(
             color: Theme.of(context).scaffoldBackgroundColor,
-            borderRadius: BorderRadius.circular(12),
             child: InkWell(
-              borderRadius: BorderRadius.circular(12),
               onTap: onTap,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Image.network(
-                    imageUrl ?? '',
-                    height: 160,
+                    imageUrl ?? 'https://picsum.photos/500',
+                    height: isRow ? 160 : 120,
                     width: double.infinity,
                     fit: BoxFit.cover,
                   ),
@@ -77,25 +74,11 @@ class SuggestCard extends StatelessWidget {
                           style: Styles.textStyle14,
                         ),
                         const SizedBox(height: 16),
-                        Row(
-                          children: [
-                            CustomSquareButton(
-                              label: "Join",
-                              onTap: onJoinGroup ?? () {},
-                              backgroundColor: AppColors.primary,
-                              isExpanded: true,
-                              textColor: Colors.white,
-                            ),
-                            const SizedBox(width: 8),
-                            CustomSquareButton(
-                              label: "Remove",
-                              onTap: onRemoveSuggestion ?? () {},
-                              backgroundColor: Colors.grey[200],
-                              textColor: Colors.black,
-                              isExpanded: true,
-                            ),
-                          ],
-                        ),
+                        
+                        if (isRow) 
+                          buildRowButtons() 
+                        else 
+                          buildColumnButtons(),
                       ],
                     ),
                   ),
@@ -105,6 +88,51 @@ class SuggestCard extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  Widget buildRowButtons() {
+    return Row(
+      children: [
+        CustomSquareButton(
+          label: "Join",
+          onTap: onJoinGroup ?? () {},
+          backgroundColor: AppColors.primary,
+          textColor: Colors.white,
+        ),
+        const SizedBox(width: 8),
+        CustomSquareButton(
+          label: "Remove",
+          onTap: onRemoveSuggestion ?? () {},
+          backgroundColor: Colors.grey[200],
+          textColor: Colors.black,
+        ),
+      ],
+    );
+  }
+
+  Widget buildColumnButtons() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        CustomSquareButton(
+          label: "Join",
+          onTap: onJoinGroup ?? () {},
+          backgroundColor: AppColors.primary,
+          isExpanded: false,
+          textColor: Colors.white,
+          height: 10, 
+        ),
+        const SizedBox(height: 8),
+        CustomSquareButton(
+          label: "Remove",
+          onTap: onRemoveSuggestion ?? () {},
+          backgroundColor: Colors.grey[200],
+          textColor: Colors.black,
+          isExpanded: false,
+          height: 10,
+        ),
+      ],
     );
   }
 }
