@@ -2,6 +2,7 @@ import 'package:auth/core/custom_bottom_navigation_bar.dart';
 import 'package:auth/presentation/chats/chat_info_button/chat_info_view.dart';
 import 'package:auth/presentation/chats/chat_screen/chat_view.dart';
 import 'package:auth/presentation/chats/messages_screen/messages_view.dart';
+import 'package:auth/presentation/groups/create_group/create_group_view.dart';
 import 'package:auth/presentation/groups/group_feed/group_feed_view.dart';
 import 'package:auth/presentation/groups/groups_view.dart';
 import 'package:auth/presentation/groups/group_preview/group_preview_view.dart';
@@ -154,6 +155,11 @@ GoRouter createRouter(bool isLoggedIn) {
                                 path: 'group_feed',
                                 builder: (context, state) =>
                                     const GroupFeedView(),
+                              ),
+                              GoRoute(
+                                path: 'create_group',
+                                builder: (context, state) =>
+                                    const CreateGroupView(),
                               ),
                             ],
                           ),

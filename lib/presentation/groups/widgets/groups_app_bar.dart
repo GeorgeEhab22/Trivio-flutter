@@ -1,4 +1,6 @@
+import 'package:auth/core/app_routes.dart';
 import 'package:auth/core/styels.dart';
+import 'package:auth/presentation/groups/create_group/create_group_view.dart';
 import 'package:auth/presentation/groups/widgets/groups_tab_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -32,8 +34,7 @@ class GroupsAppBar extends StatelessWidget implements PreferredSizeWidget {
             size: 28,
           ),
           onPressed: () {
-            context.push('/create_group');
-          },
+            context.push(AppRoutes.createGroup);},
         ),
         IconButton(
           icon: Icon(
@@ -50,7 +51,6 @@ class GroupsAppBar extends StatelessWidget implements PreferredSizeWidget {
     );
   }
 
-
   @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight+40 );
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight + 40);
 }
