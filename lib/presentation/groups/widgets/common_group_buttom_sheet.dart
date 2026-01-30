@@ -1,35 +1,46 @@
 import 'package:flutter/material.dart';
+
 void showCommonGroupBottomSheet({
   required BuildContext context,
   required List<Widget> actions,
 }) {
   showModalBottomSheet(
     context: context,
-    isScrollControlled: true, 
+    isScrollControlled: true,
     backgroundColor: Theme.of(context).scaffoldBackgroundColor,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
     ),
     builder: (context) {
-      return DraggableScrollableSheet( 
-        initialChildSize: 0.4,
-        maxChildSize: 0.9,
-        minChildSize: 0.2,
-        expand: false,
-        builder: (context, scrollController) {
-          return SafeArea(
+      return ConstrainedBox(
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.of(context).size.height * 0.8,
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10),
             child: SingleChildScrollView(
-              controller: scrollController,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: actions,
-                ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 40,
+                    height: 4,
+                    margin: const EdgeInsets.only(bottom: 10),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[400],
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: actions,
+                  ),
+                ],
               ),
             ),
-          );
-        },
+          ),
+        ),
       );
     },
   );
