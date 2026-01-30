@@ -1,9 +1,9 @@
 import 'package:auth/common/functions/custom_square_button.dart';
-import 'package:auth/common/functions/format_number.dart';
 import 'package:auth/constants/colors.dart';
 import 'package:auth/core/styels.dart';
 import 'package:auth/presentation/groups/group_preview/widgets/group_image.dart';
 import 'package:auth/presentation/groups/group_preview/widgets/group_preview_app_bar.dart';
+import 'package:auth/presentation/groups/widgets/members_row.dart';
 import 'package:auth/presentation/home/widgets/exbandable_text.dart';
 import 'package:flutter/material.dart';
 
@@ -12,7 +12,6 @@ class GroupPreviewView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final int numOfMembers = 5400;
     return Scaffold(
       appBar: const GroupPreviewAppBar(),
       body: SingleChildScrollView(
@@ -27,10 +26,7 @@ class GroupPreviewView extends StatelessWidget {
                 children: [
                   const Text("Liverpool", style: Styles.textStyleBold20),
                   const SizedBox(height: 8),
-                  Text(
-                    "${formatNumber(numOfMembers)} members",
-                    style: Styles.textStyle14.copyWith(color: Colors.grey),
-                  ),
+                  const MembersRow(),
                   const SizedBox(height: 20),
 
                   SizedBox(

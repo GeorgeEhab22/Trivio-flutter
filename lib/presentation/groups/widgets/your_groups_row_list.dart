@@ -1,8 +1,8 @@
 import 'package:auth/presentation/groups/widgets/your_group_item.dart';
 import 'package:flutter/material.dart';
 
-class YourGroupsListView extends StatelessWidget {
-  const YourGroupsListView({super.key});
+class YourGroupsRowList extends StatelessWidget {
+  const YourGroupsRowList({super.key});
 
   @override
   Widget build(BuildContext context) {

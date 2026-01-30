@@ -1,4 +1,5 @@
 import 'package:auth/core/styels.dart';
+import 'package:auth/presentation/groups/widgets/groups_tab_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -45,9 +46,11 @@ class GroupsAppBar extends StatelessWidget implements PreferredSizeWidget {
           },
         ),
       ],
+      bottom: GroupsTabBar(),
     );
   }
 
+
   @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight+40 );
 }

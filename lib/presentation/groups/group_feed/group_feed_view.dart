@@ -1,11 +1,11 @@
 import 'package:auth/common/functions/custom_square_button.dart';
-import 'package:auth/common/functions/format_number.dart';
 import 'package:auth/constants/colors.dart';
 import 'package:auth/core/styels.dart';
 import 'package:auth/presentation/groups/group_feed/widgets/group_feed_app_bar.dart';
 import 'package:auth/presentation/groups/group_feed/widgets/leave_group_button.dart';
 import 'package:auth/presentation/groups/group_preview/widgets/group_image.dart';
 import 'package:auth/presentation/groups/widgets/common_group_buttom_sheet.dart';
+import 'package:auth/presentation/groups/widgets/members_row.dart';
 import 'package:flutter/material.dart';
 
 class GroupFeedView extends StatelessWidget {
@@ -13,7 +13,6 @@ class GroupFeedView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final int numOfMembers = 3070000;
     return Scaffold(
       appBar: const GroupFeedAppBar(),
       body: ListView(
@@ -29,10 +28,7 @@ class GroupFeedView extends StatelessWidget {
                   children: [
                     const Text("Liverpool", style: Styles.textStyleBold20),
                     const SizedBox(height: 8),
-                    Text(
-                      "${formatNumber(numOfMembers)} members",
-                      style: Styles.textStyle14.copyWith(color: Colors.grey),
-                    ),
+                    const MembersRow(),
                     const SizedBox(height: 20),
 
                     SizedBox(
