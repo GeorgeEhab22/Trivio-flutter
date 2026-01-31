@@ -29,6 +29,8 @@ class AppRoutes {
   static const String createGroup = '/app/home/settings/groups/create_group';
   static const String addCoverPhoto = '/app/home/settings/groups/create_group/add_cover_photo';
   static const String myGroup = '/app/home/settings/groups/my_group';
+  static const String manageGroup = '/app/home/settings/groups/my_group/manage_group';
+
 
 
 
