@@ -4,22 +4,30 @@ import 'package:auth/presentation/groups/widgets/members_row.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-class YourGroupItem extends StatelessWidget {
+class GroupItem extends StatelessWidget {
   final String title;
   final String? imageUrl;
   final bool isHorizontal;
+  final bool? myGroup;
 
-  const YourGroupItem({
+  const GroupItem({
     super.key,
     required this.title,
     this.imageUrl,
     this.isHorizontal = false,
+    this.myGroup = false,
   });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => context.push(AppRoutes.groupFeed),
+      onTap: () {
+        if (myGroup == true) {
+          context.push(AppRoutes.myGroup);
+        } else {
+          context.push(AppRoutes.groupFeed);
+        }
+      },
       child: isHorizontal ? buildHorizontalLayout() : buildVerticalLayout(),
     );
   }

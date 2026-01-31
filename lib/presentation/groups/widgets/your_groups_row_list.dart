@@ -1,4 +1,4 @@
-import 'package:auth/presentation/groups/widgets/your_group_item.dart';
+import 'package:auth/presentation/groups/widgets/group_item.dart';
 import 'package:flutter/material.dart';
 
 class YourGroupsRowList extends StatelessWidget {
@@ -14,7 +14,7 @@ class YourGroupsRowList extends StatelessWidget {
         separatorBuilder: (context, index) => const SizedBox(width: 0),
         itemBuilder: (context, index) {
           //TODO: replace with real group data
-          return const YourGroupItem(
+          return const GroupItem(
             title: "nameeeeeeee",
             imageUrl: "https://picsum.photos/500",
           );

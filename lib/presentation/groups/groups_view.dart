@@ -1,10 +1,11 @@
 import 'package:auth/common/functions/see_all_header.dart';
 import 'package:auth/core/styels.dart';
 import 'package:auth/presentation/groups/discover_groups_list_view.dart';
+import 'package:auth/presentation/groups/my_groups_list_view.dart';
 import 'package:auth/presentation/groups/widgets/groups_app_bar.dart';
-import 'package:auth/presentation/groups/widgets/suggested_list_view.dart';
+import 'package:auth/presentation/groups/widgets/suggested_row_list.dart';
 import 'package:auth/presentation/groups/widgets/your_groups_row_list.dart';
-import 'package:auth/presentation/groups/your_groups_list_view.dart';
+import 'package:auth/presentation/groups/joined_groups_list_view.dart';
 import 'package:flutter/material.dart';
 
 class GroupsView extends StatelessWidget {
@@ -13,7 +14,7 @@ class GroupsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3,
+      length: 4,
       child: Scaffold(
         appBar: const GroupsAppBar(),
         body: Builder(
@@ -37,7 +38,7 @@ class GroupsView extends StatelessWidget {
                         DefaultTabController.of(context).animateTo(2);
                       },
                     ),
-                    const SuggestedGroupsListView(),
+                    const SuggestedGroupsRowList(),
                     const SizedBox(height: 20),
 
                     Padding(
@@ -54,8 +55,9 @@ class GroupsView extends StatelessWidget {
                   ],
                 ),
 
-                const YourGroupsListView(),
+                const JoinedGroupsListView(),
                 const DiscoverGroupsListView(),
+                const MyGroupsListView(),
               ],
             );
           },

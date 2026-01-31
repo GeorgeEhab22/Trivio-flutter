@@ -3,8 +3,8 @@ import 'package:auth/presentation/groups/widgets/suggest_card.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-class SuggestedGroupsListView extends StatelessWidget {
-  const SuggestedGroupsListView({super.key});
+class SuggestedGroupsRowList extends StatelessWidget {
+  const SuggestedGroupsRowList({super.key});
 
   @override
   Widget build(BuildContext context) {

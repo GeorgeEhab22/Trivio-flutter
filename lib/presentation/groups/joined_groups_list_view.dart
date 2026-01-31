@@ -1,9 +1,9 @@
 import 'package:auth/core/styels.dart';
-import 'package:auth/presentation/groups/widgets/your_group_item.dart';
+import 'package:auth/presentation/groups/widgets/group_item.dart';
 import 'package:flutter/material.dart';
 
-class YourGroupsListView extends StatelessWidget {
-  const YourGroupsListView({super.key});
+class JoinedGroupsListView extends StatelessWidget {
+  const JoinedGroupsListView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +44,7 @@ class YourGroupsListView extends StatelessWidget {
             ),
           );
         }
-        return const YourGroupItem(
+        return const GroupItem(
           title: "barcelona g1",
           imageUrl: "https://picsum.photos/500",
           isHorizontal: true,

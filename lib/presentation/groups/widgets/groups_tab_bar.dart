@@ -28,8 +28,9 @@ class GroupsTabBar extends StatelessWidget implements PreferredSizeWidget {
       padding: const EdgeInsets.only(left: 8, bottom: 8),
       tabs: [
         buildTab("For you", isDark),
-        buildTab("Your groups", isDark),
+        buildTab("Joined", isDark),
         buildTab("Discover", isDark),
+        buildTab("My groups", isDark),
       ],
     );
   }
