@@ -2,10 +2,12 @@ import 'package:auth/core/custom_bottom_navigation_bar.dart';
 import 'package:auth/presentation/chats/chat_info_button/chat_info_view.dart';
 import 'package:auth/presentation/chats/chat_screen/chat_view.dart';
 import 'package:auth/presentation/chats/messages_screen/messages_view.dart';
+import 'package:auth/presentation/groups/create_group/add_cover_photo_view.dart';
 import 'package:auth/presentation/groups/create_group/create_group_view.dart';
 import 'package:auth/presentation/groups/group_feed/group_feed_view.dart';
 import 'package:auth/presentation/groups/groups_view.dart';
 import 'package:auth/presentation/groups/group_preview/group_preview_view.dart';
+import 'package:auth/presentation/groups/my_group/my_group_view.dart';
 import 'package:auth/presentation/reels/reels_page.dart';
 import 'package:auth/presentation/settings/settings_view.dart';
 import 'package:auth/presentation/settings/theme_view.dart';
@@ -160,6 +162,18 @@ GoRouter createRouter(bool isLoggedIn) {
                                 path: 'create_group',
                                 builder: (context, state) =>
                                     const CreateGroupView(),
+                                routes: [
+                                  GoRoute(
+                                    path: 'add_cover_photo',
+                                    builder: (context, state) =>
+                                        const AddCoverPhotoView(),
+                                  ),
+                                ],
+                              ),
+                              GoRoute(
+                                path: 'my_group',
+                                builder: (context, state) =>
+                                    const MyGroupView(),
                               ),
                             ],
                           ),

@@ -28,7 +28,7 @@ class CustomSquareButton extends StatelessWidget {
     this.textColor,
     this.textStyle,
     this.alignment = CrossAxisAlignment.center,
-    this.isExpanded = true,
+    this.isExpanded = false,
     this.leadingIcon,
     this.trailingIcon,
     this.row = false,
@@ -64,7 +64,9 @@ class CustomSquareButton extends StatelessWidget {
       ),
     );
 
-    return isExpanded ? Expanded(child: buttonContent) : buttonContent;
+   return isExpanded 
+      ? SizedBox(width: double.infinity, child: buttonContent) 
+      : buttonContent;
   }
 
   Widget buildRowLayout(BuildContext context, TextStyle style) {

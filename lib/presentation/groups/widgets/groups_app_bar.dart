@@ -1,6 +1,5 @@
 import 'package:auth/core/app_routes.dart';
 import 'package:auth/core/styels.dart';
-import 'package:auth/presentation/groups/create_group/create_group_view.dart';
 import 'package:auth/presentation/groups/widgets/groups_tab_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';

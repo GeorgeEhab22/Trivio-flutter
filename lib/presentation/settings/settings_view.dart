@@ -32,60 +32,68 @@ class SettingsView extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          CustomSquareButton(
-                            label: 'Saved',
-                            icon: Icons.bookmark_border,
-                            backgroundColor: Theme.of(
-                              context,
-                            ).scaffoldBackgroundColor,
-                            borderColor: Theme.of(
-                              context,
-                            ).colorScheme.outlineVariant,
-                            alignment: CrossAxisAlignment.start,
-                            onTap: () {},
+                          Expanded(
+                            child: CustomSquareButton(
+                              label: 'Saved',
+                              icon: Icons.bookmark_border,
+                              backgroundColor: Theme.of(
+                                context,
+                              ).scaffoldBackgroundColor,
+                              borderColor: Theme.of(
+                                context,
+                              ).colorScheme.outlineVariant,
+                              alignment: CrossAxisAlignment.start,
+                              onTap: () {},
+                            ),
                           ),
                           const SizedBox(width: 12),
-                          CustomSquareButton(
-                            label: 'Groups',
-                            icon: Icons.groups_2_outlined,
-                            backgroundColor: Theme.of(
-                              context,
-                            ).scaffoldBackgroundColor,
-                            borderColor: Theme.of(
-                              context,
-                            ).colorScheme.outlineVariant,
-                            alignment: CrossAxisAlignment.start,
-                            onTap: () => context.push(AppRoutes.groups),
+                          Expanded(
+                            child: CustomSquareButton(
+                              label: 'Groups',
+                              icon: Icons.groups_2_outlined,
+                              backgroundColor: Theme.of(
+                                context,
+                              ).scaffoldBackgroundColor,
+                              borderColor: Theme.of(
+                                context,
+                              ).colorScheme.outlineVariant,
+                              alignment: CrossAxisAlignment.start,
+                              onTap: () => context.push(AppRoutes.groups),
+                            ),
                           ),
                         ],
                       ),
                       const SizedBox(height: 12),
                       Row(
                         children: [
-                          CustomSquareButton(
-                            label: 'Posts',
-                            icon: Icons.featured_play_list_outlined,
-                            backgroundColor: Theme.of(
-                              context,
-                            ).scaffoldBackgroundColor,
-                            borderColor: Theme.of(
-                              context,
-                            ).colorScheme.outlineVariant,
-                            alignment: CrossAxisAlignment.start,
-                            onTap: () {},
+                          Expanded(
+                            child: CustomSquareButton(
+                              label: 'Posts',
+                              icon: Icons.featured_play_list_outlined,
+                              backgroundColor: Theme.of(
+                                context,
+                              ).scaffoldBackgroundColor,
+                              borderColor: Theme.of(
+                                context,
+                              ).colorScheme.outlineVariant,
+                              alignment: CrossAxisAlignment.start,
+                              onTap: () {},
+                            ),
                           ),
                           const SizedBox(width: 12),
-                          CustomSquareButton(
-                            label: 'Reels',
-                            icon: Icons.video_library_outlined,
-                            backgroundColor: Theme.of(
-                              context,
-                            ).scaffoldBackgroundColor,
-                            borderColor: Theme.of(
-                              context,
-                            ).colorScheme.outlineVariant,
-                            alignment: CrossAxisAlignment.start,
-                            onTap: () {},
+                          Expanded(
+                            child: CustomSquareButton(
+                              label: 'Reels',
+                              icon: Icons.video_library_outlined,
+                              backgroundColor: Theme.of(
+                                context,
+                              ).scaffoldBackgroundColor,
+                              borderColor: Theme.of(
+                                context,
+                              ).colorScheme.outlineVariant,
+                              alignment: CrossAxisAlignment.start,
+                              onTap: () {},
+                            ),
                           ),
                         ],
                       ),

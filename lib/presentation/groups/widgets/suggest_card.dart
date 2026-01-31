@@ -94,18 +94,22 @@ class SuggestCard extends StatelessWidget {
   Widget buildRowButtons() {
     return Row(
       children: [
-        CustomSquareButton(
-          label: "Join",
-          onTap: onJoinGroup ?? () {},
-          backgroundColor: AppColors.primary,
-          textColor: Colors.white,
+        Expanded(
+          child: CustomSquareButton(
+            label: "Join",
+            onTap: onJoinGroup ?? () {},
+            backgroundColor: AppColors.primary,
+            textColor: Colors.white,
+          ),
         ),
         const SizedBox(width: 8),
-        CustomSquareButton(
-          label: "Remove",
-          onTap: onRemoveSuggestion ?? () {},
-          backgroundColor: Colors.grey[200],
-          textColor: Colors.black,
+        Expanded(
+          child: CustomSquareButton(
+            label: "Remove",
+            onTap: onRemoveSuggestion ?? () {},
+            backgroundColor: Colors.grey[200],
+            textColor: Colors.black,
+          ),
         ),
       ],
     );
@@ -119,7 +123,6 @@ class SuggestCard extends StatelessWidget {
           label: "Join",
           onTap: onJoinGroup ?? () {},
           backgroundColor: AppColors.primary,
-          isExpanded: false,
           textColor: Colors.white,
           height: 10, 
         ),
@@ -129,7 +132,6 @@ class SuggestCard extends StatelessWidget {
           onTap: onRemoveSuggestion ?? () {},
           backgroundColor: Colors.grey[200],
           textColor: Colors.black,
-          isExpanded: false,
           height: 10,
         ),
       ],

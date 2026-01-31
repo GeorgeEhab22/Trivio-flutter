@@ -3,6 +3,7 @@ import 'package:auth/constants/colors.dart';
 import 'package:auth/core/styels.dart';
 import 'package:auth/presentation/groups/group_preview/widgets/group_image.dart';
 import 'package:auth/presentation/groups/group_preview/widgets/group_preview_app_bar.dart';
+import 'package:auth/presentation/groups/group_preview/widgets/private_row.dart';
 import 'package:auth/presentation/groups/widgets/members_row.dart';
 import 'package:auth/presentation/home/widgets/exbandable_text.dart';
 import 'package:flutter/material.dart';
@@ -29,18 +30,15 @@ class GroupPreviewView extends StatelessWidget {
                   const MembersRow(),
                   const SizedBox(height: 20),
 
-                  SizedBox(
-                    width: double.infinity,
-                    child: CustomSquareButton(
-                      label: "Join group",
-                      onTap: () {
-                        //  TODO :  send request and update the button
-                      },
-                      backgroundColor: AppColors.primary,
-                      isExpanded: false,
-                      textColor: Colors.white,
-                      textStyle: Styles.textStyle16,
-                    ),
+                  CustomSquareButton(
+                    label: "Join group",
+                    onTap: () {
+                      //  TODO :  send request and update the button
+                    },
+                    backgroundColor: AppColors.primary,
+                    isExpanded: true,
+                    textColor: Colors.white,
+                    textStyle: Styles.textStyle16,
                   ),
                   const SizedBox(height: 20),
 
@@ -52,23 +50,7 @@ class GroupPreviewView extends StatelessWidget {
                     textStyle: Styles.textStyleNormal15,
                   ),
                   const SizedBox(height: 24),
-                  Row(
-                    children: [
-                      const Icon(Icons.lock_outline, size: 24),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Text(
-                          "Only members can see who's in the group and what they post.",
-                          style: Styles.textStyle14.copyWith(
-                            color: Colors.grey,
-                          ),
-                          maxLines: 2,
-
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
+                  const PrivateRow(),
                 ],
               ),
             ),

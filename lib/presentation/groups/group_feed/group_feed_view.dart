@@ -31,24 +31,21 @@ class GroupFeedView extends StatelessWidget {
                     const MembersRow(),
                     const SizedBox(height: 20),
 
-                    SizedBox(
-                      width: double.infinity,
-                      child: CustomSquareButton(
-                        label: "Joined",
-                        height: 13,
-                        onTap: () {
-                          showCommonGroupBottomSheet(
-                            context: context,
-                            actions: [LeaveGroupButton(),],
-                          );
-                        },
-                        row: true,
-                        trailingIcon: Icons.arrow_drop_down_outlined,
-                        leadingIcon: Icons.groups,
-                        backgroundColor: Theme.of(context).cardColor,
-                        isExpanded: false,
-                        textStyle: Styles.textStyle16,
-                      ),
+                    CustomSquareButton(
+                      label: "Joined",
+                      height: 13,
+                      onTap: () {
+                        showCommonGroupBottomSheet(
+                          context: context,
+                          actions: [LeaveGroupButton(),],
+                        );
+                      },
+                      row: true,
+                      isExpanded: true,
+                      trailingIcon: Icons.arrow_drop_down_outlined,
+                      leadingIcon: Icons.groups,
+                      backgroundColor: Theme.of(context).cardColor,
+                      textStyle: Styles.textStyle16,
                     ),
                     const SizedBox(height: 20),
 
@@ -62,16 +59,18 @@ class GroupFeedView extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 8),
-                        CustomSquareButton(
-                          onTap: () {},
-                          label: "Write something",
-                          borderColor: Theme.of(
-                            context,
-                          ).colorScheme.outlineVariant,
-                          borderRadius: 20,
-                          height: 12,
-                          backgroundColor: Theme.of(context).cardColor,
-                          alignment: CrossAxisAlignment.start,
+                        Expanded(
+                          child: CustomSquareButton(
+                            onTap: () {},
+                            label: "Write something",
+                            borderColor: Theme.of(
+                              context,
+                            ).colorScheme.outlineVariant,
+                            borderRadius: 20,
+                            height: 12,
+                            backgroundColor: Theme.of(context).cardColor,
+                            alignment: CrossAxisAlignment.start,
+                          ),
                         ),
                         // SizedBox(width: ),
                         IconButton(

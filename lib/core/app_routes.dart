@@ -27,6 +27,9 @@ class AppRoutes {
   static const String groupPreview = '/app/home/settings/groups/group_preview';
   static const String groupFeed = '/app/home/settings/groups/group_feed';
   static const String createGroup = '/app/home/settings/groups/create_group';
+  static const String addCoverPhoto = '/app/home/settings/groups/create_group/add_cover_photo';
+  static const String myGroup = '/app/home/settings/groups/my_group';
+
 
 
 // chats

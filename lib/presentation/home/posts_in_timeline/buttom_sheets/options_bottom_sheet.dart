@@ -72,29 +72,33 @@ class OptionsBottomSheet extends StatelessWidget {
                       } else if (state is SavePostError) {
                         isSaved = state.oldStatus;
                       }
-                      return CustomSquareButton(
-                        label: isSaved ? 'Saved' : 'Save',
-                        icon: isSaved ? Icons.bookmark : Icons.bookmark_border,
-                        backgroundColor: Theme.of(context).cardColor,
-                        onTap: () {
-                          cubit.toggleSavePost(
-                            postId: post.postID ?? '',
-                            userId: currentUserId,
-                            currentSavedStatus: isSaved,
-                          );
-                        },
+                      return Expanded(
+                        child: CustomSquareButton(
+                          label: isSaved ? 'Saved' : 'Save',
+                          icon: isSaved ? Icons.bookmark : Icons.bookmark_border,
+                          backgroundColor: Theme.of(context).cardColor,
+                          onTap: () {
+                            cubit.toggleSavePost(
+                              postId: post.postID ?? '',
+                              userId: currentUserId,
+                              currentSavedStatus: isSaved,
+                            );
+                          },
+                        ),
                       );
                     },
                   ),
                   const SizedBox(width: 8),
-                  CustomSquareButton(
-                    label: 'Copy Link',
-                    icon: Icons.link_outlined,
-                    backgroundColor: Theme.of(context).cardColor,
-                    onTap: () {
-                      //TODO : later copy the right post link..
-                      copyToClipboard(context, post.caption ?? 'No Link');
-                    },
+                  Expanded(
+                    child: CustomSquareButton(
+                      label: 'Copy Link',
+                      icon: Icons.link_outlined,
+                      backgroundColor: Theme.of(context).cardColor,
+                      onTap: () {
+                        //TODO : later copy the right post link..
+                        copyToClipboard(context, post.caption ?? 'No Link');
+                      },
+                    ),
                   ),
                 ],
               ),
