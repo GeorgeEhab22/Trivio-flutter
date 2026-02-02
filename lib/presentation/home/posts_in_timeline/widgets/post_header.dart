@@ -35,6 +35,7 @@ class PostHeader extends StatelessWidget {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
+              if (post.authorId != currentUserId)
               FollowButton(
                 currentUserId: currentUserId,
                 authorId: post.authorId ?? '',

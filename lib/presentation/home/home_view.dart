@@ -11,8 +11,6 @@ class HomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cubit = context.read<PostCubit>();
-
     return BlocListener<PostCubit, PostState>(
       listener: (context, state) {
         if (state is DeletePostSuccess) {
@@ -33,10 +31,16 @@ class HomeView extends StatelessWidget {
           child: Stack(
             children: [
               NotificationListener<ScrollNotification>(
-                onNotification: (scrollInfo) =>
-                    _handlePagination(scrollInfo, cubit),
+                onNotification: (notification) {
+                  if (notification is ScrollEndNotification &&
+                      notification.metrics.extentAfter < 500) {
+                    context.read<PostCubit>().loadMorePosts();
+                  }
+                  return false;
+                },
                 child: RefreshIndicator(
-                  onRefresh: () async => await cubit.fetchPosts(refresh: true),
+                  onRefresh: () =>
+                      context.read<PostCubit>().fetchPosts(refresh: true),
                   child: const CustomScrollView(
                     slivers: [
                       SliverAppBar(
@@ -51,8 +55,7 @@ class HomeView extends StatelessWidget {
                   ),
                 ),
               ),
-
-              _buildAddPostFAB(context, cubit),
+              _buildAddPostFAB(context),
             ],
           ),
         ),
@@ -61,15 +64,8 @@ class HomeView extends StatelessWidget {
   }
 }
 
-bool _handlePagination(ScrollNotification scrollInfo, PostCubit cubit) {
-  if (scrollInfo.metrics.pixels >= scrollInfo.metrics.maxScrollExtent * 0.9 &&
-      !cubit.isLoadingMore) {
-    cubit.loadMorePosts();
-  }
-  return false;
-}
-
-Widget _buildAddPostFAB(BuildContext context, PostCubit cubit) {
+Widget _buildAddPostFAB(BuildContext context) {
+  final cubit = context.read<PostCubit>();
   return Positioned(
     bottom: 20,
     right: 20,

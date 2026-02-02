@@ -1,5 +1,4 @@
 import 'package:auth/domain/entities/post.dart';
-import 'package:auth/presentation/authentication/widgets/show_custom_snackbar.dart';
 import 'package:auth/presentation/home/posts_in_timeline/widgets/post_card.dart';
 import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
 import 'package:flutter/material.dart';
@@ -18,34 +17,26 @@ class TimelineListView extends StatelessWidget {
           'Loading content lines for skeleton effect.\nSecond line for better UI.',
       type: 'text',
     );
-
-    return BlocConsumer<PostCubit, PostState>(
-      listener: (context, state) {
-        if (state is PostsLoadingMoreError) {
-          showCustomSnackBar(context, state.message, false);
-        }
-      },
+    return BlocBuilder<PostCubit, PostState>(
       builder: (context, state) {
-        final cubit = context.read<PostCubit>();
-        final posts = cubit.posts;
+        final posts = context.read<PostCubit>().posts;
+        //TODO remove to your id to test delete and edit post
+        final currentUserId = '1';
 
         if (state is PostLoading && posts.isEmpty) {
           return Skeletonizer.sliver(
             enabled: true,
             child: SliverList(
-              delegate: SliverChildBuilderDelegate((context, index) {
-                return PostCard(
+              delegate: SliverChildBuilderDelegate(
+                (context, index) => PostCard(
                   post: dummyPost,
-                  currentUserId: '1',
+                  currentUserId: currentUserId,
                   isFollowing: false,
-                );
-              }, childCount: 1),
+                ),
+                childCount: 3,
+              ),
             ),
           );
-        }
-
-        if (state is PostError && posts.isEmpty) {
-          return SliverFillRemaining(child: Center(child: Text(state.message)));
         }
 
         return SliverList(
@@ -55,14 +46,15 @@ class TimelineListView extends StatelessWidget {
                 enabled: true,
                 child: PostCard(
                   post: dummyPost,
-                  currentUserId: '1',
+                  currentUserId: currentUserId,
                   isFollowing: false,
                 ),
               );
             }
+
             return PostCard(
               post: posts[index],
-              currentUserId: '1',
+              currentUserId: currentUserId,
               isFollowing: false,
             );
           }, childCount: posts.length + (state is PostsLoadingMore ? 1 : 0)),
