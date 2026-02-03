@@ -11,6 +11,7 @@ import 'package:auth/presentation/groups/manage_group/admins_list_view.dart';
 import 'package:auth/presentation/groups/manage_group/banned_members_list.dart';
 import 'package:auth/presentation/groups/manage_group/manage_group_view.dart';
 import 'package:auth/presentation/groups/manage_group/members_list_view.dart';
+import 'package:auth/presentation/groups/manage_group/members_requests_list_view.dart';
 import 'package:auth/presentation/groups/manage_group/moderators_list_view.dart';
 import 'package:auth/presentation/groups/my_group/my_group_view.dart';
 import 'package:auth/presentation/reels/reels_page.dart';
@@ -189,7 +190,7 @@ GoRouter createRouter(bool isLoggedIn) {
                                       GoRoute(
                                         path: 'members_requests',
                                         builder: (context, state) =>
-                                            const ManageGroupView(),
+                                            const MembersRequestsListView(),
                                       ),
                                       GoRoute(
                                         path: 'pending_posts',
