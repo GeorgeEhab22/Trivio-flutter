@@ -4,7 +4,7 @@ import 'package:auth/core/styels.dart';
 import 'package:auth/presentation/groups/group_preview/widgets/group_image.dart';
 import 'package:auth/presentation/groups/group_preview/widgets/group_preview_app_bar.dart';
 import 'package:auth/presentation/groups/group_preview/widgets/private_row.dart';
-import 'package:auth/presentation/groups/widgets/members_row.dart';
+import 'package:auth/presentation/groups/widgets/number_of_members_row.dart';
 import 'package:auth/presentation/home/widgets/exbandable_text.dart';
 import 'package:flutter/material.dart';
 
@@ -27,7 +27,7 @@ class GroupPreviewView extends StatelessWidget {
                 children: [
                   const Text("Liverpool", style: Styles.textStyleBold20),
                   const SizedBox(height: 8),
-                  const MembersRow(),
+                  const NumberOfMembersRow(),
                   const SizedBox(height: 20),
 
                   CustomSquareButton(

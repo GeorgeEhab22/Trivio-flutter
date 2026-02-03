@@ -1,6 +1,6 @@
 import 'package:auth/core/app_routes.dart';
 import 'package:auth/core/styels.dart';
-import 'package:auth/presentation/groups/widgets/members_row.dart';
+import 'package:auth/presentation/groups/widgets/number_of_members_row.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -85,7 +85,7 @@ class GroupItem extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
 
-                const MembersRow(),
+                const NumberOfMembersRow(),
               ],
             ),
           ),

@@ -31,6 +31,14 @@ class AppRoutes {
   static const String myGroup = '/app/home/settings/groups/my_group';
   static const String manageGroup = '/app/home/settings/groups/my_group/manage_group';
 
+  static const String groupMembersRequests = '/app/home/settings/groups/my_group/manage_group/members_requests';
+  static const String groupPendingPosts = '/app/home/settings/groups/my_group/manage_group/pending_posts';
+  static const String groupReportedPosts = '/app/home/settings/groups/my_group/manage_group/reported_posts';
+
+  static const String groupMembers = '/app/home/settings/groups/my_group/manage_group/members';
+  static const String groupModerators = '/app/home/settings/groups/my_group/manage_group/moderators';
+  static const String groupAdmins = '/app/home/settings/groups/my_group/manage_group/admins';
+  static const String bannedMembers = '/app/home/settings/groups/my_group/manage_group/banned_members';
 
 
 

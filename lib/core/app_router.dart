@@ -7,6 +7,11 @@ import 'package:auth/presentation/groups/create_group/create_group_view.dart';
 import 'package:auth/presentation/groups/group_feed/group_feed_view.dart';
 import 'package:auth/presentation/groups/groups_view.dart';
 import 'package:auth/presentation/groups/group_preview/group_preview_view.dart';
+import 'package:auth/presentation/groups/manage_group/admins_list_view.dart';
+import 'package:auth/presentation/groups/manage_group/banned_members_list.dart';
+import 'package:auth/presentation/groups/manage_group/manage_group_view.dart';
+import 'package:auth/presentation/groups/manage_group/members_list_view.dart';
+import 'package:auth/presentation/groups/manage_group/moderators_list_view.dart';
 import 'package:auth/presentation/groups/my_group/my_group_view.dart';
 import 'package:auth/presentation/reels/reels_page.dart';
 import 'package:auth/presentation/settings/settings_view.dart';
@@ -60,8 +65,9 @@ CustomTransitionPage buildAnimatedPage({
 
 GoRouter createRouter(bool isLoggedIn) {
   return GoRouter(
-    initialLocation: '/app/home/settings/groups',
+    initialLocation: '/app/home/settings/groups/my_group/manage_group',
     // initialLocation:isLoggedIn ? '/app/home' : '/signin',
+    // initialLocation: '/signin',
     routes: [
       GoRoute(
         path: AppRoutes.signIn,
@@ -174,6 +180,50 @@ GoRouter createRouter(bool isLoggedIn) {
                                 path: 'my_group',
                                 builder: (context, state) =>
                                     const MyGroupView(),
+                                routes: [
+                                  GoRoute(
+                                    path: 'manage_group',
+                                    builder: (context, state) =>
+                                        const ManageGroupView(),
+                                    routes: [
+                                      GoRoute(
+                                        path: 'members_requests',
+                                        builder: (context, state) =>
+                                            const ManageGroupView(),
+                                      ),
+                                      GoRoute(
+                                        path: 'pending_posts',
+                                        builder: (context, state) =>
+                                            const ManageGroupView(),
+                                      ),
+                                      GoRoute(
+                                        path: 'reported_posts',
+                                        builder: (context, state) =>
+                                            const ManageGroupView(),
+                                      ),
+                                      GoRoute(
+                                        path: 'members',
+                                        builder: (context, state) =>
+                                            const MembersListView(),
+                                      ),
+                                      GoRoute(
+                                        path: 'moderators',
+                                        builder: (context, state) =>
+                                            const ModeratorsListView(),
+                                      ),
+                                      GoRoute(
+                                        path: 'admins',
+                                        builder: (context, state) =>
+                                            const AdminsListView(),
+                                      ),
+                                      GoRoute(
+                                        path: 'banned_members',
+                                        builder: (context, state) =>
+                                            const BannedMembersList(),
+                                      ),
+                                    ],
+                                  ),
+                                ],
                               ),
                             ],
                           ),

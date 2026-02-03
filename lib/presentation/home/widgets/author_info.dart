@@ -24,7 +24,7 @@ class AuthorInfo extends StatelessWidget {
     this.showTimeInline = false,
     this.avatarRadius = 22,
     this.authorTextStyle,
-    this.isGroupPost = true,
+    this.isGroupPost = false,
   });
 
   @override

@@ -4,7 +4,7 @@ import 'package:auth/core/app_routes.dart';
 import 'package:auth/core/styels.dart';
 import 'package:auth/presentation/groups/group_preview/widgets/group_image.dart';
 import 'package:auth/presentation/groups/my_group/widgets/my_group_app_bar.dart';
-import 'package:auth/presentation/groups/widgets/members_row.dart';
+import 'package:auth/presentation/groups/widgets/number_of_members_row.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -29,7 +29,7 @@ class MyGroupView extends StatelessWidget {
                   children: [
                     const Text("My group1", style: Styles.textStyleBold20),
                     const SizedBox(height: 8),
-                    const MembersRow(),
+                    const NumberOfMembersRow(),
                     const SizedBox(height: 20),
 
                     CustomSquareButton(

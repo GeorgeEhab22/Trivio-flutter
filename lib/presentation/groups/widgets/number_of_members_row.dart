@@ -2,8 +2,8 @@ import 'package:auth/common/functions/format_number.dart';
 import 'package:auth/core/styels.dart';
 import 'package:flutter/material.dart';
 
-class MembersRow extends StatelessWidget {
-  const MembersRow({super.key});
+class NumberOfMembersRow extends StatelessWidget {
+  const NumberOfMembersRow({super.key});
 
   @override
   Widget build(BuildContext context) {
