@@ -68,7 +68,7 @@ CustomTransitionPage buildAnimatedPage({
 
 GoRouter createRouter(bool isLoggedIn) {
   return GoRouter(
-    initialLocation: '/app/home/settings/groups/my_group/manage_group',
+    initialLocation: '/app/home',
     // initialLocation:isLoggedIn ? '/app/home' : '/signin',
     // initialLocation: '/signin',
     routes: [
@@ -127,112 +127,6 @@ GoRouter createRouter(bool isLoggedIn) {
                     path: 'home',
                     pageBuilder: (context, state) =>
                         NoTransitionPage(child: const HomePage()),
-                    routes: [
-                      GoRoute(
-                        path: 'messages',
-                        builder: (context, state) => const MessagesView(),
-                        routes: [
-                          GoRoute(
-                            path: 'chat',
-                            builder: (context, state) => const ChatView(),
-                            routes: [
-                              GoRoute(
-                                path: 'chat_info',
-                                builder: (context, state) =>
-                                    const ChatInfoView(),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      GoRoute(
-                        path: 'settings',
-                        builder: (context, state) => const SettingsView(),
-                        routes: [
-                          GoRoute(
-                            path: 'theme',
-                            builder: (context, state) => const ThemeView(),
-                          ),
-                          GoRoute(
-                            path: 'groups',
-                            builder: (context, state) => const GroupsView(),
-                            routes: [
-                              GoRoute(
-                                path: 'group_preview',
-                                builder: (context, state) =>
-                                    const GroupPreviewView(),
-                              ),
-                              GoRoute(
-                                path: 'group_feed',
-                                builder: (context, state) =>
-                                    const GroupFeedView(),
-                              ),
-                              GoRoute(
-                                path: 'create_group',
-                                builder: (context, state) =>
-                                    const CreateGroupView(),
-                                routes: [
-                                  GoRoute(
-                                    path: 'add_cover_photo',
-                                    builder: (context, state) =>
-                                        const AddCoverPhotoView(),
-                                  ),
-                                ],
-                              ),
-                              GoRoute(
-                                path: 'my_group',
-                                builder: (context, state) =>
-                                    const MyGroupView(),
-                                routes: [
-                                  GoRoute(
-                                    path: 'manage_group',
-                                    builder: (context, state) =>
-                                        const ManageGroupView(),
-                                    routes: [
-                                      GoRoute(
-                                        path: 'members_requests',
-                                        builder: (context, state) =>
-                                            const MembersRequestsListView(),
-                                      ),
-                                      GoRoute(
-                                        path: 'pending_posts',
-                                        builder: (context, state) =>
-                                            const PendingPostsView(),
-                                      ),
-                                      GoRoute(
-                                        path: 'reported_posts',
-                                        builder: (context, state) =>
-                                            const ReportedPostsView(),
-                                      ),
-                                      GoRoute(
-                                        path: 'members',
-                                        builder: (context, state) =>
-                                            const MembersListView(),
-                                      ),
-                                      GoRoute(
-                                        path: 'moderators',
-                                        builder: (context, state) =>
-                                            const ModeratorsListView(),
-                                      ),
-                                      GoRoute(
-                                        path: 'admins',
-                                        builder: (context, state) =>
-                                            const AdminsListView(),
-                                      ),
-                                      GoRoute(
-                                        path: 'banned_members',
-                                        builder: (context, state) =>
-                                            const BannedMembersList(),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ],
                   ),
                 ],
               ),
@@ -269,6 +163,97 @@ GoRouter createRouter(bool isLoggedIn) {
                     path: 'profile',
                     pageBuilder: (context, state) =>
                         NoTransitionPage(child: const UserProfileSettings()),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
+      ),
+      GoRoute(
+        path: '/messages',
+        builder: (context, state) => const MessagesView(),
+        routes: [
+          GoRoute(
+            path: 'chat',
+            builder: (context, state) => const ChatView(),
+            routes: [
+              GoRoute(
+                path: 'chat_info',
+                builder: (context, state) => const ChatInfoView(),
+              ),
+            ],
+          ),
+        ],
+      ),
+      GoRoute(
+        path: '/settings',
+        builder: (context, state) => const SettingsView(),
+        routes: [
+          GoRoute(
+            path: 'theme',
+            builder: (context, state) => const ThemeView(),
+          ),
+          GoRoute(
+            path: 'groups',
+            builder: (context, state) => const GroupsView(),
+            routes: [
+              GoRoute(
+                path: 'group_preview',
+                builder: (context, state) => const GroupPreviewView(),
+              ),
+              GoRoute(
+                path: 'group_feed',
+                builder: (context, state) => const GroupFeedView(),
+              ),
+              GoRoute(
+                path: 'create_group',
+                builder: (context, state) => const CreateGroupView(),
+                routes: [
+                  GoRoute(
+                    path: 'add_cover_photo',
+                    builder: (context, state) => const AddCoverPhotoView(),
+                  ),
+                ],
+              ),
+              GoRoute(
+                path: 'my_group',
+                builder: (context, state) => const MyGroupView(),
+                routes: [
+                  GoRoute(
+                    path: 'manage_group',
+                    builder: (context, state) => const ManageGroupView(),
+                    routes: [
+                      GoRoute(
+                        path: 'members_requests',
+                        builder: (context, state) =>
+                            const MembersRequestsListView(),
+                      ),
+                      GoRoute(
+                        path: 'pending_posts',
+                        builder: (context, state) => const PendingPostsView(),
+                      ),
+                      GoRoute(
+                        path: 'reported_posts',
+                        builder: (context, state) => const ReportedPostsView(),
+                      ),
+                      GoRoute(
+                        path: 'members',
+                        builder: (context, state) => const MembersListView(),
+                      ),
+                      GoRoute(
+                        path: 'moderators',
+                        builder: (context, state) => const ModeratorsListView(),
+                      ),
+                      GoRoute(
+                        path: 'admins',
+                        builder: (context, state) => const AdminsListView(),
+                      ),
+                      GoRoute(
+                        path: 'banned_members',
+                        builder: (context, state) => const BannedMembersList(),
+                      ),
+                    ],
                   ),
                 ],
               ),

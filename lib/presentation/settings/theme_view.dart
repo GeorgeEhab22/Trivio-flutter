@@ -2,6 +2,7 @@ import 'package:auth/presentation/manager/theme_cubit/theme_cubit.dart';
 import 'package:auth/presentation/settings/widgets/row_option.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class ThemeView extends StatelessWidget {
   const ThemeView({super.key});
@@ -18,7 +19,7 @@ class ThemeView extends StatelessWidget {
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => context.pop(),
         ),
       ),
       body: ListView(

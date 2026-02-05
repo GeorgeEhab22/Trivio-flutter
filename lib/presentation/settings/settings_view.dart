@@ -11,6 +11,24 @@ class SettingsView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        surfaceTintColor: Colors.transparent,
+        elevation: 0.5,
+        automaticallyImplyLeading: false,
+        centerTitle: true,
+        leading: IconButton(
+          onPressed: () {
+            if (Navigator.canPop(context)) {
+              context.pop();
+            } else {
+              context.go(AppRoutes.home);
+            }
+          },
+          icon: Icon(
+            Icons.arrow_back_ios_new_rounded,
+            color: Theme.of(context).iconTheme.color,
+            size: 25,
+          ),
+        ),
         title: const Text(
           'Menu',
           style: TextStyle(fontWeight: FontWeight.w600),

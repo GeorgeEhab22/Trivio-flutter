@@ -13,12 +13,18 @@ class AddCoverPhotoView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        surfaceTintColor: Colors.transparent,
+        elevation: 0.5,
+        automaticallyImplyLeading: false,
+        centerTitle: true,
         leading: IconButton(
           onPressed: () => context.pop(),
-          icon: const Icon(Icons.arrow_back_ios_new, size: 20),
+          icon: Icon(
+            Icons.arrow_back_ios_new_rounded,
+            color: Theme.of(context).iconTheme.color,
+            size: 25,
+          ),
         ),
-
-        elevation: 0,
       ),
       body: Column(
         children: [

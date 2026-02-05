@@ -14,15 +14,19 @@ class CreateGroupView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        surfaceTintColor: Colors.transparent,
+        elevation: 0.5,
+        automaticallyImplyLeading: false,
+        centerTitle: true,
         leading: IconButton(
-          onPressed: () {
-            context.pop();
-          },
-          icon: const Icon(Icons.close),
+          onPressed: () => context.pop(),
+          icon: Icon(
+            Icons.close,
+            color: Theme.of(context).iconTheme.color,
+            size: 25,
+          ),
         ),
         title: const Text("Create group", style: Styles.textStyle18),
-        centerTitle: true,
-        elevation: 0,
       ),
       body: Column(
         children: [

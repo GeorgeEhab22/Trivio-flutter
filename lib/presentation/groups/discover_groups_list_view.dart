@@ -1,5 +1,7 @@
+import 'package:auth/core/app_routes.dart';
 import 'package:auth/presentation/groups/widgets/suggest_card.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class DiscoverGroupsListView extends StatelessWidget {
   const DiscoverGroupsListView({super.key});
@@ -29,11 +31,14 @@ class DiscoverGroupsListView extends StatelessWidget {
               childAspectRatio: availableWidth / 320,
             ),
             delegate: SliverChildBuilderDelegate((context, index) {
-              return const SuggestCard(
+              return SuggestCard(
                 imageUrl: "https://picsum.photos/500",
                 groupName: "messi",
                 description: "descripe the group",
                 isRow: false,
+                onTap: () {
+                  context.push(AppRoutes.groupPreview);
+                },
               );
             }, childCount: 10),
           ),
