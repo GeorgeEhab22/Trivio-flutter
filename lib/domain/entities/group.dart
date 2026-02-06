@@ -9,6 +9,7 @@ class Group extends Equatable {
   final String? adminsCount;
   final String? moderatorsCount;
   final String? currentRule;
+  final String? privacy;
 
   const Group({
     this.groupId,
@@ -19,6 +20,7 @@ class Group extends Equatable {
     this.adminsCount,
     this.moderatorsCount,
     this.currentRule,
+    this.privacy,
   });
 
   @override
@@ -31,5 +33,6 @@ class Group extends Equatable {
     adminsCount,
     moderatorsCount,
     currentRule,
+    privacy
   ];
 }
