@@ -46,4 +46,9 @@ class ApiEndpoints {
 
   // COMMENT MENTIONS
   static const mentionUsersInComment = 'comments/mentions'; // POST {commentId}
+
+  //profile follow
+  static const followRequests = '/follow/me';
+  static const acceptFollowRequest = '/follow/follow-requests';
+  static const declineFollowRequest = '/follow/follow-requests';
 }

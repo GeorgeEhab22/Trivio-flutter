@@ -4,33 +4,33 @@ import 'package:equatable/equatable.dart';
 class UserProfile extends Equatable {
   final String userId;
   final String username;
-  final String about;
-  final String profileImageUrl;
-  final int followersCount;
-  final int followingCount;
-  final int postsCount;
-  final List<Post> posts;
+  final String? about;
+  final String? profileImageUrl;
+  final int? followersCount;
+  final int? followingCount;
+  final int? postsCount;
+  final List<Post>? posts;
 
-  const UserProfile(
-    this.userId,
-    this.username,
+  const UserProfile({
+    required this.userId,
+    required this.username,
     this.about,
     this.profileImageUrl,
     this.followersCount,
     this.followingCount,
-    this.postsCount, 
+    this.postsCount,
     this.posts,
-  );
+  });
 
   @override
   List<Object?> get props => [
-    userId,
-    username,
-    about,
-    profileImageUrl,
-    followersCount,
-    followingCount,
-    postsCount,
-    posts
-  ];
+        userId,
+        username,
+        about,
+        profileImageUrl,
+        followersCount,
+        followingCount,
+        postsCount,
+        posts,
+      ];
 }
