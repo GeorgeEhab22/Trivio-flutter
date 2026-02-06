@@ -22,9 +22,9 @@ abstract class GroupRepo {
   // 4 update group
   Future<Either<Failure, Group>> updateGroup({
     required String groupId,
-    required String name,
-    required String description,
-    required String coverImage,
+    String? name,
+    String? description,
+    String? coverImage,
     String? privacy,
   });
 
