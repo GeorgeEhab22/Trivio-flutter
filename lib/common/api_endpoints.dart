@@ -46,4 +46,7 @@ class ApiEndpoints {
 
   // COMMENT MENTIONS
   static const mentionUsersInComment = 'comments/mentions'; // POST {commentId}
+
+  // GROUPS
+  static const groups = 'groups';            // POST (create), GET (all)
 }
