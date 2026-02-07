@@ -9,6 +9,7 @@ class EditGroupPostUseCase {
 
   Future<Either<Failure, GroupPost>> call({
     required String groupId,
+    required String userId,
     required String postId,
     required String newCaption,
     List<String>? media,
@@ -18,6 +19,7 @@ class EditGroupPostUseCase {
     }
     return await groupRepo.editGroupPost(
       groupId: groupId,
+      userId: userId,
       postId: postId,
       newCaption: newCaption.trim(),
       media: media,

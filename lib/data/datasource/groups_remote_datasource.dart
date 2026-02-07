@@ -231,7 +231,7 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
 
   // --- 5. Membership Actions ---
   @override
-  Future<String> joinGroup(String groupId) async {
+  Future<String> joinGroup(String groupId,) async {
     try {
       final response = await api.post(
         "${ApiEndpoints.groups}/$groupId/join",

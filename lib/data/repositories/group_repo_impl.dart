@@ -105,7 +105,7 @@ class GroupRepoImpl implements GroupRepo {
   // --- 2. Membership & Requests ---
 
   @override
-  Future<Either<Failure, String>> joinGroup({required String groupId}) async {
+  Future<Either<Failure, String>> joinGroup({required String groupId, required String userId}) async {
     try {
       final message = await remoteDataSource.joinGroup(groupId);
       return Right(message);
@@ -117,7 +117,7 @@ class GroupRepoImpl implements GroupRepo {
   }
 
   @override
-  Future<Either<Failure, String>> leaveGroup({required String groupId}) async {
+  Future<Either<Failure, String>> leaveGroup({required String groupId, required String userId}) async {
     try {
       await remoteDataSource.leaveGroup(groupId);
       return const Right('Left group successfully');
@@ -131,6 +131,7 @@ class GroupRepoImpl implements GroupRepo {
   @override
   Future<Either<Failure, String>> cancelRequest({
     required String groupId,
+    required String userId,
   }) async {
     try {
       await remoteDataSource.cancelJoinRequest(groupId);
@@ -288,7 +289,7 @@ class GroupRepoImpl implements GroupRepo {
   @override
   Future<Either<Failure, GroupPost>> createGroupPost({
     required String groupId,
-    required String caption,
+    String? caption,
     List<String>? media,
   }) async {
     try {
@@ -307,6 +308,7 @@ class GroupRepoImpl implements GroupRepo {
   @override
   Future<Either<Failure, String>> deleteGroupPost({
     required String groupId,
+    required String userId,
     required String postId,
   }) async {
     try {
@@ -322,6 +324,7 @@ class GroupRepoImpl implements GroupRepo {
   @override
   Future<Either<Failure, GroupPost>> editGroupPost({
     required String groupId,
+    required String userId,
     required String postId,
     required String newCaption,
     List<String>? media,

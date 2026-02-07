@@ -6,11 +6,11 @@ class CancelRequestUseCase {
   final GroupRepo groupRepo;
   CancelRequestUseCase(this.groupRepo);
 
-  Future<Either<Failure, String>> call({required String groupId}) async {
+  Future<Either<Failure, String>> call({required String groupId, required String userId}) async {
     if (groupId.isEmpty) {
       return const Left(ValidationFailure('Invalid Group ID'));
     }
 
-    return await groupRepo.cancelRequest(groupId: groupId);
+    return await groupRepo.cancelRequest(groupId: groupId, userId: userId);
   }
 }

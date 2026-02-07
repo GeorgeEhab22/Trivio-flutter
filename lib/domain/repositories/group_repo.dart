@@ -35,12 +35,21 @@ abstract class GroupRepo {
   });
 
   // 6 join group
-  Future<Either<Failure, String>> joinGroup({required String groupId});
+  Future<Either<Failure, String>> joinGroup({
+    required String groupId,
+    required String userId,
+  });
 
   // 7 leave group
-  Future<Either<Failure, String>> leaveGroup({required String groupId});
+  Future<Either<Failure, String>> leaveGroup({
+    required String groupId,
+    required String userId,
+  });
   //8 cancel request
-  Future<Either<Failure, String>> cancelRequest({required String groupId});
+  Future<Either<Failure, String>> cancelRequest({
+    required String groupId,
+    required String userId,
+  });
 
   // 9 get join requests
   Future<Either<Failure, List<GroupMember>>> getJoinRequests({
@@ -95,7 +104,7 @@ abstract class GroupRepo {
   // 20 group posts
   Future<Either<Failure, GroupPost>> createGroupPost({
     required String groupId,
-    required String caption,
+    String? caption,
     List<String>? media,
   });
 
@@ -103,12 +112,14 @@ abstract class GroupRepo {
   Future<Either<Failure, String>> deleteGroupPost({
     required String groupId,
     required String postId,
+    required String userId,
   });
 
   // 22 edit group post
   Future<Either<Failure, GroupPost>> editGroupPost({
     required String groupId,
     required String postId,
+    required String userId,
     required String newCaption,
     List<String>? media,
   });

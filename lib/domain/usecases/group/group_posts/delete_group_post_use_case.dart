@@ -8,8 +8,9 @@ class DeleteGroupPostUseCase {
 
   Future<Either<Failure, String>> call({
     required String groupId,
+    required String userId,
     required String postId,
   }) async {
-    return await groupRepo.deleteGroupPost(groupId: groupId, postId: postId);
+    return await groupRepo.deleteGroupPost(groupId: groupId,userId: userId,postId: postId);
   }
 }
