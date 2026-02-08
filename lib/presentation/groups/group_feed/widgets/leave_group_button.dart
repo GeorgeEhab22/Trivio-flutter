@@ -1,7 +1,5 @@
 import 'package:auth/common/functions/custom_list_tile.dart';
 import 'package:auth/common/functions/show_custom_dialog.dart';
-import 'package:auth/core/app_routes.dart';
-import 'package:auth/presentation/authentication/widgets/show_custom_snackbar.dart';
 import 'package:auth/presentation/manager/group_cubit/leave_group/leave_group_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/leave_group/leave_group_state.dart';
 import 'package:flutter/material.dart';

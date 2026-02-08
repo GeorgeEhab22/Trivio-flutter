@@ -136,7 +136,6 @@ class GroupRepoImpl implements GroupRepo {
   @override
   Future<Either<Failure, String>> cancelRequest({
     required String groupId,
-    required String userId,
   }) async {
     try {
       await remoteDataSource.cancelJoinRequest(groupId);

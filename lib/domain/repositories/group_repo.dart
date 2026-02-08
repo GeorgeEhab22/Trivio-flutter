@@ -46,7 +46,6 @@ abstract class GroupRepo {
   //8 cancel request
   Future<Either<Failure, String>> cancelRequest({
     required String groupId,
-    required String userId,
   });
 
   // 9 get join requests

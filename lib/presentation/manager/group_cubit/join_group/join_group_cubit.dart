@@ -28,8 +28,6 @@ class JoinGroupCubit extends Cubit<JoinGroupState> {
         return JoinGroupFailure(message: failure.message, errorType: 'validation');
       case const (NetworkFailure):
         return JoinGroupFailure(message: failure.message, errorType: 'network');
-      case const (AuthFailure):
-        return JoinGroupFailure(message: failure.message, errorType: 'auth');
       default:
         return JoinGroupFailure(message: failure.message, errorType: 'server');
     }

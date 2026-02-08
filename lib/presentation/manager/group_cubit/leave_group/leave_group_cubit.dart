@@ -28,8 +28,6 @@ class LeaveGroupCubit extends Cubit<LeaveGroupState> {
         return LeaveGroupFailure(message: failure.message, errorType: 'validation');
       case const (NetworkFailure):
         return LeaveGroupFailure(message: failure.message, errorType: 'network');
-      case const (AuthFailure):
-        return LeaveGroupFailure(message: failure.message, errorType: 'auth');
       default:
         return LeaveGroupFailure(message: failure.message, errorType: 'server');
     }
