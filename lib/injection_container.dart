@@ -4,12 +4,15 @@ import 'package:auth/common/api_service.dart';
 import 'package:auth/common/functions/handle_dio_error.dart';
 import 'package:auth/data/datasource/auth_remote_datasource.dart';
 import 'package:auth/data/datasource/comments_remote_datasource.dart';
+import 'package:auth/data/datasource/groups_remote_datasource.dart';
 import 'package:auth/data/datasource/posts_remote_datasource.dart';
 import 'package:auth/data/repositories/auth_repo_impl.dart';
 import 'package:auth/data/repositories/comment_repo_impl.dart';
+import 'package:auth/data/repositories/group_repo_impl.dart';
 import 'package:auth/data/repositories/post_repo_impl.dart';
 import 'package:auth/domain/repositories/auth_repo.dart';
 import 'package:auth/domain/repositories/comment_repo.dart';
+import 'package:auth/domain/repositories/group_repo.dart';
 import 'package:auth/domain/repositories/post_repo.dart';
 import 'package:auth/domain/usecases/comment/add_comment_usecase.dart';
 import 'package:auth/domain/usecases/comment/delete_comment_usecase.dart';
@@ -18,6 +21,7 @@ import 'package:auth/domain/usecases/comment/get_comments_usecase.dart';
 import 'package:auth/domain/usecases/comment/get_replies_usecase.dart';
 import 'package:auth/domain/usecases/comment/mention_users_in_comment_usecase.dart';
 import 'package:auth/domain/usecases/comment/react_to_comment_usecase.dart';
+import 'package:auth/domain/usecases/group/groups/join_group_use_case.dart';
 import 'package:auth/domain/usecases/post/comment_on_post_usecase.dart';
 import 'package:auth/domain/usecases/post/create_post_usecase.dart';
 import 'package:auth/domain/usecases/post/delete_post_usecase.dart';
@@ -40,6 +44,7 @@ import 'package:auth/domain/usecases/sign_in/request_otp.dart';
 import 'package:auth/domain/usecases/sign_in/signin_usecase.dart';
 import 'package:auth/domain/usecases/sign_in/verify_otp.dart';
 import 'package:auth/presentation/manager/comment_cubit/comment_cubit.dart';
+import 'package:auth/presentation/manager/group_cubit/join_group/join_group_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/create_post_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/post_interaction_cubit.dart';
@@ -112,8 +117,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => ToggleFollowUserUseCase(sl()));
   sl.registerLazySingleton(() => ToggleSavePostUseCase(sl()));
 
-  sl.registerFactory(
-    () => PostCubit(sl()),);
+  sl.registerFactory(() => PostCubit(sl()));
   sl.registerFactory(
     () => PostInteractionCubit(
       reactToPostUseCase: sl(),
@@ -158,9 +162,16 @@ Future<void> init() async {
     ),
   );
 
-  sl.registerFactory(
-    () => CreatePostCubit(
-      createPostUseCase: sl(),),
+  sl.registerFactory(() => CreatePostCubit(createPostUseCase: sl()));
+  sl.registerFactory(() => ThemeCubit());
+
+// groups
+  sl.registerLazySingleton<GroupRemoteDataSource>(
+    () => GroupRemoteDataSourceImpl(api: sl(), prefs: sl(), errorHandler: sl()),
   );
-   sl.registerFactory(() => ThemeCubit());
+  sl.registerLazySingleton<GroupRepo>(
+    () => GroupRepoImpl(remoteDataSource: sl()),
+  );
+  sl.registerLazySingleton(() => JoinGroupUseCase(sl()));
+  sl.registerFactory(() => JoinGroupCubit(joinGroupUseCase: sl()));
 }

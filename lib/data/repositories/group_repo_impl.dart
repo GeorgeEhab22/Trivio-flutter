@@ -105,7 +105,7 @@ class GroupRepoImpl implements GroupRepo {
   // --- 2. Membership & Requests ---
 
   @override
-  Future<Either<Failure, String>> joinGroup({required String groupId, required String userId}) async {
+  Future<Either<Failure, String>> joinGroup({required String groupId}) async {
     try {
       final message = await remoteDataSource.joinGroup(groupId);
       return Right(message);

@@ -21,7 +21,7 @@ class SuggestedGroupsRowList extends StatelessWidget {
             groupName: "Group1 suggestion",
             description: "group description",
             imageUrl: "https://picsum.photos/500",
-            onTap: () {
+            onJoinGroup: () {
               context.push(AppRoutes.groupPreview);
             },
           );

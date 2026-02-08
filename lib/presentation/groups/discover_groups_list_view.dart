@@ -36,7 +36,7 @@ class DiscoverGroupsListView extends StatelessWidget {
                 groupName: "messi",
                 description: "descripe the group",
                 isRow: false,
-                onTap: () {
+                onJoinGroup: () {
                   context.push(AppRoutes.groupPreview);
                 },
               );

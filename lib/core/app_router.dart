@@ -16,6 +16,7 @@ import 'package:auth/presentation/groups/manage_group/moderators_list_view.dart'
 import 'package:auth/presentation/groups/manage_group/pending_posts_view.dart';
 import 'package:auth/presentation/groups/manage_group/reported_posts_view.dart';
 import 'package:auth/presentation/groups/my_group/my_group_view.dart';
+import 'package:auth/presentation/manager/group_cubit/join_group/join_group_cubit.dart';
 import 'package:auth/presentation/reels/reels_page.dart';
 import 'package:auth/presentation/settings/settings_view.dart';
 import 'package:auth/presentation/settings/theme_view.dart';
@@ -68,7 +69,7 @@ CustomTransitionPage buildAnimatedPage({
 
 GoRouter createRouter(bool isLoggedIn) {
   return GoRouter(
-    initialLocation: '/app/home',
+    initialLocation: AppRoutes.groups,
     // initialLocation:isLoggedIn ? '/app/home' : '/signin',
     // initialLocation: '/signin',
     routes: [
@@ -200,7 +201,10 @@ GoRouter createRouter(bool isLoggedIn) {
             routes: [
               GoRoute(
                 path: 'group_preview',
-                builder: (context, state) => const GroupPreviewView(),
+                builder: (context, state) => BlocProvider(
+                  create: (context) => di.sl<JoinGroupCubit>(),
+                  child: const GroupPreviewView(),
+                ),
               ),
               GoRoute(
                 path: 'group_feed',

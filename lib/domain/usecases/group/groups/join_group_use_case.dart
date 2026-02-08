@@ -6,10 +6,10 @@ class JoinGroupUseCase {
   final GroupRepo groupRepo;
   JoinGroupUseCase(this.groupRepo);
 
-  Future<Either<Failure, String>> call({required String groupId, required String userId}) async {
+  Future<Either<Failure, String>> call({required String groupId}) async {
     if (groupId.isEmpty) {
       return const Left(ValidationFailure('Invalid Group ID'));
     }
-    return await groupRepo.joinGroup(groupId: groupId, userId: userId);
+    return await groupRepo.joinGroup(groupId: groupId);
   }
 }

@@ -237,6 +237,7 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
         "${ApiEndpoints.groups}/$groupId/join",
         options: _getAuthOptions(),
       );
+      print(response['message']);
       return response['message'];
     } catch (e) {
       errorHandler.handleDioError(e);

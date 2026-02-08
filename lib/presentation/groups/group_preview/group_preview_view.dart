@@ -1,8 +1,7 @@
-import 'package:auth/common/functions/custom_square_button.dart';
-import 'package:auth/constants/colors.dart';
 import 'package:auth/core/styels.dart';
 import 'package:auth/presentation/groups/group_preview/widgets/group_image.dart';
 import 'package:auth/presentation/groups/group_preview/widgets/group_preview_app_bar.dart';
+import 'package:auth/presentation/groups/group_preview/widgets/join_group_button.dart';
 import 'package:auth/presentation/groups/group_preview/widgets/private_row.dart';
 import 'package:auth/presentation/groups/widgets/number_of_members_row.dart';
 import 'package:auth/presentation/home/widgets/exbandable_text.dart';
@@ -29,17 +28,8 @@ class GroupPreviewView extends StatelessWidget {
                   const SizedBox(height: 8),
                   const NumberOfMembersRow(),
                   const SizedBox(height: 20),
-
-                  CustomSquareButton(
-                    label: "Join group",
-                    onTap: () {
-                      //  TODO :  send request and update the button
-                    },
-                    backgroundColor: AppColors.primary,
-                    isExpanded: true,
-                    textColor: Colors.white,
-                    textStyle: Styles.textStyle16,
-                  ),
+                  //TODO delete this id when complete get groups use case
+                  JoinGroupButton(groupId: "69888500a488d0dae5e0accc"),
                   const SizedBox(height: 20),
 
                   const Text("About", style: Styles.textStyleBold18),

@@ -37,7 +37,6 @@ abstract class GroupRepo {
   // 6 join group
   Future<Either<Failure, String>> joinGroup({
     required String groupId,
-    required String userId,
   });
 
   // 7 leave group
