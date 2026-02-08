@@ -106,6 +106,8 @@ class GroupRepoImpl implements GroupRepo {
 
   @override
   Future<Either<Failure, String>> joinGroup({required String groupId}) async {
+    // await Future.delayed(const Duration(seconds: 1));
+    //       return const Right('joined group successfully');
     try {
       final message = await remoteDataSource.joinGroup(groupId);
       return Right(message);
@@ -118,6 +120,9 @@ class GroupRepoImpl implements GroupRepo {
 
   @override
   Future<Either<Failure, String>> leaveGroup({required String groupId}) async {
+    // await Future.delayed(const Duration(seconds: 1));
+    //       return const Right('Left group successfully');
+
     try {
       await remoteDataSource.leaveGroup(groupId);
       return const Right('Left group successfully');

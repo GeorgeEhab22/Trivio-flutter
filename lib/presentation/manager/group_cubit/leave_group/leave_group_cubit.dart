@@ -11,7 +11,7 @@ class LeaveGroupCubit extends Cubit<LeaveGroupState> {
   })  : _leaveGroupUseCase = leaveGroupUseCase,
         super(const LeaveGroupInitial());
 
-  Future<void> joinGroup({required String groupId}) async {
+  Future<void> leaveGroup({required String groupId}) async {
     emit(const LeaveGroupLoading());
 
     final result = await _leaveGroupUseCase(groupId: groupId);

@@ -22,6 +22,7 @@ import 'package:auth/domain/usecases/comment/get_replies_usecase.dart';
 import 'package:auth/domain/usecases/comment/mention_users_in_comment_usecase.dart';
 import 'package:auth/domain/usecases/comment/react_to_comment_usecase.dart';
 import 'package:auth/domain/usecases/group/groups/join_group_use_case.dart';
+import 'package:auth/domain/usecases/group/groups/leave_group_use_case.dart';
 import 'package:auth/domain/usecases/post/comment_on_post_usecase.dart';
 import 'package:auth/domain/usecases/post/create_post_usecase.dart';
 import 'package:auth/domain/usecases/post/delete_post_usecase.dart';
@@ -45,6 +46,7 @@ import 'package:auth/domain/usecases/sign_in/signin_usecase.dart';
 import 'package:auth/domain/usecases/sign_in/verify_otp.dart';
 import 'package:auth/presentation/manager/comment_cubit/comment_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/join_group/join_group_cubit.dart';
+import 'package:auth/presentation/manager/group_cubit/leave_group/leave_group_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/create_post_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/post_interaction_cubit.dart';
@@ -165,13 +167,17 @@ Future<void> init() async {
   sl.registerFactory(() => CreatePostCubit(createPostUseCase: sl()));
   sl.registerFactory(() => ThemeCubit());
 
-// groups
+  // groups
   sl.registerLazySingleton<GroupRemoteDataSource>(
     () => GroupRemoteDataSourceImpl(api: sl(), prefs: sl(), errorHandler: sl()),
   );
   sl.registerLazySingleton<GroupRepo>(
     () => GroupRepoImpl(remoteDataSource: sl()),
   );
+  // join
   sl.registerLazySingleton(() => JoinGroupUseCase(sl()));
   sl.registerFactory(() => JoinGroupCubit(joinGroupUseCase: sl()));
+  //leave
+  sl.registerLazySingleton(() => LeaveGroupUseCase(sl()));
+  sl.registerFactory(() => LeaveGroupCubit(leaveGroupUseCase: sl()));
 }

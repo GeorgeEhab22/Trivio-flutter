@@ -2,7 +2,9 @@ import 'package:auth/common/functions/custom_list_tile.dart';
 import 'package:auth/core/app_routes.dart';
 import 'package:auth/presentation/groups/group_feed/widgets/leave_group_button.dart';
 import 'package:auth/presentation/groups/widgets/common_group_buttom_sheet.dart';
+import 'package:auth/presentation/manager/group_cubit/leave_group/leave_group_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class GroupFeedAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -37,6 +39,7 @@ class GroupFeedAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
         IconButton(
           onPressed: () {
+            final leaveGroupCubit = context.read<LeaveGroupCubit>();
             showCommonGroupBottomSheet(
               context: context,
               actions: [
@@ -48,7 +51,10 @@ class GroupFeedAppBar extends StatelessWidget implements PreferredSizeWidget {
                     //TODO: copy link
                   },
                 ),
-                LeaveGroupButton(),
+                BlocProvider.value(
+                  value: leaveGroupCubit,
+                  child: const LeaveGroupButton(groupId: "69888500a488d0dae5e0accc"),
+                ),
                 CustomListTile(
                   icon: Icons.report_gmailerrorred,
                   text: "Report group",

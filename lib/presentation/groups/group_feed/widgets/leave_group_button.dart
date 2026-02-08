@@ -1,17 +1,26 @@
 import 'package:auth/common/functions/custom_list_tile.dart';
 import 'package:auth/common/functions/show_custom_dialog.dart';
+import 'package:auth/core/app_routes.dart';
+import 'package:auth/presentation/authentication/widgets/show_custom_snackbar.dart';
+import 'package:auth/presentation/manager/group_cubit/leave_group/leave_group_cubit.dart';
+import 'package:auth/presentation/manager/group_cubit/leave_group/leave_group_state.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class LeaveGroupButton extends StatelessWidget {
-  const LeaveGroupButton({super.key});
+  final String groupId;
+  const LeaveGroupButton({super.key, required this.groupId});
 
   @override
   Widget build(BuildContext context) {
+    final state = context.watch<LeaveGroupCubit>().state;
+    final isLoading = state is LeaveGroupLoading;
     return CustomListTile(
       icon: Icons.logout_rounded,
-      text: "Leave group",
+      text: isLoading is LeaveGroupLoading ? "Loading..." : "Leave group",
       onTap: () {
+        final leaveCubit = context.read<LeaveGroupCubit>();
         context.pop();
         showCustomDialog(
           context: context,
@@ -19,7 +28,7 @@ class LeaveGroupButton extends StatelessWidget {
           confirmText: "Leave",
           confirmTextColor: Colors.red,
           onConfirm: () {
-            //TODO: add leave group logic
+            leaveCubit.leaveGroup(groupId: groupId);
           },
           content: "Are you sure you want to leave this group?",
         );
