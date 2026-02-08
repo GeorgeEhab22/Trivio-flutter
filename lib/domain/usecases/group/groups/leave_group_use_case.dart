@@ -6,10 +6,10 @@ class LeaveGroupUseCase {
   final GroupRepo groupRepo;
   LeaveGroupUseCase(this.groupRepo);
 
-  Future<Either<Failure, String>> call({required String groupId, required String userId}) async {
+  Future<Either<Failure, String>> call({required String groupId}) async {
     if (groupId.isEmpty) {
       return const Left(ValidationFailure('Invalid Group ID'));
     }
-    return await groupRepo.leaveGroup(groupId: groupId, userId: userId);
+    return await groupRepo.leaveGroup(groupId: groupId);
   }
 }

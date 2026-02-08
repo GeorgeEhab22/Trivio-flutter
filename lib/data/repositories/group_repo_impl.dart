@@ -117,7 +117,7 @@ class GroupRepoImpl implements GroupRepo {
   }
 
   @override
-  Future<Either<Failure, String>> leaveGroup({required String groupId, required String userId}) async {
+  Future<Either<Failure, String>> leaveGroup({required String groupId}) async {
     try {
       await remoteDataSource.leaveGroup(groupId);
       return const Right('Left group successfully');

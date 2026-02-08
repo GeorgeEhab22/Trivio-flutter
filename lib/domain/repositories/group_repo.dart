@@ -42,7 +42,6 @@ abstract class GroupRepo {
   // 7 leave group
   Future<Either<Failure, String>> leaveGroup({
     required String groupId,
-    required String userId,
   });
   //8 cancel request
   Future<Either<Failure, String>> cancelRequest({
