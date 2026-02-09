@@ -16,6 +16,7 @@ import 'package:auth/presentation/groups/manage_group/moderators_list_view.dart'
 import 'package:auth/presentation/groups/manage_group/pending_posts_view.dart';
 import 'package:auth/presentation/groups/manage_group/reported_posts_view.dart';
 import 'package:auth/presentation/groups/my_group/my_group_view.dart';
+import 'package:auth/presentation/manager/group_cubit/cancel_request/cancel_request_group_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/join_group/join_group_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/leave_group/leave_group_cubit.dart';
 import 'package:auth/presentation/reels/reels_page.dart';
@@ -202,8 +203,11 @@ GoRouter createRouter(bool isLoggedIn) {
             routes: [
               GoRoute(
                 path: 'group_preview',
-                builder: (context, state) => BlocProvider(
-                  create: (context) => di.sl<JoinGroupCubit>(),
+                builder: (context, state) => MultiBlocProvider(
+                  providers: [
+                    BlocProvider(create: (context) => di.sl<JoinGroupCubit>()),
+                    BlocProvider(create: (context) => di.sl<CancelRequestGroupCubit>()),
+                  ],
                   child: const GroupPreviewView(),
                 ),
               ),

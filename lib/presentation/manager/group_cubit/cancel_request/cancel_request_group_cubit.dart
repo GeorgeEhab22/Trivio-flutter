@@ -1,7 +1,6 @@
 import 'package:auth/core/errors/failure.dart';
 import 'package:auth/domain/usecases/group/cancel_request_use_case.dart';
 import 'package:auth/presentation/manager/group_cubit/cancel_request/cancel_request_group_state.dart';
-import 'package:auth/presentation/manager/group_cubit/leave_group/leave_group_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CancelRequestGroupCubit extends Cubit<CancelRequestGroupState> {
@@ -37,7 +36,7 @@ class CancelRequestGroupCubit extends Cubit<CancelRequestGroupState> {
 
   void resetState() => emit(const CancelRequestGroupInitial());
 
-  bool get isLoading => state is LeaveGroupLoading;
-  bool get isSuccess => state is LeaveGroupSuccess;
-  bool get isFailure => state is LeaveGroupFailure;
+  bool get isLoading => state is CancelRequestGroupLoading;
+  bool get isSuccess => state is CancelRequestGroupSuccess;
+  bool get isFailure => state is CancelRequestGroupFailure;
 }

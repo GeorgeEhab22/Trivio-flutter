@@ -2,6 +2,7 @@ import 'package:auth/common/functions/custom_square_button.dart';
 import 'package:auth/core/styels.dart';
 import 'package:auth/injection_container.dart' as di;
 import 'package:auth/presentation/groups/group_preview/widgets/join_group_button.dart';
+import 'package:auth/presentation/manager/group_cubit/cancel_request/cancel_request_group_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/join_group/join_group_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -28,8 +29,11 @@ class SuggestCard extends StatelessWidget {
   Widget build(BuildContext context) {
     double cardWidth = (MediaQuery.of(context).size.width * (2 / 3)).clamp(250, 300);
 
-    return BlocProvider(
-      create: (context) => di.sl<JoinGroupCubit>(),
+    return MultiBlocProvider(
+      providers:[
+        BlocProvider(create: (context) => di.sl<JoinGroupCubit>()),
+        BlocProvider(create: (context)=> di.sl<CancelRequestGroupCubit>()),
+      ],
       child: Padding(
         padding: const EdgeInsets.only(right: 8.0, top: 8.0, bottom: 8.0),
         child: Container(
