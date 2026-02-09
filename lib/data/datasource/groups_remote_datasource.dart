@@ -1,3 +1,4 @@
+import 'package:auth/data/models/join_request_model.dart';
 import 'package:dio/dio.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -32,7 +33,7 @@ abstract class GroupRemoteDataSource {
   Future<String> joinGroup(String groupId);
   Future<void> leaveGroup(String groupId);
   Future<void> cancelJoinRequest(String groupId);
-  Future<List<GroupMemberModel>> getJoinRequests({
+  Future<List<JoinRequestModel>> getJoinRequests({
     required String groupId,
     int page = 1,
   });
@@ -268,7 +269,7 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
       await _simpleDelete("${ApiEndpoints.groups}/$groupId/requests/cancel");
 
   @override
-  Future<List<GroupMemberModel>> getJoinRequests({
+  Future<List<JoinRequestModel>> getJoinRequests({
     required String groupId,
     int page = 1,
   }) async {
@@ -277,7 +278,7 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
       options: _getAuthOptions(),
     );
     final list = response['data']['data'] as List;
-    return list.map((e) => GroupMemberModel.fromJson(e)).toList();
+    return list.map((item) => JoinRequestModel.fromJson(item)).toList();
   }
 
   @override

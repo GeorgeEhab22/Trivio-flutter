@@ -2,6 +2,7 @@ import 'package:auth/core/errors/failure.dart';
 import 'package:auth/domain/entities/group.dart';
 import 'package:auth/domain/entities/group_member.dart';
 import 'package:auth/domain/entities/group_post.dart';
+import 'package:auth/domain/entities/join_request.dart';
 import 'package:dartz/dartz.dart';
 
 abstract class GroupRepo {
@@ -49,7 +50,7 @@ abstract class GroupRepo {
   });
 
   // 9 get join requests
-  Future<Either<Failure, List<GroupMember>>> getJoinRequests({
+  Future<Either<Failure, List<JoinRequest>>> getJoinRequests({
     required String groupId,
     int page = 1,
   });

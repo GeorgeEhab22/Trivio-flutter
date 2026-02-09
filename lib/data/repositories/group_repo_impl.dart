@@ -4,6 +4,7 @@ import 'package:auth/data/datasource/groups_remote_datasource.dart';
 import 'package:auth/domain/entities/group.dart';
 import 'package:auth/domain/entities/group_member.dart';
 import 'package:auth/domain/entities/group_post.dart';
+import 'package:auth/domain/entities/join_request.dart';
 import 'package:auth/domain/repositories/group_repo.dart';
 import 'package:dartz/dartz.dart';
 
@@ -151,7 +152,7 @@ class GroupRepoImpl implements GroupRepo {
   }
 
   @override
-  Future<Either<Failure, List<GroupMember>>> getJoinRequests({
+  Future<Either<Failure, List<JoinRequest>>> getJoinRequests({
     required String groupId,
     int page = 1,
   }) async {
@@ -160,6 +161,7 @@ class GroupRepoImpl implements GroupRepo {
         groupId: groupId,
         page: page,
       );
+      // return Right(models.cast<JoinRequest>().toList());
       return Right(models);
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));
