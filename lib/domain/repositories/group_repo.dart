@@ -57,13 +57,13 @@ abstract class GroupRepo {
   // 10 accept join request
   Future<Either<Failure, String>> acceptJoinRequest({
     required String groupId,
-    required String userId,
+    required String requestedId,
   });
 
   // 11 decline join request
   Future<Either<Failure, String>> declineJoinRequest({
     required String groupId,
-    required String userId,
+    required String requestedId,
   });
 
   // 12 change member role

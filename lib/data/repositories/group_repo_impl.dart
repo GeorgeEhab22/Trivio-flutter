@@ -171,12 +171,12 @@ class GroupRepoImpl implements GroupRepo {
   @override
   Future<Either<Failure, String>> acceptJoinRequest({
     required String groupId,
-    required String userId,
+    required String requestedId,
   }) async {
     try {
       await remoteDataSource.acceptJoinRequest(
         groupId: groupId,
-        requestId: userId,
+        requestId: requestedId,
       );
       return const Right('Request accepted');
     } on ServerException catch (e) {
@@ -189,12 +189,12 @@ class GroupRepoImpl implements GroupRepo {
   @override
   Future<Either<Failure, String>> declineJoinRequest({
     required String groupId,
-    required String userId,
+    required String requestedId,
   }) async {
     try {
       await remoteDataSource.declineJoinRequest(
         groupId: groupId,
-        requestId: userId,
+        requestId: requestedId,
       );
       return const Right('Request declined');
     } on ServerException catch (e) {

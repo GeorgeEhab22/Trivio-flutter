@@ -8,11 +8,11 @@ class DeclineJoinRequestUseCase {
 
   Future<Either<Failure, String>> call({
     required String groupId,
-    required String userId,
+    required String requestedId,
   }) async {
-    if (userId.isEmpty) {
-      return const Left(ValidationFailure('User ID is required'));
+    if (groupId.isEmpty||requestedId.isEmpty) {
+      return const Left(ValidationFailure('ID is required'));
     }
-    return await groupRepo.declineJoinRequest(groupId: groupId, userId: userId);
+    return await groupRepo.declineJoinRequest(groupId: groupId, requestedId: requestedId);
   }
 }
