@@ -83,7 +83,7 @@ Future<void> _setupDevMode() async {
   final prefs = await SharedPreferences.getInstance();
   
   // 1. Paste your long JWT string here
-  const String devToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NzYwMzhmNTE5ZjRkNDE5MzVlMzRiMiIsInVzZXJuYW1lIjoiR2VvcmdlIiwiZW1haWwiOiJnZW9yZ2VlaGFiLmNzQGdtYWlsLmNvbSIsImlhdCI6MTc2OTM0NzY2MiwiZXhwIjoxNzY5NDM0MDYyfQ.Dyx8rlY_dHAsQ1FMrnZ023K4yUOtdsg7F1Prt8Z_UEc"; 
+  const String devToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NzYwMzhmNTE5ZjRkNDE5MzVlMzRiMiIsInVzZXJuYW1lIjoiR2VvcmdlIiwiZW1haWwiOiJnZW9yZ2VlaGFiLmNzQGdtYWlsLmNvbSIsImlhdCI6MTc3MDY0MDczMH0.DA5cIFKg6zrFN5aailMaZOwgeQIriILXVBVGdJoskpI"; 
 
   await prefs.setString('auth_token', devToken);
   

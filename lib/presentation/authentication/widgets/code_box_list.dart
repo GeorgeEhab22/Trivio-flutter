@@ -8,14 +8,16 @@ class CodeBoxList extends StatelessWidget {
   final VoidCallback? onComplete;
   final bool enabled;
   final int length;
+  final bool isForVerification;
 
   const CodeBoxList({
-    super.key,
+    super.key,  
     required this.controllers,
     required this.focusNodes,
     this.onComplete,
     this.enabled = true,
-    this.length = 6,
+    this.length = 6,  
+    required this.isForVerification,
   });
 
   @override
@@ -47,7 +49,8 @@ class CodeBoxList extends StatelessWidget {
                       focusNodes,
                       controllers,
                       context,
-                      onComplete,),
+                      onComplete,
+                      isForVerification,),
                     onKeyEvent: (event) => CodeBoxHandlers.onKeyEvent(
                       event,
                       index,

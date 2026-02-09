@@ -1,4 +1,6 @@
 import 'package:auth/core/custom_bottom_navigation_bar.dart';
+import 'package:auth/domain/usecases/sign_in/verify_otp.dart';
+import 'package:auth/presentation/authentication/signIn/forget_password_otp_view.dart';
 import 'package:auth/presentation/chats/chat_info_button/chat_info_view.dart';
 import 'package:auth/presentation/chats/chat_screen/chat_view.dart';
 import 'package:auth/presentation/chats/messages_screen/messages_view.dart';
@@ -8,6 +10,7 @@ import 'package:auth/presentation/groups/group_feed/group_feed_view.dart';
 import 'package:auth/presentation/groups/groups_view.dart';
 import 'package:auth/presentation/groups/group_preview/group_preview_view.dart';
 import 'package:auth/presentation/groups/my_group/my_group_view.dart';
+import 'package:auth/presentation/manager/sigin_in_cubit/forget_password_otp_cubit.dart';
 import 'package:auth/presentation/reels/reels_page.dart';
 import 'package:auth/presentation/settings/settings_view.dart';
 import 'package:auth/presentation/settings/theme_view.dart';
@@ -60,7 +63,7 @@ CustomTransitionPage buildAnimatedPage({
 
 GoRouter createRouter(bool isLoggedIn) {
   return GoRouter(
-    initialLocation: '/app/home/settings/groups',
+    initialLocation: '/signin',
     // initialLocation:isLoggedIn ? '/app/home' : '/signin',
     routes: [
       GoRoute(
@@ -100,6 +103,23 @@ GoRouter createRouter(bool isLoggedIn) {
               sendPasswordResetOtp: di.sl<SendPasswordResetOtp>(),
             ),
             child: RequestEmailView(isForVerification: false, username: ''),
+          );
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.forgetPasswordOtp,
+        builder: (context, state) {
+          final email = state.extra as String? ?? '';
+
+          return MultiBlocProvider(
+            providers: [
+              BlocProvider(
+                create: (context) =>
+                    ForgetPasswordOTPCubit(verifyOTP: di.sl<VerifyOTP>()),
+              ),
+              BlocProvider(create: (context) => di.sl<RequestOTPCubit>()),
+            ],
+            child: ForgetPasswordOtp(email: email),
           );
         },
       ),

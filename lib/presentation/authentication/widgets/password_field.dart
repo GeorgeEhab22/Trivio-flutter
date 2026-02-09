@@ -246,6 +246,9 @@ class _PasswordFieldState extends State<PasswordField> {
               ),
               onPressed: widget.onVisibilityToggle,
             ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(6),
+            ),
           ).applyDefaults(theme.inputDecorationTheme),
           validator: (value) {
             final result = _validatePassword(value);

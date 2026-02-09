@@ -121,6 +121,9 @@ class _UsernameFieldState extends State<UsernameField> {
             suffixIcon: allValid
                 ? const Icon(Icons.check_circle, color: Colors.green, size: 20)
                 : null,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(6),
+            ),
           ).applyDefaults(theme.inputDecorationTheme),
           validator: (value){
              final error = _defaultValidator(value);

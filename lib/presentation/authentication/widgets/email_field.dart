@@ -147,6 +147,9 @@ class _EmailFieldState extends State<EmailField> {
             suffixIcon: isValid && _hasTouched&&!widget.isLogin
                 ? const Icon(Icons.check_circle, color: Colors.green, size: 20)
                 : null,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(6),
+            ),
           ).applyDefaults(theme.inputDecorationTheme),
           validator: _defaultValidator,
         ),
