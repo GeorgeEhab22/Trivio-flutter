@@ -173,6 +173,9 @@ class GroupRepoImpl implements GroupRepo {
     required String groupId,
     required String requestedId,
   }) async {
+      // await Future.delayed(const Duration(seconds: 1));
+      //     return const Right('Request accepted');
+
     try {
       await remoteDataSource.acceptJoinRequest(
         groupId: groupId,
@@ -181,7 +184,8 @@ class GroupRepoImpl implements GroupRepo {
       return const Right('Request accepted');
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));
-    } catch (_) {
+    } catch (e) {
+      // print("Accept request error : ${e.toString()}");
       return Left(ServerFailure('Failed to accept request'));
     }
   }
@@ -191,6 +195,9 @@ class GroupRepoImpl implements GroupRepo {
     required String groupId,
     required String requestedId,
   }) async {
+      // await Future.delayed(const Duration(seconds: 1));
+      //     return const Right('Request declined');
+
     try {
       await remoteDataSource.declineJoinRequest(
         groupId: groupId,
@@ -199,7 +206,8 @@ class GroupRepoImpl implements GroupRepo {
       return const Right('Request declined');
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));
-    } catch (_) {
+    } catch (e) {
+      // print("Decline request error : ${e.toString()}");
       return Left(ServerFailure('Failed to decline request'));
     }
   }

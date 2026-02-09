@@ -21,7 +21,9 @@ import 'package:auth/domain/usecases/comment/get_comments_usecase.dart';
 import 'package:auth/domain/usecases/comment/get_replies_usecase.dart';
 import 'package:auth/domain/usecases/comment/mention_users_in_comment_usecase.dart';
 import 'package:auth/domain/usecases/comment/react_to_comment_usecase.dart';
+import 'package:auth/domain/usecases/group/accept_join_request_use_case.dart';
 import 'package:auth/domain/usecases/group/cancel_request_use_case.dart';
+import 'package:auth/domain/usecases/group/decline_join_request_use_case.dart';
 import 'package:auth/domain/usecases/group/groups/join_group_use_case.dart';
 import 'package:auth/domain/usecases/group/groups/leave_group_use_case.dart';
 import 'package:auth/domain/usecases/post/comment_on_post_usecase.dart';
@@ -46,7 +48,9 @@ import 'package:auth/domain/usecases/sign_in/request_otp.dart';
 import 'package:auth/domain/usecases/sign_in/signin_usecase.dart';
 import 'package:auth/domain/usecases/sign_in/verify_otp.dart';
 import 'package:auth/presentation/manager/comment_cubit/comment_cubit.dart';
+import 'package:auth/presentation/manager/group_cubit/accept_request/accept_request_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/cancel_request/cancel_request_group_cubit.dart';
+import 'package:auth/presentation/manager/group_cubit/decline_request/decline_request_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/join_group/join_group_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/leave_group/leave_group_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/create_post_cubit.dart';
@@ -185,4 +189,10 @@ Future<void> init() async {
   //cancel request
   sl.registerLazySingleton(() => CancelRequestUseCase(sl()));
   sl.registerFactory(() => CancelRequestGroupCubit(cancelRequestUseCase: sl()));
+  //accept request
+  sl.registerLazySingleton(() => AcceptJoinRequestUseCase(sl()));
+  sl.registerFactory(() => AcceptRequestCubit(acceptJoinRequestUseCase: sl()));
+  // declie request
+  sl.registerLazySingleton(() => DeclineJoinRequestUseCase(sl()));
+  sl.registerFactory(() => DeclineRequestCubit(declineJoinRequestUseCase: sl()));
 }
