@@ -19,6 +19,7 @@ import 'package:auth/presentation/groups/my_group/my_group_view.dart';
 import 'package:auth/presentation/manager/group_cubit/accept_request/accept_request_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/cancel_request/cancel_request_group_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/decline_request/decline_request_cubit.dart';
+import 'package:auth/presentation/manager/group_cubit/get_join_requests/get_join_requests_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/join_group/join_group_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/leave_group/leave_group_cubit.dart';
 import 'package:auth/presentation/reels/reels_page.dart';
@@ -242,17 +243,28 @@ GoRouter createRouter(bool isLoggedIn) {
                     routes: [
                       GoRoute(
                         path: 'members_requests',
-                        builder: (context, state) => MultiBlocProvider(
-                          providers: [
-                            BlocProvider(
-                              create: (context) => di.sl<AcceptRequestCubit>(),
-                            ),
-                            BlocProvider(
-                              create: (context) => di.sl<DeclineRequestCubit>(),
-                            ),
-                          ],
-                          child: const MembersRequestsListView(),
-                        ),
+                        builder: (context, state) {
+                          final groupId = (state.extra as String?)??"69888500a488d0dae5e0accc";
+
+                          return MultiBlocProvider(
+                            providers: [
+                              BlocProvider(
+                                create: (context) =>
+                                    di.sl<GetJoinRequestsCubit>()
+                                      ..getJoinRequestsGroup(groupId: groupId),
+                              ),
+                              BlocProvider(
+                                create: (context) =>
+                                    di.sl<AcceptRequestCubit>(),
+                              ),
+                              BlocProvider(
+                                create: (context) =>
+                                    di.sl<DeclineRequestCubit>(),
+                              ),
+                            ],
+                            child: MembersRequestsListView(groupId: groupId),
+                          );
+                        },
                       ),
                       GoRoute(
                         path: 'pending_posts',

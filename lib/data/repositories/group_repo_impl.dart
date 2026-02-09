@@ -156,7 +156,39 @@ class GroupRepoImpl implements GroupRepo {
     required String groupId,
     int page = 1,
   }) async {
+    await Future.delayed(const Duration(seconds: 1));
+
+//To testt
+  // final List<JoinRequest> mockRequests = [
+  //   const JoinRequest(
+  //     requestId: "69888894a488d0dae5e0ace7",
+  //     groupId: "695d4782c3f2873f107b0f17",
+  //     userId: "u1",
+  //     userName: "Shimaa Khaled",
+  //     userEmail: "shimaa@example.com",
+  //     status: "pending",
+  //   ),
+  //   const JoinRequest(
+  //     requestId: "69888894a488d0dae5e0ace8",
+  //     groupId: "695d4782c3f2873f107b0f17",
+  //     userId: "u2",
+  //     userName: "Ahmed Mohamed",
+  //     userEmail: "ahmed.m@trivio.com",
+  //     status: "pending",
+  //   ),
+  //   const JoinRequest(
+  //     requestId: "69888894a488d0dae5e0ace9",
+  //     groupId: "695d4782c3f2873f107b0f17",
+  //     userId: "u3",
+  //     userName: "Lio Messi",
+  //     userEmail: "leo10@goat.com",
+  //     status: "pending",
+  //   ),
+  // ];
+
+  // return Right(mockRequests);
     try {
+
       final models = await remoteDataSource.getJoinRequests(
         groupId: groupId,
         page: page,

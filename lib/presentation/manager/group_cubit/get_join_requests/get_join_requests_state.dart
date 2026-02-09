@@ -23,7 +23,9 @@ class GetJoinRequestsSuccess extends GetJoinRequestsState {
   @override
   List<Object?> get props => [requests];
 }
-
+class GetJoinRequestsEmpty extends GetJoinRequestsState {
+  const GetJoinRequestsEmpty();
+}
 class GetJoinRequestsFailure extends GetJoinRequestsState {
   final String message;
   final String? errorType;

@@ -10,15 +10,17 @@ class GetJoinRequestsCubit extends Cubit<GetJoinRequestsState> {
     : _getJoinRequestsUseCase = getJoinRequestsUseCase,
       super(const GetJoinRequestsInitial());
 
-  Future<void> cancelRequestGroup({required String groupId}) async {
+  Future<void> getJoinRequestsGroup({required String groupId}) async {
     emit(const GetJoinRequestsLoading());
 
     final result = await _getJoinRequestsUseCase(groupId: groupId);
 
-    result.fold(
-      (failure) => emit(_mapFailureToState(failure)),
-      (requests) => emit(GetJoinRequestsSuccess(requests: requests)),
-    );
+    result.fold((failure) => emit(_mapFailureToState(failure)), (requests) {
+      if (requests.isEmpty) {
+        emit(const GetJoinRequestsEmpty());
+      }
+      emit(GetJoinRequestsSuccess(requests: requests));
+    });
   }
 
   GetJoinRequestsFailure _mapFailureToState(Failure failure) {
