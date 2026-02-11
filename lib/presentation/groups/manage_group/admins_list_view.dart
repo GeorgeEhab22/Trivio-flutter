@@ -1,9 +1,9 @@
 import 'package:auth/presentation/authentication/widgets/show_custom_snackbar.dart';
 import 'package:auth/presentation/groups/manage_group/widgets/member_row.dart';
-import 'package:auth/presentation/manager/get_admins/get_admins_cubit.dart';
-import 'package:auth/presentation/manager/get_admins/get_admins_state.dart';
-import 'package:auth/presentation/manager/get_members/get_members_cubit.dart';
-import 'package:auth/presentation/manager/get_moderators/get_moderators_cubit.dart';
+import 'package:auth/presentation/manager/group_cubit/get_admins/get_admins_cubit.dart';
+import 'package:auth/presentation/manager/group_cubit/get_admins/get_admins_state.dart';
+import 'package:auth/presentation/manager/group_cubit/get_members/get_members_cubit.dart';
+import 'package:auth/presentation/manager/group_cubit/get_moderators/get_moderators_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/change_member_role/change_member_role_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/change_member_role/change_member_role_state.dart';
 import 'package:flutter/material.dart';

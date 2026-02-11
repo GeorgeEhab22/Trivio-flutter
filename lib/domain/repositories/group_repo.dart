@@ -99,10 +99,10 @@ abstract class GroupRepo {
     required String groupId,
     int page = 1,
   });
-  // Future<Either<Failure, List<GroupMember>>> getGroupBannedMembers({
-  //   required String groupId,
-  //   int page = 1,
-  // });
+  Future<Either<Failure, List<GroupMember>>> getGroupBannedMembers({
+    required String groupId,
+    int page = 1,
+  });
 
   // 20 group posts
   Future<Either<Failure, GroupPost>> createGroupPost({

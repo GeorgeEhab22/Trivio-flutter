@@ -72,6 +72,10 @@ abstract class GroupRemoteDataSource {
     required String groupId,
     int page = 1,
   });
+  Future<List<GroupMemberModel>> getBannedMembers({
+    required String groupId,
+    int page = 1,
+  });
   // Posts
   Future<GroupPostModel> createGroupPost({
     required String groupId,
@@ -371,6 +375,19 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
   }) async {
     final response = await api.get(
       "${ApiEndpoints.groups}/$groupId/admins?page=$page",
+      options: _getAuthOptions(),
+    );
+    final list = response['data']['data'] as List;
+    return list.map((e) => GroupMemberModel.fromJson(e)).toList();
+  }
+
+  @override
+  Future<List<GroupMemberModel>> getBannedMembers({
+    required String groupId,
+    int page = 1,
+  }) async {
+    final response = await api.get(
+      "${ApiEndpoints.groups}/$groupId/banned?page=$page",
       options: _getAuthOptions(),
     );
     final list = response['data']['data'] as List;

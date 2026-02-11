@@ -27,10 +27,14 @@ import 'package:auth/domain/usecases/group/decline_join_request_use_case.dart';
 import 'package:auth/domain/usecases/group/get_join_requests_use_case.dart';
 import 'package:auth/domain/usecases/group/groups/join_group_use_case.dart';
 import 'package:auth/domain/usecases/group/groups/leave_group_use_case.dart';
+import 'package:auth/domain/usecases/group/members/ban_member_use_case.dart';
 import 'package:auth/domain/usecases/group/members/change_member_rule_use_case.dart';
 import 'package:auth/domain/usecases/group/members/get_group_admins_use_case.dart';
+import 'package:auth/domain/usecases/group/members/get_group_banned_members_use_case.dart';
 import 'package:auth/domain/usecases/group/members/get_group_members_use_case.dart';
 import 'package:auth/domain/usecases/group/members/get_group_moderators_use_case.dart';
+import 'package:auth/domain/usecases/group/members/kick_member_use_case.dart';
+import 'package:auth/domain/usecases/group/members/unban_member_use_case.dart';
 import 'package:auth/domain/usecases/post/comment_on_post_usecase.dart';
 import 'package:auth/domain/usecases/post/create_post_usecase.dart';
 import 'package:auth/domain/usecases/post/delete_post_usecase.dart';
@@ -53,16 +57,20 @@ import 'package:auth/domain/usecases/sign_in/request_otp.dart';
 import 'package:auth/domain/usecases/sign_in/signin_usecase.dart';
 import 'package:auth/domain/usecases/sign_in/verify_otp.dart';
 import 'package:auth/presentation/manager/comment_cubit/comment_cubit.dart';
-import 'package:auth/presentation/manager/get_admins/get_admins_cubit.dart';
-import 'package:auth/presentation/manager/get_members/get_members_cubit.dart';
-import 'package:auth/presentation/manager/get_moderators/get_moderators_cubit.dart';
+import 'package:auth/presentation/manager/group_cubit/ban_member/ban_member_cubit.dart';
+import 'package:auth/presentation/manager/group_cubit/get_admins/get_admins_cubit.dart';
+import 'package:auth/presentation/manager/group_cubit/get_banned_members/get_banned_members_cubit.dart';
+import 'package:auth/presentation/manager/group_cubit/get_members/get_members_cubit.dart';
+import 'package:auth/presentation/manager/group_cubit/get_moderators/get_moderators_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/accept_request/accept_request_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/cancel_request/cancel_request_group_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/change_member_role/change_member_role_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/decline_request/decline_request_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/get_join_requests/get_join_requests_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/join_group/join_group_cubit.dart';
+import 'package:auth/presentation/manager/group_cubit/kick_member/kick_member_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/leave_group/leave_group_cubit.dart';
+import 'package:auth/presentation/manager/group_cubit/unban_member/unban_member_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/create_post_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/post_interaction_cubit.dart';
@@ -220,5 +228,17 @@ Future<void> init() async {
   // get moderators
   sl.registerLazySingleton(()=> GetGroupModeratorsUseCase(sl()));
   sl.registerFactory(()=> GetModeratorsCubit(getgroupModeratorsUseCase: sl()));
+  // get banned members
+  sl.registerLazySingleton(()=> GetGroupBannedMembersUseCase(sl()));
+  sl.registerFactory(()=> GetBannedMembersCubit(getGroupBannedMembersUseCase: sl()));
+  // kick member
+  sl.registerLazySingleton(()=> KickMemberUseCase(sl()));
+  sl.registerFactory(()=> KickMemberCubit(kickMemberUseCase: sl()));
+  // ban member
+  sl.registerLazySingleton(()=> BanMemberUseCase(sl()));
+  sl.registerFactory(()=> BanMemberCubit(banMemberUseCase: sl()));
+  // unban member
+  sl.registerLazySingleton(()=> UnbanMemberUseCase(sl()));  
+  sl.registerFactory(()=> UnbanMemberCubit(unbanMemberUseCase: sl()));
   
 }

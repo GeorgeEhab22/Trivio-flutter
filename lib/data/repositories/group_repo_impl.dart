@@ -434,6 +434,26 @@ class GroupRepoImpl implements GroupRepo {
     }
   }
 
+  @override
+  Future<Either<Failure, List<GroupMember>>> getGroupBannedMembers({
+    required String groupId,
+    int page = 1,
+  }) async {
+    // await Future.delayed(const Duration(seconds: 1));
+    // final onlyMembers = mockList.where((m) => m.role == "moderator").toList();
+    // return Right(onlyMembers);
+    try {
+      final models = await remoteDataSource.getBannedMembers(
+        groupId: groupId,
+        page: page,
+      );
+      return Right(models);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } catch (_) {
+      return Left(ServerFailure('Failed to fetch members'));
+    }
+  }
   // --- 4. Posts Management ---
 
   @override
