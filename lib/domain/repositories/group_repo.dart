@@ -36,18 +36,12 @@ abstract class GroupRepo {
   });
 
   // 6 join group
-  Future<Either<Failure, String>> joinGroup({
-    required String groupId,
-  });
+  Future<Either<Failure, String>> joinGroup({required String groupId});
 
   // 7 leave group
-  Future<Either<Failure, String>> leaveGroup({
-    required String groupId,
-  });
+  Future<Either<Failure, String>> leaveGroup({required String groupId});
   //8 cancel request
-  Future<Either<Failure, String>> cancelRequest({
-    required String groupId,
-  });
+  Future<Either<Failure, String>> cancelRequest({required String groupId});
 
   // 9 get join requests
   Future<Either<Failure, List<JoinRequest>>> getJoinRequests({
@@ -95,9 +89,20 @@ abstract class GroupRepo {
   // 16 members , 17 baned members , 18 admins , 19 moderators
   Future<Either<Failure, List<GroupMember>>> getGroupMembers({
     required String groupId,
-    required String role,
     int page = 1,
   });
+  Future<Either<Failure, List<GroupMember>>> getGroupAdmins({
+    required String groupId,
+    int page = 1,
+  });
+  Future<Either<Failure, List<GroupMember>>> getGroupModerators({
+    required String groupId,
+    int page = 1,
+  });
+  // Future<Either<Failure, List<GroupMember>>> getGroupBannedMembers({
+  //   required String groupId,
+  //   int page = 1,
+  // });
 
   // 20 group posts
   Future<Either<Failure, GroupPost>> createGroupPost({

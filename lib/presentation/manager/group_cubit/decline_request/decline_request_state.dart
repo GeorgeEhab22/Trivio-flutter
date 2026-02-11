@@ -16,7 +16,10 @@ class DeclineRequestLoading extends DeclineRequestState {
 }
 
 class DeclineRequestSuccess extends DeclineRequestState {
-  const DeclineRequestSuccess();
+  final String requestId;
+  const DeclineRequestSuccess(this.requestId);
+  @override
+  List<Object?> get props => [requestId];
 }
 
 class DeclineRequestFailure extends DeclineRequestState {

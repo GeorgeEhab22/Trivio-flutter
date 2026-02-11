@@ -78,23 +78,9 @@ class ManageGroupView extends StatelessWidget {
               children: [
                 CustomListTile(
                   icon: Icons.group_outlined,
-                  text: 'Members',
+                  text: 'People',
                   onTap: () {
                     context.push(AppRoutes.groupMembers);
-                  },
-                ),
-                CustomListTile(
-                  icon: Icons.admin_panel_settings_outlined,
-                  text: 'Moderators',
-                  onTap: () {
-                    context.push(AppRoutes.groupModerators);
-                  },
-                ),
-                CustomListTile(
-                  icon: Icons.admin_panel_settings_rounded,
-                  text: 'Admins',
-                  onTap: () {
-                    context.push(AppRoutes.groupAdmins);
                   },
                 ),
                 CustomListTile(

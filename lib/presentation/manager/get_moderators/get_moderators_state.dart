@@ -17,11 +17,11 @@ class GetModeratorsLoading extends GetModeratorsState {
 }
 
 class GetModeratorsSuccess extends GetModeratorsState {
-  final List<GroupMember> members;
-  const GetModeratorsSuccess({required this.members});
+  final List<GroupMember> moderators;
+  const GetModeratorsSuccess({required this.moderators});
 
   @override
-  List<Object?> get props => [members];
+  List<Object?> get props => [moderators];
 }
 
 class GetModeratorsFailure extends GetModeratorsState {

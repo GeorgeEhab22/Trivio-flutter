@@ -17,11 +17,11 @@ class GetAdminsLoading extends GetAdminsState {
 }
 
 class GetAdminsSuccess extends GetAdminsState {
-  final List<GroupMember> members;
-  const GetAdminsSuccess({required this.members});
+  final List<GroupMember> admins;
+  const GetAdminsSuccess({required this.admins});
 
   @override
-  List<Object?> get props => [members];
+  List<Object?> get props => [admins];
 }
 
 class GetAdminsFailure extends GetAdminsState {

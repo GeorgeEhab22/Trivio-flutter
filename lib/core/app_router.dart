@@ -7,17 +7,19 @@ import 'package:auth/presentation/groups/create_group/create_group_view.dart';
 import 'package:auth/presentation/groups/group_feed/group_feed_view.dart';
 import 'package:auth/presentation/groups/groups_view.dart';
 import 'package:auth/presentation/groups/group_preview/group_preview_view.dart';
-import 'package:auth/presentation/groups/manage_group/admins_list_view.dart';
 import 'package:auth/presentation/groups/manage_group/banned_members_list.dart';
 import 'package:auth/presentation/groups/manage_group/manage_group_view.dart';
-import 'package:auth/presentation/groups/manage_group/members_list_view.dart';
 import 'package:auth/presentation/groups/manage_group/members_requests_list_view.dart';
-import 'package:auth/presentation/groups/manage_group/moderators_list_view.dart';
 import 'package:auth/presentation/groups/manage_group/pending_posts_view.dart';
+import 'package:auth/presentation/groups/manage_group/people_view/people_view.dart';
 import 'package:auth/presentation/groups/manage_group/reported_posts_view.dart';
 import 'package:auth/presentation/groups/my_group/my_group_view.dart';
+import 'package:auth/presentation/manager/get_admins/get_admins_cubit.dart';
+import 'package:auth/presentation/manager/get_members/get_members_cubit.dart';
+import 'package:auth/presentation/manager/get_moderators/get_moderators_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/accept_request/accept_request_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/cancel_request/cancel_request_group_cubit.dart';
+import 'package:auth/presentation/manager/group_cubit/change_member_role/change_member_role_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/decline_request/decline_request_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/get_join_requests/get_join_requests_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/join_group/join_group_cubit.dart';
@@ -244,7 +246,9 @@ GoRouter createRouter(bool isLoggedIn) {
                       GoRoute(
                         path: 'members_requests',
                         builder: (context, state) {
-                          final groupId = (state.extra as String?)??"69888500a488d0dae5e0accc";
+                          final groupId =
+                              (state.extra as String?) ??
+                              "69888500a488d0dae5e0accc";
 
                           return MultiBlocProvider(
                             providers: [
@@ -276,15 +280,35 @@ GoRouter createRouter(bool isLoggedIn) {
                       ),
                       GoRoute(
                         path: 'members',
-                        builder: (context, state) => const MembersListView(),
-                      ),
-                      GoRoute(
-                        path: 'moderators',
-                        builder: (context, state) => const ModeratorsListView(),
-                      ),
-                      GoRoute(
-                        path: 'admins',
-                        builder: (context, state) => const AdminsListView(),
+                        builder: (context, state) {
+                          final groupId =
+                              (state.extra as String?) ??
+                              "695d4782c3f2873f107b0f17";
+                          return MultiBlocProvider(
+                            providers: [
+                              BlocProvider(
+                                create: (context) =>
+                                    di.sl<GetMembersCubit>()
+                                      ..getMembers(groupId: groupId),
+                              ),
+                              BlocProvider(
+                                create: (context) =>
+                                    di.sl<ChangeMemberRoleCubit>(),
+                              ),
+                              BlocProvider(
+                                create: (context) =>
+                                    di.sl<GetModeratorsCubit>()
+                                      ..getModerators(groupId: groupId),
+                              ),
+                              BlocProvider(
+                                create: (context) =>
+                                    di.sl<GetAdminsCubit>()
+                                      ..getAdmins(groupId: groupId),
+                              ),
+                            ],
+                            child: PeopleView(groupId: groupId),
+                          );
+                        },
                       ),
                       GoRoute(
                         path: 'banned_members',

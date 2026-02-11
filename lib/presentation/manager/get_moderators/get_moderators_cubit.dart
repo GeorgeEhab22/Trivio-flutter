@@ -18,7 +18,7 @@ class GetModeratorsCubit extends Cubit<GetModeratorsState> {
 
     result.fold(
       (failure) => emit(_mapFailureToState(failure)),
-      (members) => emit(GetModeratorsSuccess(members: members)),
+      (moderators) => emit(GetModeratorsSuccess(moderators: moderators)),
     );
   }
 

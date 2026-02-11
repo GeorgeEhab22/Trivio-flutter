@@ -36,8 +36,6 @@ class AppRoutes {
   static const String groupReportedPosts = '/settings/groups/my_group/manage_group/reported_posts';
 
   static const String groupMembers = '/settings/groups/my_group/manage_group/members';
-  static const String groupModerators = '/settings/groups/my_group/manage_group/moderators';
-  static const String groupAdmins = '/settings/groups/my_group/manage_group/admins';
   static const String bannedMembers = '/settings/groups/my_group/manage_group/banned_members';
 
 

@@ -84,50 +84,74 @@ class MembersRequestsListView extends StatelessWidget {
                         radius: 26,
                         backgroundImage: NetworkImage(
                           'https://picsum.photos/500',
-                        ),
+                        ), //
                       ),
-                      title: Text(request.userName, style: Styles.textStyle16),
+                      title: Text(
+                        request.userName,
+                        style: Styles.textStyle16,
+                      ), //
                       subtitle: Text(request.userEmail),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.check),
-                            onPressed: () => showCustomDialog(
-                              context: context,
-                              title: "Accept this member?",
-                              onConfirm: () {
-                                context
-                                    .read<AcceptRequestCubit>()
-                                    .acceptRequest(
-                                      groupId: groupId,
-                                      requestId: request.requestId,
-                                    );
-                              },
-                              content:
-                                  "Do you want to add ${request.userName} to the group?",
-                            ),
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.close),
-                            onPressed: () => showCustomDialog(
-                              context: context,
-                              title: "Decline request?",
-                              confirmText: "Decline",
-                              confirmTextColor: Colors.red,
-                              onConfirm: () {
-                                context
-                                    .read<DeclineRequestCubit>()
-                                    .declineRequest(
-                                      groupId: groupId,
-                                      requestId: request.requestId,
-                                    );
-                              },
-                              content:
-                                  "Are you sure you want to decline this request?",
-                            ),
-                          ),
-                        ],
+                      trailing: Builder(
+                        builder: (context) {
+                          final acceptState = context
+                              .watch<AcceptRequestCubit>()
+                              .state;
+                          final declineState = context
+                              .watch<DeclineRequestCubit>()
+                              .state;
+
+                          if (acceptState is AcceptRequestSuccess &&
+                              acceptState.requestId == request.requestId) {
+                            return const Text("Accepted");
+                          }
+
+                          if (declineState is DeclineRequestSuccess &&
+                              declineState.requestId == request.requestId) {
+                            return const Text("Declined");
+                          }
+
+                          return Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.check),
+                                onPressed: () => showCustomDialog(
+                                  context: context,
+                                  title: "Accept this member?",
+                                  onConfirm: () {
+                                    context
+                                        .read<AcceptRequestCubit>()
+                                        .acceptRequest(
+                                          groupId: groupId,
+                                          requestId: request.requestId,
+                                        );
+                                  },
+                                  content:
+                                      "Do you want to add ${request.userName} to the group?",
+                                ),
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.close),
+                                onPressed: () => showCustomDialog(
+                                  context: context,
+                                  title: "Decline request?",
+                                  confirmText: "Decline",
+                                  confirmTextColor: Colors.red,
+                                  onConfirm: () {
+                                    context
+                                        .read<DeclineRequestCubit>()
+                                        .declineRequest(
+                                          groupId: groupId,
+                                          requestId: request.requestId,
+                                        );
+                                  },
+                                  content:
+                                      "Are you sure you want to decline this request?",
+                                ),
+                              ),
+                            ],
+                          );
+                        },
                       ),
                     ),
                   );

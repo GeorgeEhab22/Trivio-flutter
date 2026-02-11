@@ -23,7 +23,7 @@ class DeclineRequestCubit extends Cubit<DeclineRequestState> {
     );
     result.fold(
       (failure) => emit(_mapFailureToState(failure)),
-      (_) => emit(const DeclineRequestSuccess()),
+      (_) => emit( DeclineRequestSuccess(requestId)),
     );
   }
 

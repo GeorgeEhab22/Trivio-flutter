@@ -3,15 +3,15 @@ import 'package:auth/domain/entities/group_member.dart';
 import 'package:auth/domain/repositories/group_repo.dart';
 import 'package:dartz/dartz.dart';
 
-class GetGroupMembersUseCase {
+class GetGroupModeratorsUseCase {
   final GroupRepo groupRepo;
-  GetGroupMembersUseCase(this.groupRepo);
+  GetGroupModeratorsUseCase(this.groupRepo);
 
   Future<Either<Failure, List<GroupMember>>> call({
     required String groupId,
     int page = 1,
   }) async {
-    return await groupRepo.getGroupMembers(
+    return await groupRepo.getGroupModerators(
       groupId: groupId,
       page: page,
     );

@@ -17,7 +17,7 @@ class GetAdminsCubit extends Cubit<GetAdminsState> {
 
     result.fold(
       (failure) => emit(_mapFailureToState(failure)),
-      (members) => emit(GetAdminsSuccess(members: members)),
+      (admins) => emit(GetAdminsSuccess(admins: admins)),
     );
   }
 

@@ -16,7 +16,10 @@ class AcceptRequestLoading extends AcceptRequestState {
 }
 
 class AcceptRequestSuccess extends AcceptRequestState {
-  const AcceptRequestSuccess();
+  final String requestId;
+  const AcceptRequestSuccess(this.requestId);
+  @override
+  List<Object?> get props => [requestId];
 }
 
 class AcceptRequestFailure extends AcceptRequestState {

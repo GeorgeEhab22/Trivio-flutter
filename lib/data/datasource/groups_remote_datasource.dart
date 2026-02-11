@@ -62,10 +62,16 @@ abstract class GroupRemoteDataSource {
   Future<void> unbanMember({required String groupId, required String userId});
   Future<List<GroupMemberModel>> getMembers({
     required String groupId,
-    required String role,
     int page = 1,
   });
-
+  Future<List<GroupMemberModel>> getAdmins({
+    required String groupId,
+    int page = 1,
+  });
+  Future<List<GroupMemberModel>> getModerators({
+    required String groupId,
+    int page = 1,
+  });
   // Posts
   Future<GroupPostModel> createGroupPost({
     required String groupId,
@@ -232,7 +238,7 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
 
   // --- 5. Membership Actions ---
   @override
-  Future<String> joinGroup(String groupId,) async {
+  Future<String> joinGroup(String groupId) async {
     try {
       final response = await api.post(
         "${ApiEndpoints.groups}/$groupId/join",
@@ -335,12 +341,36 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
   @override
   Future<List<GroupMemberModel>> getMembers({
     required String groupId,
-    required String role,
     int page = 1,
   }) async {
-    // role: members, admins, moderators, banned
     final response = await api.get(
-      "${ApiEndpoints.groups}/$groupId/$role?page=$page",
+      "${ApiEndpoints.groups}/$groupId/members?page=$page",
+      options: _getAuthOptions(),
+    );
+    final list = response['data']['data'] as List;
+    return list.map((e) => GroupMemberModel.fromJson(e)).toList();
+  }
+
+  @override
+  Future<List<GroupMemberModel>> getModerators({
+    required String groupId,
+    int page = 1,
+  }) async {
+    final response = await api.get(
+      "${ApiEndpoints.groups}/$groupId/moderators?page=$page",
+      options: _getAuthOptions(),
+    );
+    final list = response['data']['data'] as List;
+    return list.map((e) => GroupMemberModel.fromJson(e)).toList();
+  }
+
+  @override
+  Future<List<GroupMemberModel>> getAdmins({
+    required String groupId,
+    int page = 1,
+  }) async {
+    final response = await api.get(
+      "${ApiEndpoints.groups}/$groupId/admins?page=$page",
       options: _getAuthOptions(),
     );
     final list = response['data']['data'] as List;
