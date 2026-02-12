@@ -8,14 +8,14 @@ class CustomTeamRow extends StatelessWidget {
   final int score;
   final bool? winner;
 
-  const CustomTeamRow(this.icon, this.name, this.score, this.winner);
+  const CustomTeamRow(this.icon, this.name, this.score, this.winner, {super.key});
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
         SizedBox(
-          width: 5,
+          width: 50,
           child: winner == true
               ? Stack(
                   alignment: Alignment.center,

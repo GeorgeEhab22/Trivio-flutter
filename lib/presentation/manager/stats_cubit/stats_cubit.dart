@@ -6,8 +6,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 part 'stats_state.dart';
 
 class StatsCubit extends Cubit<StatsState> {
-  StatsCubit(this.statsUseCase) : super(StatsInitial());
-  final StatsUseCase statsUseCase;
+   final StatsUseCase statsUseCase;
+  StatsCubit( this.statsUseCase) : super(StatsInitial());
 
   Future<void> loadStats() async {
     emit(StatsLoading());

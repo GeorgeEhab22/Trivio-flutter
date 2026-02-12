@@ -12,32 +12,29 @@ class MatchTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool? homeWon;
-    if (match.score?.winner == 'HOME_TEAM') {
-      homeWon = true;
-    } else if (match.score?.winner == 'AWAY_TEAM') {
-      homeWon = false;
-    } else if (match.score?.winner == null) {
-      homeWon = false;
-    }
+    final bool isHomeWinner = match.score?.winner == 'HOME_TEAM';
+    final bool isAwayWinner = match.score?.winner == 'AWAY_TEAM';
+
     return Container(
-      padding: EdgeInsets.only(top: 10),
+      padding: const EdgeInsets.only(top: 10),
       decoration: BoxDecoration(
         border: Border(
+          top: BorderSide(color: AppColors.lightGrey, width: 1),
           bottom: BorderSide(color: AppColors.lightGrey, width: 1),
         ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // League row
+          // League Header
+          
           Row(
             children: [
               SizedBox(
-                width: 75,
+                width: 65,
                 child: ColorFiltered(
                   colorFilter: ColorFilter.mode(
-                   Theme.of(context).iconTheme.color ?? Colors.black, 
+                    Theme.of(context).iconTheme.color ?? Colors.black,
                     BlendMode.srcIn,
                   ),
                   child: match.competition?.emblem != null
@@ -45,7 +42,7 @@ class MatchTile extends StatelessWidget {
                           match.competition!.emblem!,
                           height: 30,
                           width: 30,
-                          fit: BoxFit.contain,
+                          fit: BoxFit.cover,
                         )
                       : Icon(
                           Icons.sports_soccer,
@@ -54,116 +51,93 @@ class MatchTile extends StatelessWidget {
                         ),
                 ),
               ),
-              Text("Soccer ", style: Styles.textStyle15),
+              const SizedBox(width: 16), 
               Text(
-                '‣ ${match.area?.name} ‣ ${match.competition?.name}',
-                style: Styles.textStyle14.copyWith(
+                '‣ ${match.area?.name ?? ""} ‣ ${match.competition?.name ?? ""}',
+                style: Styles.textStyle16.copyWith(
                   color: Theme.of(
                     context,
-                  ).textTheme.bodyMedium?.color?.withValues(alpha: 0.4),
+                  ).textTheme.bodyMedium?.color?.withOpacity(0.9),
                 ),
               ),
             ],
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: [
-                // Time / Status
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 12.0),
-                  child: SizedBox(
-                    width: 60,
+            child: IntrinsicHeight(
+              child: Row(
+                children: [
+                  SizedBox(
+                    width: 50,
+                    child: Center(
+                      child: Text(
+                        match.utcDate != null
+                            ? "${DateTime.parse(match.utcDate!).hour.toString().padLeft(2, '0')}:${DateTime.parse(match.utcDate!).minute.toString().padLeft(2, '0')}"
+                            : "TBD",
+                        style: Styles.textStyle14,
+                      ),
+                    ),
+                  ),
+
+                  const VerticalDivider(
+                    width: 32,
+                    color: AppColors.customGrey,
+                    thickness: 1,
+                  ),
+
+                  Expanded(
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Text(
-                          match.utcDate != null
-                              ? "${DateTime.parse(match.utcDate!).hour.toString().padLeft(2, '0')}:${DateTime.parse(match.utcDate!).minute.toString().padLeft(2, '0')}"
-                              : "TBD",
-                          style: Styles.textStyle14.copyWith(
-                            color: Theme.of(context).textTheme.bodyMedium?.color
-                                ?.withValues(alpha: 0.7),
-                          ),
+                        CustomTeamRow(
+                          _buildCrest(match.homeTeam?.crest, context),
+                          match.homeTeam?.shortName ??
+                              match.homeTeam?.name ??
+                              "Home",
+                          match.score?.fullTime?.home ?? 0,
+                          isHomeWinner,
                         ),
-                        // Text(
-                        //   match.status,
-                        //   style: TextStyle(
-                        //     color: Theme.of(context).textTheme.bodyMedium?.color
-                        //         ?.withValues(alpha: 0.7),
-                        //     fontSize: 12,
-                        //   ),
-                        // ),
+                        const SizedBox(height: 12),
+                        CustomTeamRow(
+                          _buildCrest(match.awayTeam?.crest, context),
+                          match.awayTeam?.shortName ??
+                              match.awayTeam?.name ??
+                              "Away",
+                          match.score?.fullTime?.away ?? 0,
+                          isAwayWinner,
+                        ),
                       ],
                     ),
                   ),
-                ),
-                SizedBox(width: 2),
-                Container(
-                  width: 1,
-                  height: 50,
-                  color: AppColors.customGrey,
-                  margin: const EdgeInsets.symmetric(horizontal: 8),
-                ),
 
-                // Teams
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CustomTeamRow(
-                        match.homeTeam?.crest != null
-                            ? Image.network(
-                                match.homeTeam!.crest!,
-                                height: 30,
-                                width: 30,
-                                fit: BoxFit.contain,
-                              )
-                            : Icon(
-                                Icons.sports_soccer,
-                                color: Theme.of(context).iconTheme.color,
-                              ),
-                        match.homeTeam?.shortName?.isNotEmpty == true
-                            ? match.homeTeam!.shortName!
-                            : match.homeTeam?.name ?? "Home Team",
-                        match.score?.fullTime?.home ?? 0,
-                        homeWon == true,
-                      ),
-                      CustomTeamRow(
-                        match.awayTeam?.crest != null
-                            ? Image.network(
-                                match.awayTeam!.crest!,
-                                height: 30,
-                                width: 30,
-                                fit: BoxFit.contain,
-                              )
-                            : Icon(
-                                Icons.sports_soccer,
-                                color: Theme.of(context).iconTheme.color,
-                              ),
-                        match.awayTeam?.shortName?.isNotEmpty == true
-                            ? match.awayTeam!.shortName!
-                            : match.awayTeam?.name ?? "Away Team",
-                        match.score?.fullTime?.away ?? 0,
-                        homeWon == false,
-                      ),
-                    ],
+                  const VerticalDivider(
+                    width: 20,
+                    color: AppColors.customGrey,
+                    thickness: 1,
                   ),
-                ),
 
-                SizedBox(width: 6),
-                Container(
-                  width: 1,
-                  height: 50,
-                  color: AppColors.customGrey,
-                  margin: const EdgeInsets.symmetric(horizontal: 6),
-                ),
-                const NotificationButton(),
-              ],
+                  // 3. Action
+                  const NotificationButton(),
+                ],
+              ),
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildCrest(String? url, BuildContext context) {
+    return SizedBox(
+      height: 50,
+      width: 50,
+      child: url != null
+          ? Image.network(
+              url,
+              fit: BoxFit.contain,
+              errorBuilder: (_, __, ___) =>
+                  const Icon(Icons.sports_soccer, size: 20),
+            )
+          : Icon(Icons.sports_soccer, color: Theme.of(context).iconTheme.color),
     );
   }
 }

@@ -5,12 +5,15 @@ import 'package:auth/common/functions/handle_dio_error.dart';
 import 'package:auth/data/datasource/auth_remote_datasource.dart';
 import 'package:auth/data/datasource/comments_remote_datasource.dart';
 import 'package:auth/data/datasource/posts_remote_datasource.dart';
+import 'package:auth/data/datasource/stats_remote_datasource.dart';
 import 'package:auth/data/repositories/auth_repo_impl.dart';
 import 'package:auth/data/repositories/comment_repo_impl.dart';
 import 'package:auth/data/repositories/post_repo_impl.dart';
+import 'package:auth/data/repositories/stats_repo_impl.dart';
 import 'package:auth/domain/repositories/auth_repo.dart';
 import 'package:auth/domain/repositories/comment_repo.dart';
 import 'package:auth/domain/repositories/post_repo.dart';
+import 'package:auth/domain/repositories/stats_repo.dart';
 import 'package:auth/domain/usecases/comment/add_comment_usecase.dart';
 import 'package:auth/domain/usecases/comment/delete_comment_usecase.dart';
 import 'package:auth/domain/usecases/comment/edit_comment_usecase.dart';
@@ -39,6 +42,7 @@ import 'package:auth/domain/usecases/sign_in/request_otp.dart';
 
 import 'package:auth/domain/usecases/sign_in/signin_usecase.dart';
 import 'package:auth/domain/usecases/sign_in/verify_otp.dart';
+import 'package:auth/domain/usecases/stats/stats_usecase.dart';
 import 'package:auth/presentation/manager/comment_cubit/comment_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/create_post_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
@@ -46,75 +50,95 @@ import 'package:auth/presentation/manager/post_cubit/post_interaction_cubit.dart
 import 'package:auth/presentation/manager/register_cubit/register_cubit.dart';
 import 'package:auth/presentation/manager/sigin_in_cubit/request_otp/request_otp_cubit.dart';
 import 'package:auth/presentation/manager/sigin_in_cubit/sign_in_cubit.dart';
+import 'package:auth/presentation/manager/stats_cubit/stats_cubit.dart';
 import 'package:auth/presentation/manager/theme_cubit/theme_cubit.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 final sl = GetIt.instance;
 
 Future<void> init() async {
+  // 1. External & Core
   await dotenv.load(fileName: ".env");
-
-  String baseUrl;
-  if (kIsWeb) {
-    baseUrl = dotenv.env['LOCAL_URL']!;
-  } else if (Platform.isAndroid || Platform.isIOS) {
-    baseUrl = dotenv.env['MOBILE_URL']!;
-  } else {
-    baseUrl = dotenv.env['LOCAL_URL']!;
-  }
   final prefs = await SharedPreferences.getInstance();
+  
+  String baseUrl = kIsWeb 
+      ? dotenv.env['LOCAL_URL']! 
+      : (Platform.isAndroid || Platform.isIOS 
+          ? dotenv.env['MOBILE_URL']! 
+          : dotenv.env['LOCAL_URL']!);
+
+  sl.registerLazySingleton(() => Dio());
   sl.registerLazySingleton(() => prefs);
   sl.registerLazySingleton(() => ApiService(baseUrl: baseUrl));
   sl.registerLazySingleton(() => ErrorHandler());
+
+  // ==========================================================================
+  // FEATURE: AUTHENTICATION
+  // ==========================================================================
   sl.registerLazySingleton<AuthRemoteDataSource>(
     () => AuthRemoteDataSourceImpl(api: sl(), prefs: sl(), errorHandler: sl()),
   );
-
   sl.registerLazySingleton<AuthRepository>(
     () => AuthRepositoryImpl(remoteDataSource: sl()),
   );
 
+  // UseCases
   sl.registerLazySingleton(() => SignInUseCase(sl()));
   sl.registerLazySingleton(() => GoogleSignInAndRegisterUseCase(sl()));
-
   sl.registerLazySingleton(() => RegisterUseCase(sl()));
   sl.registerLazySingleton(() => VerifyCode(sl()));
   sl.registerLazySingleton(() => ResendVerificationCode(sl()));
   sl.registerLazySingleton(() => SendPasswordResetOtp(sl()));
   sl.registerLazySingleton(() => VerifyOTP(sl()));
 
-  sl.registerFactory(
-    () => SignInCubit(signInUseCase: sl(), googleSignInUseCase: sl()),
-  );
-
+  // Cubits
+  sl.registerFactory(() => SignInCubit(signInUseCase: sl(), googleSignInUseCase: sl()));
   sl.registerFactory(() => RegisterCubit(registerUseCase: sl()));
+  sl.registerFactory(() => RequestOTPCubit(sendPasswordResetOtp: sl()));
 
-  //posts
+  // ==========================================================================
+  // FEATURE: STATS (Football Data)
+  // ==========================================================================
+  sl.registerLazySingleton<StatsRemoteDatasource>(
+    () => StatsRemoteDatasourceImpl(sl()),
+  );
+  sl.registerLazySingleton<StatsRepository>(
+    () => StatsRepoImpl(remoteDatasource: sl()), 
+  );
+  sl.registerLazySingleton(() => StatsUseCase(sl()));
+  sl.registerFactory(() => StatsCubit(sl()));
+
+  // ==========================================================================
+  // FEATURE: POSTS
+  // ==========================================================================
   sl.registerLazySingleton<PostsRemoteDataSource>(
     () => PostsRemoteDataSourceImpl(api: sl(), prefs: sl(), errorHandler: sl()),
   );
   sl.registerLazySingleton<PostRepository>(
     () => PostRepositoryImpl(remoteDataSource: sl()),
   );
-  sl.registerLazySingleton(() => CommentOnPostUseCase(sl()));
+
+  // UseCases
   sl.registerLazySingleton(() => CreatePostUseCase(sl()));
   sl.registerLazySingleton(() => DeletePostUseCase(sl()));
   sl.registerLazySingleton(() => EditPostUseCase(sl()));
   sl.registerLazySingleton(() => FetchPostsUseCase(sl()));
   sl.registerLazySingleton(() => FetchSinglePostUseCase(sl()));
-  sl.registerLazySingleton(() => ReactToPostUseCase(sl()));
-  sl.registerLazySingleton(() => RemoveReactionFromPostUseCase(sl()));
-  sl.registerLazySingleton(() => ReportPostUseCase(sl()));
   sl.registerLazySingleton(() => SearchPostsUseCase(sl()));
-  sl.registerLazySingleton(() => SharePostUseCase(sl()));
+  sl.registerLazySingleton(() => ReportPostUseCase(sl()));
   sl.registerLazySingleton(() => ToggleFollowUserUseCase(sl()));
   sl.registerLazySingleton(() => ToggleSavePostUseCase(sl()));
+  sl.registerLazySingleton(() => ReactToPostUseCase(sl()));
+  sl.registerLazySingleton(() => RemoveReactionFromPostUseCase(sl()));
+  sl.registerLazySingleton(() => CommentOnPostUseCase(sl()));
+  sl.registerLazySingleton(() => SharePostUseCase(sl()));
 
-  sl.registerFactory(
-    () => PostCubit(sl()),);
+  // Cubits
+  sl.registerFactory(() => PostCubit(sl()));
+  sl.registerFactory(() => CreatePostCubit(createPostUseCase: sl()));
   sl.registerFactory(
     () => PostInteractionCubit(
       reactToPostUseCase: sl(),
@@ -128,17 +152,18 @@ Future<void> init() async {
       editPostUseCase: sl(),
     ),
   );
-  // comments
+
+  // ==========================================================================
+  // FEATURE: COMMENTS
+  // ==========================================================================
   sl.registerLazySingleton<CommentsRemoteDataSource>(
-    () => CommentsRemoteDataSourceImpl(
-      api: sl(),
-      prefs: sl(),
-      errorHandler: sl(),
-    ),
+    () => CommentsRemoteDataSourceImpl(api: sl(), prefs: sl(), errorHandler: sl()),
   );
   sl.registerLazySingleton<CommentRepository>(
     () => CommentRepositoryImpl(remoteDataSource: sl()),
   );
+
+  // UseCases
   sl.registerLazySingleton(() => AddCommentUseCase(sl()));
   sl.registerLazySingleton(() => DeleteCommentUseCase(sl()));
   sl.registerLazySingleton(() => EditCommentUseCase(sl()));
@@ -147,6 +172,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => MentionUsersInCommentUseCase(sl()));
   sl.registerLazySingleton(() => ReactToCommentUseCase(sl()));
 
+  // Cubit
   sl.registerFactory(
     () => CommentCubit(
       addCommentUseCase: sl(),
@@ -159,10 +185,8 @@ Future<void> init() async {
     ),
   );
 
-  sl.registerFactory(
-    () => CreatePostCubit(
-      createPostUseCase: sl(),),
-  );
-   sl.registerFactory(() => ThemeCubit());
-   sl.registerFactory(() => RequestOTPCubit(sendPasswordResetOtp: sl()));
+  // ==========================================================================
+  // CORE / GLOBAL
+  // ==========================================================================
+  sl.registerFactory(() => ThemeCubit());
 }
