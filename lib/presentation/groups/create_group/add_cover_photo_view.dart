@@ -3,14 +3,22 @@ import 'package:auth/common/functions/custom_square_button.dart';
 import 'package:auth/constants/colors.dart';
 import 'package:auth/core/app_routes.dart';
 import 'package:auth/core/styels.dart';
+import 'package:auth/presentation/authentication/widgets/show_custom_snackbar.dart';
+import 'package:auth/presentation/manager/group_cubit/create_group/create_group_cubit.dart';
+import 'package:auth/presentation/manager/group_cubit/create_group/create_group_state.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'dart:io';
 
 class AddCoverPhotoView extends StatelessWidget {
   const AddCoverPhotoView({super.key});
 
   @override
   Widget build(BuildContext context) {
+    const String defaultAssetPath = 'assets/images/Football Community.png';
+
     return Scaffold(
       appBar: AppBar(
         surfaceTintColor: Colors.transparent,
@@ -26,81 +34,114 @@ class AddCoverPhotoView extends StatelessWidget {
           ),
         ),
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView(
-              padding: const EdgeInsets.all(16),
-              children: [
-                const Text("Add a cover photo", style: Styles.textStyleBold20),
-                const SizedBox(height: 8),
-                Text(
-                  "Get noticed with an image that helps show what your group is all about.",
-                  style: Styles.textStyle14.copyWith(color: Colors.grey),
-                ),
-                const SizedBox(height: 32),
+      body: BlocConsumer<CreateGroupCubit, CreateGroupState>(
+        listener: (context, state) {
+          if (state is CreateGroupSuccess) {
+            showCustomSnackBar(context, "Group Created Successfully!", true);
+            context.go(AppRoutes.myGroup);
+          }
+          if (state is CreateGroupFailure) {
+            showCustomSnackBar(context, state.message, false);
+          }
+        },
+        builder: (context, state) {
+          final cubit = context.read<CreateGroupCubit>();
 
-                InkWell(
-                  onTap: () {
-                    BottomSheetManager.showMediaSourceSheet(
-                      context,
-                      false, // photo only
-                      onPicked: (files) {
-                        // TODO  : handle addd media
-                        // cubit.addMedia(files);
-                      },
-                    );
-                  },
-                  child: Container(
-                    height: 200,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).cardColor,
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(
-                        color: Colors.grey.withValues(alpha: 0.3),
-                        width: 1,
-                      ),
+          return Column(
+            children: [
+              Expanded(
+                child: ListView(
+                  padding: const EdgeInsets.all(16),
+                  children: [
+                    const Text(
+                      "Add a cover photo",
+                      style: Styles.textStyleBold20,
                     ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                    const SizedBox(height: 8),
+                    Text(
+                      "Get noticed with an image that helps show what your group is all about.",
+                      style: Styles.textStyle14.copyWith(color: Colors.grey),
+                    ),
+                    const SizedBox(height: 32),
+
+                    Stack(
                       children: [
-                        CircleAvatar(
-                          radius: 30,
-                          backgroundColor: AppColors.primary.withValues(
-                            alpha: 0.1,
+                        Container(
+                          height: 220,
+                          width: double.infinity,
+                          clipBehavior: Clip.antiAlias,
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).cardColor,
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: Colors.grey.withValues(alpha: 0.3),
+                              width: 1,
+                            ),
                           ),
-                          child: Icon(
-                            Icons.camera_alt_outlined,
-                            color: AppColors.primary,
-                            size: 30,
+                          child: cubit.groupCoverImage != null
+                              ? (kIsWeb
+                                    ? Image.network(
+                                        cubit.groupCoverImage!.path,
+                                        fit: BoxFit.cover,
+                                      )
+                                    : Image.file(
+                                        File(cubit.groupCoverImage!.path),
+                                        fit: BoxFit.cover,
+                                      ))
+                              : Image.asset(
+                                  defaultAssetPath,
+                                  fit: BoxFit.cover,
+                                ),
+                        ),
+
+                        Positioned(
+                          bottom: 12,
+                          right: 12,
+                          child: CustomSquareButton(
+                            label: "Edit",
+                            backgroundColor: Theme.of(context).cardColor.withValues(alpha: 0.8),
+                            textColor: Colors.white,
+                            textStyle: Styles.textStyle14,
+                            height: 10,
+                            onTap: () {
+                              final currentCubit = context
+                                  .read<CreateGroupCubit>();
+                              BottomSheetManager.showMediaSourceSheet(
+                                context,
+                                false,
+                                onPicked: (files) {
+                                  if (files.isNotEmpty) {
+                                    currentCubit.updateImage(files.first);
+                                  }
+                                },
+                              );
+                            },
                           ),
                         ),
-                        const SizedBox(height: 12),
-                        const Text("Upload a photo", style: Styles.textStyle16),
                       ],
                     ),
-                  ),
+                  ],
                 ),
-              ],
-            ),
-          ),
+              ),
 
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: CustomSquareButton(
-              label: "Create group",
-              backgroundColor: AppColors.primary,
-              textColor: Colors.white,
-              textStyle: Styles.textStyle16,
-              isExpanded: true,
-              onTap: () {
-                //TODO: link craete the group logic
-                context.go(AppRoutes.myGroup);
-              },
-            ),
-          ),
-        ],
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: CustomSquareButton(
+                  label: state is CreateGroupLoading
+                      ? "Creating..."
+                      : "Create group",
+                  backgroundColor: AppColors.primary,
+                  textColor: Colors.white,
+                  textStyle: Styles.textStyle16,
+                  isExpanded: true,
+                  onTap: state is CreateGroupLoading
+                      ? null
+                      : () => cubit.createGroup(),
+                ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }

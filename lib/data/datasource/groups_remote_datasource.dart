@@ -1,5 +1,6 @@
 import 'package:auth/data/models/join_request_model.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:auth/common/api_endpoints.dart';
@@ -15,8 +16,7 @@ abstract class GroupRemoteDataSource {
   Future<GroupModel> createGroup({
     required String name,
     required String description,
-    required String coverImage,
-    String? privacy,
+    XFile? coverImage,
   });
   Future<GroupModel> updateGroup({
     required String groupId,
@@ -124,25 +124,38 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
   Future<GroupModel> createGroup({
     required String name,
     required String description,
-    required String coverImage,
-    String? privacy,
+    XFile? coverImage,
   }) async {
     try {
-      final formData = FormData.fromMap({
+      final Map<String, dynamic> body = {
         'name': name,
         'description': description,
-        'privacy': privacy ?? 'private',
-        'logo': await MultipartFile.fromFile(
-          coverImage,
-          filename: coverImage.split('/').last,
-        ),
-      });
+        'privacy': 'private',
+      };
+
+      if (coverImage != null) {
+      if (kIsWeb) {
+        final bytes = await coverImage.readAsBytes();
+        body['logo'] = MultipartFile.fromBytes(
+          bytes,
+          filename: coverImage.name,
+        );
+      } else {
+        body['logo'] = await MultipartFile.fromFile(
+          coverImage.path,
+          filename: coverImage.name,
+        );
+      }
+    }
+
+      final formData = FormData.fromMap(body);
 
       final response = await api.post(
         ApiEndpoints.groups,
         data: formData,
         options: _getAuthOptions(),
       );
+      print(response);
       return GroupModel.fromJson(response['data']['group']);
     } catch (e) {
       errorHandler.handleDioError(e);

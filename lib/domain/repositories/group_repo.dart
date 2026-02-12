@@ -4,14 +4,14 @@ import 'package:auth/domain/entities/group_member.dart';
 import 'package:auth/domain/entities/group_post.dart';
 import 'package:auth/domain/entities/join_request.dart';
 import 'package:dartz/dartz.dart';
+import 'package:image_picker/image_picker.dart';
 
 abstract class GroupRepo {
   // 1 create group
   Future<Either<Failure, Group>> createGroup({
     required String name,
     required String description,
-    required String coverImage,
-    String? privacy,
+    XFile? coverImage,
   });
 
   // 2 delete group

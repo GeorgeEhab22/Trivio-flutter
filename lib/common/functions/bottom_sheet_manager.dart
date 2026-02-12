@@ -9,11 +9,10 @@ import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
 class BottomSheetManager {
-  
   static void showMediaSourceSheet(
     BuildContext context,
     bool isVideo, {
-    required Null Function(dynamic files) onPicked,
+    required void Function(List<XFile> files) onPicked,
   }) {
     showModalBottomSheet(
       context: context,
@@ -22,7 +21,7 @@ class BottomSheetManager {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (context) {
+      builder: (sheetContext) {
         return SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 10),
@@ -34,14 +33,15 @@ class BottomSheetManager {
                     color: Theme.of(context).iconTheme.color,
                   ),
                   title: const Text("Choose from Gallery"),
-                  textColor: Theme.of(context).textTheme.bodyMedium?.color,
-                  onTap: () {
-                    context.pop();
-                    pickMedia(
+                  onTap: () async {
+                    sheetContext.pop();
+                    await pickMedia(
                       isVideo: isVideo,
                       fromCamera: false,
                       onError: (message) {
-                        showCustomSnackBar(context, message, false);
+                        if (context.mounted) {
+                          showCustomSnackBar(context, message, false);
+                        }
                       },
                       onPicked: onPicked,
                     );
@@ -53,14 +53,15 @@ class BottomSheetManager {
                     color: Theme.of(context).iconTheme.color,
                   ),
                   title: const Text("Use Camera"),
-                  textColor: Theme.of(context).textTheme.bodyMedium?.color,
-                  onTap: () {
-                    context.pop();
-                    pickMedia(
+                  onTap: () async {
+                    sheetContext.pop();
+                    await pickMedia(
                       isVideo: isVideo,
                       fromCamera: true,
                       onError: (message) {
-                        showCustomSnackBar(context, message, false);
+                        if (context.mounted) {
+                          showCustomSnackBar(context, message, false);
+                        }
                       },
                       onPicked: onPicked,
                     );
@@ -83,21 +84,19 @@ class BottomSheetManager {
     try {
       final ImagePicker picker = ImagePicker();
       if (isVideo) {
-        final XFile? pickedVideo = await picker.pickVideo(
+        final XFile? video = await picker.pickVideo(
           source: fromCamera ? ImageSource.camera : ImageSource.gallery,
         );
-        if (pickedVideo != null) {
-          onPicked([pickedVideo]);
-        }
+        if (video != null) onPicked([video]);
       } else {
-        final List<XFile> pickedImages = fromCamera
-            ? [
-                await picker.pickImage(source: ImageSource.camera),
-              ].whereType<XFile>().toList()
-            : await picker.pickMultiImage();
-
-        if (pickedImages.isNotEmpty) {
-          onPicked(pickedImages);
+        if (fromCamera) {
+          final XFile? photo = await picker.pickImage(
+            source: ImageSource.camera,
+          );
+          if (photo != null) onPicked([photo]);
+        } else {
+          final List<XFile> photos = await picker.pickMultiImage();
+          if (photos.isNotEmpty) onPicked(photos);
         }
       }
     } catch (e) {

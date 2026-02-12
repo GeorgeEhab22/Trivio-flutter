@@ -25,6 +25,7 @@ import 'package:auth/domain/usecases/group/accept_join_request_use_case.dart';
 import 'package:auth/domain/usecases/group/cancel_request_use_case.dart';
 import 'package:auth/domain/usecases/group/decline_join_request_use_case.dart';
 import 'package:auth/domain/usecases/group/get_join_requests_use_case.dart';
+import 'package:auth/domain/usecases/group/groups/create_group_use_case.dart';
 import 'package:auth/domain/usecases/group/groups/join_group_use_case.dart';
 import 'package:auth/domain/usecases/group/groups/leave_group_use_case.dart';
 import 'package:auth/domain/usecases/group/members/ban_member_use_case.dart';
@@ -58,6 +59,7 @@ import 'package:auth/domain/usecases/sign_in/signin_usecase.dart';
 import 'package:auth/domain/usecases/sign_in/verify_otp.dart';
 import 'package:auth/presentation/manager/comment_cubit/comment_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/ban_member/ban_member_cubit.dart';
+import 'package:auth/presentation/manager/group_cubit/create_group/create_group_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/get_banned_members/get_banned_members_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/accept_request/accept_request_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/cancel_request/cancel_request_group_cubit.dart';
@@ -196,6 +198,11 @@ Future<void> init() async {
   sl.registerLazySingleton<GroupRepo>(
     () => GroupRepoImpl(remoteDataSource: sl()),
   );
+
+  // create group
+  sl.registerLazySingleton(() => CreateGroupUseCase(sl()));
+  sl.registerFactory(() => CreateGroupCubit(createGroupUseCase: sl()));
+
   // join
   sl.registerLazySingleton(() => JoinGroupUseCase(sl()));
   sl.registerFactory(() => JoinGroupCubit(joinGroupUseCase: sl()));

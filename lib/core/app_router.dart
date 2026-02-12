@@ -15,6 +15,7 @@ import 'package:auth/presentation/groups/manage_group/people_view/people_view.da
 import 'package:auth/presentation/groups/manage_group/reported_posts_view.dart';
 import 'package:auth/presentation/groups/my_group/my_group_view.dart';
 import 'package:auth/presentation/manager/group_cubit/ban_member/ban_member_cubit.dart';
+import 'package:auth/presentation/manager/group_cubit/create_group/create_group_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/get_banned_members/get_banned_members_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/accept_request/accept_request_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/cancel_request/cancel_request_group_cubit.dart';
@@ -227,13 +228,23 @@ GoRouter createRouter(bool isLoggedIn) {
                   child: const GroupFeedView(),
                 ),
               ),
-              GoRoute(
-                path: 'create_group',
-                builder: (context, state) => const CreateGroupView(),
+              ShellRoute(
+                builder: (context, state, child) {
+                  return BlocProvider(
+                    create: (context) => di.sl<CreateGroupCubit>(),
+                    child: child,
+                  );
+                },
                 routes: [
                   GoRoute(
-                    path: 'add_cover_photo',
-                    builder: (context, state) => const AddCoverPhotoView(),
+                    path: 'create_group',
+                    builder: (context, state) => const CreateGroupView(),
+                    routes: [
+                      GoRoute(
+                        path: 'add_cover_photo',
+                        builder: (context, state) => const AddCoverPhotoView(),
+                      ),
+                    ],
                   ),
                 ],
               ),

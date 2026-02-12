@@ -4,7 +4,10 @@ import 'package:auth/core/app_routes.dart';
 import 'package:auth/core/styels.dart';
 import 'package:auth/presentation/groups/create_group/widgets/text_field_widget.dart';
 import 'package:auth/presentation/groups/group_preview/widgets/private_row.dart';
+import 'package:auth/presentation/manager/group_cubit/create_group/create_group_cubit.dart';
+import 'package:auth/presentation/manager/group_cubit/create_group/create_group_state.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class CreateGroupView extends StatelessWidget {
@@ -12,6 +15,16 @@ class CreateGroupView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cubit = context.read<CreateGroupCubit>();
+    final state = context.watch<CreateGroupCubit>().state;
+    String? nameError;
+    String? descError;
+
+    if (state is CreateGroupInitial) {
+      nameError = state.nameError;
+      descError = state.descError;
+    }
+
     return Scaffold(
       appBar: AppBar(
         surfaceTintColor: Colors.transparent,
@@ -36,7 +49,14 @@ class CreateGroupView extends StatelessWidget {
               children: [
                 const Text("Name", style: Styles.textStyle18),
                 const SizedBox(height: 12),
-                textFieldWidget(hint: "Name your group"),
+                textFieldWidget(
+                  controller:cubit.nameController,
+                  hint: "Name your group",
+                  errorText: nameError,
+                  onChanged: () {
+                    cubit.clearFieldsError();
+                  },
+                ),
 
                 const SizedBox(height: 24),
                 const Divider(thickness: 0.5),
@@ -45,8 +65,13 @@ class CreateGroupView extends StatelessWidget {
                 const Text("Description", style: Styles.textStyle18),
                 const SizedBox(height: 12),
                 textFieldWidget(
+                  controller: cubit.descController,
                   hint: "Tell people what this group is about",
                   maxLines: 5,
+                  errorText: descError,
+                  onChanged: () {
+                    cubit.clearFieldsError();
+                  },
                 ),
                 const SizedBox(height: 24),
                 const PrivateRow(),
@@ -62,7 +87,9 @@ class CreateGroupView extends StatelessWidget {
               textStyle: Styles.textStyle16,
               isExpanded: true,
               onTap: () {
-                context.push(AppRoutes.addCoverPhoto);
+                if (cubit.validateFields()) {
+                  context.push(AppRoutes.addCoverPhoto);
+                }
               },
               // isExpanded: true,
             ),

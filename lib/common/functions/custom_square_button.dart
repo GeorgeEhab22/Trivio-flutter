@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class CustomSquareButton extends StatelessWidget {
   final IconData? icon;
   final String? label;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
   final Color? backgroundColor;
   final Color? borderColor;
   final Color? iconColor;
@@ -21,7 +21,7 @@ class CustomSquareButton extends StatelessWidget {
     super.key,
     this.icon,
     this.label,
-    required this.onTap,
+    this.onTap,
     this.backgroundColor,
     this.borderColor,
     this.iconColor,

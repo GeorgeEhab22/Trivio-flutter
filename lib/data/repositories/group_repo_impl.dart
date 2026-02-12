@@ -9,6 +9,7 @@ import 'package:auth/domain/entities/group_post.dart';
 import 'package:auth/domain/entities/join_request.dart';
 import 'package:auth/domain/repositories/group_repo.dart';
 import 'package:dartz/dartz.dart';
+import 'package:image_picker/image_picker.dart';
 
 class GroupRepoImpl implements GroupRepo {
   final GroupRemoteDataSource remoteDataSource;
@@ -21,15 +22,13 @@ class GroupRepoImpl implements GroupRepo {
   Future<Either<Failure, Group>> createGroup({
     required String name,
     required String description,
-    required String coverImage,
-    String? privacy,
+    XFile? coverImage,
   }) async {
     try {
       final model = await remoteDataSource.createGroup(
         name: name,
         description: description,
         coverImage: coverImage,
-        privacy: privacy,
       );
       return Right(model);
     } on ServerException catch (e) {
