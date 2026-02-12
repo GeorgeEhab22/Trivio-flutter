@@ -1,21 +1,23 @@
 import 'package:auth/constants/colors.dart';
 import 'package:auth/core/styels.dart';
+import 'package:auth/data/models/stats_dart/matches.dart';
 import 'package:auth/presentation/stats/widgets/custom_team_row.dart';
-import 'package:auth/presentation/stats/widgets/match_item_class.dart';
 import 'package:auth/presentation/stats/widgets/notification_button.dart';
 import 'package:flutter/material.dart';
 
 class MatchTile extends StatelessWidget {
-  final MatchItem match;
+  final Matches match;
 
   const MatchTile({super.key, required this.match});
 
   @override
   Widget build(BuildContext context) {
     bool? homeWon;
-    if (match.homeScore > match.awayScore) {
+    if (match.score?.winner == 'HOME_TEAM') {
       homeWon = true;
-    } else if (match.awayScore > match.homeScore) {
+    } else if (match.score?.winner == 'AWAY_TEAM') {
+      homeWon = false;
+    } else if (match.score?.winner == null) {
       homeWon = false;
     }
     return Container(
@@ -38,12 +40,23 @@ class MatchTile extends StatelessWidget {
                    Theme.of(context).iconTheme.color ?? Colors.black, 
                     BlendMode.srcIn,
                   ),
-                  child: match.leagueIcon,
+                  child: match.competition?.emblem != null
+                      ? Image.network(
+                          match.competition!.emblem!,
+                          height: 30,
+                          width: 30,
+                          fit: BoxFit.contain,
+                        )
+                      : Icon(
+                          Icons.sports_soccer,
+                          color: Theme.of(context).iconTheme.color,
+                          size: 30,
+                        ),
                 ),
               ),
               Text("Soccer ", style: Styles.textStyle15),
               Text(
-                '‣ ${match.country} ‣ ${match.league}',
+                '‣ ${match.area?.name} ‣ ${match.competition?.name}',
                 style: Styles.textStyle14.copyWith(
                   color: Theme.of(
                     context,
@@ -65,20 +78,22 @@ class MatchTile extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
-                          match.time,
+                          match.utcDate != null
+                              ? "${DateTime.parse(match.utcDate!).hour.toString().padLeft(2, '0')}:${DateTime.parse(match.utcDate!).minute.toString().padLeft(2, '0')}"
+                              : "TBD",
                           style: Styles.textStyle14.copyWith(
                             color: Theme.of(context).textTheme.bodyMedium?.color
                                 ?.withValues(alpha: 0.7),
                           ),
                         ),
-                        Text(
-                          match.status,
-                          style: TextStyle(
-                            color: Theme.of(context).textTheme.bodyMedium?.color
-                                ?.withValues(alpha: 0.7),
-                            fontSize: 12,
-                          ),
-                        ),
+                        // Text(
+                        //   match.status,
+                        //   style: TextStyle(
+                        //     color: Theme.of(context).textTheme.bodyMedium?.color
+                        //         ?.withValues(alpha: 0.7),
+                        //     fontSize: 12,
+                        //   ),
+                        // ),
                       ],
                     ),
                   ),
@@ -97,23 +112,39 @@ class MatchTile extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       CustomTeamRow(
-                        match.homeTeamIcon ??
-                            Icon(
-                              Icons.sports_soccer,
-                              color: Theme.of(context).iconTheme.color,
-                            ),
-                        match.homeTeam,
-                        match.homeScore,
+                        match.homeTeam?.crest != null
+                            ? Image.network(
+                                match.homeTeam!.crest!,
+                                height: 30,
+                                width: 30,
+                                fit: BoxFit.contain,
+                              )
+                            : Icon(
+                                Icons.sports_soccer,
+                                color: Theme.of(context).iconTheme.color,
+                              ),
+                        match.homeTeam?.shortName?.isNotEmpty == true
+                            ? match.homeTeam!.shortName!
+                            : match.homeTeam?.name ?? "Home Team",
+                        match.score?.fullTime?.home ?? 0,
                         homeWon == true,
                       ),
                       CustomTeamRow(
-                        match.awayTeamIcon ??
-                            Icon(
-                              Icons.sports_soccer,
-                              color: Theme.of(context).iconTheme.color,
-                            ),
-                        match.awayTeam,
-                        match.awayScore,
+                        match.awayTeam?.crest != null
+                            ? Image.network(
+                                match.awayTeam!.crest!,
+                                height: 30,
+                                width: 30,
+                                fit: BoxFit.contain,
+                              )
+                            : Icon(
+                                Icons.sports_soccer,
+                                color: Theme.of(context).iconTheme.color,
+                              ),
+                        match.awayTeam?.shortName?.isNotEmpty == true
+                            ? match.awayTeam!.shortName!
+                            : match.awayTeam?.name ?? "Away Team",
+                        match.score?.fullTime?.away ?? 0,
                         homeWon == false,
                       ),
                     ],
