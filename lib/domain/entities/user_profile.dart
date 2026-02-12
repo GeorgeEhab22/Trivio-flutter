@@ -1,36 +1,22 @@
-import 'package:auth/domain/entities/post.dart';
-import 'package:equatable/equatable.dart';
-
-class UserProfile extends Equatable {
-  final String userId;
-  final String username;
-  final String? about;
-  final String? profileImageUrl;
-  final int? followersCount;
-  final int? followingCount;
-  final int? postsCount;
-  final List<Post>? posts;
+class UserProfile {
+  final String id;
+  final String name;
+  final String? email;
+  final String? role;
+  final String privacy;
+  final int followersCount;
+  final int followingCount;
+  final DateTime? createdAt;
+  
 
   const UserProfile({
-    required this.userId,
-    required this.username,
-    this.about,
-    this.profileImageUrl,
-    this.followersCount,
-    this.followingCount,
-    this.postsCount,
-    this.posts,
+    required this.id,
+    required this.name,
+    required this.email,
+    required this.role,
+    this.privacy = "public",
+    this.followersCount = 0,
+    this.followingCount = 0,
+    this.createdAt,
   });
-
-  @override
-  List<Object?> get props => [
-        userId,
-        username,
-        about,
-        profileImageUrl,
-        followersCount,
-        followingCount,
-        postsCount,
-        posts,
-      ];
 }

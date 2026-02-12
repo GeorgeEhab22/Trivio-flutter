@@ -48,7 +48,26 @@ class ApiEndpoints {
   static const mentionUsersInComment = 'comments/mentions'; // POST {commentId}
 
   //profile follow
-  static const followRequests = '/follow/me';
-  static const acceptFollowRequest = '/follow/follow-requests';
-  static const declineFollowRequest = '/follow/follow-requests';
+  static String followUser(String userId) => '/api/v1/users/$userId/follow';
+
+  static const String myFollowRequests = '/api/v1/follow-requests/me';
+
+  static String acceptFollowRequest(String requestId) =>
+      '/api/v1/follow-requests/$requestId/accept';
+
+  static String declineFollowRequest(String requestId) =>
+      '/api/v1/follow-requests/follow-requests/$requestId/decline';
+
+  static String getUserFollowers(String userId) =>
+      '/api/v1/users/$userId/followers';
+
+  static String getUserFollowing(String userId) =>
+      '/api/v1/users/$userId/following';
+
+  static const String myFollowers = '/api/v1/users/me/followers';
+
+  static const String myFollowing = '/api/v1/users/me/following';
+
+  //profile
+  static const String myProfile = '/api/v1/users/me';
 }

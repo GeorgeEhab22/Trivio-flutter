@@ -1,99 +1,51 @@
-enum UserPrivacy {
-  private,
-  public,
-}
+import 'package:auth/domain/entities/user_profile.dart';
 
-UserPrivacy? userPrivacyFromString(String? value) {
-  if (value == null) return null;
-  return UserPrivacy.values.firstWhere(
-    (e) => e.name == value,
-    orElse: () => UserPrivacy.public,
-  );
-}
-
-String? userPrivacyToString(UserPrivacy? privacy) {
-  return privacy?.name;
-}
-
-class UserProfileModel {
+class UserProfileModel extends UserProfile {
   final String id;
-  final String username;
+  final String name;
   final String email;
   final String role;
-  final bool isVerified;
-  final bool isPremium;
-
-  final int? following;
-  final int? followers;
-  final int? posts;
-
-  final List<String>? favTeams;
-  final UserPrivacy? privacy;
-
-  final DateTime? passwordChangedAt;
-  final DateTime? codeCreatedAt;
-  final DateTime? otpCreatedAt;
+  final String privacy; // now just a string
+  final int followersCount;
+  final int followingCount;
+  final DateTime? createdAt;
 
   UserProfileModel({
     required this.id,
-    required this.username,
+    required this.name,
     required this.email,
     required this.role,
-    required this.isVerified,
-    required this.isPremium,
-    this.following,
-    this.followers,
-    this.posts,
-    this.favTeams,
-    this.privacy,
-    this.passwordChangedAt,
-    this.codeCreatedAt,
-    this.otpCreatedAt,
-  });
+    this.privacy = "public",
+    this.followersCount = 0,
+    this.followingCount = 0,
+    this.createdAt,
+  }) : super(id: id, name: name, email: email, role: role);
 
   factory UserProfileModel.fromJson(Map<String, dynamic> json) {
     return UserProfileModel(
       id: json['_id'] ?? json['id'],
-      username: json['username'],
+      name: json['name'],
       email: json['email'],
-      role: json['role'],
-      isVerified: json['isVerified'] ?? false,
-      isPremium: json['isPremium'] ?? false,
-      following: json['following'],
-      followers: json['followers'],
-      posts: json['posts'],
-      favTeams: json['favTeams'] != null
-          ? List<String>.from(json['favTeams'])
-          : null,
-      privacy: userPrivacyFromString(json['privacy']),
-      passwordChangedAt: json['passwordChangedAt'] != null
-          ? DateTime.parse(json['passwordChangedAt'])
-          : null,
-      codeCreatedAt: json['codeCreatedAt'] != null
-          ? DateTime.parse(json['codeCreatedAt'])
-          : null,
-      otpCreatedAt: json['OTPCreatedAt'] != null
-          ? DateTime.parse(json['OTPCreatedAt'])
+      role: json['role'] ?? 'user',
+      privacy: json['privacy'], // just store the string
+      followersCount: json['followersCount'] ?? 0,
+      followingCount: json['followingCount'] ?? 0,
+      createdAt: json['createdAt'] != null
+          ? DateTime.tryParse(json['createdAt'])
           : null,
     );
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'username': username,
-      'email': email,
-      'role': role,
-      'isVerified': isVerified,
-      'isPremium': isPremium,
-      'following': following,
-      'followers': followers,
-      'posts': posts,
-      'favTeams': favTeams,
-      'privacy': userPrivacyToString(privacy),
-      'passwordChangedAt': passwordChangedAt?.toIso8601String(),
-      'codeCreatedAt': codeCreatedAt?.toIso8601String(),
-      'OTPCreatedAt': otpCreatedAt?.toIso8601String(),
-    };
+  UserProfile toEntity() {
+    return UserProfile(
+      id: id,
+      name: name,
+      email: email,
+      role: role,
+      privacy: privacy,
+      followersCount: followersCount,
+      followingCount: followingCount,
+      createdAt: createdAt,
+    );
   }
 }
