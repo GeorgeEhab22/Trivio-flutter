@@ -58,10 +58,7 @@ import 'package:auth/domain/usecases/sign_in/signin_usecase.dart';
 import 'package:auth/domain/usecases/sign_in/verify_otp.dart';
 import 'package:auth/presentation/manager/comment_cubit/comment_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/ban_member/ban_member_cubit.dart';
-import 'package:auth/presentation/manager/group_cubit/get_admins/get_admins_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/get_banned_members/get_banned_members_cubit.dart';
-import 'package:auth/presentation/manager/group_cubit/get_members/get_members_cubit.dart';
-import 'package:auth/presentation/manager/group_cubit/get_moderators/get_moderators_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/accept_request/accept_request_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/cancel_request/cancel_request_group_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/change_member_role/change_member_role_cubit.dart';
@@ -70,6 +67,7 @@ import 'package:auth/presentation/manager/group_cubit/get_join_requests/get_join
 import 'package:auth/presentation/manager/group_cubit/join_group/join_group_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/kick_member/kick_member_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/leave_group/leave_group_cubit.dart';
+import 'package:auth/presentation/manager/group_cubit/get_members_by_roles/members_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/unban_member/unban_member_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/create_post_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
@@ -221,13 +219,10 @@ Future<void> init() async {
   sl.registerFactory(() => ChangeMemberRoleCubit(changeMemberRoleUseCase: sl()));
   // get members
   sl.registerLazySingleton(()=> GetGroupMembersUseCase(sl()));
-  sl.registerFactory(() => GetMembersCubit(getgroupMembersUseCase: sl()));
   // get admins
   sl.registerLazySingleton(()=> GetGroupAdminsUseCase(sl()));
-  sl.registerFactory(()=> GetAdminsCubit(getgroupAdminsUseCase: sl()));
   // get moderators
   sl.registerLazySingleton(()=> GetGroupModeratorsUseCase(sl()));
-  sl.registerFactory(()=> GetModeratorsCubit(getgroupModeratorsUseCase: sl()));
   // get banned members
   sl.registerLazySingleton(()=> GetGroupBannedMembersUseCase(sl()));
   sl.registerFactory(()=> GetBannedMembersCubit(getGroupBannedMembersUseCase: sl()));
@@ -240,5 +235,7 @@ Future<void> init() async {
   // unban member
   sl.registerLazySingleton(()=> UnbanMemberUseCase(sl()));  
   sl.registerFactory(()=> UnbanMemberCubit(unbanMemberUseCase: sl()));
-  
+  // group members
+  sl.registerFactory(() => GroupMembersCubit(sl(), sl(), sl()));
+ 
 }

@@ -15,6 +15,22 @@ class GroupMember extends Equatable {
     this.status,
   });
 
+  GroupMember copyWith({
+    String? userId,
+    String? userName,
+    String? profileImageUrl,
+    String? role,
+    String? status,
+  }) {
+    return GroupMember(
+      userId: userId ?? this.userId,
+      userName: userName ?? this.userName,
+      profileImageUrl: profileImageUrl ?? this.profileImageUrl,
+      role: role ?? this.role,
+      status: status ?? this.status,
+    );
+  }
+
   @override
   List<Object?> get props => [userId, userName, profileImageUrl, role, status];
 }

@@ -14,16 +14,18 @@ import 'package:auth/presentation/groups/manage_group/pending_posts_view.dart';
 import 'package:auth/presentation/groups/manage_group/people_view/people_view.dart';
 import 'package:auth/presentation/groups/manage_group/reported_posts_view.dart';
 import 'package:auth/presentation/groups/my_group/my_group_view.dart';
-import 'package:auth/presentation/manager/group_cubit/get_admins/get_admins_cubit.dart';
-import 'package:auth/presentation/manager/group_cubit/get_members/get_members_cubit.dart';
-import 'package:auth/presentation/manager/group_cubit/get_moderators/get_moderators_cubit.dart';
+import 'package:auth/presentation/manager/group_cubit/ban_member/ban_member_cubit.dart';
+import 'package:auth/presentation/manager/group_cubit/get_banned_members/get_banned_members_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/accept_request/accept_request_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/cancel_request/cancel_request_group_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/change_member_role/change_member_role_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/decline_request/decline_request_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/get_join_requests/get_join_requests_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/join_group/join_group_cubit.dart';
+import 'package:auth/presentation/manager/group_cubit/kick_member/kick_member_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/leave_group/leave_group_cubit.dart';
+import 'package:auth/presentation/manager/group_cubit/get_members_by_roles/members_cubit.dart';
+import 'package:auth/presentation/manager/group_cubit/unban_member/unban_member_cubit.dart';
 import 'package:auth/presentation/reels/reels_page.dart';
 import 'package:auth/presentation/settings/settings_view.dart';
 import 'package:auth/presentation/settings/theme_view.dart';
@@ -288,22 +290,18 @@ GoRouter createRouter(bool isLoggedIn) {
                             providers: [
                               BlocProvider(
                                 create: (context) =>
-                                    di.sl<GetMembersCubit>()
-                                      ..getMembers(groupId: groupId),
+                                    di.sl<GroupMembersCubit>()
+                                      ..getAllGroupData(groupId),
                               ),
                               BlocProvider(
                                 create: (context) =>
                                     di.sl<ChangeMemberRoleCubit>(),
                               ),
                               BlocProvider(
-                                create: (context) =>
-                                    di.sl<GetModeratorsCubit>()
-                                      ..getModerators(groupId: groupId),
+                                create: (context) => di.sl<BanMemberCubit>(),
                               ),
                               BlocProvider(
-                                create: (context) =>
-                                    di.sl<GetAdminsCubit>()
-                                      ..getAdmins(groupId: groupId),
+                                create: (context) => di.sl<KickMemberCubit>(),
                               ),
                             ],
                             child: PeopleView(groupId: groupId),
@@ -312,7 +310,28 @@ GoRouter createRouter(bool isLoggedIn) {
                       ),
                       GoRoute(
                         path: 'banned_members',
-                        builder: (context, state) => const BannedMembersList(),
+                        builder: (context, state) {
+                          final groupId =
+                              (state.extra as String?) ??
+                              "69888500a488d0dae5e0accc";
+                          return MultiBlocProvider(
+                            providers: [
+                              BlocProvider(
+                                create: (context) =>
+                                    di.sl<GetBannedMembersCubit>()
+                                      ..getBannedMembers(groupId: groupId),
+                              ),
+                              BlocProvider(
+                                create: (context) =>
+                                    di.sl<UnbanMemberCubit>()..unbanMember(
+                                      groupId: groupId,
+                                      targetUserId: "695c2fdc9dae082566c285c8",
+                                    ),
+                              ),
+                            ],
+                            child: BannedMembersList(groupId: groupId),
+                          );
+                        },
                       ),
                     ],
                   ),

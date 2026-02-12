@@ -12,6 +12,9 @@ class MemberRow extends StatelessWidget {
   final String? role;
   final bool? bannedList;
   final Function(String newRole)? onRoleChanged;
+  final VoidCallback? onBan;
+  final VoidCallback? onKick;
+
   const MemberRow({
     super.key,
     this.name,
@@ -19,55 +22,85 @@ class MemberRow extends StatelessWidget {
     this.role,
     this.bannedList = false,
     this.onRoleChanged,
+    this.onBan,
+    this.onKick,
   });
+
   @override
   Widget build(BuildContext context) {
     return ListTile(
       leading: CircleAvatar(
         radius: 26,
-        backgroundImage: NetworkImage(image??'https://picsum.photos/500'),
+        backgroundImage: NetworkImage(image ?? 'https://picsum.photos/500'),
       ),
       title: Padding(
         padding: const EdgeInsets.only(left: 2.0),
         child: Text(name ?? "name", style: Styles.textStyle16),
       ),
-      trailing: Icon(
-        Icons.more_horiz,
-        color: Theme.of(context).iconTheme.color,
-      ),
-      subtitle: MemberRuleRow(role: role ?? "Member"),
-      onTap: () {
-        if (bannedList!) {
-          showCustomDialog(
-            context: context,
-            confirmText: "Unban",
-            confirmTextColor: Colors.red,
-            onConfirm: () {
-              //TODO: add unban logic
-
-            },
-            title: 'Unban user',
-            content: "Are you sure you want to unban this user?",
-          );
-        } else {
+      trailing: IconButton(
+        onPressed: () {
           showCommonGroupBottomSheet(
             context: context,
-            title: "Change role",
+            title: "Ban user",
             actions: [
-              buildRoleOption(context, "member", Icons.person),
-              buildRoleOption(
-                context,
-                "moderator",
-                Icons.admin_panel_settings_outlined,
+              CustomListTile(
+                icon: Icons.logout_rounded,
+                text: "Kick",
+                onTap: () {
+                  showCustomDialog(
+                    context: context,
+                    title: "Kick $name",
+                    content: "Are you sure you want to kick $name?",
+                    confirmText: "Kick",
+                    confirmTextColor: Colors.red,
+                    onConfirm: () {
+                      onKick!();
+                      context.pop();
+                    },
+                  );
+                },
               ),
-              buildRoleOption(
-                context,
-                "admin",
-                Icons.admin_panel_settings_rounded,
+              CustomListTile(
+                icon: Icons.person_off_outlined,
+                text: "Ban",
+                onTap: () {
+                  showCustomDialog(
+                    context: context,
+                    title: "Ban $name",
+                    content: "Are you sure you want to ban $name?",
+                    confirmText: "Ban",
+                    confirmTextColor: Colors.red,
+                    onConfirm: () {
+                      onBan!();
+                      context.pop();
+                    },
+                  );
+                },
               ),
             ],
           );
-        }
+        },
+        icon: Icon(Icons.more_horiz, color: Theme.of(context).iconTheme.color),
+      ),
+      subtitle: MemberRuleRow(role: role ?? "Member"),
+      onTap: () {
+        showCommonGroupBottomSheet(
+          context: context,
+          title: "Change role",
+          actions: [
+            buildRoleOption(context, "member", Icons.person),
+            buildRoleOption(
+              context,
+              "moderator",
+              Icons.admin_panel_settings_outlined,
+            ),
+            buildRoleOption(
+              context,
+              "admin",
+              Icons.admin_panel_settings_rounded,
+            ),
+          ],
+        );
       },
     );
   }

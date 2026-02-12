@@ -15,10 +15,11 @@ class KickMemberLoading extends KickMemberState {
 }
 
 class KickMemberSuccess extends KickMemberState {
+  final String userId;
   final String message;
-  const KickMemberSuccess(this.message);
+  const KickMemberSuccess(this.message, this.userId);
   @override
-  List<Object?> get props => [message];
+  List<Object?> get props => [message, userId];
 }
 
 class KickMemberFailure extends KickMemberState {

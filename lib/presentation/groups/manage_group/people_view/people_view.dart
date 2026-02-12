@@ -18,9 +18,9 @@ class PeopleView extends StatelessWidget {
           builder: (context) {
             return TabBarView(
               children: [
-                MembersListView(groupId: groupId),
-                ModeratorsListView(groupId: groupId),
-                AdminsListView(groupId: groupId),
+                MembersListView(key:const PageStorageKey('members'),groupId: groupId),
+                ModeratorsListView(key: const PageStorageKey('moderators'),groupId: groupId),
+                AdminsListView(key: const PageStorageKey('admins'),groupId: groupId),
               ],
             );
           },

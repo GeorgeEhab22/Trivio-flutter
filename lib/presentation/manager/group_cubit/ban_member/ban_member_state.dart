@@ -16,9 +16,10 @@ class BanMemberLoading extends BanMemberState {
 
 class BanMemberSuccess extends BanMemberState {
   final String message;
-  const BanMemberSuccess(this.message);
+  final String userId;
+  const BanMemberSuccess(this.message,this.userId);
   @override
-  List<Object?> get props => [message];
+  List<Object?> get props => [message, userId];
 }
 
 class BanMemberFailure extends BanMemberState {

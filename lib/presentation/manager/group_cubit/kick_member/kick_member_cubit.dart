@@ -27,7 +27,7 @@ class KickMemberCubit extends Cubit<KickMemberState> {
               : 'server',
         ),
       ),
-      (message) => emit(KickMemberSuccess(message)),
+      (message) => emit(KickMemberSuccess(message, targetUserId)),
     );
   }
 }

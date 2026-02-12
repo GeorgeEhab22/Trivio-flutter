@@ -1,11 +1,13 @@
 import 'package:auth/presentation/authentication/widgets/show_custom_snackbar.dart';
 import 'package:auth/presentation/groups/manage_group/widgets/member_row.dart';
-import 'package:auth/presentation/manager/group_cubit/get_admins/get_admins_cubit.dart';
-import 'package:auth/presentation/manager/group_cubit/get_members/get_members_cubit.dart';
-import 'package:auth/presentation/manager/group_cubit/get_moderators/get_moderators_cubit.dart';
-import 'package:auth/presentation/manager/group_cubit/get_moderators/get_moderators_state.dart';
+import 'package:auth/presentation/manager/group_cubit/ban_member/ban_member_cubit.dart';
+import 'package:auth/presentation/manager/group_cubit/ban_member/ban_member_state.dart';
 import 'package:auth/presentation/manager/group_cubit/change_member_role/change_member_role_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/change_member_role/change_member_role_state.dart';
+import 'package:auth/presentation/manager/group_cubit/kick_member/kick_member_cubit.dart';
+import 'package:auth/presentation/manager/group_cubit/kick_member/kick_member_state.dart';
+import 'package:auth/presentation/manager/group_cubit/get_members_by_roles/members_cubit.dart';
+import 'package:auth/presentation/manager/group_cubit/get_members_by_roles/members_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -22,47 +24,82 @@ class ModeratorsListView extends StatelessWidget {
           listener: (context, state) {
             if (state is ChangeMemberRoleSuccess) {
               showCustomSnackBar(context, state.message, true);
-              context.read<GetModeratorsCubit>().getModerators(
-                groupId: groupId,
+              context.read<GroupMembersCubit>().updateMemberRoleLocally(
+                state.userId,
+                state.newRole,
               );
-              context.read<GetMembersCubit>().getMembers(groupId: groupId);
-              context.read<GetAdminsCubit>().getAdmins(groupId: groupId);
             }
             if (state is ChangeMemberRoleFailure) {
               showCustomSnackBar(context, state.message, false);
             }
           },
         ),
+        BlocListener<BanMemberCubit, BanMemberState>(
+          listener: (context, state) {
+            if (state is BanMemberSuccess) {
+              showCustomSnackBar(context, state.message, true);
+              context.read<GroupMembersCubit>().removeMemberLocally(
+                state.userId,
+              );
+            }
+            if (state is BanMemberFailure) {
+              showCustomSnackBar(context, state.message, false);
+            }
+          },
+        ),
+        BlocListener<KickMemberCubit, KickMemberState>(
+          listener: (context, state) {
+            if (state is KickMemberSuccess) {
+              showCustomSnackBar(context, state.message, true);
+              context.read<GroupMembersCubit>().removeMemberLocally(
+                state.userId,
+              );
+            }
+            if (state is KickMemberFailure) {
+              showCustomSnackBar(context, state.message, false);
+            }
+          },
+        ),
       ],
       child: Scaffold(
-        body: BlocBuilder<GetModeratorsCubit, GetModeratorsState>(
+        body: BlocBuilder<GroupMembersCubit, GroupMembersState>(
           builder: (context, state) {
-            if (state is GetModeratorsLoading) {
+            if (state.isLoading) {
               return const Center(child: CircularProgressIndicator());
             }
-            if (state is GetModeratorsSuccess) {
-              return ListView.builder(
-                itemCount: state.moderators.length,
-                itemBuilder: (context, index) {
-                  final moderator = state.moderators[index];
-                  return MemberRow(
-                    name: moderator.userName,
-                    image: moderator.profileImageUrl,
-                    role: moderator.role ?? "Moderator",
-                    onRoleChanged: (newRole) {
-                      context.read<ChangeMemberRoleCubit>().changeMemberRole(
-                        groupId: groupId,
-                        userId: moderator.userId!,
-                        newRole: newRole,
-                      );
-                    },
-                  );
-                },
-              );
-            } else if (state is GetModeratorsFailure) {
-              return Center(child: Text(state.message));
+
+            final moderators = state.moderators;
+
+            if (moderators.isEmpty) {
+              return const Center(child: Text("No Moderators found"));
             }
-            return const SizedBox();
+
+            return ListView.builder(
+              itemCount: moderators.length,
+              itemBuilder: (context, index) {
+                final moderator = moderators[index];
+                return MemberRow(
+                  name: moderator.userName,
+                  image: moderator.profileImageUrl,
+                  role: moderator.role ?? "Moderator",
+                  onRoleChanged: (newRole) {
+                    context.read<ChangeMemberRoleCubit>().changeMemberRole(
+                      groupId: groupId,
+                      userId: moderator.userId!,
+                      newRole: newRole,
+                    );
+                  },
+                  onBan: () => context.read<BanMemberCubit>().banMember(
+                    groupId: groupId,
+                    targetUserId: moderator.userId!,
+                  ),
+                  onKick: () => context.read<KickMemberCubit>().kickMember(
+                    groupId: groupId,
+                    targetUserId: moderator.userId!,
+                  ),
+                );
+              },
+            );
           },
         ),
       ),

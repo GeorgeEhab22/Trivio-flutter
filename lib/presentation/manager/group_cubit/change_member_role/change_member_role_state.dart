@@ -15,10 +15,12 @@ class ChangeMemberRoleLoading extends ChangeMemberRoleState {
 }
 
 class ChangeMemberRoleSuccess extends ChangeMemberRoleState {
+  final String userId;
+  final String newRole;
   final String message;
-  const ChangeMemberRoleSuccess(this.message);
+  const ChangeMemberRoleSuccess(this.message, this.userId, this.newRole);
   @override
-  List<Object?> get props => [message];
+  List<Object?> get props => [message, userId];
 }
 
 class ChangeMemberRoleFailure extends ChangeMemberRoleState {

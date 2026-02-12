@@ -25,7 +25,7 @@ class ChangeMemberRoleCubit extends Cubit<ChangeMemberRoleState> {
 
     result.fold(
       (failure) => emit(ChangeMemberRoleFailure(failure.message)),
-      (successMsg) => emit(ChangeMemberRoleSuccess(successMsg)),
+      (message) => emit(ChangeMemberRoleSuccess(message, userId, newRole)),
     );
   }
 }

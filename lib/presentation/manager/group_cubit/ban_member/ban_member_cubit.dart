@@ -20,7 +20,7 @@ class BanMemberCubit extends Cubit<BanMemberState> {
 
     result.fold(
       (failure) => emit(BanMemberFailure(message: failure.message)),
-      (message) => emit(BanMemberSuccess(message)),
+      (message) => emit(BanMemberSuccess(message, targetUserId)),
     );
   }
 }

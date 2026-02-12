@@ -1,6 +1,8 @@
 import 'package:auth/core/errors/failure.dart';
 import 'package:auth/data/core/error/exceptions.dart';
 import 'package:auth/data/datasource/groups_remote_datasource.dart';
+import 'package:auth/data/models/group_member_model.dart';
+import 'package:auth/data/models/join_request_model.dart';
 import 'package:auth/domain/entities/group.dart';
 import 'package:auth/domain/entities/group_member.dart';
 import 'package:auth/domain/entities/group_post.dart';
@@ -52,6 +54,7 @@ class GroupRepoImpl implements GroupRepo {
   @override
   Future<Either<Failure, Group>> getGroup({required String groupId}) async {
     try {
+      
       final model = await remoteDataSource.getGroup(groupId);
       return Right(model);
     } on ServerException catch (e) {
@@ -133,13 +136,26 @@ class GroupRepoImpl implements GroupRepo {
       return Left(ServerFailure('Failed to leave group'));
     }
   }
+  static List<GroupMemberModel> mockList = [
+    const GroupMemberModel(userId: "1", userName: "Ahmed Ali", role: "member", profileImageUrl: "https://picsum.photos/id/1/200", status: "active"),
+    const GroupMemberModel(userId: "2", userName: "Sara Ahmed", role: "moderator", profileImageUrl: "https://picsum.photos/id/2/200", status: "active"),
+    const GroupMemberModel(userId: "3", userName: "Shimaa Khaled", role: "admin", profileImageUrl: "https://picsum.photos/id/3/200", status: "active"),
+  ];
 
+  static List<GroupMemberModel> mockBannedList = [
+    const GroupMemberModel(userId: "b1", userName: "Ziad Mahmoud", role: "member", profileImageUrl: "https://picsum.photos/id/10/200", status: "banned"),
+    const GroupMemberModel(userId: "b2", userName: "Mariam Ali", role: "member", profileImageUrl: "https://picsum.photos/id/11/200", status: "banned"),
+  ];
+
+  static List<JoinRequestModel> mockJoinRequests = [
+    const JoinRequestModel(requestId: "req_1", groupId: "g1", userId: "u101", userName: "Nour El-Din", userEmail: "nour@fcis.asu.edu.eg", status: "pending"),
+  ];
   @override
   Future<Either<Failure, String>> cancelRequest({
     required String groupId,
   }) async {
-    //  await Future.delayed(const Duration(seconds: 1));
-    //       return const Right('Request cancelled successfully');
+     await Future.delayed(const Duration(seconds: 1));
+          return const Right('Request cancelled successfully');
 
     try {
       await remoteDataSource.cancelJoinRequest(groupId);
@@ -151,39 +167,13 @@ class GroupRepoImpl implements GroupRepo {
     }
   }
 
-  // List<JoinRequestModel> mockJoinRequests = [
-  //   const JoinRequestModel(
-  //     requestId: "req_1",
-  //     groupId: "695d4782c3f2873f107b0f17",
-  //     userId: "u101",
-  //     userName: "Nour El-Din",
-  //     userEmail: "nour@fcis.asu.edu.eg",
-  //     status: "pending",
-  //   ),
-  //   const JoinRequestModel(
-  //     requestId: "req_2",
-  //     groupId: "695d4782c3f2873f107b0f17",
-  //     userId: "u102",
-  //     userName: "Youssef Ahmed",
-  //     userEmail: "youssef@example.com",
-  //     status: "pending",
-  //   ),
-  //   const JoinRequestModel(
-  //     requestId: "req_3",
-  //     groupId: "695d4782c3f2873f107b0f17",
-  //     userId: "u103",
-  //     userName: "Laila Mahmoud",
-  //     userEmail: "laila.m@trivio.com",
-  //     status: "pending",
-  //   ),
-  // ];
-  @override
+   @override
   Future<Either<Failure, List<JoinRequest>>> getJoinRequests({
     required String groupId,
     int page = 1,
   }) async {
-    // await Future.delayed(const Duration(seconds: 1));
-    // return Right(mockJoinRequests);
+    await Future.delayed(const Duration(seconds: 1));
+    return Right(mockJoinRequests);
     try {
       final models = await remoteDataSource.getJoinRequests(
         groupId: groupId,
@@ -198,65 +188,65 @@ class GroupRepoImpl implements GroupRepo {
     }
   }
 
-  // @override
-  // Future<Either<Failure, String>> acceptJoinRequest({
-  //   required String groupId,
-  //   required String requestedId,
-  // }) async {
-  //   await Future.delayed(const Duration(seconds: 1));
-  //   final requestIndex = mockJoinRequests.indexWhere(
-  //     (req) => req.requestId == requestedId,
-  //   ); //
-
-  //   if (requestIndex != -1) {
-  //     final request = mockJoinRequests[requestIndex];
-
-  //     mockList.add(
-  //       GroupMemberModel(
-  //         userId: request.userId,
-  //         userName: request.userName,
-  //         role: "member",
-  //         profileImageUrl: "https://picsum.photos/id/10/200",
-  //         status: "active",
-  //       ),
-  //     );
-
-  //     mockJoinRequests.removeAt(requestIndex);
-  //     return const Right('Request accepted');
-  //   }
-
-  //   return Left(ServerFailure('Request not found'));
-  // }
   @override
   Future<Either<Failure, String>> acceptJoinRequest({
     required String groupId,
     required String requestedId,
   }) async {
-    // await Future.delayed(const Duration(seconds: 1));
-    //     return const Right('Request accepted');
+    await Future.delayed(const Duration(seconds: 1));
+    final requestIndex = mockJoinRequests.indexWhere(
+      (req) => req.requestId == requestedId,
+    ); //
 
-    try {
-      await remoteDataSource.acceptJoinRequest(
-        groupId: groupId,
-        requestId: requestedId,
+    if (requestIndex != -1) {
+      final request = mockJoinRequests[requestIndex];
+
+      mockList.add(
+        GroupMemberModel(
+          userId: request.userId,
+          userName: request.userName,
+          role: "member",
+          profileImageUrl: "https://picsum.photos/id/10/200",
+          status: "active",
+        ),
       );
+
+      mockJoinRequests.removeAt(requestIndex);
       return const Right('Request accepted');
-    } on ServerException catch (e) {
-      return Left(ServerFailure(e.message));
-    } catch (e) {
-      // print("Accept request error : ${e.toString()}");
-      return Left(ServerFailure('Failed to accept request'));
     }
+
+    return Left(ServerFailure('Request not found'));
   }
+  // @override
+  // Future<Either<Failure, String>> acceptJoinRequest({
+  //   required String groupId,
+  //   required String requestedId,
+  // }) async {
+  //   // await Future.delayed(const Duration(seconds: 1));
+  //   //     return const Right('Request accepted');
+
+  //   try {
+  //     await remoteDataSource.acceptJoinRequest(
+  //       groupId: groupId,
+  //       requestId: requestedId,
+  //     );
+  //     return const Right('Request accepted');
+  //   } on ServerException catch (e) {
+  //     return Left(ServerFailure(e.message));
+  //   } catch (e) {
+  //     // print("Accept request error : ${e.toString()}");
+  //     return Left(ServerFailure('Failed to accept request'));
+  //   }
+  // }
 
   @override
   Future<Either<Failure, String>> declineJoinRequest({
     required String groupId,
     required String requestedId,
   }) async {
-    // await Future.delayed(const Duration(seconds: 1));
-    // mockJoinRequests.removeWhere((req) => req.requestId == requestedId);
-    // return const Right('Request declined');
+    await Future.delayed(const Duration(seconds: 1));
+    mockJoinRequests.removeWhere((req) => req.requestId == requestedId);
+    return const Right('Request declined');
 
     try {
       await remoteDataSource.declineJoinRequest(
@@ -280,18 +270,18 @@ class GroupRepoImpl implements GroupRepo {
     required String userId,
     required String newRole,
   }) async {
-    // await Future.delayed(const Duration(seconds: 1));
-    // final index = mockList.indexWhere((m) => m.userId == userId);
-    // if (index != -1) {
-    //   mockList[index] = GroupMemberModel(
-    //     userId: mockList[index].userId,
-    //     userName: mockList[index].userName,
-    //     profileImageUrl: mockList[index].profileImageUrl,
-    //     role: newRole,
-    //     status: mockList[index].status,
-    //   );
-    // }
-    // return const Right('changed');
+    await Future.delayed(const Duration(seconds: 1));
+    final index = mockList.indexWhere((m) => m.userId == userId);
+    if (index != -1) {
+      mockList[index] = GroupMemberModel(
+        userId: mockList[index].userId,
+        userName: mockList[index].userName,
+        profileImageUrl: mockList[index].profileImageUrl,
+        role: newRole,
+        status: mockList[index].status,
+      );
+    }
+    return const Right('changed');
     try {
       await remoteDataSource.promoteMember(
         groupId: groupId,
@@ -311,6 +301,9 @@ class GroupRepoImpl implements GroupRepo {
     required String groupId,
     required String userId,
   }) async {
+    await Future.delayed(const Duration(milliseconds: 500));
+    mockList.removeWhere((m) => m.userId == userId);
+    return const Right('Member kicked successfully');
     try {
       await remoteDataSource.kickMember(groupId: groupId, userId: userId);
       return const Right('Member kicked');
@@ -326,6 +319,23 @@ class GroupRepoImpl implements GroupRepo {
     required String groupId,
     required String userId,
   }) async {
+    await Future.delayed(const Duration(milliseconds: 500));
+
+    final index = mockList.indexWhere((m) => m.userId == userId);
+    if (index != -1) {
+      final user = mockList[index];
+
+      mockBannedList.add(GroupMemberModel(
+        userId: user.userId,
+        userName: user.userName,
+        role: user.role,
+        profileImageUrl: user.profileImageUrl,
+        status: "banned",
+      ));
+
+      mockList.removeAt(index);
+      return const Right('Member banned successfully');
+    }
     try {
       await remoteDataSource.banMember(groupId: groupId, userId: userId);
       return const Right('Member banned');
@@ -341,6 +351,22 @@ class GroupRepoImpl implements GroupRepo {
     required String groupId,
     required String userId,
   }) async {
+    await Future.delayed(const Duration(milliseconds: 500));
+    final index = mockBannedList.indexWhere((m) => m.userId == userId);
+    if (index != -1) {
+      final user = mockBannedList[index];
+      
+      mockList.add(GroupMemberModel(
+        userId: user.userId,
+        userName: user.userName,
+        role: "member",
+        profileImageUrl: user.profileImageUrl,
+        status: "active",
+      ));
+
+      mockBannedList.removeAt(index);
+      return const Right('Member unbanned successfully');
+    }
     try {
       await remoteDataSource.unbanMember(groupId: groupId, userId: userId);
       return const Right('Member unbanned');
@@ -351,34 +377,14 @@ class GroupRepoImpl implements GroupRepo {
     }
   }
 
-  // List<GroupMemberModel> mockList = [
-  //   const GroupMemberModel(
-  //     userId: "1",
-  //     userName: "Ahmed Ali",
-  //     role: "member",
-  //     profileImageUrl: "https://picsum.photos/id/1/200",
-  //   ),
-  //   const GroupMemberModel(
-  //     userId: "2",
-  //     userName: "Sara Ahmed",
-  //     role: "member",
-  //     profileImageUrl: "https://picsum.photos/id/1/200",
-  //   ),
-  //   const GroupMemberModel(
-  //     userId: "3",
-  //     userName: "shimaa Ahmed",
-  //     role: "member",
-  //     profileImageUrl: "https://picsum.photos/id/1/200",
-  //   ),
-  // ];
   @override
   Future<Either<Failure, List<GroupMember>>> getGroupMembers({
     required String groupId,
     int page = 1,
   }) async {
-    // await Future.delayed(const Duration(seconds: 1));
-    // final onlyMembers = mockList.where((m) => m.role == "member").toList();
-    // return Right(onlyMembers);
+    await Future.delayed(const Duration(seconds: 1));
+    final onlyMembers = mockList.where((m) => m.role == "member").toList();
+    return Right(onlyMembers);
     try {
       final models = await remoteDataSource.getMembers(
         groupId: groupId,
@@ -397,11 +403,11 @@ class GroupRepoImpl implements GroupRepo {
     required String groupId,
     int page = 1,
   }) async {
-    // await Future.delayed(const Duration(seconds: 1));
-    // final onlyMembers = mockList.where((m) => m.role == "admin").toList();
-    // return Right(onlyMembers);
+    await Future.delayed(const Duration(seconds: 1));
+    final onlyMembers = mockList.where((m) => m.role == "admin").toList();
+    return Right(onlyMembers);
     try {
-      final models = await remoteDataSource.getMembers(
+      final models = await remoteDataSource.getAdmins(
         groupId: groupId,
         page: page,
       );
@@ -418,11 +424,11 @@ class GroupRepoImpl implements GroupRepo {
     required String groupId,
     int page = 1,
   }) async {
-    // await Future.delayed(const Duration(seconds: 1));
-    // final onlyMembers = mockList.where((m) => m.role == "moderator").toList();
-    // return Right(onlyMembers);
+    await Future.delayed(const Duration(seconds: 1));
+    final onlyMembers = mockList.where((m) => m.role == "moderator").toList();
+    return Right(onlyMembers);
     try {
-      final models = await remoteDataSource.getMembers(
+      final models = await remoteDataSource.getModerators(
         groupId: groupId,
         page: page,
       );
@@ -439,9 +445,8 @@ class GroupRepoImpl implements GroupRepo {
     required String groupId,
     int page = 1,
   }) async {
-    // await Future.delayed(const Duration(seconds: 1));
-    // final onlyMembers = mockList.where((m) => m.role == "moderator").toList();
-    // return Right(onlyMembers);
+    await Future.delayed(const Duration(milliseconds: 500));
+    return Right(mockBannedList);
     try {
       final models = await remoteDataSource.getBannedMembers(
         groupId: groupId,
