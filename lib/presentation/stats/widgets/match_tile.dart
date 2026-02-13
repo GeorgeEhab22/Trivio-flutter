@@ -4,6 +4,8 @@ import 'package:auth/data/models/stats_dart/matches.dart';
 import 'package:auth/presentation/stats/widgets/custom_team_row.dart';
 import 'package:auth/presentation/stats/widgets/notification_button.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class MatchTile extends StatelessWidget {
   final Matches match;
@@ -26,38 +28,33 @@ class MatchTile extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // League Header
-          
           Row(
             children: [
               SizedBox(
                 width: 65,
-                child: ColorFiltered(
-                  colorFilter: ColorFilter.mode(
-                    Theme.of(context).iconTheme.color ?? Colors.black,
-                    BlendMode.srcIn,
-                  ),
-                  child: match.competition?.emblem != null
-                      ? Image.network(
+                child: match.competition?.emblem != null
+                    ? Padding(
+                        padding: const EdgeInsets.only(left: 12.0),
+                        child: Image.network(
                           match.competition!.emblem!,
-                          height: 30,
-                          width: 30,
-                          fit: BoxFit.cover,
-                        )
-                      : Icon(
-                          Icons.sports_soccer,
-                          color: Theme.of(context).iconTheme.color,
-                          size: 30,
+                          height: 45,
+                          width: 45,
+                          fit: BoxFit.contain,
                         ),
-                ),
+                      )
+                    : Icon(
+                        Icons.sports_soccer,
+                        color: Theme.of(context).iconTheme.color,
+                        size: 30,
+                      ),
               ),
-              const SizedBox(width: 16), 
-              Text(
-                '‣ ${match.area?.name ?? ""} ‣ ${match.competition?.name ?? ""}',
-                style: Styles.textStyle16.copyWith(
-                  color: Theme.of(
-                    context,
-                  ).textTheme.bodyMedium?.color?.withOpacity(0.9),
+              const SizedBox(width: 16),
+              Skeleton.ignore(
+                child: Text(
+                  '‣ ${match.area?.name ?? ""} ‣ ${match.competition?.name ?? ""}',
+                  style: Styles.textStyle16.copyWith(
+                    color: Theme.of(context).textTheme.bodyMedium?.color,
+                  ),
                 ),
               ),
             ],
@@ -72,9 +69,9 @@ class MatchTile extends StatelessWidget {
                     child: Center(
                       child: Text(
                         match.utcDate != null
-                            ? "${DateTime.parse(match.utcDate!).hour.toString().padLeft(2, '0')}:${DateTime.parse(match.utcDate!).minute.toString().padLeft(2, '0')}"
+                            ? DateFormat('hh:mm').format(DateTime.parse(match.utcDate!).toLocal())
                             : "TBD",
-                        style: Styles.textStyle14,
+                        style: Styles.textStyle16,
                       ),
                     ),
                   ),
@@ -116,7 +113,7 @@ class MatchTile extends StatelessWidget {
                   ),
 
                   // 3. Action
-                  const NotificationButton(),
+                  Skeleton.ignore(child: const NotificationButton()),
                 ],
               ),
             ),
@@ -127,17 +124,32 @@ class MatchTile extends StatelessWidget {
   }
 
   Widget _buildCrest(String? url, BuildContext context) {
-    return SizedBox(
-      height: 50,
-      width: 50,
-      child: url != null
-          ? Image.network(
-              url,
-              fit: BoxFit.contain,
-              errorBuilder: (_, __, ___) =>
-                  const Icon(Icons.sports_soccer, size: 20),
-            )
-          : Icon(Icons.sports_soccer, color: Theme.of(context).iconTheme.color),
+    return Container(
+      height: 40,
+      width: 40,
+      decoration: BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+      child: ClipOval(
+        child: url != null
+            ? Image.network(
+                url,
+                fit: BoxFit.contain,
+                filterQuality: FilterQuality.high,
+                isAntiAlias: true,
+                errorBuilder: (_, __, ___) => const Icon(
+                  Icons.sports_soccer,
+                  size: 18,
+                  color: Colors.grey,
+                ),
+              )
+            : Opacity(
+                opacity: 0.3,
+                child: Icon(
+                  Icons.sports_soccer_outlined,
+                  color: Theme.of(context).iconTheme.color,
+                  size: 24,
+                ),
+              ),
+      ),
     );
   }
 }

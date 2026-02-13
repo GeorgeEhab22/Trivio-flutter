@@ -13,9 +13,11 @@ class StatsCubit extends Cubit<StatsState> {
     emit(StatsLoading());
     try {
       final matches = await statsUseCase.call();
+      if(isClosed) return;
 
       emit(StatsLoaded(matches: matches));
     } catch (e) {
+      if(isClosed) return;
       emit(StatsError(message: e.toString()));
     }
   }

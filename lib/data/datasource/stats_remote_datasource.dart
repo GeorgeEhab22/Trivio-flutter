@@ -8,7 +8,6 @@ abstract class StatsRemoteDatasource {
 class StatsRemoteDatasourceImpl implements StatsRemoteDatasource {
   final Dio dio;
 
-  // Replace with your actual API key from football-data.org
   static const String _apiKey = 'fe7743eafb25472c8f3ce45647c65cfb';
   static const String _baseUrl = 'https://api.football-data.org/v4';
 

@@ -1,6 +1,7 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:auth/constants/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:auth/core/styels.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class CustomTeamRow extends StatelessWidget {
   final Widget icon;
@@ -8,10 +9,18 @@ class CustomTeamRow extends StatelessWidget {
   final int score;
   final bool? winner;
 
-  const CustomTeamRow(this.icon, this.name, this.score, this.winner, {super.key});
+  const CustomTeamRow(
+    this.icon,
+    this.name,
+    this.score,
+    this.winner, {
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Row(
       children: [
         SizedBox(
@@ -34,20 +43,26 @@ class CustomTeamRow extends StatelessWidget {
           child: Text(
             name,
             style: Styles.textStyle16.copyWith(
-              color: Theme.of(
-                context,
-              ).textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
-              fontWeight: winner == true ? FontWeight.w600 : FontWeight.normal,
+              color: winner == true
+                  ? (isDark
+                        ? AppColors.primary
+                        : AppColors.primary.withValues(alpha: 0.9, green: 120))
+                  : Theme.of(context).textTheme.displayMedium?.color,
+              fontWeight: winner == true ? FontWeight.w900 : FontWeight.w600,
             ),
           ),
         ),
-        Text(
-          score.toString(),
-          style: Styles.textStyle16.copyWith(
-            color: Theme.of(
-              context,
-            ).textTheme.bodyMedium?.color?.withValues(alpha: 0.8),
-            fontWeight: winner == true ? FontWeight.w600 : FontWeight.normal,
+        Skeleton.ignore(
+          child: Text(
+            score.toString(),
+            style: Styles.textStyle18.copyWith(
+              color: winner == true
+                  ? (isDark
+                        ? AppColors.primary
+                        : AppColors.primary.withValues(alpha: 0.9, green: 120))
+                  : Theme.of(context).textTheme.displayMedium?.color,
+              fontWeight: winner == true ? FontWeight.w900 : FontWeight.w500,
+            ),
           ),
         ),
       ],
