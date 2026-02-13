@@ -12,10 +12,10 @@ final class StatsLoading extends StatsState {}
 final class StatsLoaded extends StatsState {
   final List<Matches> matches;  // List of Match objects
 
-  StatsLoaded({required this.matches});
+  const StatsLoaded({required this.matches});
 }
 final class StatsError extends StatsState {
   final String message;
 
-  StatsError({required this.message});
+  const StatsError({required this.message});
 }

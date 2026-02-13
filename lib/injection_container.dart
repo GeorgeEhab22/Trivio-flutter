@@ -5,6 +5,7 @@ import 'package:auth/common/functions/handle_dio_error.dart';
 import 'package:auth/data/datasource/auth_remote_datasource.dart';
 import 'package:auth/data/datasource/comments_remote_datasource.dart';
 import 'package:auth/data/datasource/posts_remote_datasource.dart';
+import 'package:auth/data/datasource/stats_local_datasource.dart';
 import 'package:auth/data/datasource/stats_remote_datasource.dart';
 import 'package:auth/data/repositories/auth_repo_impl.dart';
 import 'package:auth/data/repositories/comment_repo_impl.dart';
@@ -56,19 +57,24 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 final sl = GetIt.instance;
 
 Future<void> init() async {
   // 1. External & Core
   await dotenv.load(fileName: ".env");
   final prefs = await SharedPreferences.getInstance();
-  
-  String baseUrl = kIsWeb 
-      ? dotenv.env['LOCAL_URL']! 
-      : (Platform.isAndroid || Platform.isIOS 
-          ? dotenv.env['MOBILE_URL']! 
-          : dotenv.env['LOCAL_URL']!);
+  await Hive.initFlutter();
+  final statslocal = StatsLocalDatasource();
+  await statslocal.init();
+
+  String baseUrl = kIsWeb
+      ? dotenv.env['LOCAL_URL']!
+      : (Platform.isAndroid || Platform.isIOS
+            ? dotenv.env['MOBILE_URL']!
+            : dotenv.env['LOCAL_URL']!);
 
   sl.registerLazySingleton(() => Dio());
   sl.registerLazySingleton(() => prefs);
@@ -95,18 +101,21 @@ Future<void> init() async {
   sl.registerLazySingleton(() => VerifyOTP(sl()));
 
   // Cubits
-  sl.registerFactory(() => SignInCubit(signInUseCase: sl(), googleSignInUseCase: sl()));
+  sl.registerFactory(
+    () => SignInCubit(signInUseCase: sl(), googleSignInUseCase: sl()),
+  );
   sl.registerFactory(() => RegisterCubit(registerUseCase: sl()));
   sl.registerFactory(() => RequestOTPCubit(sendPasswordResetOtp: sl()));
 
   // ==========================================================================
   // FEATURE: STATS (Football Data)
   // ==========================================================================
+  sl.registerLazySingleton<StatsLocalDatasource>(() => StatsLocalDatasource());
   sl.registerLazySingleton<StatsRemoteDatasource>(
-    () => StatsRemoteDatasourceImpl(sl()),
+    () => StatsRemoteDatasourceImpl(sl(), sl()),
   );
   sl.registerLazySingleton<StatsRepository>(
-    () => StatsRepoImpl(remoteDatasource: sl()), 
+    () => StatsRepoImpl(remoteDatasource: sl(), localDatasource: sl()),
   );
   sl.registerLazySingleton(() => StatsUseCase(sl()));
   sl.registerFactory(() => StatsCubit(sl()));
@@ -157,7 +166,11 @@ Future<void> init() async {
   // FEATURE: COMMENTS
   // ==========================================================================
   sl.registerLazySingleton<CommentsRemoteDataSource>(
-    () => CommentsRemoteDataSourceImpl(api: sl(), prefs: sl(), errorHandler: sl()),
+    () => CommentsRemoteDataSourceImpl(
+      api: sl(),
+      prefs: sl(),
+      errorHandler: sl(),
+    ),
   );
   sl.registerLazySingleton<CommentRepository>(
     () => CommentRepositoryImpl(remoteDataSource: sl()),

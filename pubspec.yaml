@@ -61,6 +61,7 @@ dependencies:
   mime: ^1.0.2
   visibility_detector: ^0.4.0+2
   flutter_slidable: ^4.0.3
+  hive_flutter: 
 dev_dependencies:
   flutter_test:
     sdk: flutter
