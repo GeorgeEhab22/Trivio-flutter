@@ -28,13 +28,13 @@ class UserProfileSettings extends StatelessWidget {
         ],
       ),
       body: Padding(
-        padding: EdgeInsets.all(MediaQuery.widthOf(context) * 0.02),
+        padding: EdgeInsets.all(MediaQuery.widthOf(context) * 0.005),
         child: SingleChildScrollView(
           physics: BouncingScrollPhysics(),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              ProfileInfoBox(isFollowing: ValueNotifier(false)),
+              ProfileInfoBox(),
               CustomProfileFilledButton(
                 onpressed: () {},
                 displayText: "Edit Profile",
@@ -43,6 +43,7 @@ class UserProfileSettings extends StatelessWidget {
               ),
               SizedBox(height: 10),
               Container(
+                padding: EdgeInsets.symmetric(horizontal: 10),
                 decoration: BoxDecoration(
                   border: Border.all(color: AppColors.lightGrey, width: 2),
                   borderRadius: BorderRadius.circular(12),

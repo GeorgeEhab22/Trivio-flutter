@@ -2,6 +2,7 @@ import 'package:auth/core/custom_bottom_navigation_bar.dart';
 import 'package:auth/presentation/chats/chat_info_button/chat_info_view.dart';
 import 'package:auth/presentation/chats/chat_screen/chat_view.dart';
 import 'package:auth/presentation/chats/messages_screen/messages_view.dart';
+import 'package:auth/presentation/manager/follow_cubit/follow_cubit.dart';
 import 'package:auth/presentation/reels/reels_page.dart';
 import 'package:auth/presentation/user/follow_requests_view.dart';
 import 'package:auth/presentation/user/followers_list_view.dart';
@@ -56,7 +57,7 @@ CustomTransitionPage buildAnimatedPage({
 
 GoRouter createRouter(bool isLoggedIn) {
   return GoRouter(
-    initialLocation: isLoggedIn ? '/app/home' : '/signin',
+    initialLocation: isLoggedIn ? '/app/profile' : '/signin',
     routes: [
       GoRoute(
         path: AppRoutes.signIn,
@@ -147,23 +148,27 @@ GoRouter createRouter(bool isLoggedIn) {
                 routes: [
                   GoRoute(
                     path: 'profile',
-                    pageBuilder: (context, state) =>
-                        NoTransitionPage(child: UserProfileView()),
+                    pageBuilder: (context, state) => NoTransitionPage(
+                      child: BlocProvider<FollowCubit>(
+                        create: (context) => di.sl<FollowCubit>(),
+                        child: UserProfileView(),
+                      ),
+                    ),
                     routes: [
                       GoRoute(
                         path: 'followers',
-                        builder: (context, state) =>
-                            const FollowersListView(),
+                        builder: (context, state) => const FollowersListView(),
                       ),
                       GoRoute(
                         path: 'following',
-                        builder: (context, state) =>
-                            const FollowingListView(),
+                        builder: (context, state) => const FollowingListView(),
                       ),
                       GoRoute(
                         path: 'settings',
-                        builder: (context, state) =>
-                            const UserProfileSettings(),
+                        builder: (context, state) => BlocProvider<FollowCubit>(
+                          create: (context) => di.sl<FollowCubit>(),
+                          child: const UserProfileSettings(),
+                        ),
                         routes: [
                           GoRoute(
                             path: 'requests',

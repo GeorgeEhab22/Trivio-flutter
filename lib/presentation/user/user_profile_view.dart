@@ -7,9 +7,7 @@ import 'package:auth/constants/colors.dart';
 import 'package:go_router/go_router.dart';
 
 class UserProfileView extends StatelessWidget {
-  UserProfileView({super.key});
-
-  final ValueNotifier<bool> followNotifier = ValueNotifier(false);
+  const UserProfileView({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,7 +35,7 @@ class UserProfileView extends StatelessWidget {
       ),
       body: ListView(
         children: [
-          ProfileInfoBox(isFollowing: followNotifier),
+          ProfileInfoBox(),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12),
             child: Align(
