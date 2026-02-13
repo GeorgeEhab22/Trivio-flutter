@@ -21,6 +21,8 @@ import 'package:auth/presentation/manager/group_cubit/accept_request/accept_requ
 import 'package:auth/presentation/manager/group_cubit/cancel_request/cancel_request_group_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/change_member_role/change_member_role_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/decline_request/decline_request_cubit.dart';
+import 'package:auth/presentation/manager/group_cubit/get_group/get_group_cubit.dart';
+import 'package:auth/presentation/manager/group_cubit/get_groups/get_groups_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/get_join_requests/get_join_requests_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/join_group/join_group_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/kick_member/kick_member_cubit.dart';
@@ -207,26 +209,51 @@ GoRouter createRouter(bool isLoggedIn) {
           ),
           GoRoute(
             path: 'groups',
-            builder: (context, state) => const GroupsView(),
+            builder: (context, state) => BlocProvider(
+              create: (context) => di.sl<GetAllGroupsCubit>()..getAllGroups(),
+              child: const GroupsView(),
+            ),
             routes: [
               GoRoute(
                 path: 'group_preview',
-                builder: (context, state) => MultiBlocProvider(
-                  providers: [
-                    BlocProvider(create: (context) => di.sl<JoinGroupCubit>()),
-                    BlocProvider(
-                      create: (context) => di.sl<CancelRequestGroupCubit>(),
-                    ),
-                  ],
-                  child: const GroupPreviewView(),
-                ),
+                builder: (context, state) {
+                  final String groupId = state.extra as String;
+
+                  return MultiBlocProvider(
+                    providers: [
+                      BlocProvider(
+                        create: (context) => di.sl<JoinGroupCubit>(),
+                      ),
+                      BlocProvider(
+                        create: (context) => di.sl<CancelRequestGroupCubit>(),
+                      ),
+                      BlocProvider(
+                        create: (context) =>
+                            di.sl<GetGroupCubit>()..getGroup(groupId),
+                      ),
+                    ],
+                    child: const GroupPreviewView(),
+                  );
+                },
               ),
               GoRoute(
                 path: 'group_feed',
-                builder: (context, state) => BlocProvider(
-                  create: (context) => di.sl<LeaveGroupCubit>(),
-                  child: const GroupFeedView(),
-                ),
+                builder: (context, state) {
+                  final String groupId = state.extra as String;
+
+                  return MultiBlocProvider(
+                    providers: [
+                      BlocProvider(
+                        create: (context) =>
+                            di.sl<GetGroupCubit>()..getGroup(groupId),
+                      ),
+                      BlocProvider(
+                        create: (context) => di.sl<LeaveGroupCubit>(),
+                      ),
+                    ],
+                    child: GroupFeedView(groupId: groupId),
+                  );
+                },
               ),
               ShellRoute(
                 builder: (context, state, child) {
@@ -250,7 +277,15 @@ GoRouter createRouter(bool isLoggedIn) {
               ),
               GoRoute(
                 path: 'my_group',
-                builder: (context, state) => const MyGroupView(),
+                builder: (context, state) {
+                  final String groupId = state.extra as String;
+                  return BlocProvider(
+                    create: (context) =>
+                        di.sl<GetGroupCubit>()..getGroup(groupId),
+                    child: const MyGroupView(),
+                  );
+                },
+
                 routes: [
                   GoRoute(
                     path: 'manage_group',

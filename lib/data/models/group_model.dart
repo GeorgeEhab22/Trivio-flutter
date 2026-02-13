@@ -2,10 +2,10 @@ import 'package:auth/domain/entities/group.dart';
 
 class GroupModel extends Group {
   const GroupModel({
-    super.groupId,
-    super.groupName,
+    required super.groupId,
+    required super.groupName,
     super.groupCoverImage,
-    super.groupDescription,
+    required super.groupDescription,
     super.membersCount,
     super.adminsCount,
     super.moderatorsCount,
@@ -18,9 +18,9 @@ class GroupModel extends Group {
     final Map<String, dynamic> data = json['group'] ?? json;
 
     return GroupModel(
-      groupId: data['_id'] as String?,
-      groupName: data['name'] as String?,
-      groupDescription: data['description'] as String?,
+      groupId: data['_id'] as String,
+      groupName: data['name'] as String,
+      groupDescription: data['description'] as String,
       groupCoverImage: data['logo'] as String?,
       membersCount: data['members'] as int? ?? 0,
       adminsCount: data['admins'] as int? ?? 0,

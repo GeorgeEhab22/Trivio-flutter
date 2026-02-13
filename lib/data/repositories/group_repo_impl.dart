@@ -57,8 +57,10 @@ class GroupRepoImpl implements GroupRepo {
       final model = await remoteDataSource.getGroup(groupId);
       return Right(model);
     } on ServerException catch (e) {
+      // print(e);
       return Left(ServerFailure(e.message));
-    } catch (_) {
+    } catch (a) {
+      // print(a);
       return Left(ServerFailure('Group not found'));
     }
   }

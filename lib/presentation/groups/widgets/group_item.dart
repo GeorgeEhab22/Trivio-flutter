@@ -1,10 +1,13 @@
 import 'package:auth/core/app_routes.dart';
 import 'package:auth/core/styels.dart';
+import 'package:auth/presentation/groups/group_preview/widgets/group_image.dart';
 import 'package:auth/presentation/groups/widgets/number_of_members_row.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class GroupItem extends StatelessWidget {
+  final String groupId;
+  final int numOfMembers;
   final String title;
   final String? imageUrl;
   final bool isHorizontal;
@@ -12,6 +15,8 @@ class GroupItem extends StatelessWidget {
 
   const GroupItem({
     super.key,
+    required this.groupId,
+    required this.numOfMembers,
     required this.title,
     this.imageUrl,
     this.isHorizontal = false,
@@ -23,12 +28,12 @@ class GroupItem extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         if (myGroup == true) {
-          context.push(AppRoutes.myGroup);
+          context.push(AppRoutes.myGroup, extra: groupId);
         } else {
-          context.push(AppRoutes.groupFeed);
+          context.push(AppRoutes.groupFeed, extra: groupId);
         }
       },
-      child: isHorizontal ? buildHorizontalLayout() : buildVerticalLayout(),
+      child: isHorizontal ? buildHorizontalLayout(numOfMembers) : buildVerticalLayout(),
     );
   }
 
@@ -39,11 +44,10 @@ class GroupItem extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
         child: Column(
           children: [
-            CircleAvatar(
-              radius: 40,
-              backgroundImage: NetworkImage(
-                imageUrl ?? 'https://picsum.photos/500',
-              ),
+            SizedBox(
+              width: 80,
+              height: 67,
+              child: ClipOval(child: GroupImage(image: imageUrl)),
             ),
             const SizedBox(height: 4),
             Text(
@@ -59,16 +63,15 @@ class GroupItem extends StatelessWidget {
     );
   }
 
-  Widget buildHorizontalLayout() {
+  Widget buildHorizontalLayout(int numOfMembers) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       child: Row(
         children: [
-          CircleAvatar(
-            radius: 32,
-            backgroundImage: NetworkImage(
-              imageUrl ?? 'https://picsum.photos/500',
-            ),
+          SizedBox(
+            width: 64,
+            height: 64,
+            child: ClipOval(child: GroupImage(image: imageUrl)),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -85,7 +88,7 @@ class GroupItem extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
 
-                const NumberOfMembersRow(),
+                NumberOfMembersRow(numOfMembers: numOfMembers,),
               ],
             ),
           ),

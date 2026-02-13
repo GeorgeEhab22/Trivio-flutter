@@ -134,19 +134,19 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
       };
 
       if (coverImage != null) {
-      if (kIsWeb) {
-        final bytes = await coverImage.readAsBytes();
-        body['logo'] = MultipartFile.fromBytes(
-          bytes,
-          filename: coverImage.name,
-        );
-      } else {
-        body['logo'] = await MultipartFile.fromFile(
-          coverImage.path,
-          filename: coverImage.name,
-        );
+        if (kIsWeb) {
+          final bytes = await coverImage.readAsBytes();
+          body['logo'] = MultipartFile.fromBytes(
+            bytes,
+            filename: coverImage.name,
+          );
+        } else {
+          body['logo'] = await MultipartFile.fromFile(
+            coverImage.path,
+            filename: coverImage.name,
+          );
+        }
       }
-    }
 
       final formData = FormData.fromMap(body);
 
@@ -155,7 +155,7 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
         data: formData,
         options: _getAuthOptions(),
       );
-      print(response);
+      // print(response);
       return GroupModel.fromJson(response['data']['group']);
     } catch (e) {
       errorHandler.handleDioError(e);
@@ -261,7 +261,7 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
         "${ApiEndpoints.groups}/$groupId/join",
         options: _getAuthOptions(),
       );
-      print(response['message']);
+      // print(response['message']);
       return response['message'];
     } catch (e) {
       errorHandler.handleDioError(e);
@@ -276,11 +276,17 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
 
   @override
   Future<GroupModel> getGroup(String groupId) async {
-    final response = await api.get(
-      "${ApiEndpoints.groups}/$groupId",
-      options: _getAuthOptions(),
-    );
-    return GroupModel.fromJson(response['data']['group']);
+    try {
+      final response = await api.get(
+        "${ApiEndpoints.groups}/$groupId",
+        options: _getAuthOptions(),
+      );
+      return GroupModel.fromJson(response['data']['group']);
+    } catch (e) {
+      // print(e);
+      errorHandler.handleDioError(e);
+      rethrow;
+    }
   }
 
   @override

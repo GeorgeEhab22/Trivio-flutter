@@ -3,11 +3,11 @@ import 'package:auth/core/styels.dart';
 import 'package:flutter/material.dart';
 
 class NumberOfMembersRow extends StatelessWidget {
-  const NumberOfMembersRow({super.key});
+  final int numOfMembers;
+  const NumberOfMembersRow({super.key,required this.numOfMembers});
 
   @override
   Widget build(BuildContext context) {
-    final int numOfMembers = 50040000;
     return Text(
       "${formatNumber(numOfMembers)} members",
       style: Styles.textStyle14.copyWith(color: Colors.grey),

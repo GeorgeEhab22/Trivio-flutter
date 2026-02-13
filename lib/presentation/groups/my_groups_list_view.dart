@@ -1,55 +1,79 @@
 import 'package:auth/core/styels.dart';
 import 'package:auth/presentation/groups/widgets/group_item.dart';
+import 'package:auth/presentation/manager/group_cubit/get_groups/get_groups_cubit.dart';
+import 'package:auth/presentation/manager/group_cubit/get_groups/get_groups_state.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MyGroupsListView extends StatelessWidget {
   const MyGroupsListView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      padding: EdgeInsets.zero,
-      itemCount: 16,
-      itemBuilder: (context, index) {
-        if (index == 0) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            child: Container(
-              height: 40,
-              decoration: BoxDecoration(
-                color: Theme.of(context).cardColor,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Icon(
-                    Icons.search,
-                    color: Theme.of(context).iconTheme.color,
-                    size: 23,
+    return BlocBuilder<GetAllGroupsCubit, GetGroupsState>(
+      builder: (context, state) {
+        if (state is GetGroupsFailure) {
+          return Center(child: Text(state.message));
+        }
+        if (state is GetGroupsSuccess) {
+          final groups = state.groups;
+          return ListView.builder(
+            padding: EdgeInsets.zero,
+            itemCount: groups.length + 1,
+            itemBuilder: (context, index) {
+              if (index == 0) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
                   ),
-                  const SizedBox(width: 6),
-                  Flexible(
-                    child: Text(
-                      'Search',
-                      style: Styles.textStyle16.copyWith(
-                        color: Theme.of(context).textTheme.bodyMedium?.color,
-                      ),
-                      overflow: TextOverflow.ellipsis,
+                  child: Container(
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).cardColor,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Icon(
+                          Icons.search,
+                          color: Theme.of(context).iconTheme.color,
+                          size: 23,
+                        ),
+                        const SizedBox(width: 6),
+                        Flexible(
+                          child: Text(
+                            'Search',
+                            style: Styles.textStyle16.copyWith(
+                              color: Theme.of(
+                                context,
+                              ).textTheme.bodyMedium?.color,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
-            ),
+                );
+              }
+              final group = groups[index - 1];
+              return GroupItem(
+                groupId: group.groupId,
+                numOfMembers: group.membersCount! +
+                    group.moderatorsCount! +
+                    group.adminsCount!,
+                title: group.groupName,
+                imageUrl: group.groupCoverImage,
+                isHorizontal: true,
+                myGroup: true,
+              );
+            },
           );
         }
-        return const GroupItem(
-          title: "my group1",
-          imageUrl: "https://picsum.photos/500",
-          isHorizontal: true,
-          myGroup: true,
-        );
+        return const SizedBox.shrink();
       },
     );
   }

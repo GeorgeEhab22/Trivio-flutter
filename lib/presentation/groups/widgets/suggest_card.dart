@@ -1,6 +1,7 @@
 import 'package:auth/common/functions/custom_square_button.dart';
 import 'package:auth/core/styels.dart';
 import 'package:auth/injection_container.dart' as di;
+import 'package:auth/presentation/groups/group_preview/widgets/group_image.dart';
 import 'package:auth/presentation/groups/group_preview/widgets/join_group_button.dart';
 import 'package:auth/presentation/manager/group_cubit/cancel_request/cancel_request_group_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/join_group/join_group_cubit.dart';
@@ -13,7 +14,7 @@ class SuggestCard extends StatelessWidget {
   final String? imageUrl;
   final VoidCallback? onJoinGroup;
   final VoidCallback? onRemoveSuggestion;
-  final bool isRow; 
+  final bool isRow;
 
   const SuggestCard({
     super.key,
@@ -22,17 +23,20 @@ class SuggestCard extends StatelessWidget {
     this.imageUrl,
     this.onJoinGroup,
     this.onRemoveSuggestion,
-    this.isRow = true, 
+    this.isRow = true,
   });
 
   @override
   Widget build(BuildContext context) {
-    double cardWidth = (MediaQuery.of(context).size.width * (2 / 3)).clamp(250, 300);
+    double cardWidth = (MediaQuery.of(context).size.width * (2 / 3)).clamp(
+      250,
+      300,
+    );
 
     return MultiBlocProvider(
-      providers:[
+      providers: [
         BlocProvider(create: (context) => di.sl<JoinGroupCubit>()),
-        BlocProvider(create: (context)=> di.sl<CancelRequestGroupCubit>()),
+        BlocProvider(create: (context) => di.sl<CancelRequestGroupCubit>()),
       ],
       child: Padding(
         padding: const EdgeInsets.only(right: 8.0, top: 8.0, bottom: 8.0),
@@ -55,12 +59,12 @@ class SuggestCard extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Image.network(
-                      imageUrl ?? 'https://picsum.photos/500',
+                    SizedBox(
                       height: isRow ? 160 : 120,
                       width: double.infinity,
-                      fit: BoxFit.cover,
+                      child: GroupImage(image: imageUrl),
                     ),
+
                     Padding(
                       padding: const EdgeInsets.all(12.0),
                       child: Column(
@@ -128,7 +132,7 @@ class SuggestCard extends StatelessWidget {
         JoinGroupButton(
           groupId: "69888500a488d0dae5e0accc",
           isExpanded: true,
-          height: 10, 
+          height: 10,
           textStyle: Styles.textStyle14,
         ),
         const SizedBox(height: 8),

@@ -35,10 +35,10 @@ class CreateGroupCubit extends Cubit<CreateGroupState> {
       coverImage: groupCoverImage,
     );
 
-    result.fold(
-      (failure) => emit(_mapFailureToState(failure)),
-      (group) => emit(const CreateGroupSuccess()),
-    );
+    result.fold((failure) => emit(_mapFailureToState(failure)), (group) {
+      emit(CreateGroupSuccess(group: group));
+      resetForm();
+    });
   }
 
   @override
@@ -48,9 +48,28 @@ class CreateGroupCubit extends Cubit<CreateGroupState> {
     return super.close();
   }
 
+  void resetForm() {
+    nameController.clear();
+    descController.clear();
+
+    groupCoverImage = null;
+
+    emit(const CreateGroupInitial());
+  }
+
   void updateImage(XFile file) {
     groupCoverImage = file;
-    emit(CreateGroupInitial());
+    emit(
+      CreateGroupInitial(
+        groupCoverImage: file,
+        nameError: (state is CreateGroupInitial)
+            ? (state as CreateGroupInitial).nameError
+            : null,
+        descError: (state is CreateGroupInitial)
+            ? (state as CreateGroupInitial).descError
+            : null,
+      ),
+    );
   }
 
   bool validateFields() {

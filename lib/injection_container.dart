@@ -26,6 +26,8 @@ import 'package:auth/domain/usecases/group/cancel_request_use_case.dart';
 import 'package:auth/domain/usecases/group/decline_join_request_use_case.dart';
 import 'package:auth/domain/usecases/group/get_join_requests_use_case.dart';
 import 'package:auth/domain/usecases/group/groups/create_group_use_case.dart';
+import 'package:auth/domain/usecases/group/groups/get_group_use_case.dart';
+import 'package:auth/domain/usecases/group/groups/get_groups_use_case.dart';
 import 'package:auth/domain/usecases/group/groups/join_group_use_case.dart';
 import 'package:auth/domain/usecases/group/groups/leave_group_use_case.dart';
 import 'package:auth/domain/usecases/group/members/ban_member_use_case.dart';
@@ -65,6 +67,8 @@ import 'package:auth/presentation/manager/group_cubit/accept_request/accept_requ
 import 'package:auth/presentation/manager/group_cubit/cancel_request/cancel_request_group_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/change_member_role/change_member_role_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/decline_request/decline_request_cubit.dart';
+import 'package:auth/presentation/manager/group_cubit/get_group/get_group_cubit.dart';
+import 'package:auth/presentation/manager/group_cubit/get_groups/get_groups_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/get_join_requests/get_join_requests_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/join_group/join_group_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/kick_member/kick_member_cubit.dart';
@@ -202,6 +206,14 @@ Future<void> init() async {
   // create group
   sl.registerLazySingleton(() => CreateGroupUseCase(sl()));
   sl.registerFactory(() => CreateGroupCubit(createGroupUseCase: sl()));
+
+  // get group
+  sl.registerLazySingleton(() => GetGroupUseCase(sl()));
+  sl.registerFactory(() => GetGroupCubit( getGroupUseCase: sl()));
+
+  //get groups
+  sl.registerLazySingleton(() => GetAllGroupsUseCase(sl()));
+  sl.registerFactory(() => GetAllGroupsCubit(getAllGroupsUseCase: sl()));
 
   // join
   sl.registerLazySingleton(() => JoinGroupUseCase(sl()));

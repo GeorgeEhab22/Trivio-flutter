@@ -38,7 +38,7 @@ class AddCoverPhotoView extends StatelessWidget {
         listener: (context, state) {
           if (state is CreateGroupSuccess) {
             showCustomSnackBar(context, "Group Created Successfully!", true);
-            context.go(AppRoutes.myGroup);
+            context.go(AppRoutes.myGroup,extra: state.group.groupId);
           }
           if (state is CreateGroupFailure) {
             showCustomSnackBar(context, state.message, false);

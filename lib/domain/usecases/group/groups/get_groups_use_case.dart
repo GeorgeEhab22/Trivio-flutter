@@ -3,9 +3,9 @@ import 'package:auth/domain/entities/group.dart';
 import 'package:auth/domain/repositories/group_repo.dart';
 import 'package:dartz/dartz.dart';
 
-class GetGroupsUseCase {
+class GetAllGroupsUseCase {
   final GroupRepo groupRepo;
-  GetGroupsUseCase(this.groupRepo);
+  GetAllGroupsUseCase(this.groupRepo);
 
   Future<Either<Failure, List<Group>>> call({
     int page = 1,

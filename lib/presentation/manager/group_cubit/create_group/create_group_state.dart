@@ -1,4 +1,6 @@
+import 'package:auth/domain/entities/group.dart';
 import 'package:equatable/equatable.dart';
+import 'package:image_picker/image_picker.dart';
 
 abstract class CreateGroupState extends Equatable {
   const CreateGroupState();
@@ -10,9 +12,10 @@ abstract class CreateGroupState extends Equatable {
 class CreateGroupInitial extends CreateGroupState {
   final String? nameError;
   final String? descError;
-  const CreateGroupInitial({this.nameError, this.descError});
+  final XFile? groupCoverImage;
+  const CreateGroupInitial({this.nameError, this.descError, this.groupCoverImage});
   @override
-  List<Object?> get props => [nameError, descError];
+  List<Object?> get props => [nameError, descError, groupCoverImage];
 }
 
 class CreateGroupLoading extends CreateGroupState {
@@ -20,7 +23,10 @@ class CreateGroupLoading extends CreateGroupState {
 }
 
 class CreateGroupSuccess extends CreateGroupState {
-  const CreateGroupSuccess();
+  final Group group;
+  const CreateGroupSuccess({required this.group});
+  @override
+  List<Object?> get props => [group];
 }
 
 class CreateGroupFailure extends CreateGroupState {
