@@ -7,6 +7,7 @@ import 'package:auth/presentation/groups/group_feed/widgets/group_feed_app_bar.d
 import 'package:auth/presentation/groups/group_feed/widgets/leave_group_button.dart';
 import 'package:auth/presentation/groups/group_preview/widgets/group_image.dart';
 import 'package:auth/presentation/groups/widgets/common_group_buttom_sheet.dart';
+import 'package:auth/presentation/groups/widgets/dummy_for_skeletonizer.dart';
 import 'package:auth/presentation/groups/widgets/number_of_members_row.dart';
 import 'package:auth/presentation/manager/group_cubit/get_group/get_group_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/get_group/get_group_state.dart';
@@ -15,6 +16,7 @@ import 'package:auth/presentation/manager/group_cubit/leave_group/leave_group_st
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class GroupFeedView extends StatelessWidget {
   final String groupId;
@@ -39,9 +41,15 @@ class GroupFeedView extends StatelessWidget {
             if (state is GetGroupFailure) {
               return Center(child: Text(state.message));
             }
-            if (state is GetGroupSuccess) {
-              final group = state.group;
-              return ListView(
+            final bool isLoading = state is GetGroupLoading;
+
+            final group = (state is GetGroupSuccess)
+                ? state.group
+                : DummyData.dummyGroup;
+
+            return Skeletonizer(
+              enabled: isLoading,
+              child: ListView(
                 children: [
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -143,9 +151,8 @@ class GroupFeedView extends StatelessWidget {
                     ],
                   ),
                 ],
-              );
-            }
-            return const SizedBox.shrink();
+              ),
+            );
           },
         ),
       ),

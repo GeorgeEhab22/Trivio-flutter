@@ -1,9 +1,11 @@
 import 'package:auth/core/styels.dart';
+import 'package:auth/presentation/groups/widgets/dummy_for_skeletonizer.dart';
 import 'package:auth/presentation/groups/widgets/group_item.dart';
 import 'package:auth/presentation/manager/group_cubit/get_groups/get_groups_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/get_groups/get_groups_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class MyGroupsListView extends StatelessWidget {
   const MyGroupsListView({super.key});
@@ -15,9 +17,13 @@ class MyGroupsListView extends StatelessWidget {
         if (state is GetGroupsFailure) {
           return Center(child: Text(state.message));
         }
-        if (state is GetGroupsSuccess) {
-          final groups = state.groups;
-          return ListView.builder(
+        final bool isLoading = state is GetGroupsLoading;
+        final groups = (state is GetGroupsSuccess)
+            ? state.groups
+            : DummyData.dummyGroups;
+        return Skeletonizer(
+          enabled: isLoading,
+          child: ListView.builder(
             padding: EdgeInsets.zero,
             itemCount: groups.length + 1,
             itemBuilder: (context, index) {
@@ -62,7 +68,8 @@ class MyGroupsListView extends StatelessWidget {
               final group = groups[index - 1];
               return GroupItem(
                 groupId: group.groupId,
-                numOfMembers: group.membersCount! +
+                numOfMembers:
+                    group.membersCount! +
                     group.moderatorsCount! +
                     group.adminsCount!,
                 title: group.groupName,
@@ -71,9 +78,8 @@ class MyGroupsListView extends StatelessWidget {
                 myGroup: true,
               );
             },
-          );
-        }
-        return const SizedBox.shrink();
+          ),
+        );
       },
     );
   }
