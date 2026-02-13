@@ -22,21 +22,11 @@ class MyGroupAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
       actions: [
         IconButton(
-          icon: Icon(
-            Icons.search,
-            color: Theme.of(context).iconTheme.color,
-            size: 28,
-          ),
           onPressed: () {
-            context.push(AppRoutes.search);
-          },
-        ),
-        IconButton(
-          onPressed: () {
-            context.push(AppRoutes.manageGroup);
+            context.go(AppRoutes.home);
           },
           icon: Icon(
-            Icons.security_outlined,
+            Icons.home_outlined,
             color: Theme.of(context).iconTheme.color,
             size: 28,
           ),

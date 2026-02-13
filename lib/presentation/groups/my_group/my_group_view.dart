@@ -1,9 +1,11 @@
+import 'package:auth/common/functions/custom_list_tile.dart';
 import 'package:auth/common/functions/custom_square_button.dart';
 import 'package:auth/constants/colors.dart';
 import 'package:auth/core/app_routes.dart';
 import 'package:auth/core/styels.dart';
 import 'package:auth/presentation/groups/group_preview/widgets/group_image.dart';
 import 'package:auth/presentation/groups/my_group/widgets/my_group_app_bar.dart';
+import 'package:auth/presentation/groups/widgets/common_group_buttom_sheet.dart';
 import 'package:auth/presentation/groups/widgets/number_of_members_row.dart';
 import 'package:auth/presentation/home/widgets/exbandable_text.dart';
 import 'package:auth/presentation/manager/group_cubit/get_group/get_group_cubit.dart';
@@ -35,15 +37,70 @@ class MyGroupView extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(group.groupName, style: Styles.textStyle25),
-                          const SizedBox(height: 8),
-                          NumberOfMembersRow(
-                            numOfMembers:
-                                group.membersCount! +
-                                group.moderatorsCount! +
-                                group.adminsCount!,
+                          Row(
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  group.groupName,
+                                  style: Styles.textStyle25,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              const Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 8.0),
+                                child: Text(
+                                  "•",
+                                  style: TextStyle(
+                                    fontSize: 24,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ),
+
+                              InkWell(
+                                onTap: () {
+                                  context.push(
+                                    AppRoutes.groupMembers,
+                                    extra: group.groupId,
+                                  );
+                                },
+                                borderRadius: BorderRadius.circular(12),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(4),
+                                  child: NumberOfMembersRow(
+                                    numOfMembers:
+                                        group.membersCount! +
+                                        group.moderatorsCount! +
+                                        group.adminsCount!,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                          const SizedBox(height: 20),
+                          const SizedBox(height: 24),
+                          Row(
+                            children: [
+                              const Text("About", style: Styles.textStyle18),
+                              const SizedBox(width: 8),
+                              IconButton(
+                                onPressed: () {
+                                  showCommonGroupBottomSheet(
+                                    context: context,
+                                    actions: [
+                                      CustomListTile(
+                                        icon: Icons.edit,
+                                        text: "Edit description",
+                                        onTap: () {},
+                                      ),
+                                    ],
+                                  );
+                                },
+                                icon: Icon(Icons.keyboard_arrow_down),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
                           ExpandableText(
                             text: group.groupDescription,
                             previewLines: 4,
@@ -54,7 +111,10 @@ class MyGroupView extends StatelessWidget {
                             label: "Manage",
                             height: 13,
                             onTap: () {
-                              context.push(AppRoutes.manageGroup);
+                              context.push(
+                                AppRoutes.manageGroup,
+                                extra: group.groupId,
+                              );
                             },
                             row: true,
                             isExpanded: true,

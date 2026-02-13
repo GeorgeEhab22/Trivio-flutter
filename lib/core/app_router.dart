@@ -16,6 +16,7 @@ import 'package:auth/presentation/groups/manage_group/reported_posts_view.dart';
 import 'package:auth/presentation/groups/my_group/my_group_view.dart';
 import 'package:auth/presentation/manager/group_cubit/ban_member/ban_member_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/create_group/create_group_cubit.dart';
+import 'package:auth/presentation/manager/group_cubit/delete_group/delete_group_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/get_banned_members/get_banned_members_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/accept_request/accept_request_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/cancel_request/cancel_request_group_cubit.dart';
@@ -207,177 +208,202 @@ GoRouter createRouter(bool isLoggedIn) {
             path: 'theme',
             builder: (context, state) => const ThemeView(),
           ),
-          GoRoute(
-            path: 'groups',
-            builder: (context, state) => BlocProvider(
-              create: (context) => di.sl<GetAllGroupsCubit>()..getAllGroups(),
-              child: const GroupsView(),
-            ),
+          ShellRoute(
+            builder: (context, state, child) {
+              return BlocProvider(
+                create: (context) => di.sl<GetAllGroupsCubit>()..getAllGroups(),
+                child: child,
+              );
+            },
             routes: [
               GoRoute(
-                path: 'group_preview',
-                builder: (context, state) {
-                  final String groupId = state.extra as String;
-
-                  return MultiBlocProvider(
-                    providers: [
-                      BlocProvider(
-                        create: (context) => di.sl<JoinGroupCubit>(),
-                      ),
-                      BlocProvider(
-                        create: (context) => di.sl<CancelRequestGroupCubit>(),
-                      ),
-                      BlocProvider(
-                        create: (context) =>
-                            di.sl<GetGroupCubit>()..getGroup(groupId),
-                      ),
-                    ],
-                    child: const GroupPreviewView(),
-                  );
-                },
-              ),
-              GoRoute(
-                path: 'group_feed',
-                builder: (context, state) {
-                  final String groupId = state.extra as String;
-
-                  return MultiBlocProvider(
-                    providers: [
-                      BlocProvider(
-                        create: (context) =>
-                            di.sl<GetGroupCubit>()..getGroup(groupId),
-                      ),
-                      BlocProvider(
-                        create: (context) => di.sl<LeaveGroupCubit>(),
-                      ),
-                    ],
-                    child: GroupFeedView(groupId: groupId),
-                  );
-                },
-              ),
-              ShellRoute(
-                builder: (context, state, child) {
-                  return BlocProvider(
-                    create: (context) => di.sl<CreateGroupCubit>(),
-                    child: child,
-                  );
-                },
+                path: 'groups',
+                builder: (context, state) => const GroupsView(),
                 routes: [
                   GoRoute(
-                    path: 'create_group',
-                    builder: (context, state) => const CreateGroupView(),
+                    path: 'group_preview',
+                    builder: (context, state) {
+                      final String groupId = state.extra as String;
+
+                      return MultiBlocProvider(
+                        providers: [
+                          BlocProvider(
+                            create: (context) => di.sl<JoinGroupCubit>(),
+                          ),
+                          BlocProvider(
+                            create: (context) =>
+                                di.sl<CancelRequestGroupCubit>(),
+                          ),
+                          BlocProvider(
+                            create: (context) =>
+                                di.sl<GetGroupCubit>()..getGroup(groupId),
+                          ),
+                        ],
+                        child: const GroupPreviewView(),
+                      );
+                    },
+                  ),
+                  GoRoute(
+                    path: 'group_feed',
+                    builder: (context, state) {
+                      final String groupId = state.extra as String;
+
+                      return MultiBlocProvider(
+                        providers: [
+                          BlocProvider(
+                            create: (context) =>
+                                di.sl<GetGroupCubit>()..getGroup(groupId),
+                          ),
+                          BlocProvider(
+                            create: (context) => di.sl<LeaveGroupCubit>(),
+                          ),
+                        ],
+                        child: GroupFeedView(groupId: groupId),
+                      );
+                    },
+                  ),
+                  ShellRoute(
+                    builder: (context, state, child) {
+                      return BlocProvider(
+                        create: (context) => di.sl<CreateGroupCubit>(),
+                        child: child,
+                      );
+                    },
                     routes: [
                       GoRoute(
-                        path: 'add_cover_photo',
-                        builder: (context, state) => const AddCoverPhotoView(),
+                        path: 'create_group',
+                        builder: (context, state) => const CreateGroupView(),
+                        routes: [
+                          GoRoute(
+                            path: 'add_cover_photo',
+                            builder: (context, state) =>
+                                const AddCoverPhotoView(),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                ],
-              ),
-              GoRoute(
-                path: 'my_group',
-                builder: (context, state) {
-                  final String groupId = state.extra as String;
-                  return BlocProvider(
-                    create: (context) =>
-                        di.sl<GetGroupCubit>()..getGroup(groupId),
-                    child: const MyGroupView(),
-                  );
-                },
-
-                routes: [
                   GoRoute(
-                    path: 'manage_group',
-                    builder: (context, state) => const ManageGroupView(),
+                    path: 'my_group',
+                    builder: (context, state) {
+                      final String groupId = state.extra as String;
+                      return BlocProvider(
+                        create: (context) =>
+                            di.sl<GetGroupCubit>()..getGroup(groupId),
+                        child: const MyGroupView(),
+                      );
+                    },
+
                     routes: [
                       GoRoute(
-                        path: 'members_requests',
+                        path: 'manage_group',
                         builder: (context, state) {
-                          final groupId =
-                              (state.extra as String?) ??
-                              "69888500a488d0dae5e0accc";
+                          final String groupId = state.extra as String;
+                          return BlocProvider(
+                            create: (context) => di.sl<DeleteGroupCubit>(),
 
-                          return MultiBlocProvider(
-                            providers: [
-                              BlocProvider(
-                                create: (context) =>
-                                    di.sl<GetJoinRequestsCubit>()
-                                      ..getJoinRequestsGroup(groupId: groupId),
-                              ),
-                              BlocProvider(
-                                create: (context) =>
-                                    di.sl<AcceptRequestCubit>(),
-                              ),
-                              BlocProvider(
-                                create: (context) =>
-                                    di.sl<DeclineRequestCubit>(),
-                              ),
-                            ],
-                            child: MembersRequestsListView(groupId: groupId),
+                            child: ManageGroupView(groupId: groupId),
                           );
                         },
-                      ),
-                      GoRoute(
-                        path: 'pending_posts',
-                        builder: (context, state) => const PendingPostsView(),
-                      ),
-                      GoRoute(
-                        path: 'reported_posts',
-                        builder: (context, state) => const ReportedPostsView(),
-                      ),
-                      GoRoute(
-                        path: 'members',
-                        builder: (context, state) {
-                          final groupId =
-                              (state.extra as String?) ??
-                              "695d4782c3f2873f107b0f17";
-                          return MultiBlocProvider(
-                            providers: [
-                              BlocProvider(
-                                create: (context) =>
-                                    di.sl<GroupMembersCubit>()
-                                      ..getAllGroupData(groupId),
-                              ),
-                              BlocProvider(
-                                create: (context) =>
-                                    di.sl<ChangeMemberRoleCubit>(),
-                              ),
-                              BlocProvider(
-                                create: (context) => di.sl<BanMemberCubit>(),
-                              ),
-                              BlocProvider(
-                                create: (context) => di.sl<KickMemberCubit>(),
-                              ),
-                            ],
-                            child: PeopleView(groupId: groupId),
-                          );
-                        },
-                      ),
-                      GoRoute(
-                        path: 'banned_members',
-                        builder: (context, state) {
-                          final groupId =
-                              (state.extra as String?) ??
-                              "69888500a488d0dae5e0accc";
-                          return MultiBlocProvider(
-                            providers: [
-                              BlocProvider(
-                                create: (context) =>
-                                    di.sl<GetBannedMembersCubit>()
-                                      ..getBannedMembers(groupId: groupId),
-                              ),
-                              BlocProvider(
-                                create: (context) =>
-                                    di.sl<UnbanMemberCubit>()..unbanMember(
-                                      groupId: groupId,
-                                      targetUserId: "695c2fdc9dae082566c285c8",
-                                    ),
-                              ),
-                            ],
-                            child: BannedMembersList(groupId: groupId),
-                          );
-                        },
+                        routes: [
+                          GoRoute(
+                            path: 'members_requests',
+                            builder: (context, state) {
+                              final groupId =
+                                  (state.extra as String?) ??
+                                  "69888500a488d0dae5e0accc";
+
+                              return MultiBlocProvider(
+                                providers: [
+                                  BlocProvider(
+                                    create: (context) =>
+                                        di.sl<GetJoinRequestsCubit>()
+                                          ..getJoinRequestsGroup(
+                                            groupId: groupId,
+                                          ),
+                                  ),
+                                  BlocProvider(
+                                    create: (context) =>
+                                        di.sl<AcceptRequestCubit>(),
+                                  ),
+                                  BlocProvider(
+                                    create: (context) =>
+                                        di.sl<DeclineRequestCubit>(),
+                                  ),
+                                ],
+                                child: MembersRequestsListView(
+                                  groupId: groupId,
+                                ),
+                              );
+                            },
+                          ),
+                          GoRoute(
+                            path: 'pending_posts',
+                            builder: (context, state) =>
+                                const PendingPostsView(),
+                          ),
+                          GoRoute(
+                            path: 'reported_posts',
+                            builder: (context, state) =>
+                                const ReportedPostsView(),
+                          ),
+                          GoRoute(
+                            path: 'members',
+                            builder: (context, state) {
+                              final groupId =
+                                  (state.extra as String?) ??
+                                  "695d4782c3f2873f107b0f17";
+                              return MultiBlocProvider(
+                                providers: [
+                                  BlocProvider(
+                                    create: (context) =>
+                                        di.sl<GroupMembersCubit>()
+                                          ..getAllGroupData(groupId),
+                                  ),
+                                  BlocProvider(
+                                    create: (context) =>
+                                        di.sl<ChangeMemberRoleCubit>(),
+                                  ),
+                                  BlocProvider(
+                                    create: (context) =>
+                                        di.sl<BanMemberCubit>(),
+                                  ),
+                                  BlocProvider(
+                                    create: (context) =>
+                                        di.sl<KickMemberCubit>(),
+                                  ),
+                                ],
+                                child: PeopleView(groupId: groupId),
+                              );
+                            },
+                          ),
+                          GoRoute(
+                            path: 'banned_members',
+                            builder: (context, state) {
+                              final groupId =
+                                  (state.extra as String?) ??
+                                  "69888500a488d0dae5e0accc";
+                              return MultiBlocProvider(
+                                providers: [
+                                  BlocProvider(
+                                    create: (context) =>
+                                        di.sl<GetBannedMembersCubit>()
+                                          ..getBannedMembers(groupId: groupId),
+                                  ),
+                                  BlocProvider(
+                                    create: (context) =>
+                                        di.sl<UnbanMemberCubit>()..unbanMember(
+                                          groupId: groupId,
+                                          targetUserId:
+                                              "695c2fdc9dae082566c285c8",
+                                        ),
+                                  ),
+                                ],
+                                child: BannedMembersList(groupId: groupId),
+                              );
+                            },
+                          ),
+                        ],
                       ),
                     ],
                   ),

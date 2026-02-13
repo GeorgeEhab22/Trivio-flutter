@@ -9,6 +9,7 @@ class GetAllGroupsCubit extends Cubit<GetGroupsState> {
     : super(GetGroupsInitial());
 
   Future<void> getAllGroups({int page = 1, String? search}) async {
+    if (state is GetGroupsLoading) return;
     emit(GetGroupsLoading());
     final result = await getAllGroupsUseCase(page: page, search: search);
 
@@ -16,5 +17,17 @@ class GetAllGroupsCubit extends Cubit<GetGroupsState> {
       (failure) => emit(GetGroupsFailure(message: failure.message)),
       (groups) => emit(GetGroupsSuccess(groups: groups)),
     );
+  }
+
+  void removeGroupLocally(String groupId) {
+    if (state is GetGroupsSuccess) {
+      final currentState = state as GetGroupsSuccess;
+      
+      final updatedList = currentState.groups
+          .where((group) => group.groupId != groupId)
+          .toList();
+      
+      emit(GetGroupsSuccess(groups: updatedList));
+    }
   }
 }

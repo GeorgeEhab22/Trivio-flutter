@@ -26,6 +26,8 @@ import 'package:auth/domain/usecases/group/cancel_request_use_case.dart';
 import 'package:auth/domain/usecases/group/decline_join_request_use_case.dart';
 import 'package:auth/domain/usecases/group/get_join_requests_use_case.dart';
 import 'package:auth/domain/usecases/group/groups/create_group_use_case.dart';
+import 'package:auth/domain/usecases/group/groups/delete_group_use_case.dart';
+import 'package:auth/domain/usecases/group/groups/edit_group_use_case.dart';
 import 'package:auth/domain/usecases/group/groups/get_group_use_case.dart';
 import 'package:auth/domain/usecases/group/groups/get_groups_use_case.dart';
 import 'package:auth/domain/usecases/group/groups/join_group_use_case.dart';
@@ -62,6 +64,7 @@ import 'package:auth/domain/usecases/sign_in/verify_otp.dart';
 import 'package:auth/presentation/manager/comment_cubit/comment_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/ban_member/ban_member_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/create_group/create_group_cubit.dart';
+import 'package:auth/presentation/manager/group_cubit/delete_group/delete_group_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/get_banned_members/get_banned_members_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/accept_request/accept_request_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/cancel_request/cancel_request_group_cubit.dart';
@@ -75,6 +78,7 @@ import 'package:auth/presentation/manager/group_cubit/kick_member/kick_member_cu
 import 'package:auth/presentation/manager/group_cubit/leave_group/leave_group_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/get_members_by_roles/members_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/unban_member/unban_member_cubit.dart';
+import 'package:auth/presentation/manager/group_cubit/update_group/update_group_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/create_post_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/post_interaction_cubit.dart';
@@ -214,6 +218,14 @@ Future<void> init() async {
   //get groups
   sl.registerLazySingleton(() => GetAllGroupsUseCase(sl()));
   sl.registerFactory(() => GetAllGroupsCubit(getAllGroupsUseCase: sl()));
+
+  // update group
+  sl.registerLazySingleton(() => UpdateGroupUseCase(sl()));
+  sl.registerFactory(() => UpdateGroupCubit(updateGroupUseCase: sl()));
+
+  // delete group
+  sl.registerLazySingleton(() => DeleteGroupUseCase(sl()));
+  sl.registerFactory(() => DeleteGroupCubit(deleteGroupUseCase: sl()));
 
   // join
   sl.registerLazySingleton(() => JoinGroupUseCase(sl()));
