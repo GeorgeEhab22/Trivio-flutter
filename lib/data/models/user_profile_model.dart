@@ -45,7 +45,6 @@ class UserProfileModel extends UserProfile {
       privacy: privacy,
       followersCount: followersCount,
       followingCount: followingCount,
-      createdAt: createdAt,
     );
   }
 }

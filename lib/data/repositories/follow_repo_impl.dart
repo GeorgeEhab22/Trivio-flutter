@@ -8,10 +8,10 @@ import 'package:auth/domain/entities/follow_request.dart';
 import 'package:auth/domain/repositories/follow_repo.dart';
 import 'package:dartz/dartz.dart';
 
-class FollowRepositoryImpl implements FollowRepo {
+class FollowRepoImpl implements FollowRepo {
   final FollowRemoteDataSource remote;
 
-  FollowRepositoryImpl({required this.remote});
+  FollowRepoImpl({required this.remote});
 
   @override
   Future<Either<Failure, Follow>> followUser({required String userId}) async {

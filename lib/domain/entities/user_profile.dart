@@ -6,7 +6,6 @@ class UserProfile {
   final String privacy;
   final int followersCount;
   final int followingCount;
-  final DateTime? createdAt;
   
 
   const UserProfile({
@@ -17,6 +16,5 @@ class UserProfile {
     this.privacy = "public",
     this.followersCount = 0,
     this.followingCount = 0,
-    this.createdAt,
   });
 }
