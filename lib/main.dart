@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:auth/constants/colors.dart';
 import 'package:auth/core/app_router.dart';
+import 'package:auth/presentation/manager/profile_cubit/profile_cubit.dart';
 import 'package:auth/presentation/manager/theme_cubit/theme_cubit.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/foundation.dart';
@@ -25,7 +26,7 @@ void main() async {
   runApp(
     DevicePreview(
       enabled: enableDevicePreview,
-      builder: (context) =>  MyApp(isLoggedIn: isLoggedIn),
+      builder: (context) => MyApp(isLoggedIn: isLoggedIn),
     ),
   );
 }
@@ -37,9 +38,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final router = createRouter(isLoggedIn);
-    
-    return BlocProvider(
-      create: (_) =>di.sl<ThemeCubit> (),
+
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => di.sl<ThemeCubit>()),
+        BlocProvider(create: (context) => ProfileCubit(getMyProfile: di.sl())),
+      ],
       child: BlocBuilder<ThemeCubit, ThemeMode>(
         builder: (context, themeMode) {
           return MaterialApp.router(
@@ -58,19 +62,19 @@ class MyApp extends StatelessWidget {
               textTheme: const TextTheme(
                 bodyMedium: TextStyle(color: Colors.black87),
               ),
-              
             ),
             darkTheme: ThemeData(
               brightness: Brightness.dark,
               useMaterial3: true,
               scaffoldBackgroundColor: const Color(0xFF18191a),
-              appBarTheme: const AppBarTheme(backgroundColor: Color(0xFF18191a)),
+              appBarTheme: const AppBarTheme(
+                backgroundColor: Color(0xFF18191a),
+              ),
               iconTheme: const IconThemeData(color: Colors.white),
               cardColor: Colors.grey[850],
               textTheme: const TextTheme(
                 bodyMedium: TextStyle(color: Colors.white),
               ),
-              
             ),
             routerConfig: router,
           );
@@ -79,13 +83,15 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
 Future<void> _setupDevMode() async {
   final prefs = await SharedPreferences.getInstance();
-  
+
   // 1. Paste your long JWT string here
-  const String devToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NzYwMzhmNTE5ZjRkNDE5MzVlMzRiMiIsInVzZXJuYW1lIjoiR2VvcmdlIiwiZW1haWwiOiJnZW9yZ2VlaGFiLmNzQGdtYWlsLmNvbSIsImlhdCI6MTc2OTM0NzY2MiwiZXhwIjoxNzY5NDM0MDYyfQ.Dyx8rlY_dHAsQ1FMrnZ023K4yUOtdsg7F1Prt8Z_UEc"; 
+  const String devToken =
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NzYwMzhmNTE5ZjRkNDE5MzVlMzRiMiIsInVzZXJuYW1lIjoiR2VvcmdlIiwiZW1haWwiOiJnZW9yZ2VlaGFiLmNzQGdtYWlsLmNvbSIsImlhdCI6MTc2OTM0NzY2MiwiZXhwIjoxNzY5NDM0MDYyfQ.Dyx8rlY_dHAsQ1FMrnZ023K4yUOtdsg7F1Prt8Z_UEc";
 
   await prefs.setString('auth_token', devToken);
-  
+
   print("🛠️ DEV MODE: Token injected. App will start as logged in.");
 }

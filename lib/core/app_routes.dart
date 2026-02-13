@@ -13,14 +13,12 @@ class AppRoutes {
   static const String chatbot = '/app/chatbot';
   static const String stats = '/app/stats';
   static const String profile = '/app/profile';
-
-  static const String settings = '/app/settings';
+  static const String profileSettings = '/app/profile/settings';
   static const String notifications = '/app/notifications';
   static const String search = '/app/search';
   static const String groups = '/app/groups';
   static const String messages = '/app/messages';
   static const String chat = '/app/messages/chat';
   static const String chatInfo = '/app/messages/chat/chat_info';
-  static const String userProfileSettings = '/app/profile_settings';
 
 }

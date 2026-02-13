@@ -8,14 +8,14 @@ import 'package:auth/domain/repositories/user_profile_repo.dart';
 import 'package:dartz/dartz.dart';
 
 class UserProfileRepositoryImpl implements UserProfileRepo {
-  final ProfileRemoteDataSource remote;
+  final ProfileRemoteDataSource remoteDataSource;
 
-  UserProfileRepositoryImpl({required this.remote});
+  UserProfileRepositoryImpl({required this.remoteDataSource});
 
   @override
   Future<Either<Failure, UserProfile>> getMyProfile() async {
     try {
-      final model = await remote.getMyProfile();
+      final model = await remoteDataSource.getMyProfile();
       final entity = model.toEntity();
       return Right(entity);
     } on ServerException catch (e) {

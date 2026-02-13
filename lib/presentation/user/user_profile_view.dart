@@ -26,7 +26,7 @@ class UserProfileView extends StatelessWidget {
 
             IconButton(
               onPressed: () {
-                GoRouter.of(context).push(AppRoutes.userProfileSettings);
+                GoRouter.of(context).push(AppRoutes.profileSettings);
               },
               icon: Icon(Icons.menu),
             ),

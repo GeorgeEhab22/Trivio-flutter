@@ -5,12 +5,15 @@ import 'package:auth/common/functions/handle_dio_error.dart';
 import 'package:auth/data/datasource/auth_remote_datasource.dart';
 import 'package:auth/data/datasource/comments_remote_datasource.dart';
 import 'package:auth/data/datasource/posts_remote_datasource.dart';
+import 'package:auth/data/datasource/profile_remote_datasource.dart';
 import 'package:auth/data/repositories/auth_repo_impl.dart';
 import 'package:auth/data/repositories/comment_repo_impl.dart';
 import 'package:auth/data/repositories/post_repo_impl.dart';
+import 'package:auth/data/repositories/profile_repo_impl.dart';
 import 'package:auth/domain/repositories/auth_repo.dart';
 import 'package:auth/domain/repositories/comment_repo.dart';
 import 'package:auth/domain/repositories/post_repo.dart';
+import 'package:auth/domain/repositories/user_profile_repo.dart';
 import 'package:auth/domain/usecases/comment/add_comment_usecase.dart';
 import 'package:auth/domain/usecases/comment/delete_comment_usecase.dart';
 import 'package:auth/domain/usecases/comment/edit_comment_usecase.dart';
@@ -39,10 +42,12 @@ import 'package:auth/domain/usecases/sign_in/request_otp.dart';
 
 import 'package:auth/domain/usecases/sign_in/signin_usecase.dart';
 import 'package:auth/domain/usecases/sign_in/verify_otp.dart';
+import 'package:auth/domain/usecases/user_profile/get_my_profile.dart';
 import 'package:auth/presentation/manager/comment_cubit/comment_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/create_post_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/post_interaction_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/profile_cubit.dart';
 import 'package:auth/presentation/manager/register_cubit/register_cubit.dart';
 import 'package:auth/presentation/manager/sigin_in_cubit/sign_in_cubit.dart';
 import 'package:auth/presentation/manager/theme_cubit/theme_cubit.dart';
@@ -163,4 +168,14 @@ Future<void> init() async {
       createPostUseCase: sl(),),
   );
    sl.registerFactory(() => ThemeCubit());
+
+  sl.registerLazySingleton<ProfileRemoteDataSource>(
+    () => ProfileRemoteDataSourceImpl(api: sl(), errorHandler: sl()),
+  );
+  sl.registerLazySingleton<UserProfileRepo>(
+    () => UserProfileRepositoryImpl(remoteDataSource: sl()),
+  );
+  
+  sl.registerFactory(() => ProfileCubit(getMyProfile: sl()));
+  sl.registerLazySingleton(() => GetMyProfile(sl()));
 }

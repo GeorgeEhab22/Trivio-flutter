@@ -23,13 +23,13 @@ class UserProfileModel extends UserProfile {
 
   factory UserProfileModel.fromJson(Map<String, dynamic> json) {
     return UserProfileModel(
-      id: json['_id'] ?? json['id'],
-      name: json['name'],
-      email: json['email'],
-      role: json['role'] ?? 'user',
-      privacy: json['privacy'], // just store the string
-      followersCount: json['followersCount'] ?? 0,
-      followingCount: json['followingCount'] ?? 0,
+      id: json['_id']?.toString() ?? json['id']?.toString() ?? '',
+      name: json['name']?.toString() ?? '',
+      email: json['email']?.toString() ?? '',
+      role: json['role']?.toString() ?? 'user',
+      privacy: json['privacy']?.toString() ?? "public",
+      followersCount: int.tryParse(json['followersCount']?.toString() ?? '0') ?? 0,
+      followingCount: int.tryParse(json['followingCount']?.toString() ?? '0') ?? 0,
       createdAt: json['createdAt'] != null
           ? DateTime.tryParse(json['createdAt'])
           : null,

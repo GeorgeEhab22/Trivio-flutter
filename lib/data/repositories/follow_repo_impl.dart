@@ -19,7 +19,7 @@ class FollowRepositoryImpl implements FollowRepo {
       final follow = await remote.followUser(userId: userId);
       return Right(follow);
     } on ServerException catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Left(ServerFailure(e.message));
     } catch (e) {
       return Left(ServerFailure('Unexpected error: $e'));
     }
@@ -31,7 +31,7 @@ class FollowRepositoryImpl implements FollowRepo {
       await remote.unfollowUser(userId: userId);
       return const Right(null);
     } on ServerException catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Left(ServerFailure(e.message));
     } catch (e) {
       return Left(ServerFailure('Unexpected error: $e'));
     }
@@ -43,7 +43,7 @@ class FollowRepositoryImpl implements FollowRepo {
       final requests = await remote.getMyFollowRequests();
       return Right(requests);
     } on ServerException catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Left(ServerFailure(e.message));
     } catch (e) {
       return Left(ServerFailure('Unexpected error: $e'));
     }
@@ -55,7 +55,7 @@ class FollowRepositoryImpl implements FollowRepo {
       final follow = await remote.acceptFollowRequest(requestId: requestId);
       return Right(follow);
     } on ServerException catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Left(ServerFailure(e.message));
     } catch (e) {
       return Left(ServerFailure('Unexpected error: $e'));
     }
@@ -67,7 +67,7 @@ class FollowRepositoryImpl implements FollowRepo {
       await remote.declineFollowRequest(requestId: requestId);
       return const Right(null);
     } on ServerException catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Left(ServerFailure(e.message));
     } catch (e) {
       return Left(ServerFailure('Unexpected error: $e'));
     }
@@ -79,7 +79,7 @@ class FollowRepositoryImpl implements FollowRepo {
       final followers = await remote.getUserFollowers(userId: userId);
       return Right(followers);
     } on ServerException catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Left(ServerFailure(e.message));
     } catch (e) {
       return Left(ServerFailure('Unexpected error: $e'));
     }
@@ -91,7 +91,7 @@ class FollowRepositoryImpl implements FollowRepo {
       final following = await remote.getUserFollowing(userId: userId);
       return Right(following);
     } on ServerException catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Left(ServerFailure(e.message));
     } catch (e) {
       return Left(ServerFailure('Unexpected error: $e'));
     }
@@ -103,7 +103,7 @@ class FollowRepositoryImpl implements FollowRepo {
       final followers = await remote.getMyFollowers(page: page, limit: limit);
       return Right(followers);
     } on ServerException catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Left(ServerFailure(e.message));
     } catch (e) {
       return Left(ServerFailure('Unexpected error: $e'));
     }
@@ -115,7 +115,7 @@ class FollowRepositoryImpl implements FollowRepo {
       final following = await remote.getMyFollowing(page: page, limit: limit);
       return Right(following);
     } on ServerException catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Left(ServerFailure(e.message));
     } catch (e) {
       return Left(ServerFailure('Unexpected error: $e'));
     }
