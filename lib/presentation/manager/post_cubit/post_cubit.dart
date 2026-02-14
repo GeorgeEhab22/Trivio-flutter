@@ -55,6 +55,7 @@ class PostCubit extends Cubit<PostState> {
     }
 
     page++;
+    if(isClosed) return;
     emit(PostLoaded(List.from(posts)));
   }
 

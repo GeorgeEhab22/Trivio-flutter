@@ -24,6 +24,7 @@ class _ThemeRevealAnimationState extends State<ThemeRevealAnimation>
   late Animation<double> _animation;
   ThemeMode? _previousTheme;
   Offset? _tapPosition;
+  bool _isDisposed = false;
 
   @override
   void initState() {
@@ -39,7 +40,7 @@ class _ThemeRevealAnimationState extends State<ThemeRevealAnimation>
   @override
   void didUpdateWidget(ThemeRevealAnimation oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.themeMode != widget.themeMode) {
+    if (oldWidget.themeMode != widget.themeMode && !_isDisposed) {
       _previousTheme = oldWidget.themeMode;
       _controller.forward(from: 0.0);
     }
@@ -47,14 +48,18 @@ class _ThemeRevealAnimationState extends State<ThemeRevealAnimation>
 
   @override
   void dispose() {
+    _isDisposed = true;
+    _controller.stop();
     _controller.dispose();
     super.dispose();
   }
 
   void setTapPosition(Offset position) {
-    setState(() {
-      _tapPosition = position;
-    });
+    if (!_isDisposed) {
+      setState(() {
+        _tapPosition = position;
+      });
+    }
   }
 
   @override
@@ -63,6 +68,7 @@ class _ThemeRevealAnimationState extends State<ThemeRevealAnimation>
       animation: _animation,
       builder: (context, child) {
         return Stack(
+          alignment: Alignment.topLeft, // FIX: Use Alignment instead of AlignmentDirectional
           children: [
             widget.child,
             if (_animation.value > 0 && _animation.value < 1)
@@ -141,6 +147,7 @@ class _ThemeRippleTransitionState extends State<ThemeRippleTransition>
   late Animation<double> _ripple2;
   late Animation<double> _ripple3;
   late Animation<double> _fade;
+  bool _isDisposed = false;
 
   @override
   void initState() {
@@ -179,13 +186,15 @@ class _ThemeRippleTransitionState extends State<ThemeRippleTransition>
   @override
   void didUpdateWidget(ThemeRippleTransition oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.isDark != widget.isDark) {
+    if (oldWidget.isDark != widget.isDark && !_isDisposed) {
       _controller.forward(from: 0.0);
     }
   }
 
   @override
   void dispose() {
+    _isDisposed = true;
+    _controller.stop();
     _controller.dispose();
     super.dispose();
   }
@@ -193,6 +202,7 @@ class _ThemeRippleTransitionState extends State<ThemeRippleTransition>
   @override
   Widget build(BuildContext context) {
     return Stack(
+      alignment: Alignment.topLeft, // FIX: Use Alignment instead of AlignmentDirectional
       children: [
         widget.child,
         AnimatedBuilder(

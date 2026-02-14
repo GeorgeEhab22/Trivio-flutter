@@ -1,3 +1,4 @@
+import 'package:auth/common/functions/match_status_helper.dart';
 import 'package:auth/constants/colors.dart';
 import 'package:auth/core/styels.dart';
 import 'package:auth/data/models/stats_dart/matches.dart';
@@ -28,60 +29,95 @@ class MatchTile extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              SizedBox(
-                width: 65,
-                child: match.competition?.emblem != null
-                    ? Padding(
-                        padding: const EdgeInsets.only(left: 12.0),
-                        child: Image.network(
+          // Competition Header Row
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Row(
+              children: [
+                // Competition emblem
+                SizedBox(
+                  width: 50,
+                  child: match.competition?.emblem != null
+                      ? Image.network(
                           match.competition!.emblem!,
-                          height: 45,
-                          width: 45,
+                          height: 40,
+                          width: 40,
                           fit: BoxFit.contain,
+                        )
+                      : Icon(
+                          Icons.sports_soccer,
+                          color: Theme.of(context).iconTheme.color,
+                          size: 28,
                         ),
-                      )
-                    : Icon(
-                        Icons.sports_soccer,
-                        color: Theme.of(context).iconTheme.color,
-                        size: 30,
+                ),
+                const SizedBox(width: 12),
+                // Competition name
+                Expanded(
+                  child: Skeleton.ignore(
+                    child: Text(
+                      '‣ ${match.area?.name ?? ""} ‣ ${match.competition?.name ?? ""}',
+                      style: Styles.textStyle16.copyWith(
+                        color: Theme.of(context).textTheme.bodyMedium?.color,
                       ),
-              ),
-              const SizedBox(width: 16),
-              Skeleton.ignore(
-                child: Text(
-                  '‣ ${match.area?.name ?? ""} ‣ ${match.competition?.name ?? ""}',
-                  style: Styles.textStyle16.copyWith(
-                    color: Theme.of(context).textTheme.bodyMedium?.color,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
+          
+          const SizedBox(height: 8),
+          
+          // Match Details Row
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
             child: IntrinsicHeight(
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  // Time and Status Column
                   SizedBox(
-                    width: 50,
-                    child: Center(
-                      child: Text(
-                        match.utcDate != null
-                            ? DateFormat('hh:mm').format(DateTime.parse(match.utcDate!).toLocal())
-                            : "TBD",
-                        style: Styles.textStyle16,
-                      ),
+                    width: 70,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // Match time
+                        Text(
+                          match.utcDate != null
+                              ? DateFormat('HH:mm').format(
+                                  DateTime.parse(match.utcDate!).toLocal(),
+                                )
+                              : "TBD",
+                          style: Styles.textStyle14.copyWith(
+                            color: Theme.of(context).textTheme.bodyMedium?.color,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        
+                        // Premium Status Badge
+                        Skeleton.ignore(
+                          child: PremiumMatchStatusBadge(
+                            status: match.status.toString(),
+                            animate: true,
+                            compact: false,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
 
-                  const VerticalDivider(
-                    width: 32,
+                  // Divider
+                  Container(
+                    width: 1,
+                    height: double.infinity,
+                    margin: const EdgeInsets.symmetric(horizontal: 12),
                     color: AppColors.customGrey,
-                    thickness: 1,
                   ),
 
+                  // Teams Column
                   Expanded(
                     child: Column(
                       children: [
@@ -106,14 +142,18 @@ class MatchTile extends StatelessWidget {
                     ),
                   ),
 
-                  const VerticalDivider(
-                    width: 20,
+                  // Divider
+                  Container(
+                    width: 1,
+                    height: double.infinity,
+                    margin: const EdgeInsets.symmetric(horizontal: 8),
                     color: AppColors.customGrey,
-                    thickness: 1,
                   ),
 
-                  // 3. Action
-                  Skeleton.ignore(child: const NotificationButton()),
+                  // Notification Button
+                  Skeleton.ignore(
+                    child: const NotificationButton(),
+                  ),
                 ],
               ),
             ),
@@ -125,9 +165,12 @@ class MatchTile extends StatelessWidget {
 
   Widget _buildCrest(String? url, BuildContext context) {
     return Container(
-      height: 40,
-      width: 40,
-      decoration: BoxDecoration(color: Colors.transparent, shape: BoxShape.circle),
+      height: 36,
+      width: 36,
+      decoration: const BoxDecoration(
+        color: Colors.transparent,
+        shape: BoxShape.circle,
+      ),
       child: ClipOval(
         child: url != null
             ? Image.network(
@@ -137,7 +180,7 @@ class MatchTile extends StatelessWidget {
                 isAntiAlias: true,
                 errorBuilder: (_, __, ___) => const Icon(
                   Icons.sports_soccer,
-                  size: 18,
+                  size: 16,
                   color: Colors.grey,
                 ),
               )
@@ -146,7 +189,7 @@ class MatchTile extends StatelessWidget {
                 child: Icon(
                   Icons.sports_soccer_outlined,
                   color: Theme.of(context).iconTheme.color,
-                  size: 24,
+                  size: 20,
                 ),
               ),
       ),

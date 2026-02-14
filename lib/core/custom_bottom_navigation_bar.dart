@@ -52,6 +52,8 @@ class _GlassmorphismNavState extends State<GlassmorphismNav>
 
   @override
   void dispose() {
+    _pulseController.stop();
+    _rotateController.stop();
     _pulseController.dispose();
     _rotateController.dispose();
     super.dispose();
