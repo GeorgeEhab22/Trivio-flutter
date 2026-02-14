@@ -10,7 +10,7 @@ class ProfileInfoBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(10.0),
       child: Column(
         children: [
           Row(
@@ -21,7 +21,6 @@ class ProfileInfoBox extends StatelessWidget {
                     radius: 40,
                     backgroundImage: NetworkImage('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqIGCJ9InU9rQK7e09YdcGY9E1TTdGAXIQ0g&s'),
                   ),
-                  // Place the Toggle Button on the bottom right of the avatar
                   Positioned(
                     bottom: 0,
                     right: 0,
@@ -30,7 +29,6 @@ class ProfileInfoBox extends StatelessWidget {
                 ],
               ),
               const SizedBox(width: 20),
-              // Use the ProfileSocialInfo widget we discussed
               const Expanded(
                 child: ProfileSocialInfo(
                   numberOfFollowers: 120,
@@ -40,7 +38,6 @@ class ProfileInfoBox extends StatelessWidget {
               ),
             ],
           ),
-          // Add Bio or Name here...
         ],
       ),
     );

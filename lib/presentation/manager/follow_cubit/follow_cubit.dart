@@ -1,8 +1,6 @@
-import 'package:auth/domain/entities/follow.dart';
 import 'package:auth/domain/usecases/follow/follow_user.dart';
 import 'package:auth/domain/usecases/follow/unfollow_user.dart';
 import 'package:auth/dummydata.dart';
-import 'package:dartz/dartz.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'follow_state.dart';
 

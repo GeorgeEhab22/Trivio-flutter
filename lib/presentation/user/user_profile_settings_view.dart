@@ -43,7 +43,7 @@ class UserProfileSettings extends StatelessWidget {
               ),
               SizedBox(height: 10),
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 10),
+                padding: EdgeInsets.symmetric(horizontal: 15),
                 decoration: BoxDecoration(
                   border: Border.all(color: AppColors.lightGrey, width: 2),
                   borderRadius: BorderRadius.circular(12),

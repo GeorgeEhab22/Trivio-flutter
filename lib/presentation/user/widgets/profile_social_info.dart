@@ -19,7 +19,7 @@ class ProfileSocialInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: 5),
       decoration: BoxDecoration(
         border: Border.all(color: AppColors.customGrey, width: 1.5),
         borderRadius: BorderRadius.circular(15),

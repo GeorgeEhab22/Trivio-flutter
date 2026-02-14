@@ -3,6 +3,7 @@ import 'package:auth/presentation/chats/chat_info_button/chat_info_view.dart';
 import 'package:auth/presentation/chats/chat_screen/chat_view.dart';
 import 'package:auth/presentation/chats/messages_screen/messages_view.dart';
 import 'package:auth/presentation/manager/follow_cubit/follow_cubit.dart';
+import 'package:auth/presentation/manager/follow_cubit/follow_request_cubit.dart';
 import 'package:auth/presentation/reels/reels_page.dart';
 import 'package:auth/presentation/user/follow_requests_view.dart';
 import 'package:auth/presentation/user/followers_list_view.dart';
@@ -172,8 +173,10 @@ GoRouter createRouter(bool isLoggedIn) {
                         routes: [
                           GoRoute(
                             path: 'requests',
-                            builder: (context, state) =>
-                                const FollowRequestsView(),
+                            builder: (context, state) => BlocProvider(
+                              create: (context) => di.sl<FollowRequestCubit>(),
+                              child: FollowRequestsView(),
+                            ),
                           ),
                         ],
                       ),
