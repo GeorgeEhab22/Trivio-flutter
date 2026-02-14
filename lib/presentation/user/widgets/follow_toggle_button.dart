@@ -47,12 +47,14 @@ class FollowToggleButton extends StatelessWidget {
 
                       // FOR TESTING (Option 2):
                        cubit.debugForceUnfollow();
+                       showCustomSnackBar(context, "Unfollowed", false);
                     } else {
                       // If not following, we want to follow
                       //cubit.followUser(targetUserId);
 
                       // FOR TESTING (Option 2):
                        cubit.debugForceSuccess();
+                       showCustomSnackBar(context, "Followed", true);
                     }
                   },
             child: Center(

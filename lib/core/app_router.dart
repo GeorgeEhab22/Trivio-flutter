@@ -4,6 +4,7 @@ import 'package:auth/presentation/chats/chat_screen/chat_view.dart';
 import 'package:auth/presentation/chats/messages_screen/messages_view.dart';
 import 'package:auth/presentation/manager/follow_cubit/follow_cubit.dart';
 import 'package:auth/presentation/manager/follow_cubit/follow_request_cubit.dart';
+import 'package:auth/presentation/manager/follow_cubit/get_follow_info_cubit.dart';
 import 'package:auth/presentation/reels/reels_page.dart';
 import 'package:auth/presentation/user/follow_requests_view.dart';
 import 'package:auth/presentation/user/followers_list_view.dart';
@@ -158,11 +159,17 @@ GoRouter createRouter(bool isLoggedIn) {
                     routes: [
                       GoRoute(
                         path: 'followers',
-                        builder: (context, state) => const FollowersListView(),
+                        builder: (context, state) => BlocProvider(
+                          create: (context) => di.sl<FollowInfoCubit>(),
+                          child: const FollowersListView(),
+                        ),
                       ),
                       GoRoute(
                         path: 'following',
-                        builder: (context, state) => const FollowingListView(),
+                        builder: (context, state) => BlocProvider(
+                          create: (context) => di.sl<FollowInfoCubit>(),
+                          child: const FollowingListView(),
+                        ),
                       ),
                       GoRoute(
                         path: 'settings',
