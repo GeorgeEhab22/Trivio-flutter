@@ -3,70 +3,117 @@ import 'package:auth/presentation/settings/widgets/row_option.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class ThemeView extends StatelessWidget {
+class ThemeView extends StatefulWidget {
   const ThemeView({super.key});
 
   @override
+  State<ThemeView> createState() => _ThemeViewState();
+}
+
+class _ThemeViewState extends State<ThemeView>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _rippleController;
+
+  @override
+  void initState() {
+    super.initState();
+    _rippleController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 600),
+    );
+  }
+
+  @override
+  void dispose() {
+    _rippleController.dispose();
+    super.dispose();
+  }
+
+  void _onThemeChanged(ThemeMode newMode) {
+    _rippleController.forward(from: 0);
+    context.read<ThemeCubit>().setThemeMode(newMode);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final brightness = Theme.of(context).brightness;
-
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Dark mode',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
-      body: ListView(
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              rowOption(
-                context,
-                title: 'On',
-                isSelected: brightness == Brightness.dark,
-                onTap: () {
-                  if (brightness == Brightness.light) {
-                    context.read<ThemeCubit>().toggleTheme();
-                  }
-                },
-              ),
-              rowOption(
-                context,
-                title: 'Off',
-                isSelected: brightness == Brightness.light,
-                onTap: () {
-                  if (brightness == Brightness.dark) {
-                    context.read<ThemeCubit>().toggleTheme();
-                  }
-                },
-              ),
-              rowOption(
-                context,
-                title: 'System default',
-                isSelected: brightness == Brightness.light,
-                onTap: () {
-                  // TODO: handle system default option
-                  context.read<ThemeCubit>().toggleTheme();
-                },
-              ),
-
-              const Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Text(
-                  "We'll adjust your appearance based on your device's system settings.",
-                  style: TextStyle(color: Colors.grey, fontSize: 13),
-                ),
-              ),
-            ],
+    return BlocBuilder<ThemeCubit, ThemeState>(
+      builder: (context, themeState) {
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text(
+              'Dark mode',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () => Navigator.pop(context),
+            ),
           ),
-        ],
-      ),
+          body: AnimatedOpacity(
+            duration: const Duration(milliseconds: 300),
+            opacity: themeState.isAnimating ? 0.7 : 1.0,
+            child: ListView(
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildAnimatedOption(
+                      context,
+                      title: 'On',
+                      isSelected: themeState.mode == ThemeMode.dark,
+                      onTap: () => _onThemeChanged(ThemeMode.dark),
+                      delay: 0,
+                    ),
+                    _buildAnimatedOption(
+                      context,
+                      title: 'Off',
+                      isSelected: themeState.mode == ThemeMode.light,
+                      onTap: () => _onThemeChanged(ThemeMode.light),
+                      delay: 50,
+                    ),
+                    _buildAnimatedOption(
+                      context,
+                      title: 'System default',
+                      isSelected: themeState.mode == ThemeMode.system,
+                      onTap: () => _onThemeChanged(ThemeMode.system),
+                      delay: 100,
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildAnimatedOption(
+    BuildContext context, {
+    required String title,
+    required bool isSelected,
+    required VoidCallback onTap,
+    required int delay,
+  }) {
+    return TweenAnimationBuilder<double>(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeOutCubic,
+      tween: Tween(begin: 0.0, end: 1.0),
+      builder: (context, value, child) {
+        return Transform.scale(
+          scale: isSelected ? 1.0 : 0.98,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOutCubicEmphasized,
+            child: rowOption(
+              context,
+              title: title,
+              isSelected: isSelected,
+              onTap: onTap,
+            ),
+          ),
+        );
+      },
     );
   }
 }

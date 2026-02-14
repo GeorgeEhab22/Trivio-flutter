@@ -201,5 +201,5 @@ Future<void> init() async {
   // ==========================================================================
   // CORE / GLOBAL
   // ==========================================================================
-  sl.registerFactory(() => ThemeCubit());
+  sl.registerFactory(() => ThemeCubit(prefs));
 }

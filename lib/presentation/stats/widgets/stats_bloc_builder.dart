@@ -12,13 +12,15 @@ class StatsBlocBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return BlocBuilder<StatsCubit, StatsState>(
       builder: (context, state) {
         if (state is StatsLoading) {
           return Skeletonizer(
             enabled: true,
-            effect: PulseEffect(
-              from: AppColors.customGrey.withValues(alpha: .1),
+            effect:  PulseEffect(
+              from: isDark ? AppColors.darkGrey.withValues(alpha: .1) : AppColors.customGrey.withValues(alpha: .1),
 
               to: AppColors.primary.withValues(alpha: 0.2),
               duration: const Duration(milliseconds: 1500),

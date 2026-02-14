@@ -127,7 +127,7 @@ class MatchTile extends StatelessWidget {
     return Container(
       height: 40,
       width: 40,
-      decoration: BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+      decoration: BoxDecoration(color: Colors.transparent, shape: BoxShape.circle),
       child: ClipOval(
         child: url != null
             ? Image.network(
