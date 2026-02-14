@@ -1,3 +1,4 @@
+import 'package:auth/constants/colors.dart';
 import 'package:flutter/material.dart';
 
 class AppThemes {
@@ -18,12 +19,14 @@ class AppThemes {
   static ThemeData get dark => ThemeData(
         useMaterial3: true,
         brightness: Brightness.dark,
-        colorSchemeSeed: Colors.blue,
+        colorSchemeSeed: AppColors.primary, // Modern M3 color generation with custom seed
         scaffoldBackgroundColor: const Color(0xFF0D1117), // GitHub-style modern dark
         appBarTheme: const AppBarTheme(
           elevation: 0,
           backgroundColor: Colors.transparent,
           surfaceTintColor: Colors.transparent,
+          foregroundColor: Colors.white,
+
         ),
       );
 }

@@ -16,7 +16,7 @@ class AppRoutes {
 
   static const String settings = '/app/home/settings';
   static const String notifications = '/app/home/settings/notifications';
-  static const String theme = '/app/home/settings/theme';
+  static const String theme = '/theme';
   static const String blocked = '/app/home/settings/blocked';
   static const String activeStates = '/app/home/settings/active_states';
   static const String saved = '/app/home/settings/saved';
