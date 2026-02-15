@@ -1,6 +1,7 @@
 import 'package:auth/core/validator.dart';
 import 'package:auth/core/vanishing_item.dart';
 import 'package:auth/core/vanishing_item_controller.dart';
+import 'package:auth/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class PasswordField extends StatefulWidget {
@@ -46,7 +47,6 @@ class _PasswordFieldState extends State<PasswordField> {
   bool showRequiredMessage = false;
 
   String? _errorText;
-
   late final VanishingItemController<String> _vanishingController;
 
   @override
@@ -61,7 +61,6 @@ class _PasswordFieldState extends State<PasswordField> {
       widget.controller.addListener(_checkPasswordMatch);
       _vanishingController.hideImmediately('passwordMatch');
     }
-
     _vanishingController.hideImmediately('required');
   }
 
@@ -81,7 +80,6 @@ class _PasswordFieldState extends State<PasswordField> {
 
   void _onPasswordChanged() {
     final password = widget.controller.text;
-
     if (password.isNotEmpty) {
       hasTouched = true;
       if (showRequiredMessage || _errorText != null) {
@@ -94,9 +92,7 @@ class _PasswordFieldState extends State<PasswordField> {
     } else {
       if (!showRequiredMessage) {
         _vanishingController.show('required');
-        setState(() {
-          showRequiredMessage = true;
-        });
+        setState(() => showRequiredMessage = true);
       }
     }
 
@@ -119,7 +115,6 @@ class _PasswordFieldState extends State<PasswordField> {
       if (oldValue != value) {
         shouldRebuild = true;
         _setRequirementState(key, value);
-
         if (value) {
           _vanishingController.scheduleHide(key);
         } else {
@@ -127,13 +122,12 @@ class _PasswordFieldState extends State<PasswordField> {
         }
       }
     }
-
     if (shouldRebuild) setState(() {});
   }
 
   void _checkPasswordMatch() {
     if (!widget.isConfirm || widget.originalController == null) return;
-
+    final l10n = AppLocalizations.of(context)!;
     final confirm = widget.controller.text.trim();
     final original = widget.originalController!.text.trim();
 
@@ -141,87 +135,56 @@ class _PasswordFieldState extends State<PasswordField> {
       if (!_vanishingController.isHidden('passwordMatch')) {
         _vanishingController.hideImmediately('passwordMatch');
       }
-      if (passwordsMatch) {
-        setState(() => passwordsMatch = false);
-      }
-      if (_errorText != null) {
-        setState(() => _errorText = null);
-      }
+      if (passwordsMatch) setState(() => passwordsMatch = false);
+      if (_errorText != null) setState(() => _errorText = null);
       return;
     }
 
     final match = confirm == original;
-
     if (passwordsMatch != match) {
       setState(() {
         passwordsMatch = match;
-        _errorText = match ? null : 'Passwords do not match';
+        _errorText = match ? null : l10n.errPasswordsDoNotMatch;
       });
-
       if (match) {
         _vanishingController.scheduleHide('passwordMatch');
       } else {
         _vanishingController.show('passwordMatch');
       }
-    } else {
-      if (!match) {
-        if (_errorText != 'Passwords do not match') {
-          setState(() => _errorText = 'Passwords do not match');
+    } else if (!match) {
+        if (_errorText != l10n.errPasswordsDoNotMatch) {
+          setState(() => _errorText = l10n.errPasswordsDoNotMatch);
         }
         _vanishingController.show('passwordMatch');
-      } else {
-        if (_errorText != null) {
-          setState(() => _errorText = null);
-        }
-      }
     }
   }
 
   bool _getRequirementState(String key) {
     switch (key) {
-      case 'minLength':
-        return hasMinLength;
-      case 'uppercase':
-        return hasUppercase;
-      case 'lowercase':
-        return hasLowercase;
-      case 'number':
-        return hasNumber;
-      case 'specialChar':
-        return hasSpecialChar;
-      default:
-        return false;
+      case 'minLength': return hasMinLength;
+      case 'uppercase': return hasUppercase;
+      case 'lowercase': return hasLowercase;
+      case 'number': return hasNumber;
+      case 'specialChar': return hasSpecialChar;
+      default: return false;
     }
   }
 
   void _setRequirementState(String key, bool value) {
     switch (key) {
-      case 'minLength':
-        hasMinLength = value;
-        break;
-      case 'uppercase':
-        hasUppercase = value;
-        break;
-      case 'lowercase':
-        hasLowercase = value;
-        break;
-      case 'number':
-        hasNumber = value;
-        break;
-      case 'specialChar':
-        hasSpecialChar = value;
-        break;
+      case 'minLength': hasMinLength = value; break;
+      case 'uppercase': hasUppercase = value; break;
+      case 'lowercase': hasLowercase = value; break;
+      case 'number': hasNumber = value; break;
+      case 'specialChar': hasSpecialChar = value; break;
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
-    final showRequirements =
-        widget.showValidation &&
-        !widget.isLogin &&
-        !widget.isConfirm &&
-        (hasTouched || widget.controller.text.isNotEmpty);
+    final showRequirements = widget.showValidation && !widget.isLogin && !widget.isConfirm && (hasTouched || widget.controller.text.isNotEmpty);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -239,16 +202,10 @@ class _PasswordFieldState extends State<PasswordField> {
             hintText: widget.hint,
             errorText: _errorText,
             suffixIcon: IconButton(
-              icon: Icon(
-                widget.isPasswordVisible
-                    ? Icons.visibility
-                    : Icons.visibility_off,
-              ),
+              icon: Icon(widget.isPasswordVisible ? Icons.visibility : Icons.visibility_off),
               onPressed: widget.onVisibilityToggle,
             ),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(6),
-            ),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(6)),
           ).applyDefaults(theme.inputDecorationTheme),
           validator: (value) {
             final result = _validatePassword(value);
@@ -261,26 +218,23 @@ class _PasswordFieldState extends State<PasswordField> {
           const SizedBox(height: 8),
           VanishingItem(
             isVisible: !_vanishingController.isHidden('minLength'),
-            child: _buildRequirement('At least 8 characters', hasMinLength),
+            child: _buildRequirement(l10n.reqMinLength, hasMinLength),
           ),
           VanishingItem(
             isVisible: !_vanishingController.isHidden('uppercase'),
-            child: _buildRequirement('One uppercase letter', hasUppercase),
+            child: _buildRequirement(l10n.reqUppercase, hasUppercase),
           ),
           VanishingItem(
             isVisible: !_vanishingController.isHidden('lowercase'),
-            child: _buildRequirement('One lowercase letter', hasLowercase),
+            child: _buildRequirement(l10n.reqLowercase, hasLowercase),
           ),
           VanishingItem(
             isVisible: !_vanishingController.isHidden('number'),
-            child: _buildRequirement('One number', hasNumber),
+            child: _buildRequirement(l10n.reqNumber, hasNumber),
           ),
           VanishingItem(
             isVisible: !_vanishingController.isHidden('specialChar'),
-            child: _buildRequirement(
-              'One special character (!@#\$&*~)',
-              hasSpecialChar,
-            ),
+            child: _buildRequirement(l10n.reqSpecialChar, hasSpecialChar),
           ),
         ],
       ],
@@ -288,24 +242,19 @@ class _PasswordFieldState extends State<PasswordField> {
   }
 
   String? _validatePassword(String? value) {
+    final l10n = AppLocalizations.of(context)!;
     final trimmed = value?.trim() ?? '';
 
     if (trimmed.isEmpty) {
-      return widget.isConfirm
-          ? 'Please confirm your password'
-          : 'Password is required';
+      return widget.isConfirm ? l10n.errConfirmPassword : l10n.errPasswordRequired;
     }
 
     if (widget.isConfirm && widget.originalController != null) {
       final original = widget.originalController!.text.trim();
-      if (trimmed != original) {
-        return 'Passwords do not match';
-      }
+      if (trimmed != original) return l10n.errPasswordsDoNotMatch;
     }
 
-    if (!Validator.isValidPassword(trimmed)) {
-      return 'Must include upper, lower, number & symbol';
-    }
+    if (!Validator.isValidPassword(trimmed)) return l10n.errPasswordComplexity;
 
     return null;
   }

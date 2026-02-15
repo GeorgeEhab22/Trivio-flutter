@@ -1,4 +1,5 @@
 import 'package:auth/core/app_routes.dart';
+import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/authentication/widgets/show_custom_snackbar.dart';
 import 'package:auth/presentation/manager/sigin_in_cubit/request_otp/request_otp_state.dart';
 import 'package:flutter/material.dart';
@@ -10,10 +11,12 @@ class RequestEmailListener {
     RequestOTPState state,
     String email,
   ) {
+    final l10n = AppLocalizations.of(context)!;
+
     if (state is RequestOTPSuccess) {
       showCustomSnackBar(
         context,
-        'Password reset OTP sent successfully!',
+        l10n.passwordResetSent, 
         true,
       );
 

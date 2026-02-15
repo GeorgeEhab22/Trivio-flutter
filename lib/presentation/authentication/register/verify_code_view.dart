@@ -2,6 +2,7 @@ import 'package:auth/common/basic_app_button.dart';
 import 'package:auth/common/functions/code_box_handlers.dart';
 import 'package:auth/constants/colors.dart';
 import 'package:auth/core/styels.dart';
+import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/authentication/register/verify_code_listener.dart';
 import 'package:auth/presentation/authentication/widgets/change_email_button.dart';
 import 'package:auth/presentation/authentication/widgets/verify_code_box_list.dart';
@@ -48,6 +49,9 @@ class _VerifyCodePageState extends State<VerifyCodePage> {
 
   @override
   Widget build(BuildContext context) {
+    // Get localization instance
+    final l10n = AppLocalizations.of(context)!;
+
     return BlocListener<VerifyCodeCubit, VerifyCodeState>(
       listener: (context, state) {
         VerifyCodeListener.handleStateChanges(context, state);
@@ -79,10 +83,11 @@ class _VerifyCodePageState extends State<VerifyCodePage> {
                   ),
                 ),
                 const SizedBox(height: 32),
-                Text('Verification Code', style: Styles.textStyle30),
+                // Localized Text
+                Text(l10n.verificationCode, style: Styles.textStyle30),
                 const SizedBox(height: 12),
                 Text(
-                  'Enter the 6-digit code sent to',
+                  l10n.enterDigitsSent,
                   style: Styles.textStyle14.copyWith(color: Colors.grey[600]),
                   textAlign: TextAlign.center,
                 ),
@@ -94,6 +99,8 @@ class _VerifyCodePageState extends State<VerifyCodePage> {
                     fontWeight: FontWeight.bold,
                   ),
                   textAlign: TextAlign.center,
+                  // Email addresses always read Left-to-Right
+                  textDirection: TextDirection.ltr, 
                 ),
                 const SizedBox(height: 48),
                 Padding(
@@ -111,15 +118,16 @@ class _VerifyCodePageState extends State<VerifyCodePage> {
                       onPressed: isLoading
                           ? null
                           : () => CodeBoxHandlers.handleVerifyCode(
-                              context,
-                              _controllers,
-                            ),
-                      title: isLoading ? 'Verifying...' : 'Verify Code',
+                                context,
+                                _controllers,
+                              ),
+                      // Localized Titles
+                      title: isLoading ? l10n.verifying : l10n.verifyCode,
                     );
                   },
                 ),
                 const SizedBox(height: 24),
-                ChangeEmailButton(isVerifying: true,),
+                ChangeEmailButton(isVerifying: true),
               ],
             ),
           ),

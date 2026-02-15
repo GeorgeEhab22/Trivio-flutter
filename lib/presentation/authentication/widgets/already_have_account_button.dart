@@ -1,4 +1,5 @@
 import 'package:auth/core/app_routes.dart';
+import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/manager/register_cubit/register_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,13 +10,15 @@ class AlreadyHaveAccountButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    
     return Center(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Text(
-            'Already have an account?',
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+          Text(
+            l10n.alreadyHaveAccount, 
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
             textAlign: TextAlign.center,
           ),
           TextButton(
@@ -23,9 +26,9 @@ class AlreadyHaveAccountButton extends StatelessWidget {
               context.read<RegisterCubit>().resetState();
               context.replace(AppRoutes.signIn);
             },
-            child: const Text(
-              'Sign in',
-              style: TextStyle(
+            child: Text(
+              l10n.signIn, 
+              style: const TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
                 color: Colors.blue,

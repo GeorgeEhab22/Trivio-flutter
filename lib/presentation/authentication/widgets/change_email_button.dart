@@ -1,5 +1,6 @@
 import 'package:auth/constants/colors.dart';
 import 'package:auth/core/app_routes.dart';
+import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/manager/register_cubit/verify_code_cubit.dart';
 import 'package:auth/presentation/manager/register_cubit/verify_code_state.dart';
 import 'package:auth/presentation/manager/sigin_in_cubit/request_otp/request_otp_cubit.dart';
@@ -14,6 +15,8 @@ class ChangeEmailButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return isVerifying
         ? BlocBuilder<VerifyCodeCubit, VerifyCodeState>(
             builder: (context, state) {
@@ -28,20 +31,20 @@ class ChangeEmailButton extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "Didn't receive the code? ",
+                    l10n.didNotReceiveCode,
                     style: TextStyle(color: Colors.grey[600], fontSize: 14),
                   ),
                   TextButton(
                     onPressed: isDisabled
                         ? null
                         : () => context.push(
-                            AppRoutes.changeEmailVerification,
-                            extra: {'username': cubit.username, 'cubit': cubit},
-                          ),
+                              AppRoutes.changeEmailVerification,
+                              extra: {'username': cubit.username, 'cubit': cubit},
+                            ),
                     child: Text(
                       canResend
-                          ? 'Change email'
-                          : 'Can change in ${countdown}s',
+                          ? l10n.changeEmail
+                          : l10n.canChangeIn(countdown.toString()), 
                       style: TextStyle(
                         color: isDisabled ? Colors.grey : AppColors.primary,
                         fontWeight: FontWeight.w600,
@@ -66,20 +69,20 @@ class ChangeEmailButton extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "Didn't receive the OTP? ",
+                    l10n.didNotReceiveOtp,
                     style: TextStyle(color: Colors.grey[600], fontSize: 14),
                   ),
                   TextButton(
                     onPressed: isDisabled
                         ? null
                         : () => context.push(
-                            AppRoutes.changeEmailOTP,
-                            extra: {'username': '', 'cubit': cubit},
-                          ),
+                              AppRoutes.changeEmailOTP,
+                              extra: {'username': '', 'cubit': cubit},
+                            ),
                     child: Text(
                       canResend
-                          ? 'Change email'
-                          : 'Can change in ${countdown}s',
+                          ? l10n.changeEmail
+                          : l10n.canChangeIn(countdown.toString()),
                       style: TextStyle(
                         color: isDisabled ? Colors.grey : AppColors.primary,
                         fontWeight: FontWeight.w600,

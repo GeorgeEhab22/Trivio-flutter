@@ -45,6 +45,7 @@ import 'package:auth/domain/usecases/sign_in/signin_usecase.dart';
 import 'package:auth/domain/usecases/sign_in/verify_otp.dart';
 import 'package:auth/domain/usecases/stats/stats_usecase.dart';
 import 'package:auth/presentation/manager/comment_cubit/comment_cubit.dart';
+import 'package:auth/presentation/manager/locale_cubit/locale_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/create_post_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/post_interaction_cubit.dart';
@@ -80,6 +81,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => prefs);
   sl.registerLazySingleton(() => ApiService(baseUrl: baseUrl));
   sl.registerLazySingleton(() => ErrorHandler());
+  sl.registerFactory(() => LocaleCubit());
 
   // ==========================================================================
   // FEATURE: AUTHENTICATION

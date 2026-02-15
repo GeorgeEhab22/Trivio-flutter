@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 void showCustomSnackBar(BuildContext context, String message, bool success) {
   final overlay = Overlay.of(context);
+  final directionality = Directionality.of(context);
   late OverlayEntry overlayEntry;
 
   overlayEntry = OverlayEntry(
@@ -10,10 +11,16 @@ void showCustomSnackBar(BuildContext context, String message, bool success) {
       bottom: 50,
       left: 20,
       right: 20,
-      child: AnimatedSnackBar(
-        message: message,
-        success: success,
-        onDismissed: () => overlayEntry.remove(), 
+      child: Directionality( 
+        textDirection: directionality,
+        child: Material( 
+          color: Colors.transparent,
+          child: AnimatedSnackBar(
+            message: message,
+            success: success,
+            onDismissed: () => overlayEntry.remove(),
+          ),
+        ),
       ),
     ),
   );

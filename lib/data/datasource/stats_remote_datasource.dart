@@ -24,7 +24,6 @@ class StatsRemoteDatasourceImpl implements StatsRemoteDatasource {
       );
 
       if (response.statusCode == 200) {
-        print('Matches fetched successfully from API');
         final List<dynamic> matchesList = response.data['matches'];
         await localcache.saveMatches(
           matchesList,
