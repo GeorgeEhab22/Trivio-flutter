@@ -2,12 +2,16 @@ import 'package:auth/common/functions/copy_to_clipboard.dart';
 import 'package:auth/common/functions/show_custom_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:auth/l10n/app_localizations.dart';
 
 void showMessageActions(BuildContext context) {
+  final l10n = AppLocalizations.of(context)!;
   String copiedMessage = "change later to actual message";
+  
   final handleBarColor = Theme.of(context).brightness == Brightness.dark
       ? Colors.grey[700]
       : Colors.grey[300];
+
   showModalBottomSheet(
     context: context,
     backgroundColor: Colors.transparent,
@@ -33,21 +37,20 @@ void showMessageActions(BuildContext context) {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _buildRowButton(context, Icons.reply, "Reply", () {
+              _buildRowButton(context, Icons.reply, l10n.reply, () {
                 context.pop();
               }),
-              _buildRowButton(context, Icons.copy_rounded, "Copy", () {
+              _buildRowButton(context, Icons.copy_rounded, l10n.copy, () {
                 context.pop();
-                // TODO: assign actual message to copiedMessage
                 copyToClipboard(context, copiedMessage);
               }),
-              _buildRowButton(context, Icons.delete_outline, "Delete", () {
+              _buildRowButton(context, Icons.delete_outline, l10n.delete, () {
                 context.pop();
                 showCustomDialog(
                   context: context,
-                  title: "Delete",
-                  content: "Are you sure you want to delete this message?",
-                  confirmText: "Delete",
+                  title: l10n.delete,
+                  content: l10n.deleteMessageConfirm,
+                  confirmText: l10n.delete,
                   confirmTextColor: Colors.red,
                   onConfirm: () {
                     // TODO: add delete functionality later
@@ -57,7 +60,7 @@ void showMessageActions(BuildContext context) {
               _buildRowButton(
                 context,
                 Icons.report_gmailerrorred,
-                "Report",
+                l10n.report,
                 () {
                   // TODO: add report functionality later
                 },

@@ -21,6 +21,7 @@ class ChatBubble extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 5),
           child: Row(
+            // Use end/start so it flips automatically in RTL
             mainAxisAlignment: isMe
                 ? MainAxisAlignment.end
                 : MainAxisAlignment.start,
@@ -35,18 +36,18 @@ class ChatBubble extends StatelessWidget {
                   color: isMe
                       ? const Color(0XFF008B1D)
                       : (isDark ? Colors.grey.shade800 : Colors.grey.shade100),
-                  borderRadius: BorderRadius.only(
-                    topLeft: const Radius.circular(15),
-                    topRight: const Radius.circular(15),
-                    bottomLeft: Radius.circular(isMe ? 15 : 0),
-                    bottomRight: Radius.circular(isMe ? 0 : 15),
+                  // Use BorderRadiusDirectional to handle RTL corners
+                  borderRadius: BorderRadiusDirectional.only(
+                    topStart: const Radius.circular(15),
+                    topEnd: const Radius.circular(15),
+                    bottomStart: Radius.circular(isMe ? 15 : 0),
+                    bottomEnd: Radius.circular(isMe ? 0 : 15),
                   ),
                 ),
                 constraints: const BoxConstraints(maxWidth: 250),
                 child: Text(
                   message,
                   style: TextStyle(
-                    // color: isMe ? Colors.white : (isDark ? Colors.white : Colors.black),
                     color: isMe
                         ? Colors.white
                         : Theme.of(context).textTheme.bodyMedium?.color,

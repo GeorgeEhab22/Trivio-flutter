@@ -925,6 +925,156 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Active status'**
   String get activeStatus;
+
+  /// No description provided for @messages.
+  ///
+  /// In en, this message translates to:
+  /// **'Messages'**
+  String get messages;
+
+  /// No description provided for @searchChatsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search chats...'**
+  String get searchChatsHint;
+
+  /// No description provided for @mute.
+  ///
+  /// In en, this message translates to:
+  /// **'Mute'**
+  String get mute;
+
+  /// No description provided for @muteChatTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Mute chat'**
+  String get muteChatTitle;
+
+  /// No description provided for @muteChatConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to mute this chat?'**
+  String get muteChatConfirm;
+
+  /// No description provided for @deleteChatTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Chat'**
+  String get deleteChatTitle;
+
+  /// No description provided for @deleteChatConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this chat?'**
+  String get deleteChatConfirm;
+
+  /// No description provided for @album.
+  ///
+  /// In en, this message translates to:
+  /// **'Album'**
+  String get album;
+
+  /// No description provided for @location.
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get location;
+
+  /// No description provided for @files.
+  ///
+  /// In en, this message translates to:
+  /// **'Files'**
+  String get files;
+
+  /// No description provided for @copy.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy'**
+  String get copy;
+
+  /// No description provided for @deleteMessageConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this message?'**
+  String get deleteMessageConfirm;
+
+  /// No description provided for @messageHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Message'**
+  String get messageHint;
+
+  /// No description provided for @calling.
+  ///
+  /// In en, this message translates to:
+  /// **'Calling...'**
+  String get calling;
+
+  /// No description provided for @videoCalling.
+  ///
+  /// In en, this message translates to:
+  /// **'Video Calling...'**
+  String get videoCalling;
+
+  /// No description provided for @callAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Call'**
+  String get callAction;
+
+  /// No description provided for @callUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Call \"{userName}\"'**
+  String callUser(Object userName);
+
+  /// No description provided for @videoCallUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Video Call \"{userName}\"'**
+  String videoCallUser(Object userName);
+
+  /// No description provided for @profile.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get profile;
+
+  /// No description provided for @options.
+  ///
+  /// In en, this message translates to:
+  /// **'Options'**
+  String get options;
+
+  /// No description provided for @createGroupChat.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Group Chat'**
+  String get createGroupChat;
+
+  /// No description provided for @block.
+  ///
+  /// In en, this message translates to:
+  /// **'Block'**
+  String get block;
+
+  /// No description provided for @blockUserTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Block User'**
+  String get blockUserTitle;
+
+  /// No description provided for @blockUserConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to block this user?'**
+  String get blockUserConfirm;
+
+  /// No description provided for @cancelBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancelBtn;
 }
 
 class _AppLocalizationsDelegate

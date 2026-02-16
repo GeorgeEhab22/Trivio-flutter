@@ -432,4 +432,84 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get activeStatus => 'حالة النشاط';
+
+  @override
+  String get messages => 'الرسائل';
+
+  @override
+  String get searchChatsHint => 'البحث في المحادثات...';
+
+  @override
+  String get mute => 'كتم';
+
+  @override
+  String get muteChatTitle => 'كتم الدردشة';
+
+  @override
+  String get muteChatConfirm => 'هل أنت متأكد من رغبتك في كتم هذه الدردشة؟';
+
+  @override
+  String get deleteChatTitle => 'حذف الدردشة';
+
+  @override
+  String get deleteChatConfirm => 'هل أنت متأكد من رغبتك في حذف هذه الدردشة؟';
+
+  @override
+  String get album => 'الألبوم';
+
+  @override
+  String get location => 'الموقع';
+
+  @override
+  String get files => 'الملفات';
+
+  @override
+  String get copy => 'نسخ';
+
+  @override
+  String get deleteMessageConfirm =>
+      'هل أنت متأكد من رغبتك في حذف هذه الرسالة؟';
+
+  @override
+  String get messageHint => 'رسالة';
+
+  @override
+  String get calling => 'جاري الاتصال...';
+
+  @override
+  String get videoCalling => 'مكالمة فيديو...';
+
+  @override
+  String get callAction => 'اتصال';
+
+  @override
+  String callUser(Object userName) {
+    return 'اتصال بـ \"$userName\"';
+  }
+
+  @override
+  String videoCallUser(Object userName) {
+    return 'مكالمة فيديو بـ \"$userName\"';
+  }
+
+  @override
+  String get profile => 'الملف الشخصي';
+
+  @override
+  String get options => 'خيارات';
+
+  @override
+  String get createGroupChat => 'إنشاء دردشة جماعية';
+
+  @override
+  String get block => 'حظر';
+
+  @override
+  String get blockUserTitle => 'حظر المستخدم';
+
+  @override
+  String get blockUserConfirm => 'هل أنت متأكد من رغبتك في حظر هذا المستخدم؟';
+
+  @override
+  String get cancelBtn => 'الغاء';
 }

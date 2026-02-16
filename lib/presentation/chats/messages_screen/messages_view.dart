@@ -3,23 +3,25 @@ import 'package:auth/presentation/chats/messages_screen/widgets/messages_loading
 import 'package:auth/presentation/chats/messages_screen/widgets/messages_search_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:auth/l10n/app_localizations.dart';
 
 class MessagesView extends StatelessWidget {
   const MessagesView({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
         surfaceTintColor: Colors.transparent,
         automaticallyImplyLeading: false,
-        title: const Text(
-          "Messages",
-          style: TextStyle(fontWeight: FontWeight.w800, fontSize: 25),
+        title: Text(
+          l10n.messages, 
+          style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 25),
         ),
-        centerTitle: false,
+        centerTitle: false, 
         actions: [
-          // TODO: change icon from home to application icon
           IconButton(
             onPressed: () {
               context.pop();

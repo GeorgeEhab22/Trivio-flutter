@@ -5,6 +5,7 @@ import 'package:auth/core/styels.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:go_router/go_router.dart';
+import 'package:auth/l10n/app_localizations.dart';
 
 class MessagesItem extends StatelessWidget {
   final int index;
@@ -12,8 +13,11 @@ class MessagesItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Slidable(
       key: ValueKey(index),
+      // Slidable automatically handles the sliding direction for RTL/LTR
       endActionPane: ActionPane(
         motion: const ScrollMotion(),
         children: [
@@ -21,9 +25,9 @@ class MessagesItem extends StatelessWidget {
             onPressed: (context) {
               showCustomDialog(
                 context: context,
-                title: "Mute chat",
-                content: "Are you sure you want to mute this chat?",
-                confirmText: "Mute",
+                title: l10n.muteChatTitle,
+                content: l10n.muteChatConfirm,
+                confirmText: l10n.mute,
                 onConfirm: () {
                   // TODO: Handle mute action
                 },
@@ -32,15 +36,15 @@ class MessagesItem extends StatelessWidget {
             backgroundColor: Colors.grey,
             foregroundColor: Colors.white,
             icon: Icons.notifications_off,
-            label: 'Mute',
+            label: l10n.mute,
           ),
           SlidableAction(
             onPressed: (context) {
               showCustomDialog(
                 context: context,
-                title: "Delete Chat",
-                content: "Are you sure you want to delete this chat?",
-                confirmText: "Delete",
+                title: l10n.deleteChatTitle,
+                content: l10n.deleteChatConfirm,
+                confirmText: l10n.delete,
                 confirmTextColor: Colors.red,
                 onConfirm: () {
                   // TODO: Handle delete action
@@ -50,23 +54,18 @@ class MessagesItem extends StatelessWidget {
             backgroundColor: Colors.red,
             foregroundColor: Colors.white,
             icon: Icons.delete,
-            label: 'Delete',
+            label: l10n.delete,
           ),
         ],
       ),
-      //TODO: change all actual data later
       child: ListTile(
         onTap: () {
           context.push(AppRoutes.chat);
         },
-        leading: Stack(
-          children: [
-            CircleAvatar(
-              radius: 28,
-              backgroundColor: Colors.grey[300],
-              child: const Icon(Icons.person, color: Colors.grey),
-            ),
-          ],
+        leading: CircleAvatar(
+          radius: 28,
+          backgroundColor: Colors.grey[300],
+          child: const Icon(Icons.person, color: Colors.grey),
         ),
         title: const Text("User Name", style: Styles.textStyle15),
         subtitle: const Text(
@@ -77,7 +76,7 @@ class MessagesItem extends StatelessWidget {
         ),
         trailing: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.end, // Aligns to logical end
           children: [
             const Text("3:45 PM", style: Styles.textStyle14),
             const SizedBox(height: 8),

@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:auth/l10n/app_localizations.dart';
 
 class MessagesSearchBar extends StatelessWidget {
   const MessagesSearchBar({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Container(
@@ -15,11 +18,13 @@ class MessagesSearchBar extends StatelessWidget {
         ),
         child: TextField(
           decoration: InputDecoration(
-            hintText: "Search chats...",
+            // Localized hint text
+            hintText: l10n.searchChatsHint,
             hintStyle: TextStyle(
               color: Theme.of(context).textTheme.bodyMedium?.color,
               fontSize: 14,
             ),
+            // prefixIcon mirrors automatically in RTL
             prefixIcon: const Icon(
               Icons.search,
               color: Colors.grey,

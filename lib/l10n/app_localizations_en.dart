@@ -434,4 +434,84 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get activeStatus => 'Active status';
+
+  @override
+  String get messages => 'Messages';
+
+  @override
+  String get searchChatsHint => 'Search chats...';
+
+  @override
+  String get mute => 'Mute';
+
+  @override
+  String get muteChatTitle => 'Mute chat';
+
+  @override
+  String get muteChatConfirm => 'Are you sure you want to mute this chat?';
+
+  @override
+  String get deleteChatTitle => 'Delete Chat';
+
+  @override
+  String get deleteChatConfirm => 'Are you sure you want to delete this chat?';
+
+  @override
+  String get album => 'Album';
+
+  @override
+  String get location => 'Location';
+
+  @override
+  String get files => 'Files';
+
+  @override
+  String get copy => 'Copy';
+
+  @override
+  String get deleteMessageConfirm =>
+      'Are you sure you want to delete this message?';
+
+  @override
+  String get messageHint => 'Message';
+
+  @override
+  String get calling => 'Calling...';
+
+  @override
+  String get videoCalling => 'Video Calling...';
+
+  @override
+  String get callAction => 'Call';
+
+  @override
+  String callUser(Object userName) {
+    return 'Call \"$userName\"';
+  }
+
+  @override
+  String videoCallUser(Object userName) {
+    return 'Video Call \"$userName\"';
+  }
+
+  @override
+  String get profile => 'Profile';
+
+  @override
+  String get options => 'Options';
+
+  @override
+  String get createGroupChat => 'Create Group Chat';
+
+  @override
+  String get block => 'Block';
+
+  @override
+  String get blockUserTitle => 'Block User';
+
+  @override
+  String get blockUserConfirm => 'Are you sure you want to block this user?';
+
+  @override
+  String get cancelBtn => 'Cancel';
 }
