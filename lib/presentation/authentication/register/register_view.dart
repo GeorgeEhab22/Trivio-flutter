@@ -2,7 +2,7 @@ import 'package:auth/core/styels.dart';
 import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/authentication/widgets/auth_action_button.dart';
 import 'package:auth/presentation/authentication/widgets/google_field.dart';
-import 'package:auth/presentation/authentication/widgets/language_switch_button.dart';
+import 'package:auth/core/language_switch_button.dart';
 import 'package:auth/presentation/authentication/widgets/username_field.dart';
 import 'package:auth/presentation/manager/register_cubit/register_cubit.dart';
 import 'package:auth/presentation/manager/register_cubit/register_state.dart';

@@ -2,6 +2,7 @@ import 'package:auth/presentation/manager/theme_cubit/theme_cubit.dart';
 import 'package:auth/presentation/settings/widgets/row_option.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:auth/l10n/app_localizations.dart';
 
 class ThemeView extends StatefulWidget {
   const ThemeView({super.key});
@@ -36,15 +37,18 @@ class _ThemeViewState extends State<ThemeView>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return BlocBuilder<ThemeCubit, ThemeState>(
       builder: (context, themeState) {
         return Scaffold(
           appBar: AppBar(
-            title: const Text(
-              'Dark mode',
-              style: TextStyle(fontWeight: FontWeight.bold),
+            title: Text(
+              l10n.darkMode,
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
             leading: IconButton(
+              // Adaptive back icon automatically flips for RTL
               icon: const Icon(Icons.arrow_back),
               onPressed: () => Navigator.pop(context),
             ),
@@ -59,21 +63,21 @@ class _ThemeViewState extends State<ThemeView>
                   children: [
                     _buildAnimatedOption(
                       context,
-                      title: 'On',
+                      title: l10n.on,
                       isSelected: themeState.mode == ThemeMode.dark,
                       onTap: () => _onThemeChanged(ThemeMode.dark),
                       delay: 0,
                     ),
                     _buildAnimatedOption(
                       context,
-                      title: 'Off',
+                      title: l10n.off,
                       isSelected: themeState.mode == ThemeMode.light,
                       onTap: () => _onThemeChanged(ThemeMode.light),
                       delay: 50,
                     ),
                     _buildAnimatedOption(
                       context,
-                      title: 'System default',
+                      title: l10n.systemDefault,
                       isSelected: themeState.mode == ThemeMode.system,
                       onTap: () => _onThemeChanged(ThemeMode.system),
                       delay: 100,

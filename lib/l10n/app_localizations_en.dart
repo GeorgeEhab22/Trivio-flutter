@@ -398,4 +398,40 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get edit => 'Edit';
+
+  @override
+  String get menu => 'Menu';
+
+  @override
+  String get darkMode => 'Dark mode';
+
+  @override
+  String get on => 'On';
+
+  @override
+  String get off => 'Off';
+
+  @override
+  String get systemDefault => 'System default';
+
+  @override
+  String get groups => 'Groups';
+
+  @override
+  String get posts => 'Posts';
+
+  @override
+  String get reels => 'Reels';
+
+  @override
+  String get notifications => 'Notifications';
+
+  @override
+  String get theme => 'Theme';
+
+  @override
+  String get blocked => 'Blocked';
+
+  @override
+  String get activeStatus => 'Active status';
 }

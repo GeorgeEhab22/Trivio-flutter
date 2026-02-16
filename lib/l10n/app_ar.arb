@@ -125,5 +125,17 @@
   "viewEditHistory": "عرض سجل التعديلات",
   "reportComment": "الإبلاغ عن التعليق",
   "hideComment": "إخفاء التعليق",
-  "edit": "تعديل"
+  "edit": "تعديل",
+  "menu": "القائمة",
+  "darkMode": "الوضع المظلم",
+  "on": "تفعيل",
+  "off": "إيقاف",
+  "systemDefault": "تلقائي حسب النظام",
+  "groups": "المجموعات",
+  "posts": "المنشورات",
+  "reels": "المقاطع",
+  "notifications": "التنبيهات",
+  "theme": "المظهر",
+  "blocked": "المحظورين",
+  "activeStatus": "حالة النشاط"
 }

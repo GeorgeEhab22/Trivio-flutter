@@ -147,6 +147,18 @@
   "viewEditHistory": "View Edit History",
   "reportComment": "Report comment",
   "hideComment": "Hide comment",
-  "edit": "Edit"
+  "edit": "Edit",
+  "menu": "Menu",
+  "darkMode": "Dark mode",
+  "on": "On",
+  "off": "Off",
+  "systemDefault": "System default",
+  "groups": "Groups",
+  "posts": "Posts",
+  "reels": "Reels",
+  "notifications": "Notifications",
+  "theme": "Theme",
+  "blocked": "Blocked",
+  "activeStatus": "Active status"
 
 }

@@ -396,4 +396,40 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get edit => 'تعديل';
+
+  @override
+  String get menu => 'القائمة';
+
+  @override
+  String get darkMode => 'الوضع المظلم';
+
+  @override
+  String get on => 'تفعيل';
+
+  @override
+  String get off => 'إيقاف';
+
+  @override
+  String get systemDefault => 'تلقائي حسب النظام';
+
+  @override
+  String get groups => 'المجموعات';
+
+  @override
+  String get posts => 'المنشورات';
+
+  @override
+  String get reels => 'المقاطع';
+
+  @override
+  String get notifications => 'التنبيهات';
+
+  @override
+  String get theme => 'المظهر';
+
+  @override
+  String get blocked => 'المحظورين';
+
+  @override
+  String get activeStatus => 'حالة النشاط';
 }
