@@ -1,6 +1,7 @@
 import 'package:auth/common/functions/bottom_sheet_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:auth/constants/colors.dart';
+import 'package:auth/l10n/app_localizations.dart';
 
 class PrivacySelector extends StatelessWidget {
   final String privacy;
@@ -13,7 +14,18 @@ class PrivacySelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    
+    // Technical logic stays in English
     final bool isPublic = privacy == "Public";
+
+    // Map technical English string to localized display string
+    String getDisplayPrivacy() {
+      if (privacy == "Public") return l10n.privacyPublic;
+      if (privacy == "Private") return l10n.privacyPrivate;
+      return privacy; 
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Container(
@@ -37,7 +49,7 @@ class PrivacySelector extends StatelessWidget {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      privacy,
+                      getDisplayPrivacy(), // Localized text
                       style: TextStyle(
                         color: Theme.of(context).textTheme.bodyLarge?.color,
                       ),

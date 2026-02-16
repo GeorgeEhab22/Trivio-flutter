@@ -517,6 +517,342 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Only letters, numbers, and underscores'**
   String get reqUsernameChars;
+
+  /// No description provided for @postDeletedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Post deleted successfully'**
+  String get postDeletedSuccess;
+
+  /// No description provided for @homeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Trivio Feed'**
+  String get homeTitle;
+
+  /// No description provided for @loadMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading more posts...'**
+  String get loadMore;
+
+  /// No description provided for @refreshSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Feed updated'**
+  String get refreshSuccess;
+
+  /// No description provided for @showMore.
+  ///
+  /// In en, this message translates to:
+  /// **'more'**
+  String get showMore;
+
+  /// No description provided for @showLess.
+  ///
+  /// In en, this message translates to:
+  /// **'less'**
+  String get showLess;
+
+  /// No description provided for @defaultGroupName.
+  ///
+  /// In en, this message translates to:
+  /// **'Group Name'**
+  String get defaultGroupName;
+
+  /// No description provided for @shareAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Share'**
+  String get shareAction;
+
+  /// No description provided for @shareHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Say something about this post...'**
+  String get shareHint;
+
+  /// No description provided for @shareSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Post shared successfully!'**
+  String get shareSuccess;
+
+  /// No description provided for @errEmptyShare.
+  ///
+  /// In en, this message translates to:
+  /// **'Write something first!'**
+  String get errEmptyShare;
+
+  /// No description provided for @defaultUserName.
+  ///
+  /// In en, this message translates to:
+  /// **'User Name'**
+  String get defaultUserName;
+
+  /// No description provided for @reactionGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal'**
+  String get reactionGoal;
+
+  /// No description provided for @reactionOffside.
+  ///
+  /// In en, this message translates to:
+  /// **'Offside'**
+  String get reactionOffside;
+
+  /// No description provided for @skeletonLoadingText.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading content lines for skeleton effect.\nSecond line for better UI.'**
+  String get skeletonLoadingText;
+
+  /// No description provided for @errNoPosts.
+  ///
+  /// In en, this message translates to:
+  /// **'No posts found in your timeline.'**
+  String get errNoPosts;
+
+  /// No description provided for @reportPostSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Post reported successfully'**
+  String get reportPostSuccess;
+
+  /// No description provided for @follow.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow'**
+  String get follow;
+
+  /// No description provided for @following.
+  ///
+  /// In en, this message translates to:
+  /// **'Following'**
+  String get following;
+
+  /// No description provided for @save.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get save;
+
+  /// No description provided for @saved.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved'**
+  String get saved;
+
+  /// No description provided for @copyLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy Link'**
+  String get copyLink;
+
+  /// No description provided for @noLink.
+  ///
+  /// In en, this message translates to:
+  /// **'No Link'**
+  String get noLink;
+
+  /// No description provided for @notInterested.
+  ///
+  /// In en, this message translates to:
+  /// **'Not Interested'**
+  String get notInterested;
+
+  /// No description provided for @report.
+  ///
+  /// In en, this message translates to:
+  /// **'Report'**
+  String get report;
+
+  /// No description provided for @delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete;
+
+  /// No description provided for @deletePostTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Post'**
+  String get deletePostTitle;
+
+  /// No description provided for @deletePostConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this post?'**
+  String get deletePostConfirm;
+
+  /// No description provided for @reportQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Why are you reporting this post?'**
+  String get reportQuestion;
+
+  /// No description provided for @reportDisclaimer.
+  ///
+  /// In en, this message translates to:
+  /// **'Your feedback helps us keep the football community safe and enjoyable.'**
+  String get reportDisclaimer;
+
+  /// No description provided for @reportReasonSpam.
+  ///
+  /// In en, this message translates to:
+  /// **'Spam or irrelevant content'**
+  String get reportReasonSpam;
+
+  /// No description provided for @reportReasonToxic.
+  ///
+  /// In en, this message translates to:
+  /// **'Toxic or offensive behavior'**
+  String get reportReasonToxic;
+
+  /// No description provided for @reportReasonFalse.
+  ///
+  /// In en, this message translates to:
+  /// **'False or misleading information'**
+  String get reportReasonFalse;
+
+  /// No description provided for @reportReasonAds.
+  ///
+  /// In en, this message translates to:
+  /// **'Promotion / advertising not allowed'**
+  String get reportReasonAds;
+
+  /// No description provided for @reportReasonOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get reportReasonOther;
+
+  /// No description provided for @commentsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Comments'**
+  String get commentsTitle;
+
+  /// No description provided for @noCommentsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No comments yet'**
+  String get noCommentsYet;
+
+  /// No description provided for @addCommentHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a comment...'**
+  String get addCommentHint;
+
+  /// No description provided for @replyingTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Replying to {userName}'**
+  String replyingTo(String userName);
+
+  /// No description provided for @reply.
+  ///
+  /// In en, this message translates to:
+  /// **'Reply'**
+  String get reply;
+
+  /// No description provided for @privacyPublic.
+  ///
+  /// In en, this message translates to:
+  /// **'Public'**
+  String get privacyPublic;
+
+  /// No description provided for @privacyPrivate.
+  ///
+  /// In en, this message translates to:
+  /// **'Private'**
+  String get privacyPrivate;
+
+  /// No description provided for @addPostHint.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s happening on your mind?'**
+  String get addPostHint;
+
+  /// No description provided for @image.
+  ///
+  /// In en, this message translates to:
+  /// **'Image'**
+  String get image;
+
+  /// No description provided for @video.
+  ///
+  /// In en, this message translates to:
+  /// **'Video'**
+  String get video;
+
+  /// No description provided for @back.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get back;
+
+  /// No description provided for @createNewPost.
+  ///
+  /// In en, this message translates to:
+  /// **'Create New Post'**
+  String get createNewPost;
+
+  /// No description provided for @postAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Post'**
+  String get postAction;
+
+  /// No description provided for @postCreatedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Post created successfully!'**
+  String get postCreatedSuccess;
+
+  /// No description provided for @chooseFromGallery.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose from Gallery'**
+  String get chooseFromGallery;
+
+  /// No description provided for @useCamera.
+  ///
+  /// In en, this message translates to:
+  /// **'Use Camera'**
+  String get useCamera;
+
+  /// No description provided for @copyComment.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy comment'**
+  String get copyComment;
+
+  /// No description provided for @viewEditHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'View Edit History'**
+  String get viewEditHistory;
+
+  /// No description provided for @reportComment.
+  ///
+  /// In en, this message translates to:
+  /// **'Report comment'**
+  String get reportComment;
+
+  /// No description provided for @hideComment.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide comment'**
+  String get hideComment;
+
+  /// No description provided for @edit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get edit;
 }
 
 class _AppLocalizationsDelegate

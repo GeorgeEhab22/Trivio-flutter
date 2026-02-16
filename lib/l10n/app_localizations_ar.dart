@@ -224,4 +224,176 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get reqUsernameChars => 'الأحرف، الأرقام، والشرطة السفلية فقط';
+
+  @override
+  String get postDeletedSuccess => 'تم حذف المنشور بنجاح';
+
+  @override
+  String get homeTitle => 'تريفيو';
+
+  @override
+  String get loadMore => 'جاري تحميل المزيد...';
+
+  @override
+  String get refreshSuccess => 'تم تحديث المنشورات';
+
+  @override
+  String get showMore => 'عرض المزيد';
+
+  @override
+  String get showLess => 'عرض أقل';
+
+  @override
+  String get defaultGroupName => 'اسم المجموعة';
+
+  @override
+  String get shareAction => 'نشر';
+
+  @override
+  String get shareHint => 'اكتب شيئاً عن هذا المنشور...';
+
+  @override
+  String get shareSuccess => 'تمت المشاركة بنجاح!';
+
+  @override
+  String get errEmptyShare => 'اكتب شيئاً أولاً!';
+
+  @override
+  String get defaultUserName => 'اسم المستخدم';
+
+  @override
+  String get reactionGoal => 'هدف';
+
+  @override
+  String get reactionOffside => 'تسلل';
+
+  @override
+  String get skeletonLoadingText =>
+      'جاري تحميل المحتوى للمنشورات.\nسطر إضافي لتحسين المظهر.';
+
+  @override
+  String get errNoPosts => 'لا توجد منشورات في الجدول الزمني الخاص بك.';
+
+  @override
+  String get reportPostSuccess => 'تم الإبلاغ عن المنشور بنجاح';
+
+  @override
+  String get follow => 'متابعة';
+
+  @override
+  String get following => 'متابع';
+
+  @override
+  String get save => 'حفظ';
+
+  @override
+  String get saved => 'تم الحفظ';
+
+  @override
+  String get copyLink => 'نسخ الرابط';
+
+  @override
+  String get noLink => 'لا يوجد رابط';
+
+  @override
+  String get notInterested => 'غير مهتم';
+
+  @override
+  String get report => 'إبلاغ';
+
+  @override
+  String get delete => 'حذف';
+
+  @override
+  String get deletePostTitle => 'حذف المنشور';
+
+  @override
+  String get deletePostConfirm => 'هل أنت متأكد من رغبتك في حذف هذا المنشور؟';
+
+  @override
+  String get reportQuestion => 'لماذا تبلغ عن هذا المنشور؟';
+
+  @override
+  String get reportDisclaimer =>
+      'تساعدنا ملاحظاتك في الحفاظ على أمان مجتمع كرة القدم.';
+
+  @override
+  String get reportReasonSpam => 'محتوى غير مرغوب فيه';
+
+  @override
+  String get reportReasonToxic => 'سلوك مسيء أو سام';
+
+  @override
+  String get reportReasonFalse => 'معلومات كاذبة أو مضللة';
+
+  @override
+  String get reportReasonAds => 'ترويج / إعلانات غير مسموح بها';
+
+  @override
+  String get reportReasonOther => 'سبب آخر';
+
+  @override
+  String get commentsTitle => 'التعليقات';
+
+  @override
+  String get noCommentsYet => 'لا توجد تعليقات بعد';
+
+  @override
+  String get addCommentHint => 'أضف تعليقاً...';
+
+  @override
+  String replyingTo(String userName) {
+    return 'الرد على $userName';
+  }
+
+  @override
+  String get reply => 'رد';
+
+  @override
+  String get privacyPublic => 'عام';
+
+  @override
+  String get privacyPrivate => 'خاص';
+
+  @override
+  String get addPostHint => 'بماذا تفكر؟';
+
+  @override
+  String get image => 'صورة';
+
+  @override
+  String get video => 'فيديو';
+
+  @override
+  String get back => 'رجوع';
+
+  @override
+  String get createNewPost => 'إنشاء منشور جديد';
+
+  @override
+  String get postAction => 'نشر';
+
+  @override
+  String get postCreatedSuccess => 'تم إنشاء المنشور بنجاح!';
+
+  @override
+  String get chooseFromGallery => 'اختر من المعرض';
+
+  @override
+  String get useCamera => 'استخدام الكاميرا';
+
+  @override
+  String get copyComment => 'نسخ التعليق';
+
+  @override
+  String get viewEditHistory => 'عرض سجل التعديلات';
+
+  @override
+  String get reportComment => 'الإبلاغ عن التعليق';
+
+  @override
+  String get hideComment => 'إخفاء التعليق';
+
+  @override
+  String get edit => 'تعديل';
 }

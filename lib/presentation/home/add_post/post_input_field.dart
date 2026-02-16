@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:auth/l10n/app_localizations.dart';
 
 class PostInputField extends StatelessWidget {
   final TextEditingController controller;
@@ -12,6 +13,8 @@ class PostInputField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       child: Container(
@@ -19,14 +22,15 @@ class PostInputField extends StatelessWidget {
         decoration: BoxDecoration(
           border: Border.all(color: Colors.black12),
           borderRadius: BorderRadius.circular(12),
-          color: Theme.of( context).cardColor,
+          color: Theme.of(context).cardColor,
         ),
         child: TextField(
           controller: controller,
           onChanged: onChanged,
           maxLines: 4,
-          decoration: const InputDecoration(
-            hintText: "What's happening on your mind?",
+          decoration: InputDecoration(
+            // Localized hint
+            hintText: l10n.addPostHint, 
             border: InputBorder.none,
           ),
         ),

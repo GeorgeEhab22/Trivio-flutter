@@ -26,9 +26,7 @@ class StatsCubit extends Cubit<StatsState> {
       (matches) => emit(StatsLoaded(matches: matches)),
     );
   } catch (e) {
-    // 3. Prevent infinite loops: Just log and stay in Error state
     if (isClosed) return;
-    print("StatsCubit Error: $e");
     emit(StatsError(message: "Failed to load data.")); 
   }
 }

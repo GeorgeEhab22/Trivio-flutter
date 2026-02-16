@@ -1,12 +1,10 @@
 import 'package:auth/presentation/authentication/widgets/show_custom_snackbar.dart';
+import 'package:auth/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../common/basic_app_button.dart';
 
-// TODO : need to be refactored later (any thing related to share)
 class ShareBottomSheet extends StatefulWidget {
-  // final VoidCallback onShare;
-
   const ShareBottomSheet({super.key});
 
   @override
@@ -21,13 +19,11 @@ class _ShareBottomSheetState extends State<ShareBottomSheet> {
   @override
   void initState() {
     super.initState();
-    // listen to controller so we react to programmatic changes as well
     _controller.addListener(_onTextChanged);
   }
 
   void _onTextChanged() {
     if (!mounted) return;
-    // calling setState only when needed reduces rebuild churn
     setState(() {});
   }
 
@@ -39,28 +35,27 @@ class _ShareBottomSheetState extends State<ShareBottomSheet> {
   }
 
   void _onSharePressed() {
+    final l10n = AppLocalizations.of(context)!;
     final content = _controller.text.trim();
+    
     if (content.isEmpty) {
-      showCustomSnackBar(context, "Write something first!", false);
+      showCustomSnackBar(context, l10n.errEmptyShare, false);
       return;
     }
 
-    // First call the share callback so parent updates its state/servers.
+    showCustomSnackBar(context, l10n.shareSuccess, true);
 
-    // Provide immediate feedback while the sheet is still mounted.
-    showCustomSnackBar(context, "Post shared successfully!", true);
-
-    // Clear the input and close the sheet
     _controller.clear();
     context.pop();
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final handleBarColor = Theme.of(context).brightness == Brightness.dark
         ? Colors.grey[700]
         : Colors.grey[300];
-    // Use AnimatedPadding to follow the keyboard (keeps your original behavior)
+
     return AnimatedPadding(
       duration: const Duration(milliseconds: 200),
       padding: EdgeInsets.only(
@@ -71,7 +66,7 @@ class _ShareBottomSheetState extends State<ShareBottomSheet> {
         child: Container(
           decoration: BoxDecoration(
             color: Theme.of(context).scaffoldBackgroundColor,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
           child: SingleChildScrollView(
@@ -92,7 +87,6 @@ class _ShareBottomSheetState extends State<ShareBottomSheet> {
                   ),
                 ),
 
-                // 🔹 Header: User info + Share button
                 Row(
                   children: [
                     CircleAvatar(
@@ -101,9 +95,9 @@ class _ShareBottomSheetState extends State<ShareBottomSheet> {
                       child: const Icon(Icons.person, color: Colors.grey),
                     ),
                     const SizedBox(width: 10),
-                    const Text(
-                      "User Name", // temporary placeholder
-                      style: TextStyle(
+                    Text(
+                      l10n.defaultUserName, 
+                      style: const TextStyle(
                         fontSize: 17,
                         fontWeight: FontWeight.w600,
                       ),
@@ -111,7 +105,7 @@ class _ShareBottomSheetState extends State<ShareBottomSheet> {
                     const Spacer(),
                     BasicAppButton(
                       onPressed: _canPost ? _onSharePressed : null,
-                      title: "Share",
+                      title: l10n.shareAction, 
                       height: 36,
                       width: 90,
                     ),
@@ -125,7 +119,7 @@ class _ShareBottomSheetState extends State<ShareBottomSheet> {
                   controller: _controller,
                   maxLines: 4,
                   decoration: InputDecoration(
-                    hintText: "Say something about this post...",
+                    hintText: l10n.shareHint, 
                     filled: true,
                     fillColor: Theme.of(context).cardColor,
                     contentPadding: const EdgeInsets.all(14),

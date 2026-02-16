@@ -21,7 +21,8 @@ OverlayEntry buildReactionsOverlay({
       const emojiSize = 24.0;
       final itemWidth = emojiSize + (itemHorizontal * 2);
       final bubbleWidth = (emojiList.length * itemWidth) + (bubblePaddingH * 2);
-        const bubbleHeightEstimate = 64.0;
+      const bubbleHeightEstimate = 64.0;
+      
       double left = anchor.center.dx - bubbleWidth / 2;
       left = left.clamp(8.0, screenSize.width - bubbleWidth - 8.0);
 
@@ -56,7 +57,7 @@ OverlayEntry buildReactionsOverlay({
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: Theme.of(context).cardColor, // Respect dark/light theme
                         borderRadius: BorderRadius.circular(30),
                         boxShadow: const [
                           BoxShadow(
@@ -66,25 +67,27 @@ OverlayEntry buildReactionsOverlay({
                           ),
                         ],
                       ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: List.generate(emojiList.length, (index) {
-                          final isHovering = hoveringReaction == reactionList[index];
-                          return _buildReactionItem(
-                            emoji: emojiList[index],
-                            label: reactionNames[index],
-                            isHovering: isHovering,
-                            onHover: (hovering) {
-                              onHoverChange(hovering);
-                              hoveringReaction =
-                                  hovering ? reactionList[index] : null;
-                          
-                            },
-                            onTap: () {
-                              onReactionSelected(reactionList[index]);
-                            },
-                          );
-                        }),
+                      // Force LTR so the emoji order matches the list index order
+                      child: Directionality(
+                        textDirection: TextDirection.ltr,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: List.generate(emojiList.length, (index) {
+                            final isHovering = hoveringReaction == reactionList[index];
+                            return _buildReactionItem(
+                              emoji: emojiList[index],
+                              label: reactionNames[index],
+                              isHovering: isHovering,
+                              onHover: (hovering) {
+                                onHoverChange(hovering);
+                                hoveringReaction = hovering ? reactionList[index] : null;
+                              },
+                              onTap: () {
+                                onReactionSelected(reactionList[index]);
+                              },
+                            );
+                          }),
+                        ),
                       ),
                     ),
                   ),
@@ -115,10 +118,12 @@ Widget _buildReactionItem({
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            // Label is now localized because it's passed from the parent state
             if (isHovering)
-              Text(label,
-                  style: const TextStyle(
-                      fontSize: 10, fontWeight: FontWeight.bold)),
+              Text(
+                label,
+                style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+              ),
             AnimatedScale(
               duration: const Duration(milliseconds: 150),
               scale: isHovering ? 1.4 : 1.0,

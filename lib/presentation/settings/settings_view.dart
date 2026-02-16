@@ -1,6 +1,7 @@
 import 'package:auth/common/functions/custom_list_tile.dart';
 import 'package:auth/core/app_routes.dart';
 import 'package:auth/common/functions/custom_square_button.dart';
+import 'package:auth/presentation/authentication/widgets/language_switch_button.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -142,8 +143,9 @@ class SettingsView extends StatelessWidget {
                     context.push(AppRoutes.activeStates);
                   },
                 ),
+                const Divider(),
+                LanguageSwitchButton(),
 
-                const SizedBox(height: 20),
               ],
             ),
           ),

@@ -226,4 +226,176 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get reqUsernameChars => 'Only letters, numbers, and underscores';
+
+  @override
+  String get postDeletedSuccess => 'Post deleted successfully';
+
+  @override
+  String get homeTitle => 'Trivio Feed';
+
+  @override
+  String get loadMore => 'Loading more posts...';
+
+  @override
+  String get refreshSuccess => 'Feed updated';
+
+  @override
+  String get showMore => 'more';
+
+  @override
+  String get showLess => 'less';
+
+  @override
+  String get defaultGroupName => 'Group Name';
+
+  @override
+  String get shareAction => 'Share';
+
+  @override
+  String get shareHint => 'Say something about this post...';
+
+  @override
+  String get shareSuccess => 'Post shared successfully!';
+
+  @override
+  String get errEmptyShare => 'Write something first!';
+
+  @override
+  String get defaultUserName => 'User Name';
+
+  @override
+  String get reactionGoal => 'Goal';
+
+  @override
+  String get reactionOffside => 'Offside';
+
+  @override
+  String get skeletonLoadingText =>
+      'Loading content lines for skeleton effect.\nSecond line for better UI.';
+
+  @override
+  String get errNoPosts => 'No posts found in your timeline.';
+
+  @override
+  String get reportPostSuccess => 'Post reported successfully';
+
+  @override
+  String get follow => 'Follow';
+
+  @override
+  String get following => 'Following';
+
+  @override
+  String get save => 'Save';
+
+  @override
+  String get saved => 'Saved';
+
+  @override
+  String get copyLink => 'Copy Link';
+
+  @override
+  String get noLink => 'No Link';
+
+  @override
+  String get notInterested => 'Not Interested';
+
+  @override
+  String get report => 'Report';
+
+  @override
+  String get delete => 'Delete';
+
+  @override
+  String get deletePostTitle => 'Delete Post';
+
+  @override
+  String get deletePostConfirm => 'Are you sure you want to delete this post?';
+
+  @override
+  String get reportQuestion => 'Why are you reporting this post?';
+
+  @override
+  String get reportDisclaimer =>
+      'Your feedback helps us keep the football community safe and enjoyable.';
+
+  @override
+  String get reportReasonSpam => 'Spam or irrelevant content';
+
+  @override
+  String get reportReasonToxic => 'Toxic or offensive behavior';
+
+  @override
+  String get reportReasonFalse => 'False or misleading information';
+
+  @override
+  String get reportReasonAds => 'Promotion / advertising not allowed';
+
+  @override
+  String get reportReasonOther => 'Other';
+
+  @override
+  String get commentsTitle => 'Comments';
+
+  @override
+  String get noCommentsYet => 'No comments yet';
+
+  @override
+  String get addCommentHint => 'Add a comment...';
+
+  @override
+  String replyingTo(String userName) {
+    return 'Replying to $userName';
+  }
+
+  @override
+  String get reply => 'Reply';
+
+  @override
+  String get privacyPublic => 'Public';
+
+  @override
+  String get privacyPrivate => 'Private';
+
+  @override
+  String get addPostHint => 'What\'s happening on your mind?';
+
+  @override
+  String get image => 'Image';
+
+  @override
+  String get video => 'Video';
+
+  @override
+  String get back => 'Back';
+
+  @override
+  String get createNewPost => 'Create New Post';
+
+  @override
+  String get postAction => 'Post';
+
+  @override
+  String get postCreatedSuccess => 'Post created successfully!';
+
+  @override
+  String get chooseFromGallery => 'Choose from Gallery';
+
+  @override
+  String get useCamera => 'Use Camera';
+
+  @override
+  String get copyComment => 'Copy comment';
+
+  @override
+  String get viewEditHistory => 'View Edit History';
+
+  @override
+  String get reportComment => 'Report comment';
+
+  @override
+  String get hideComment => 'Hide comment';
+
+  @override
+  String get edit => 'Edit';
 }

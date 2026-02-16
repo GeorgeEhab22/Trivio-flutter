@@ -1,6 +1,7 @@
 import 'package:auth/constants/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:auth/domain/entities/comment.dart';
+import 'package:auth/l10n/app_localizations.dart';
 import '../comment_item/comment_item.dart';
 
 class CommentsList extends StatelessWidget {
@@ -17,20 +18,19 @@ class CommentsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-   
+    // Empty state localized
     if (comments.isEmpty) {
+      final l10n = AppLocalizations.of(context)!;
       return Center(
         child: Text(
-          "No comments yet",
+          l10n.noCommentsYet,
           style: TextStyle(color: AppColors.iconsColor),
         ),
       );
     }
 
-// TODO : handle later => do not show all comments at once
-// TODO: show all comments and in replies list and the arrow that shows replies and hide it build ui in comment item
     return ListView.builder(
-      itemCount: comments.length, // <====
+      itemCount: comments.length,
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
       itemBuilder: (context, index) {
         final comment = comments[index];
@@ -40,13 +40,11 @@ class CommentsList extends StatelessWidget {
               key: ValueKey(comment.id),
               comment: comment,
               currentUserId: currentUserId,
-              onReplyTap:onReplyTap,
+              onReplyTap: onReplyTap,
               replies: comment.repliesList ?? [],
             ),
-            
           ],
         );
-
       },
     );
   }

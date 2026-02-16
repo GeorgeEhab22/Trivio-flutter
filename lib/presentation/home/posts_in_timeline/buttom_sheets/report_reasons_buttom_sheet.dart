@@ -1,5 +1,6 @@
 import 'package:auth/core/styels.dart';
 import 'package:flutter/material.dart';
+import 'package:auth/l10n/app_localizations.dart';
 
 class ReportReasonsBottomSheet extends StatelessWidget {
   final void Function(String reason) onReportSelected;
@@ -8,15 +9,18 @@ class ReportReasonsBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final handleBarColor = Theme.of(context).brightness == Brightness.dark
         ? Colors.grey[700]
         : Colors.grey[300];
+
+    // Map of technical keys to localized strings
     final reasons = [
-      "Spam or irrelevant content",
-      "Toxic or offensive behavior",
-      "False or misleading information",
-      "Promotion / advertising not allowed",
-      "Other",
+      l10n.reportReasonSpam,
+      l10n.reportReasonToxic,
+      l10n.reportReasonFalse,
+      l10n.reportReasonAds,
+      l10n.reportReasonOther,
     ];
 
     return Container(
@@ -48,25 +52,24 @@ class ReportReasonsBottomSheet extends StatelessWidget {
               ),
             ),
 
-            const Center(child: Text("Report", style: Styles.textStyle20)),
+            Center(child: Text(l10n.report, style: Styles.textStyle20)),
             const SizedBox(height: 12),
 
-            const Text(
-              "Why are you reporting this post?",
+            Text(
+              l10n.reportQuestion,
               style: Styles.textStyle20,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 12),
 
             Text(
-              "Your feedback helps us keep the football community safe and enjoyable.",
+              l10n.reportDisclaimer,
               style: Styles.textStyle16.copyWith(color: Colors.black54),
               textAlign: TextAlign.center,
             ),
 
             const SizedBox(height: 16),
 
-            // Reasons list
             ListView.separated(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
@@ -83,7 +86,6 @@ class ReportReasonsBottomSheet extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 6),
                       child: Row(
                         children: [
-                          // const Icon(Icons.report, size: 20, color: Colors.redAccent),
                           const SizedBox(width: 12),
                           Expanded(
                             child: Text(

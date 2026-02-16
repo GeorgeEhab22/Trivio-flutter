@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:auth/constants/colors.dart';
+import 'package:auth/l10n/app_localizations.dart';
 
 class CommentInputField extends StatelessWidget {
   final TextEditingController controller;
@@ -18,8 +19,9 @@ class CommentInputField extends StatelessWidget {
   });
 
   @override
-  @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return SafeArea(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -34,7 +36,8 @@ class CommentInputField extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      "Replying to $replyingToUser",
+                      // Localized: "Replying to $replyingToUser"
+                      l10n.replyingTo(replyingToUser!), 
                       style: TextStyle(
                         color: Theme.of(context).textTheme.bodyMedium?.color,
                       ),
@@ -52,7 +55,6 @@ class CommentInputField extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: Row(
               children: [
-                // user profile photo => TODO: change it later
                 const CircleAvatar(
                   radius: 18,
                   backgroundColor: Colors.grey,
@@ -61,19 +63,18 @@ class CommentInputField extends StatelessWidget {
 
                 const SizedBox(width: 10),
 
-                // text field
                 Expanded(
                   child: TextField(
                     controller: controller,
                     focusNode: focusNode,
                     decoration: InputDecoration(
-                      hintText: "Add a comment...",
+                      hintText: l10n.addCommentHint, // Localized hint
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20),
                         borderSide: BorderSide.none,
                       ),
                       filled: true,
-                      fillColor:Theme.of(context).cardColor,
+                      fillColor: Theme.of(context).cardColor,
                       contentPadding: const EdgeInsets.symmetric(
                         horizontal: 16,
                         vertical: 8,
@@ -83,7 +84,6 @@ class CommentInputField extends StatelessWidget {
                   ),
                 ),
 
-                // submit button
                 ValueListenableBuilder<TextEditingValue>(
                   valueListenable: controller,
                   builder: (context, value, child) {

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
 import 'package:auth/presentation/authentication/widgets/show_custom_snackbar.dart';
+import 'package:auth/l10n/app_localizations.dart'; // Import localization
 
 class HomeView extends StatelessWidget {
   const HomeView({super.key});
@@ -12,13 +13,15 @@ class HomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<PostCubit>();
+    final l10n = AppLocalizations.of(context)!;
 
     return BlocListener<PostCubit, PostState>(
       listener: (context, state) {
         if (state is DeletePostSuccess) {
-          showCustomSnackBar(context, 'Post deleted successfully', true);
+          showCustomSnackBar(context, l10n.postDeletedSuccess, true);
         }
         if (state is DeletePostError) {
+          // Use the localized error helper we discussed or show state message
           showCustomSnackBar(context, state.message, false);
         }
       },
@@ -45,7 +48,6 @@ class HomeView extends StatelessWidget {
                   ),
                 ),
               ),
-
               _buildAddPostFAB(context, cubit),
             ],
           ),
@@ -53,35 +55,38 @@ class HomeView extends StatelessWidget {
       ),
     );
   }
-}
 
-bool _handlePagination(ScrollNotification scrollInfo, PostCubit cubit) {
-  if (scrollInfo.metrics.pixels >= scrollInfo.metrics.maxScrollExtent * 0.9 &&
-      !cubit.isLoadingMore) {
-    cubit.loadMorePosts();
+  bool _handlePagination(ScrollNotification scrollInfo, PostCubit cubit) {
+    if (scrollInfo.metrics.pixels >= scrollInfo.metrics.maxScrollExtent * 0.9 &&
+        !cubit.isLoadingMore) {
+      cubit.loadMorePosts();
+    }
+    return false;
   }
-  return false;
-}
 
-Widget _buildAddPostFAB(BuildContext context, PostCubit cubit) {
-  return Positioned(
-    bottom: 20,
-    right: 20,
-    child: FloatingActionButton(
-      shape: const CircleBorder(),
-      backgroundColor: const Color(0xff42C83C),
-      child: const Icon(Icons.add, color: Colors.white),
-      onPressed: () async {
-        final newPost = await showModalBottomSheet(
-          context: context,
-          isScrollControlled: true,
-          backgroundColor: Colors.transparent,
-          builder: (context) => const AddPostBottomSheet(),
-        );
-        if (newPost != null && context.mounted) {
-          cubit.addNewPostToFeed(newPost);
-        }
-      },
-    ),
-  );
+  Widget _buildAddPostFAB(BuildContext context, PostCubit cubit) {
+    // In RTL (Arabic), 'right: 20' will naturally place it on the left 
+    // of the screen unless you wrap it in Directionality(ltr).
+    // Standard practice for Arabic is to let it flip.
+    return Positioned(
+      bottom: 20,
+      right: 20,
+      child: FloatingActionButton(
+        shape: const CircleBorder(),
+        backgroundColor: const Color(0xff42C83C),
+        child: const Icon(Icons.add, color: Colors.white),
+        onPressed: () async {
+          final newPost = await showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            backgroundColor: Colors.transparent,
+            builder: (context) => const AddPostBottomSheet(),
+          );
+          if (newPost != null && context.mounted) {
+            cubit.addNewPostToFeed(newPost);
+          }
+        },
+      ),
+    );
+  }
 }

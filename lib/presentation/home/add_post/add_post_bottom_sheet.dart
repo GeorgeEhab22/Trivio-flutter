@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:auth/l10n/app_localizations.dart';
 
 class AddPostBottomSheet extends StatefulWidget {
   const AddPostBottomSheet({super.key});
@@ -30,11 +31,12 @@ class _AddPostBottomSheetState extends State<AddPostBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final mediaQuery = MediaQuery.of(context);
+    
     // Handle keyboard overlap
     final keyboardHeight = mediaQuery.viewInsets.bottom;
-    final maxHeight =
-        mediaQuery.size.height * 0.9; // Increased slightly for better view
+    final maxHeight = mediaQuery.size.height * 0.9; 
 
     return BlocProvider(
       create: (context) => di.sl<CreatePostCubit>(),
@@ -43,9 +45,10 @@ class _AddPostBottomSheetState extends State<AddPostBottomSheet> {
           if (state is CreatePostSuccess) {
             // Close the bottom sheet and return the new post
             context.pop(state.createdPost);
-            showCustomSnackBar(context, "Post created successfully!", true);
+            showCustomSnackBar(context, l10n.postCreatedSuccess, true);
           }
           if (state is CreatePostError) {
+            // state.message should be mapped to an l10n key in your listener logic if needed
             showCustomSnackBar(context, state.message, false);
           }
         },
@@ -70,7 +73,7 @@ class _AddPostBottomSheetState extends State<AddPostBottomSheet> {
               constraints: BoxConstraints(maxHeight: maxHeight),
               decoration: BoxDecoration(
                 color: Theme.of(context).scaffoldBackgroundColor,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
               ),
               child: cubit.isLoading
                   ? const SizedBox(
@@ -86,6 +89,7 @@ class _AddPostBottomSheetState extends State<AddPostBottomSheet> {
                           AddPostHeader(
                             isPostEnabled: isButtonEnabled,
                             onPost: () {
+                              // Replace with actual current user ID from Auth Bloc
                               cubit.submitPost(userId: "curr_user_id");
                             },
                           ),

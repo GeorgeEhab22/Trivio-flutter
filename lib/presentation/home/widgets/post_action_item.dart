@@ -32,6 +32,7 @@ class PostActionItem extends StatelessWidget {
             fontWeight: FontWeight.w500,
             color: color,
           ),
+          textDirection: TextDirection.ltr,
         ),
       ],
     );

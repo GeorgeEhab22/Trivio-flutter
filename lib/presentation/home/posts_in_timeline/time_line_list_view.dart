@@ -5,23 +5,27 @@ import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:skeletonizer/skeletonizer.dart';
+import 'package:auth/l10n/app_localizations.dart';
 
 class TimelineListView extends StatelessWidget {
   const TimelineListView({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    
+    // Localized dummy post for skeleton effect
     final dummyPost = Post(
       postID: '10',
       authorId: '0',
-      caption:
-          'Loading content lines for skeleton effect.\nSecond line for better UI.',
+      caption: l10n.skeletonLoadingText, // Localized dummy text
       type: 'text',
     );
 
     return BlocConsumer<PostCubit, PostState>(
       listener: (context, state) {
         if (state is PostsLoadingMoreError) {
+          // Use localized helper if state.message is a technical key
           showCustomSnackBar(context, state.message, false);
         }
       },
@@ -29,6 +33,7 @@ class TimelineListView extends StatelessWidget {
         final cubit = context.read<PostCubit>();
         final posts = cubit.posts;
 
+        // Initial Loading State
         if (state is PostLoading && posts.isEmpty) {
           return Skeletonizer.sliver(
             enabled: true,
@@ -44,28 +49,40 @@ class TimelineListView extends StatelessWidget {
           );
         }
 
+        // Error State (Empty List)
         if (state is PostError && posts.isEmpty) {
-          return SliverFillRemaining(child: Center(child: Text(state.message)));
+          return SliverFillRemaining(
+            child: Center(
+              child: Text(
+                state.message, // Ensure Cubit maps technical errors to l10n keys
+                style: const TextStyle(fontWeight: FontWeight.w500),
+              ),
+            ),
+          );
         }
 
+        // Data List with Pagination Skeleton
         return SliverList(
-          delegate: SliverChildBuilderDelegate((context, index) {
-            if (index >= posts.length) {
-              return Skeletonizer(
-                enabled: true,
-                child: PostCard(
-                  post: dummyPost,
-                  currentUserId: '1',
-                  isFollowing: false,
-                ),
+          delegate: SliverChildBuilderDelegate(
+            (context, index) {
+              if (index >= posts.length) {
+                return Skeletonizer(
+                  enabled: true,
+                  child: PostCard(
+                    post: dummyPost,
+                    currentUserId: '1',
+                    isFollowing: false,
+                  ),
+                );
+              }
+              return PostCard(
+                post: posts[index],
+                currentUserId: '1',
+                isFollowing: false,
               );
-            }
-            return PostCard(
-              post: posts[index],
-              currentUserId: '1',
-              isFollowing: false,
-            );
-          }, childCount: posts.length + (state is PostsLoadingMore ? 1 : 0)),
+            },
+            childCount: posts.length + (state is PostsLoadingMore ? 1 : 0),
+          ),
         );
       },
     );

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:auth/core/styels.dart';
 import 'package:auth/presentation/manager/post_cubit/post_interaction_cubit.dart';
+import 'package:auth/l10n/app_localizations.dart';
 
 class FollowButton extends StatelessWidget {
   final String currentUserId;
@@ -35,6 +36,7 @@ class FollowButton extends StatelessWidget {
               current is FollowUserError;
         },
         builder: (context, state) {
+          final l10n = AppLocalizations.of(context)!;
           bool isFollowing = initialFollowStatus;
 
           if (state is PostFollowUpdated) {
@@ -50,10 +52,10 @@ class FollowButton extends StatelessWidget {
             child: TextButton(
               onPressed: () {
                 context.read<PostInteractionCubit>().toggleFollowUser(
-                  followerId: currentUserId,
-                  followeeId: authorId,
-                  currentFollowStatus: isFollowing,
-                );
+                      followerId: currentUserId,
+                      followeeId: authorId,
+                      currentFollowStatus: isFollowing,
+                    );
               },
               style: TextButton.styleFrom(
                 backgroundColor: isFollowing
@@ -70,7 +72,8 @@ class FollowButton extends StatelessWidget {
                 ),
               ),
               child: Text(
-                isFollowing ? 'Following' : 'Follow',
+                // Localized labels
+                isFollowing ? l10n.following : l10n.follow,
                 style: Styles.textStyle14.copyWith(
                   color: isFollowing
                       ? Theme.of(context).iconTheme.color

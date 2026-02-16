@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:auth/l10n/app_localizations.dart';
 
 class ExpandableText extends StatefulWidget {
   final String text;
@@ -35,7 +36,7 @@ class _ExpandableTextState extends State<ExpandableText> {
     ).merge(widget.textStyle);
   }
 
-  bool _didOverflow(String text, double maxWidth, TextStyle style) {
+  bool _didOverflow(String text, double maxWidth, TextStyle style, BuildContext context) {
     if (_lastText == text &&
         _lastMaxWidth == maxWidth &&
         _lastDidOverflow != null) {
@@ -45,7 +46,8 @@ class _ExpandableTextState extends State<ExpandableText> {
     final tp = TextPainter(
       text: TextSpan(text: text, style: style),
       maxLines: widget.previewLines,
-      textDirection: TextDirection.ltr,
+      // Detect the actual app direction for accurate overflow calculation
+      textDirection: Directionality.of(context),
     )..layout(maxWidth: maxWidth);
 
     final overflow = tp.didExceedMaxLines;
@@ -60,6 +62,7 @@ class _ExpandableTextState extends State<ExpandableText> {
   @override
   Widget build(BuildContext context) {
     final effectiveStyle = _getEffectiveTextStyle(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -67,7 +70,7 @@ class _ExpandableTextState extends State<ExpandableText> {
             ? constraints.maxWidth
             : MediaQuery.of(context).size.width;
 
-        final overflow = _didOverflow(widget.text, maxWidth, effectiveStyle);
+        final overflow = _didOverflow(widget.text, maxWidth, effectiveStyle, context);
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -86,7 +89,9 @@ class _ExpandableTextState extends State<ExpandableText> {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4),
                   child: Text(
-                    _expanded ? (widget.canCollapse ? 'less' : '') : 'more',
+                    _expanded 
+                        ? (widget.canCollapse ? l10n.showLess : '') 
+                        : l10n.showMore,
                     style: TextStyle(
                       color: Colors.grey[600],
                       fontWeight: FontWeight.bold,

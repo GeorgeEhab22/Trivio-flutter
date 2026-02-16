@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:auth/domain/entities/reaction_type.dart';
+import 'package:auth/l10n/app_localizations.dart'; // Import localization
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'widgets/reaction_button.dart';
@@ -29,12 +30,26 @@ class _ReactionInteractionState extends State<ReactionInteraction> {
   Timer? _closeTimer;
   bool _isOverlayOpen = false;
 
+  // Static lists for logic
   static const List<String> _emojiList = ['🥅', '🚩'];
-  static const List<String> _reactionNames = ['Goal', 'Offside'];
   static const List<ReactionType> _reactionList = [
     ReactionType.goal,
     ReactionType.offside,
   ];
+
+  // This list will hold the localized names
+  List<String> _localizedReactionNames = [];
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Initialize or update localized names when the locale changes
+    final l10n = AppLocalizations.of(context)!;
+    _localizedReactionNames = [
+      l10n.reactionGoal,
+      l10n.reactionOffside,
+    ];
+  }
 
   @override
   void dispose() {
@@ -46,7 +61,6 @@ class _ReactionInteractionState extends State<ReactionInteraction> {
 
   void _onHoverEnter(bool isHovered) {
     if (!kIsWeb) return;
-
     if (isHovered) {
       _closeTimer?.cancel();
       if (!_isOverlayOpen) {
@@ -61,9 +75,7 @@ class _ReactionInteractionState extends State<ReactionInteraction> {
   }
 
   Rect _buttonGlobalRect() {
-   
     final overlay = Overlay.of(context);
-
     final overlayRenderBox = overlay.context.findRenderObject() as RenderBox?;
     final renderBox = context.findRenderObject() as RenderBox?;
 
@@ -71,7 +83,6 @@ class _ReactionInteractionState extends State<ReactionInteraction> {
       return Rect.zero;
     }
 
-    // top-left in overlay coordinates
     final topLeft = renderBox.localToGlobal(
       Offset.zero,
       ancestor: overlayRenderBox,
@@ -101,7 +112,8 @@ class _ReactionInteractionState extends State<ReactionInteraction> {
     return buildReactionsOverlay(
       anchor: anchor,
       emojiList: _emojiList,
-      reactionNames: _reactionNames,
+      // Use the localized list here
+      reactionNames: _localizedReactionNames, 
       reactionList: _reactionList,
       onReactionSelected: (type) {
         _removeOverlay();
@@ -141,8 +153,8 @@ class _ReactionInteractionState extends State<ReactionInteraction> {
             : rect;
         _showOverlayAtAnchor(anchor);
       },
-
       onLongPressEnd: (_) {
+        // Use a short delay or microtask to ensure the tap doesn't immediately close it
         Future.microtask(() => _removeOverlay());
       },
       child: MouseRegion(

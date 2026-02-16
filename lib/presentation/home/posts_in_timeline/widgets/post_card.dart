@@ -9,6 +9,7 @@ import 'package:auth/domain/entities/post.dart';
 import 'package:auth/domain/entities/reaction_type.dart';
 import 'package:auth/presentation/manager/post_cubit/post_interaction_cubit.dart';
 import 'package:auth/presentation/authentication/widgets/show_custom_snackbar.dart';
+import 'package:auth/l10n/app_localizations.dart';
 
 class PostCard extends StatelessWidget {
   final Post post;
@@ -32,8 +33,9 @@ class PostCard extends StatelessWidget {
         builder: (innerContext) {
           return BlocConsumer<PostInteractionCubit, PostInteractionState>(
             listener: (context, state) {
+              final l10n = AppLocalizations.of(context)!;
               if (state is ReportPostSuccess) {
-                showCustomSnackBar(context, 'Post reported successfully', true);
+                showCustomSnackBar(context, l10n.reportPostSuccess, true);
               }
               if (state is ReportPostError) {
                 showCustomSnackBar(context, state.message, false);

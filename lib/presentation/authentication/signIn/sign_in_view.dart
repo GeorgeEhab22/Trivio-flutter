@@ -50,6 +50,7 @@ class _SignInPageState extends State<SignInPage> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
+        forceMaterialTransparency: true,
         actions: const[LanguageSwitchButton()],
       ),
       body: BlocListener<SignInCubit, SignInState>(
