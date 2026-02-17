@@ -15,14 +15,14 @@ abstract class GroupRemoteDataSource {
   // Core Group
   Future<GroupModel> createGroup({
     required String name,
-    required String description,
+    String? description,
     XFile? coverImage,
   });
   Future<GroupModel> updateGroup({
     required String groupId,
     String? name,
     String? description,
-    String? coverImage,
+    XFile? coverImage,
     String? privacy,
   });
   Future<void> deleteGroup(String groupId);
@@ -123,16 +123,14 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
   @override
   Future<GroupModel> createGroup({
     required String name,
-    required String description,
+    String? description,
     XFile? coverImage,
   }) async {
     try {
-      final Map<String, dynamic> body = {
-        'name': name,
-        'description': description,
-        'privacy': 'private',
-      };
-
+      final Map<String, dynamic> body = {'name': name, 'privacy': 'private'};
+      if (description != null && description.trim().isNotEmpty) {
+        body['description'] = description;
+      }
       if (coverImage != null) {
         if (kIsWeb) {
           final bytes = await coverImage.readAsBytes();
@@ -158,6 +156,7 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
       // print(response);
       return GroupModel.fromJson(response['data']['group']);
     } catch (e) {
+      // print(e);
       errorHandler.handleDioError(e);
       rethrow;
     }
@@ -169,7 +168,7 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
     required String groupId,
     String? name,
     String? description,
-    String? coverImage,
+    XFile? coverImage,
     String? privacy,
   }) async {
     try {
@@ -180,15 +179,25 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
 
       final formData = FormData.fromMap(dataMap);
       if (coverImage != null) {
-        formData.files.add(
-          MapEntry(
-            'logo',
-            await MultipartFile.fromFile(
-              coverImage,
-              filename: coverImage.split('/').last,
+        if (kIsWeb) {
+          final bytes = await coverImage.readAsBytes();
+          formData.files.add(
+            MapEntry(
+              'logo',
+              MultipartFile.fromBytes(bytes, filename: coverImage.name),
             ),
-          ),
-        );
+          );
+        } else {
+          formData.files.add(
+            MapEntry(
+              'logo',
+              await MultipartFile.fromFile(
+                coverImage.path,
+                filename: coverImage.name,
+              ),
+            ),
+          );
+        }
       }
 
       final response = await api.patch(
@@ -196,8 +205,10 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
         data: formData,
         options: _getAuthOptions(),
       );
+      // print(response);
       return GroupModel.fromJson(response['data']['group']);
     } catch (e) {
+      // print(e);
       errorHandler.handleDioError(e);
       rethrow;
     }

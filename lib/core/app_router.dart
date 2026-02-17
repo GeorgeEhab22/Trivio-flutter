@@ -30,6 +30,7 @@ import 'package:auth/presentation/manager/group_cubit/kick_member/kick_member_cu
 import 'package:auth/presentation/manager/group_cubit/leave_group/leave_group_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/get_members_by_roles/members_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/unban_member/unban_member_cubit.dart';
+import 'package:auth/presentation/manager/group_cubit/update_group/update_group_cubit.dart';
 import 'package:auth/presentation/reels/reels_page.dart';
 import 'package:auth/presentation/settings/settings_view.dart';
 import 'package:auth/presentation/settings/theme_view.dart';
@@ -287,10 +288,17 @@ GoRouter createRouter(bool isLoggedIn) {
                     path: 'my_group',
                     builder: (context, state) {
                       final String groupId = state.extra as String;
-                      return BlocProvider(
-                        create: (context) =>
-                            di.sl<GetGroupCubit>()..getGroup(groupId),
-                        child: const MyGroupView(),
+                      return MultiBlocProvider(
+                        providers: [
+                          BlocProvider(
+                            create: (context) =>
+                                di.sl<GetGroupCubit>()..getGroup(groupId),
+                          ),
+                          BlocProvider(
+                            create: (context) => di.sl<UpdateGroupCubit>(),
+                          ),
+                        ],
+                        child: MyGroupView(groupId: groupId),
                       );
                     },
 

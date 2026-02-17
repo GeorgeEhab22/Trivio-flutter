@@ -10,23 +10,17 @@ class CreateGroupUseCase {
 
   Future<Either<Failure, Group>> call({
     required String name,
-    required String description,
+    String? description,
     XFile? coverImage,
   }) async {
     if (name.trim().isEmpty) {
       return const Left(ValidationFailure('Group name cannot be empty'));
     }
 
-    if (description.trim().isEmpty) {
-      return const Left(
-        ValidationFailure('Group description cannot be empty'),
-      );
-    }
-
 
     return await groupRepo.createGroup(
       name: name.trim(),
-      description: description.trim(),
+      description: description,
       coverImage: coverImage,
     );
   }

@@ -5,7 +5,7 @@ class GroupModel extends Group {
     required super.groupId,
     required super.groupName,
     super.groupCoverImage,
-    required super.groupDescription,
+    super.groupDescription,
     super.membersCount,
     super.adminsCount,
     super.moderatorsCount,
@@ -20,7 +20,7 @@ class GroupModel extends Group {
     return GroupModel(
       groupId: data['_id'] as String,
       groupName: data['name'] as String,
-      groupDescription: data['description'] as String,
+      groupDescription: data['description']?.toString() ??"",
       groupCoverImage: data['logo'] as String?,
       membersCount: data['members'] as int? ?? 0,
       adminsCount: data['admins'] as int? ?? 0,

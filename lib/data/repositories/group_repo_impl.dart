@@ -21,7 +21,7 @@ class GroupRepoImpl implements GroupRepo {
   @override
   Future<Either<Failure, Group>> createGroup({
     required String name,
-    required String description,
+    String? description,
     XFile? coverImage,
   }) async {
     try {
@@ -70,7 +70,7 @@ class GroupRepoImpl implements GroupRepo {
     required String groupId,
     String? name,
     String? description,
-    String? coverImage,
+    XFile? coverImage,
     String? privacy,
   }) async {
     try {

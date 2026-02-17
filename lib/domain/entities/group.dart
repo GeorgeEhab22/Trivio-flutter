@@ -4,7 +4,7 @@ class Group extends Equatable {
   final String groupId;
   final String groupName;
   final String? groupCoverImage;
-  final String groupDescription;
+  final String? groupDescription;
   final int? membersCount;
   final int? adminsCount;
   final int? moderatorsCount;
@@ -16,7 +16,7 @@ class Group extends Equatable {
     required this.groupId,
     required this.groupName,
     this.groupCoverImage,
-    required this.groupDescription,
+    this.groupDescription,
     this.membersCount,
     this.adminsCount,
     this.moderatorsCount,

@@ -10,7 +10,7 @@ abstract class GroupRepo {
   // 1 create group
   Future<Either<Failure, Group>> createGroup({
     required String name,
-    required String description,
+    String? description,
     XFile? coverImage,
   });
 
@@ -25,7 +25,7 @@ abstract class GroupRepo {
     required String groupId,
     String? name,
     String? description,
-    String? coverImage,
+    XFile? coverImage,
     String? privacy,
   });
 

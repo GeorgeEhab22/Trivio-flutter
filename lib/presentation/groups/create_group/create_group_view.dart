@@ -10,9 +10,32 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-class CreateGroupView extends StatelessWidget {
+class CreateGroupView extends StatefulWidget {
   const CreateGroupView({super.key});
 
+  @override
+  State<CreateGroupView> createState() => _CreateGroupViewState();
+}
+
+class _CreateGroupViewState extends State<CreateGroupView> {
+  late TextEditingController nameController;
+  late TextEditingController descController;
+
+  @override
+  void initState() {
+    super.initState();
+    final cubit = context.read<CreateGroupCubit>();
+    nameController = TextEditingController(text: cubit.name);
+    descController = TextEditingController(text: cubit.description);
+  }
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    descController.dispose();
+    super.dispose();
+  }
+  
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<CreateGroupCubit>();
@@ -50,10 +73,11 @@ class CreateGroupView extends StatelessWidget {
                 const Text("Name", style: Styles.textStyle18),
                 const SizedBox(height: 12),
                 textFieldWidget(
-                  controller:cubit.nameController,
+                  controller:nameController,
                   hint: "Name your group",
                   errorText: nameError,
-                  onChanged: () {
+                  onChanged: (val) {
+                    cubit.updateName(nameController.text);
                     cubit.clearFieldsError();
                   },
                 ),
@@ -65,11 +89,12 @@ class CreateGroupView extends StatelessWidget {
                 const Text("Description", style: Styles.textStyle18),
                 const SizedBox(height: 12),
                 textFieldWidget(
-                  controller: cubit.descController,
+                  controller: descController,
                   hint: "Tell people what this group is about",
                   maxLines: 5,
                   errorText: descError,
-                  onChanged: () {
+                  onChanged: (val) {
+                    cubit.updateDescription(descController.text);
                     cubit.clearFieldsError();
                   },
                 ),

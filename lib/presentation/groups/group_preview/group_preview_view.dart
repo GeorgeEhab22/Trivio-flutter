@@ -46,9 +46,9 @@ class GroupPreviewView extends StatelessWidget {
                           const SizedBox(height: 8),
                           NumberOfMembersRow(
                             numOfMembers:
-                                group.membersCount! +
-                                group.moderatorsCount! +
-                                group.adminsCount!,
+                                (group.membersCount??0) +
+                                (group.moderatorsCount??0) +
+                                (group.adminsCount??0),
                           ),
                           const SizedBox(height: 20),
                           JoinGroupButton(groupId:group.groupId),
@@ -57,7 +57,7 @@ class GroupPreviewView extends StatelessWidget {
                           const Text("About", style: Styles.textStyleBold18),
                           const SizedBox(height: 12),
                           ExpandableText(
-                            text: group.groupDescription,
+                            text: group.groupDescription ?? "",
                             previewLines: 4,
                             textStyle: Styles.textStyleNormal15,
                           ),

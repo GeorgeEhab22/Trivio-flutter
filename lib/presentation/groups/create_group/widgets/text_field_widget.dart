@@ -5,7 +5,7 @@ Widget textFieldWidget({
   int maxLines = 1,
   TextEditingController? controller,
   String? errorText,
-  VoidCallback? onChanged,
+  ValueChanged<String>? onChanged,
 }) {
   return Focus(
     child: Builder(
@@ -34,7 +34,7 @@ Widget textFieldWidget({
                 child: TextField(
                   controller: controller,
                   maxLines: maxLines,
-                  onChanged: (_) =>onChanged?.call(),
+                  onChanged: (value) =>onChanged?.call(value),
                   decoration: InputDecoration(
                     labelText: hint,
                     errorStyle: const TextStyle(height: 0),
