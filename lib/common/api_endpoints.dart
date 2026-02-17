@@ -49,4 +49,8 @@ class ApiEndpoints {
 
   // GROUPS
   static const groups = 'groups';            // POST (create), GET (all)
+
+  // USERS / ME
+  static const myGroups = 'users/me/my-groups';           // GET
+  static const joinedGroups = 'users/me/joined-groups';   // GET
 }

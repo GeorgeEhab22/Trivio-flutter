@@ -30,6 +30,8 @@ import 'package:auth/domain/usecases/group/groups/delete_group_use_case.dart';
 import 'package:auth/domain/usecases/group/groups/edit_group_use_case.dart';
 import 'package:auth/domain/usecases/group/groups/get_group_use_case.dart';
 import 'package:auth/domain/usecases/group/groups/get_groups_use_case.dart';
+import 'package:auth/domain/usecases/group/groups/get_joined_groups_use_case.dart';
+import 'package:auth/domain/usecases/group/groups/get_my_groups_use_case.dart';
 import 'package:auth/domain/usecases/group/groups/join_group_use_case.dart';
 import 'package:auth/domain/usecases/group/groups/leave_group_use_case.dart';
 import 'package:auth/domain/usecases/group/members/ban_member_use_case.dart';
@@ -73,6 +75,8 @@ import 'package:auth/presentation/manager/group_cubit/decline_request/decline_re
 import 'package:auth/presentation/manager/group_cubit/get_group/get_group_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/get_groups/get_groups_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/get_join_requests/get_join_requests_cubit.dart';
+import 'package:auth/presentation/manager/group_cubit/get_joined_groups/get_joined_groups_cubit.dart';
+import 'package:auth/presentation/manager/group_cubit/get_my_groups/get_my_groups_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/join_group/join_group_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/kick_member/kick_member_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/leave_group/leave_group_cubit.dart';
@@ -268,5 +272,13 @@ Future<void> init() async {
   sl.registerFactory(()=> UnbanMemberCubit(unbanMemberUseCase: sl()));
   // group members
   sl.registerFactory(() => GroupMembersCubit(sl(), sl(), sl()));
+
+  // get my groups
+  sl.registerLazySingleton(()=> GetMyGroupsUseCase(sl()));
+  sl.registerFactory(() => GetMyGroupsCubit(getMyGroupsUseCase: sl()));
+
+// get joined groups
+  sl.registerLazySingleton(()=> GetJoinedGroupsUseCase(sl()));
+  sl.registerFactory(() => GetJoinedGroupsCubit(getJoinedGroupsUseCase: sl()));
  
 }

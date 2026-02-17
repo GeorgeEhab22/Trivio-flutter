@@ -25,6 +25,8 @@ import 'package:auth/presentation/manager/group_cubit/decline_request/decline_re
 import 'package:auth/presentation/manager/group_cubit/get_group/get_group_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/get_groups/get_groups_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/get_join_requests/get_join_requests_cubit.dart';
+import 'package:auth/presentation/manager/group_cubit/get_joined_groups/get_joined_groups_cubit.dart';
+import 'package:auth/presentation/manager/group_cubit/get_my_groups/get_my_groups_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/join_group/join_group_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/kick_member/kick_member_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/leave_group/leave_group_cubit.dart';
@@ -211,8 +213,21 @@ GoRouter createRouter(bool isLoggedIn) {
           ),
           ShellRoute(
             builder: (context, state, child) {
-              return BlocProvider(
-                create: (context) => di.sl<GetAllGroupsCubit>()..getAllGroups(),
+              return MultiBlocProvider(
+                providers: [
+                  BlocProvider(
+                    create: (context) =>
+                        di.sl<GetAllGroupsCubit>()..getAllGroups(),
+                  ),
+                  BlocProvider(
+                    create: (context) =>
+                        di.sl<GetMyGroupsCubit>()..getMyGroups(),
+                  ),
+                  BlocProvider(
+                    create: (context) =>
+                        di.sl<GetJoinedGroupsCubit>()..getJoinedGroups(),
+                  ),
+                ],
                 child: child,
               );
             },

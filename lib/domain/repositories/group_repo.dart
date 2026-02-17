@@ -135,4 +135,15 @@ abstract class GroupRepo {
 
   // 24 get groups feed
   Future<Either<Failure, List<GroupPost>>> getGroupsFeed({int page = 1});
+
+  // 25 get my groups
+  Future<Either<Failure, List<Group>>> getMyGroups({
+    int page = 1,
+    String? search,
+  });
+  // 26 get joined groups
+  Future<Either<Failure, List<Group>>> getJoinedGroups({
+    int page = 1,
+    String? search,
+  });
 }

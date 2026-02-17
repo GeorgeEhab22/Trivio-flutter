@@ -1,8 +1,8 @@
 import 'package:auth/core/styels.dart';
 import 'package:auth/presentation/groups/widgets/dummy_for_skeletonizer.dart';
 import 'package:auth/presentation/groups/widgets/group_item.dart';
-import 'package:auth/presentation/manager/group_cubit/get_groups/get_groups_cubit.dart';
-import 'package:auth/presentation/manager/group_cubit/get_groups/get_groups_state.dart';
+import 'package:auth/presentation/manager/group_cubit/get_joined_groups/get_joined_groups_cubit.dart';
+import 'package:auth/presentation/manager/group_cubit/get_joined_groups/get_joined_groups_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -12,13 +12,13 @@ class JoinedGroupsListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<GetAllGroupsCubit, GetGroupsState>(
+    return BlocBuilder<GetJoinedGroupsCubit, GetJoinedGroupsState>(
       builder: (context, state) {
-        if (state is GetGroupsFailure) {
+        if (state is GetJoinedGroupsFailure) {
           return Center(child: Text(state.message));
         }
-        final bool isLoading = state is GetGroupsLoading;
-        final groups = (state is GetGroupsSuccess)
+        final bool isLoading = state is GetJoinedGroupsLoading;
+        final groups = (state is GetJoinedGroupsSuccess)
             ? state.groups
             : DummyData.dummyGroups;
         return Skeletonizer(

@@ -100,6 +100,8 @@ abstract class GroupRemoteDataSource {
     required String postId,
   });
   Future<List<GroupPostModel>> getGroupFeed({int page = 1});
+  Future<List<GroupModel>> getMyGroups({int page = 1, String? search});
+  Future<List<GroupModel>> getJoinedGroups({int page = 1, String? search});
 }
 
 class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
@@ -527,4 +529,44 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
       rethrow;
     }
   }
+
+ // --- Get My Groups ---
+  @override
+  Future<List<GroupModel>> getMyGroups({int page = 1, String? search}) async {
+    try {
+      final query = search != null
+          ? "?page=$page&keyword=$search"
+          : "?page=$page";
+      final response = await api.get(
+        "${ApiEndpoints.myGroups}$query",
+        options: _getAuthOptions(),
+      );
+      final list = response['data']['groups'] as List;
+      return list.map((e) => GroupModel.fromJson(e)).toList();
+    } catch (e) {
+      errorHandler.handleDioError(e);
+      rethrow;
+    }
+  }
+
+  // --- Get Joined Groups ---
+  @override
+  Future<List<GroupModel>> getJoinedGroups({int page = 1, String? search}) async {
+    try {
+      final query = search != null
+          ? "?page=$page&keyword=$search"
+          : "?page=$page";
+      final response = await api.get(
+        "${ApiEndpoints.joinedGroups}$query",
+        options: _getAuthOptions(),
+      );
+      final list = response['data']['groups'] as List;
+      return list.map((e) => GroupModel.fromJson(e)).toList();
+    } catch (e) {
+      errorHandler.handleDioError(e);
+      rethrow;
+    }
+  }
+
+
 }

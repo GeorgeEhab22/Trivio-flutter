@@ -5,7 +5,7 @@ import 'package:auth/core/styels.dart';
 import 'package:auth/presentation/authentication/widgets/show_custom_snackbar.dart';
 import 'package:auth/presentation/manager/group_cubit/delete_group/delete_group_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/delete_group/delete_group_state.dart';
-import 'package:auth/presentation/manager/group_cubit/get_groups/get_groups_cubit.dart';
+import 'package:auth/presentation/manager/group_cubit/get_my_groups/get_my_groups_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -19,7 +19,7 @@ class ManageGroupView extends StatelessWidget {
     return BlocListener<DeleteGroupCubit,DeleteGroupState >(
       listener: (context, state) {
         if (state is DeleteGroupSuccess) {
-          context.read<GetAllGroupsCubit>().removeGroupLocally(groupId);
+          context.read<GetMyGroupsCubit>().removeGroupLocally(groupId);
           showCustomSnackBar(context, "Group deleted successfully", true);
           context.go(AppRoutes.groups); 
         }
