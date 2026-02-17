@@ -3,8 +3,8 @@ import 'package:auth/data/core/error/exceptions.dart';
 import 'package:auth/data/datasource/groups_remote_datasource.dart';
 import 'package:auth/domain/entities/group.dart';
 import 'package:auth/domain/entities/group_member.dart';
-import 'package:auth/domain/entities/group_post.dart';
 import 'package:auth/domain/entities/join_request.dart';
+import 'package:auth/domain/entities/post.dart';
 import 'package:auth/domain/repositories/group_repo.dart';
 import 'package:dartz/dartz.dart';
 import 'package:image_picker/image_picker.dart';
@@ -422,17 +422,20 @@ class GroupRepoImpl implements GroupRepo {
   // --- 4. Posts Management ---
 
   @override
-  Future<Either<Failure, GroupPost>> createGroupPost({
+  Future<Either<Failure, Post>> createGroupPost({
     required String groupId,
     String? caption,
     List<String>? media,
+    required String type,
   }) async {
     try {
       final model = await remoteDataSource.createGroupPost(
         groupId: groupId,
         caption: caption,
+        media: [],
+        type: type,
       );
-      return Right(model);
+      return Right(model.toEntity());
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));
     } catch (_) {
@@ -443,7 +446,6 @@ class GroupRepoImpl implements GroupRepo {
   @override
   Future<Either<Failure, String>> deleteGroupPost({
     required String groupId,
-    required String userId,
     required String postId,
   }) async {
     try {
@@ -457,9 +459,8 @@ class GroupRepoImpl implements GroupRepo {
   }
 
   @override
-  Future<Either<Failure, GroupPost>> editGroupPost({
+  Future<Either<Failure, Post>> editGroupPost({
     required String groupId,
-    required String userId,
     required String postId,
     required String newCaption,
     List<String>? media,
@@ -479,7 +480,7 @@ class GroupRepoImpl implements GroupRepo {
   }
 
   @override
-  Future<Either<Failure, List<GroupPost>>> getGroupPosts({
+  Future<Either<Failure, List<Post>>> getGroupPosts({
     required String groupId,
     int page = 1,
   }) async {
@@ -497,7 +498,7 @@ class GroupRepoImpl implements GroupRepo {
   }
 
   @override
-  Future<Either<Failure, List<GroupPost>>> getGroupsFeed({int page = 1}) async {
+  Future<Either<Failure, List<Post>>> getGroupsFeed({int page = 1}) async {
     try {
       final models = await remoteDataSource.getGroupFeed(page: page);
       return Right(models);

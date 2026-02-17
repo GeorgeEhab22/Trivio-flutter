@@ -1,5 +1,6 @@
 import 'package:auth/core/errors/failure.dart';
 import 'package:auth/domain/entities/post.dart';
+import 'package:auth/domain/usecases/group/group_posts/create_group_post_use_case.dart';
 import 'package:auth/domain/usecases/post/create_post_usecase.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,12 +10,13 @@ part 'create_post_state.dart';
 
 class CreatePostCubit extends Cubit<CreatePostState> {
   final CreatePostUseCase createPostUseCase;
+  final CreateGroupPostUseCase createGroupPostUseCase;
 
   List<XFile> _media = [];
   String type = "Public";
   String caption = "";
 
-  CreatePostCubit({required this.createPostUseCase})
+  CreatePostCubit({required this.createPostUseCase,required this.createGroupPostUseCase})
       : super(const CreatePostInitial());
 
   // --- UI Helpers ---
@@ -72,17 +74,24 @@ class CreatePostCubit extends Cubit<CreatePostState> {
 
   // --- Submission Logic ---
 
-  Future<void> submitPost({required String userId}) async {
+  Future<void> submitPost({required String userId,String? groupId}) async {
     if (caption.trim().isEmpty && _media.isEmpty) return;
 
     emit(const CreatePostLoading());
 
    
-    final result = await createPostUseCase(
-      caption: caption,
-      media: _media, 
-      type: type,
-    );
+    final result = (groupId != null)
+        ? await createGroupPostUseCase(
+            groupId: groupId,
+            caption: caption,
+            media: _media.map((file) => file.path).toList(),
+            type: "private",
+          )
+        : await createPostUseCase(
+            caption: caption,
+            media: _media,
+            type: type,
+          );
 
     result.fold(
       (failure) => emit(_mapFailureToState(failure)),

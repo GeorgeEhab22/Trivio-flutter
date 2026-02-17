@@ -1,5 +1,5 @@
 import 'package:auth/core/errors/failure.dart';
-import 'package:auth/domain/entities/group_post.dart';
+import 'package:auth/domain/entities/post.dart';
 import 'package:auth/domain/repositories/group_repo.dart';
 import 'package:dartz/dartz.dart';
 
@@ -7,10 +7,11 @@ class CreateGroupPostUseCase {
   final GroupRepo groupRepo;
   CreateGroupPostUseCase(this.groupRepo);
 
-  Future<Either<Failure, GroupPost>> call({
+  Future<Either<Failure, Post>> call({
     required String groupId,
     String? caption,
     List<String>? media,
+    required String type,
   }) async {
     final trimmedCaption = caption?.trim() ?? '';
     final hasMedia = media != null && media.isNotEmpty;
@@ -25,6 +26,7 @@ class CreateGroupPostUseCase {
       groupId: groupId,
       caption: trimmedCaption,
       media: media,
+      type: type,
     );
   }
 }

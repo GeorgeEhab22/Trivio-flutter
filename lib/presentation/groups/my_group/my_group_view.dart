@@ -9,6 +9,7 @@ import 'package:auth/presentation/groups/my_group/widgets/my_group_app_bar.dart'
 import 'package:auth/presentation/groups/my_group/widgets/my_group_description.dart';
 import 'package:auth/presentation/groups/widgets/dummy_for_skeletonizer.dart';
 import 'package:auth/presentation/groups/widgets/number_of_members_row.dart';
+import 'package:auth/presentation/home/add_post/add_post_bottom_sheet.dart';
 import 'package:auth/presentation/manager/group_cubit/get_group/get_group_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/get_group/get_group_state.dart';
 import 'package:auth/presentation/manager/group_cubit/update_group/update_group_cubit.dart';
@@ -190,7 +191,17 @@ class MyGroupView extends StatelessWidget {
                                 const SizedBox(width: 8),
                                 Expanded(
                                   child: CustomSquareButton(
-                                    onTap: () {},
+                                    onTap: () async {
+                                      await showModalBottomSheet(
+                                        context: context,
+                                        isScrollControlled: true,
+                                        backgroundColor: Colors.transparent,
+                                        builder: (context) =>
+                                            AddPostBottomSheet(
+                                              groupId: group.groupId,
+                                            ),
+                                      );
+                                    },
                                     label: "Write something",
                                     borderColor: Theme.of(
                                       context,

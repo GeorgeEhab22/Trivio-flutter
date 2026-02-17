@@ -1,4 +1,5 @@
 import 'package:auth/data/models/join_request_model.dart';
+import 'package:auth/data/models/post_model.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
@@ -8,7 +9,6 @@ import 'package:auth/common/functions/handle_dio_error.dart';
 import 'package:auth/data/core/error/exceptions.dart';
 import 'package:auth/data/models/group_model.dart';
 import 'package:auth/data/models/group_member_model.dart';
-import 'package:auth/data/models/group_post_model.dart';
 import '../../common/api_service.dart';
 
 abstract class GroupRemoteDataSource {
@@ -77,29 +77,30 @@ abstract class GroupRemoteDataSource {
     int page = 1,
   });
   // Posts
-  Future<GroupPostModel> createGroupPost({
+  Future<PostModel> createGroupPost({
     required String groupId,
     String? caption,
     List<XFile>? media,
+    required String type,
   });
   Future<void> deleteGroupPost({
     required String groupId,
     required String postId,
   });
-  Future<GroupPostModel> updateGroupPost({
+  Future<PostModel> updateGroupPost({
     required String groupId,
     required String postId,
     required String caption,
   });
-  Future<List<GroupPostModel>> getGroupPosts({
+  Future<List<PostModel>> getGroupPosts({
     required String groupId,
     int page = 1,
   });
-  Future<GroupPostModel> getGroupPostById({
+  Future<PostModel> getGroupPostById({
     required String groupId,
     required String postId,
   });
-  Future<List<GroupPostModel>> getGroupFeed({int page = 1});
+  Future<List<PostModel>> getGroupFeed({int page = 1});
   Future<List<GroupModel>> getMyGroups({int page = 1, String? search});
   Future<List<GroupModel>> getJoinedGroups({int page = 1, String? search});
 }
@@ -235,36 +236,7 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
     }
   }
 
-  // --- 4. Create Group Post (Handles multiple 'media' files) ---
-  @override
-  Future<GroupPostModel> createGroupPost({
-    required String groupId,
-    String? caption,
-    List<XFile>? media,
-  }) async {
-    try {
-      final formData = FormData.fromMap({'caption': caption ?? ''});
-      if (media != null) {
-        for (var file in media) {
-          formData.files.add(
-            MapEntry(
-              'media',
-              await MultipartFile.fromFile(file.path, filename: file.name),
-            ),
-          );
-        }
-      }
-      final response = await api.post(
-        "${ApiEndpoints.groups}/$groupId/posts",
-        data: formData,
-        options: _getAuthOptions(),
-      );
-      return GroupPostModel.fromJson(response['data']['post']);
-    } catch (e) {
-      errorHandler.handleDioError(e);
-      rethrow;
-    }
-  }
+ 
 
   // --- 5. Membership Actions ---
   @override
@@ -427,62 +399,129 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
   }
 
   // --- Posts ---
+
+ @override
+  Future<PostModel> createGroupPost({
+    required String groupId,
+    String? caption,
+    List<XFile>? media,
+    required String type,
+  }) async {
+    try {
+      final formData = FormData.fromMap({'caption': caption ?? '', 'type': type});
+      if (media != null) {
+        for (var file in media) {
+          if (kIsWeb) {
+            final bytes = await file.readAsBytes();
+            formData.files.add(MapEntry(
+              'media',
+              MultipartFile.fromBytes(bytes, filename: file.name),
+            ));
+          } else {
+            formData.files.add(MapEntry(
+              'media',
+              await MultipartFile.fromFile(file.path, filename: file.name),
+            ));
+          }
+        }
+      }
+      final response = await api.post(
+        "${ApiEndpoints.groups}/$groupId/posts",
+        data: formData,
+        options: _getAuthOptions(),
+      );
+      // print(response);
+      return PostModel.fromJson(response['data']['post']);
+    } catch (e) {
+      // print(e);
+      errorHandler.handleDioError(e);
+      rethrow;
+    }
+  }
+
   @override
   Future<void> deleteGroupPost({
     required String groupId,
     required String postId,
-  }) async => await api.delete(
-    "${ApiEndpoints.groups}/$groupId/posts/$postId",
-    options: _getAuthOptions(),
-  );
+  }) async {
+    try {
+      await api.delete(
+        "${ApiEndpoints.groups}/$groupId/posts/$postId",
+        options: _getAuthOptions(),
+      );
+    } catch (e) {
+      errorHandler.handleDioError(e);
+      rethrow;
+    }
+  }
 
   @override
-  Future<GroupPostModel> updateGroupPost({
+  Future<PostModel> updateGroupPost({
     required String groupId,
     required String postId,
     required String caption,
   }) async {
-    final response = await api.patch(
-      "${ApiEndpoints.groups}/$groupId/posts/$postId",
-      data: {'caption': caption},
-      options: _getAuthOptions(),
-    );
-    return GroupPostModel.fromJson(response['data']['post']);
+    try {
+      final response = await api.patch(
+        "${ApiEndpoints.groups}/$groupId/posts/$postId",
+        data: {'caption': caption},
+        options: _getAuthOptions(),
+      );
+      return PostModel.fromJson(response['data']['post']);
+    } catch (e) {
+      errorHandler.handleDioError(e);
+      rethrow;
+    }
   }
 
   @override
-  Future<List<GroupPostModel>> getGroupPosts({
+  Future<List<PostModel>> getGroupPosts({
     required String groupId,
     int page = 1,
   }) async {
-    final response = await api.get(
-      "${ApiEndpoints.groups}/$groupId/posts?page=$page",
-      options: _getAuthOptions(),
-    );
-    final list = response['data']['data'] as List;
-    return list.map((e) => GroupPostModel.fromJson(e)).toList();
+    try {
+      final response = await api.get(
+        "${ApiEndpoints.groups}/$groupId/posts?page=$page",
+        options: _getAuthOptions(),
+      );
+      final list = response['data']['data'] as List;
+      return list.map((e) => PostModel.fromJson(e)).toList();
+    } catch (e) {
+      errorHandler.handleDioError(e);
+      rethrow;
+    }
   }
 
   @override
-  Future<GroupPostModel> getGroupPostById({
+  Future<PostModel> getGroupPostById({
     required String groupId,
     required String postId,
   }) async {
-    final response = await api.get(
-      "${ApiEndpoints.groups}/$groupId/posts/$postId",
-      options: _getAuthOptions(),
-    );
-    return GroupPostModel.fromJson(response['data']['post']);
+    try {
+      final response = await api.get(
+        "${ApiEndpoints.groups}/$groupId/posts/$postId",
+        options: _getAuthOptions(),
+      );
+      return PostModel.fromJson(response['data']['post']);
+    } catch (e) {
+      errorHandler.handleDioError(e);
+      rethrow;
+    }
   }
 
   @override
-  Future<List<GroupPostModel>> getGroupFeed({int page = 1}) async {
-    final response = await api.get(
-      "${ApiEndpoints.groups}/feed?page=$page",
-      options: _getAuthOptions(),
-    );
-    final list = response['data']['posts'] as List;
-    return list.map((e) => GroupPostModel.fromJson(e)).toList();
+  Future<List<PostModel>> getGroupFeed({int page = 1}) async {
+    try {
+      final response = await api.get(
+        "${ApiEndpoints.groups}/feed?page=$page",
+        options: _getAuthOptions(),
+      );
+      final list = response['data']['posts'] as List;
+      return list.map((e) => PostModel.fromJson(e)).toList();
+    } catch (e) {
+      errorHandler.handleDioError(e);
+      rethrow;
+    }
   }
 
   // --- Private Helpers to reduce code repetition ---
@@ -530,7 +569,7 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
     }
   }
 
- // --- Get My Groups ---
+  // --- Get My Groups ---
   @override
   Future<List<GroupModel>> getMyGroups({int page = 1, String? search}) async {
     try {
@@ -551,7 +590,10 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
 
   // --- Get Joined Groups ---
   @override
-  Future<List<GroupModel>> getJoinedGroups({int page = 1, String? search}) async {
+  Future<List<GroupModel>> getJoinedGroups({
+    int page = 1,
+    String? search,
+  }) async {
     try {
       final query = search != null
           ? "?page=$page&keyword=$search"
@@ -567,6 +609,4 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
       rethrow;
     }
   }
-
-
 }

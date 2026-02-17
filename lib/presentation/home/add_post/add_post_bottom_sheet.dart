@@ -13,7 +13,8 @@ import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
 class AddPostBottomSheet extends StatefulWidget {
-  const AddPostBottomSheet({super.key});
+  final String? groupId;
+  const AddPostBottomSheet({super.key, this.groupId});
 
   @override
   State<AddPostBottomSheet> createState() => _AddPostBottomSheetState();
@@ -86,7 +87,8 @@ class _AddPostBottomSheetState extends State<AddPostBottomSheet> {
                           AddPostHeader(
                             isPostEnabled: isButtonEnabled,
                             onPost: () {
-                              cubit.submitPost(userId: "curr_user_id");
+                              //TODO change to actual user id
+                              cubit.submitPost(userId: "curr_user_id", groupId: widget.groupId);
                             },
                           ),
                           PostInputField(
@@ -118,6 +120,7 @@ class _AddPostBottomSheetState extends State<AddPostBottomSheet> {
                                   },
                                 ),
                           ),
+                          if(widget.groupId == null)
                           PrivacySelector(
                             privacy: currentPrivacy,
                             onChange: (value) => cubit.updatePrivacy(value),

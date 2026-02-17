@@ -1,8 +1,8 @@
 import 'package:auth/core/errors/failure.dart';
 import 'package:auth/domain/entities/group.dart';
 import 'package:auth/domain/entities/group_member.dart';
-import 'package:auth/domain/entities/group_post.dart';
 import 'package:auth/domain/entities/join_request.dart';
+import 'package:auth/domain/entities/post.dart';
 import 'package:dartz/dartz.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -105,36 +105,35 @@ abstract class GroupRepo {
   });
 
   // 20 group posts
-  Future<Either<Failure, GroupPost>> createGroupPost({
+  Future<Either<Failure, Post>> createGroupPost({
     required String groupId,
     String? caption,
     List<String>? media,
+    required String type,
   });
 
   // 21 delete group post
   Future<Either<Failure, String>> deleteGroupPost({
     required String groupId,
     required String postId,
-    required String userId,
   });
 
   // 22 edit group post
-  Future<Either<Failure, GroupPost>> editGroupPost({
+  Future<Either<Failure, Post>> editGroupPost({
     required String groupId,
     required String postId,
-    required String userId,
     required String newCaption,
     List<String>? media,
   });
 
   // 23 get group posts
-  Future<Either<Failure, List<GroupPost>>> getGroupPosts({
+  Future<Either<Failure, List<Post>>> getGroupPosts({
     required String groupId,
     int page = 1,
   });
 
   // 24 get groups feed
-  Future<Either<Failure, List<GroupPost>>> getGroupsFeed({int page = 1});
+  Future<Either<Failure, List<Post>>> getGroupsFeed({int page = 1});
 
   // 25 get my groups
   Future<Either<Failure, List<Group>>> getMyGroups({

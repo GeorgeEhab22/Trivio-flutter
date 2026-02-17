@@ -1,5 +1,5 @@
 import 'package:auth/core/errors/failure.dart';
-import 'package:auth/domain/entities/group_post.dart';
+import 'package:auth/domain/entities/post.dart';
 import 'package:auth/domain/repositories/group_repo.dart';
 import 'package:dartz/dartz.dart';
 
@@ -7,7 +7,7 @@ class GetGroupPostsUseCase {
   final GroupRepo groupRepo;
   GetGroupPostsUseCase(this.groupRepo);
 
-  Future<Either<Failure, List<GroupPost>>> call({
+  Future<Either<Failure, List<Post>>> call({
     required String groupId,
     int page = 1,
   }) async {

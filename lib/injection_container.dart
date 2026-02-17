@@ -25,6 +25,7 @@ import 'package:auth/domain/usecases/group/accept_join_request_use_case.dart';
 import 'package:auth/domain/usecases/group/cancel_request_use_case.dart';
 import 'package:auth/domain/usecases/group/decline_join_request_use_case.dart';
 import 'package:auth/domain/usecases/group/get_join_requests_use_case.dart';
+import 'package:auth/domain/usecases/group/group_posts/create_group_post_use_case.dart';
 import 'package:auth/domain/usecases/group/groups/create_group_use_case.dart';
 import 'package:auth/domain/usecases/group/groups/delete_group_use_case.dart';
 import 'package:auth/domain/usecases/group/groups/edit_group_use_case.dart';
@@ -200,7 +201,7 @@ Future<void> init() async {
     ),
   );
 
-  sl.registerFactory(() => CreatePostCubit(createPostUseCase: sl()));
+  sl.registerFactory(() => CreatePostCubit(createPostUseCase: sl(),createGroupPostUseCase: sl()));
   sl.registerFactory(() => ThemeCubit());
 
   // groups
@@ -280,5 +281,8 @@ Future<void> init() async {
 // get joined groups
   sl.registerLazySingleton(()=> GetJoinedGroupsUseCase(sl()));
   sl.registerFactory(() => GetJoinedGroupsCubit(getJoinedGroupsUseCase: sl()));
+
+// create group post
+sl.registerLazySingleton(() => CreateGroupPostUseCase(sl()));
  
 }
