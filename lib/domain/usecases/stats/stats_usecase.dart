@@ -14,7 +14,7 @@ class StatsUseCase {
     return result.fold(
       (failure) => Left(failure),
       (allMatches) {
-        const allowedLeagues = ['PL', 'PD', 'SA'];
+        const allowedLeagues = ['PL', 'PD', 'SA', 'FL1', 'BL1', 'CL', 'WC'];
 
         return Right(allMatches.where((match) {
           final code = match.competition?.code;

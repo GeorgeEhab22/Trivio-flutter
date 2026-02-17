@@ -7,6 +7,8 @@ import 'package:auth/presentation/stats/widgets/notification_button.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:skeletonizer/skeletonizer.dart';
+// Ensure this import path is correct for your project
+import 'package:auth/common/functions/football_mapper.dart';
 
 class MatchTile extends StatelessWidget {
   final Matches match;
@@ -15,6 +17,12 @@ class MatchTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isArabic = Localizations.localeOf(context).languageCode == 'ar';
+    final bool hasStarted =
+        match.status != 'SCHEDULED' &&
+        match.status != 'TIMED' &&
+        match.status != 'CANCELLED';
+
     final bool isHomeWinner = match.score?.winner == 'HOME_TEAM';
     final bool isAwayWinner = match.score?.winner == 'AWAY_TEAM';
 
@@ -29,12 +37,10 @@ class MatchTile extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Competition Header Row
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: Row(
               children: [
-                // Competition emblem
                 SizedBox(
                   width: 50,
                   child: match.competition?.emblem != null
@@ -51,11 +57,12 @@ class MatchTile extends StatelessWidget {
                         ),
                 ),
                 const SizedBox(width: 12),
-                // Competition name
                 Expanded(
                   child: Skeleton.ignore(
                     child: Text(
-                      '‣ ${match.area?.name ?? ""} ‣ ${match.competition?.name ?? ""}',
+                      isArabic
+                          ? '‣ ${FootballMapper.translate(match.area?.name)} ‣ ${FootballMapper.translate(match.competition?.name)}'
+                          : '‣ ${match.area?.name ?? ''} ‣ ${match.competition?.name ?? ''}',
                       style: Styles.textStyle16.copyWith(
                         color: Theme.of(context).textTheme.bodyMedium?.color,
                       ),
@@ -67,23 +74,20 @@ class MatchTile extends StatelessWidget {
               ],
             ),
           ),
-          
+
           const SizedBox(height: 8),
-          
-          // Match Details Row
+
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
             child: IntrinsicHeight(
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  // Time and Status Column
                   SizedBox(
                     width: 70,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        // Match time
                         Text(
                           match.utcDate != null
                               ? DateFormat('HH:mm').format(
@@ -91,16 +95,18 @@ class MatchTile extends StatelessWidget {
                                 )
                               : "TBD",
                           style: Styles.textStyle14.copyWith(
-                            color: Theme.of(context).textTheme.bodyMedium?.color,
+                            color: Theme.of(
+                              context,
+                            ).textTheme.bodyMedium?.color,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
                         const SizedBox(height: 6),
-                        
-                        // Premium Status Badge
+
                         Skeleton.ignore(
                           child: PremiumMatchStatusBadge(
                             status: match.status.toString(),
+
                             animate: true,
                             compact: false,
                           ),
@@ -109,7 +115,6 @@ class MatchTile extends StatelessWidget {
                     ),
                   ),
 
-                  // Divider
                   Container(
                     width: 1,
                     height: double.infinity,
@@ -117,32 +122,34 @@ class MatchTile extends StatelessWidget {
                     color: AppColors.customGrey,
                   ),
 
-                  // Teams Column
                   Expanded(
                     child: Column(
                       children: [
                         CustomTeamRow(
                           _buildCrest(match.homeTeam?.crest, context),
-                          match.homeTeam?.shortName ??
-                              match.homeTeam?.name ??
-                              "Home",
-                          match.score?.fullTime?.home ?? 0,
+                          isArabic
+                              ? FootballMapper.translate(match.homeTeam?.name)
+                              : match.homeTeam?.shortName ?? '',
+                          hasStarted
+                              ? (match.score?.fullTime?.home ?? 0)
+                              : null,
                           isHomeWinner,
                         ),
                         const SizedBox(height: 12),
                         CustomTeamRow(
                           _buildCrest(match.awayTeam?.crest, context),
-                          match.awayTeam?.shortName ??
-                              match.awayTeam?.name ??
-                              "Away",
-                          match.score?.fullTime?.away ?? 0,
+                          isArabic
+                              ? FootballMapper.translate(match.awayTeam?.name)
+                              : match.awayTeam?.shortName ?? '',
+                          hasStarted
+                              ? (match.score?.fullTime?.away ?? 0)
+                              : null,
                           isAwayWinner,
                         ),
                       ],
                     ),
                   ),
 
-                  // Divider
                   Container(
                     width: 1,
                     height: double.infinity,
@@ -150,10 +157,7 @@ class MatchTile extends StatelessWidget {
                     color: AppColors.customGrey,
                   ),
 
-                  // Notification Button
-                  Skeleton.ignore(
-                    child: const NotificationButton(),
-                  ),
+                  Skeleton.ignore(child: const NotificationButton()),
                 ],
               ),
             ),

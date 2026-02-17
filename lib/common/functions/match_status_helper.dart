@@ -1,6 +1,7 @@
 // ignore_for_file: deprecated_member_use
 
 import 'dart:ui';
+import 'package:auth/common/functions/football_mapper.dart';
 import 'package:flutter/material.dart';
 
 /// ULTRA BULLETPROOF Premium match status badge
@@ -84,7 +85,11 @@ class _PremiumMatchStatusBadgeState extends State<PremiumMatchStatusBadge>
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final bool isArabic = Localizations.localeOf(context).languageCode == 'ar';
     final statusInfo = _getStatusInfo(widget.status, isDarkMode);
+    final String displayText = isArabic 
+      ? FootballMapper.translate(widget.status) 
+      : statusInfo.text;
 
     final badge = Container(
       constraints: BoxConstraints(
@@ -129,7 +134,7 @@ class _PremiumMatchStatusBadgeState extends State<PremiumMatchStatusBadge>
                   Container(
                     width: 6,
                     height: 6,
-                    margin: const EdgeInsets.only(right: 4),
+                    margin: const EdgeInsetsDirectional.only(end: 4),
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: statusInfo.dotColor,
@@ -143,7 +148,7 @@ class _PremiumMatchStatusBadgeState extends State<PremiumMatchStatusBadge>
                     ),
                   ),
                 Text(
-                  statusInfo.text,
+                  displayText,
                   style: TextStyle(
                     fontSize: widget.compact ? 10 : 11,
                     fontWeight: FontWeight.bold,
@@ -159,7 +164,6 @@ class _PremiumMatchStatusBadgeState extends State<PremiumMatchStatusBadge>
       ),
     );
 
-    // Only animate if controller exists
     if (_controller != null && _animation != null) {
       return AnimatedBuilder(
         animation: _animation!,

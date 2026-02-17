@@ -56,12 +56,10 @@ class StatsRepoImpl extends StatsRepository {
 
 List<Matches> _parseMatches(List<dynamic> jsonList) {
   return jsonList.map((item) {
-    // 1. Force the dynamic map from Hive into a Map<String, dynamic>
     final Map<String, dynamic> safeMap = (item as Map).map(
       (key, value) => MapEntry(key.toString(), value),
     );
     
-    // 2. Now pass the safeMap to your model
     return Matches.fromMap(safeMap);
   }).toList();
 }

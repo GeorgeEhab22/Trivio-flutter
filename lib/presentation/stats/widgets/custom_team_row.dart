@@ -6,7 +6,7 @@ import 'package:skeletonizer/skeletonizer.dart';
 class CustomTeamRow extends StatelessWidget {
   final Widget icon;
   final String name;
-  final int score;
+  final int? score;
   final bool? winner;
 
   const CustomTeamRow(
@@ -54,7 +54,7 @@ class CustomTeamRow extends StatelessWidget {
         ),
         Skeleton.ignore(
           child: Text(
-            score.toString(),
+            score == null ? '' : score.toString(),
             style: Styles.textStyle18.copyWith(
               color: winner == true
                   ? (isDark
