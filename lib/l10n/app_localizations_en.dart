@@ -72,14 +72,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get forgotPasswordDesc =>
-      'Don\'t worry! It happens. Please enter the email address associated with your account.';
+      'Don\'t worry! It happens. Please enter the email address associated with your account';
 
   @override
   String get resendCodeTitle => 'Resend Verification Code';
 
   @override
   String get resendCodeDesc =>
-      'Please re-enter your email address. We’ll resend a new verification code to help you activate your account.';
+      'Please re-enter your email address. We’ll resend a new verification code to help you activate your account';
 
   @override
   String get sendOtpBtn => 'Send OTP';
@@ -274,7 +274,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Loading content lines for skeleton effect.\nSecond line for better UI.';
 
   @override
-  String get errNoPosts => 'No posts found in your timeline.';
+  String get errNoPosts => 'No posts found in your timeline';
 
   @override
   String get reportPostSuccess => 'Post reported successfully';
@@ -317,7 +317,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get reportDisclaimer =>
-      'Your feedback helps us keep the football community safe and enjoyable.';
+      'Your feedback helps us keep the football community safe and enjoyable';
 
   @override
   String get reportReasonSpam => 'Spam or irrelevant content';
@@ -514,4 +514,66 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get cancelBtn => 'Cancel';
+
+  @override
+  String get followers => 'Followers';
+
+  @override
+  String get editProfile => 'Edit Profile';
+
+  @override
+  String get shareProfile => 'Share Profile';
+
+  @override
+  String get followRequests => 'Follow Requests';
+
+  @override
+  String get noFollowRequests => 'No follow requests yet';
+
+  @override
+  String get noFollowersYet => 'No followers found';
+
+  @override
+  String get noFollowingYet => 'No following found';
+
+  @override
+  String get profileSettings => 'Profile Settings';
+
+  @override
+  String get accountSettings => 'Account Settings';
+
+  @override
+  String get accountSettingsSub =>
+      'Manage your account details and preferences.';
+
+  @override
+  String get privacySettings => 'Privacy Settings';
+
+  @override
+  String get privacySettingsSub => 'Control who sees your posts and activity.';
+
+  @override
+  String get notificationPrefs => 'Notification Preferences';
+
+  @override
+  String get notificationPrefsSub => 'Customize your notification alerts.';
+
+  @override
+  String get appPrefs => 'App Preferences';
+
+  @override
+  String get appPrefsSub => 'Adjust language, theme, and data usage';
+
+  @override
+  String get requireFollow => 'Require Follow Requests';
+
+  @override
+  String get requireFollowSub => 'Manually approve followers';
+
+  @override
+  String get searchableProfile => 'Searchable Profile';
+
+  @override
+  String get searchableProfileSub =>
+      'Allow your profile to appear in search results';
 }

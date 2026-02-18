@@ -221,7 +221,7 @@ abstract class AppLocalizations {
   /// No description provided for @forgotPasswordDesc.
   ///
   /// In en, this message translates to:
-  /// **'Don\'t worry! It happens. Please enter the email address associated with your account.'**
+  /// **'Don\'t worry! It happens. Please enter the email address associated with your account'**
   String get forgotPasswordDesc;
 
   /// No description provided for @resendCodeTitle.
@@ -233,7 +233,7 @@ abstract class AppLocalizations {
   /// No description provided for @resendCodeDesc.
   ///
   /// In en, this message translates to:
-  /// **'Please re-enter your email address. We’ll resend a new verification code to help you activate your account.'**
+  /// **'Please re-enter your email address. We’ll resend a new verification code to help you activate your account'**
   String get resendCodeDesc;
 
   /// No description provided for @sendOtpBtn.
@@ -611,7 +611,7 @@ abstract class AppLocalizations {
   /// No description provided for @errNoPosts.
   ///
   /// In en, this message translates to:
-  /// **'No posts found in your timeline.'**
+  /// **'No posts found in your timeline'**
   String get errNoPosts;
 
   /// No description provided for @reportPostSuccess.
@@ -695,7 +695,7 @@ abstract class AppLocalizations {
   /// No description provided for @reportDisclaimer.
   ///
   /// In en, this message translates to:
-  /// **'Your feedback helps us keep the football community safe and enjoyable.'**
+  /// **'Your feedback helps us keep the football community safe and enjoyable'**
   String get reportDisclaimer;
 
   /// No description provided for @reportReasonSpam.
@@ -1075,6 +1075,126 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Cancel'**
   String get cancelBtn;
+
+  /// No description provided for @followers.
+  ///
+  /// In en, this message translates to:
+  /// **'Followers'**
+  String get followers;
+
+  /// No description provided for @editProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Profile'**
+  String get editProfile;
+
+  /// No description provided for @shareProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Share Profile'**
+  String get shareProfile;
+
+  /// No description provided for @followRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow Requests'**
+  String get followRequests;
+
+  /// No description provided for @noFollowRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'No follow requests yet'**
+  String get noFollowRequests;
+
+  /// No description provided for @noFollowersYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No followers found'**
+  String get noFollowersYet;
+
+  /// No description provided for @noFollowingYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No following found'**
+  String get noFollowingYet;
+
+  /// No description provided for @profileSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile Settings'**
+  String get profileSettings;
+
+  /// No description provided for @accountSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Account Settings'**
+  String get accountSettings;
+
+  /// No description provided for @accountSettingsSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage your account details and preferences.'**
+  String get accountSettingsSub;
+
+  /// No description provided for @privacySettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Settings'**
+  String get privacySettings;
+
+  /// No description provided for @privacySettingsSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Control who sees your posts and activity.'**
+  String get privacySettingsSub;
+
+  /// No description provided for @notificationPrefs.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification Preferences'**
+  String get notificationPrefs;
+
+  /// No description provided for @notificationPrefsSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Customize your notification alerts.'**
+  String get notificationPrefsSub;
+
+  /// No description provided for @appPrefs.
+  ///
+  /// In en, this message translates to:
+  /// **'App Preferences'**
+  String get appPrefs;
+
+  /// No description provided for @appPrefsSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Adjust language, theme, and data usage'**
+  String get appPrefsSub;
+
+  /// No description provided for @requireFollow.
+  ///
+  /// In en, this message translates to:
+  /// **'Require Follow Requests'**
+  String get requireFollow;
+
+  /// No description provided for @requireFollowSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Manually approve followers'**
+  String get requireFollowSub;
+
+  /// No description provided for @searchableProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Searchable Profile'**
+  String get searchableProfile;
+
+  /// No description provided for @searchableProfileSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow your profile to appear in search results'**
+  String get searchableProfileSub;
 }
 
 class _AppLocalizationsDelegate

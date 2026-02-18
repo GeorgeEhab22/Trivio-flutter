@@ -1,6 +1,7 @@
 import 'package:auth/constants/colors.dart';
 import 'package:auth/core/app_routes.dart';
 import 'package:auth/core/styels.dart';
+import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/user/widgets/custom_profile_filled_button.dart';
 import 'package:auth/presentation/user/widgets/profile_info_box.dart';
 import 'package:auth/presentation/user/widgets/settings_row.dart';
@@ -13,79 +14,86 @@ class UserProfileSettings extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text("Profile Settings", style: Styles.textStyle30),
+        title: Text(l10n.profileSettings, style: Styles.textStyle20),
         shape: Border(bottom: BorderSide(color: AppColors.lightGrey, width: 2)),
         actions: [
           IconButton(
-            onPressed: () {
-              GoRouter.of(context).push(AppRoutes.requests);
-            },
-            icon: Icon(Icons.person_add_alt),
-            tooltip: "Follow Requests",
+            onPressed: () => GoRouter.of(context).push(AppRoutes.requests),
+            icon: const Icon(Icons.person_add_alt),
+            tooltip: l10n.followRequests,
           ),
         ],
       ),
       body: Padding(
-        padding: EdgeInsets.all(MediaQuery.widthOf(context) * 0.02),
+        padding: EdgeInsets.all(MediaQuery.sizeOf(context).width * 0.02),
         child: SingleChildScrollView(
-          physics: BouncingScrollPhysics(),
+          physics: const BouncingScrollPhysics(),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              ProfileInfoBox(isFollowing: ValueNotifier(false)),
+              // Username and About handled by ProfileInfoBox internally
+               ProfileInfoBox(
+                username: "Username", 
+                userAbout: "Football Enthusiast", 
+                isFollowing: ValueNotifier(false)
+              ),
+              
               CustomProfileFilledButton(
                 onpressed: () {},
-                displayText: "Edit Profile",
+                displayText: l10n.editProfile,
                 icon: FontAwesomeIcons.userPen,
                 color: AppColors.primary,
               ),
-              SizedBox(height: 10),
+              
+              const SizedBox(height: 10),
+              
               Container(
                 decoration: BoxDecoration(
                   border: Border.all(color: AppColors.lightGrey, width: 2),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: ListView(
-                  physics: NeverScrollableScrollPhysics(),
+                  physics: const NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
                   children: [
                     SettingsRow(
-                      title: "Account Settings",
-                      subtitle: "Manage your account details and preferences.",
+                      title: l10n.accountSettings,
+                      subtitle: l10n.accountSettingsSub,
                       onpressed: () {},
                     ),
-                    Divider(color: AppColors.lightGrey),
+                    Divider(color: AppColors.lightGrey, height: 1),
                     SettingsRow(
-                      title: "Privacy Settings",
-                      subtitle: "Control who sees your posts and activity.",
+                      title: l10n.privacySettings,
+                      subtitle: l10n.privacySettingsSub,
                       onpressed: () {},
                     ),
-                    Divider(color: AppColors.lightGrey),
+                    Divider(color: AppColors.lightGrey, height: 1),
                     SettingsRow(
-                      title: "Notification Preferences",
-                      subtitle: "Customize your notification alerts.",
+                      title: l10n.notificationPrefs,
+                      subtitle: l10n.notificationPrefsSub,
                       onpressed: () {},
                     ),
-                    Divider(color: AppColors.lightGrey),
+                    Divider(color: AppColors.lightGrey, height: 1),
                     SettingsRow(
-                      title: "App Preferences",
-                      subtitle: "Adjust language, theme, and data usage",
+                      title: l10n.appPrefs,
+                      subtitle: l10n.appPrefsSub,
                       onpressed: () {},
                     ),
-                    Divider(color: AppColors.lightGrey),
+                    Divider(color: AppColors.lightGrey, height: 1),
                     SettingsRow(
-                      title: "Require Follow Requests",
-                      subtitle: "Manually approve followers",
+                      title: l10n.requireFollow,
+                      subtitle: l10n.requireFollowSub,
                       onpressed: () {},
                       isToggle: true,
                     ),
-                    Divider(color: AppColors.lightGrey),
+                    Divider(color: AppColors.lightGrey, height: 1),
                     SettingsRow(
-                      title: "Searchable Profile",
-                      subtitle:
-                          "Allow your profile to appear in search results",
+                      title: l10n.searchableProfile,
+                      subtitle: l10n.searchableProfileSub,
                       onpressed: () {},
                       isToggle: true,
                     ),

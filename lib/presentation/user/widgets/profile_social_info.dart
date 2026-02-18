@@ -1,4 +1,5 @@
 import 'package:auth/core/app_routes.dart';
+import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/user/widgets/custom_column_for_profile_info.dart';
 import 'package:flutter/material.dart';
 import 'package:auth/constants/colors.dart';
@@ -18,47 +19,66 @@ class ProfileSocialInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: AppColors.customGrey, width: 1.5),
-          borderRadius: BorderRadius.circular(15),
-        ),
+    final l10n = AppLocalizations.of(context)!;
 
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: AppColors.customGrey, width: 1.5),
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: IntrinsicHeight( 
         child: Row(
           mainAxisSize: MainAxisSize.max,
           children: [
             Expanded(
               child: InkWell(
-                borderRadius: BorderRadius.circular(40),
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(15),
+                  bottomLeft: Radius.circular(15),
+                ),
                 onTap: () => GoRouter.of(context).push(AppRoutes.followersList),
                 child: CustomColumnForProfileInfo(
                   number: numberOfFollowers.toString(),
-                  thing: "followers",
+                  thing: l10n.followers,
                 ),
               ),
             ),
+            
+            _buildDivider(),
+
+            /// Following
             Expanded(
               child: InkWell(
-                borderRadius: BorderRadius.circular(40),
                 onTap: () => GoRouter.of(context).push(AppRoutes.followingList),
                 child: CustomColumnForProfileInfo(
                   number: numberOfFollowing.toString(),
-                  thing: "following",
+                  thing: l10n.following, 
                 ),
               ),
             ),
+
+            _buildDivider(),
+
+            /// Posts
             Expanded(
-              child: InkWell(
-                borderRadius: BorderRadius.circular(40),
-                onTap: () => GoRouter.of(context).push(AppRoutes.requests),
-                child: CustomColumnForProfileInfo(
-                  number: numberOfPosts.toString(),
-                  thing: "posts",
-                ),
+              child: CustomColumnForProfileInfo(
+                number: numberOfPosts.toString(),
+                thing: l10n.posts, 
               ),
             ),
           ],
         ),
-      );
+      ),
+    );
+  }
+
+  Widget _buildDivider() {
+    return VerticalDivider(
+      color: AppColors.customGrey,
+      thickness: 1.5,
+      width: 0,
+      indent: 10,
+      endIndent: 10,
+    );
   }
 }

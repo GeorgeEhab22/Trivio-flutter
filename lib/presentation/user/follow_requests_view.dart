@@ -1,5 +1,6 @@
 import 'package:auth/constants/colors.dart';
 import 'package:auth/core/styels.dart';
+import 'package:auth/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class FollowRequestsView extends StatelessWidget {
@@ -7,15 +8,31 @@ class FollowRequestsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Access localized strings
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text("Follow Requests", style: Styles.textStyle30),
-        shape: Border(bottom: BorderSide(color: AppColors.lightGrey, width: 2)),
+        title: Text(
+          l10n.followRequests, 
+          style: Styles.textStyle20, 
+        ),
+        centerTitle: true,
+        shape: Border(
+          bottom: BorderSide(color: AppColors.lightGrey, width: 2),
+        ),
       ),
-      body: Center(
-        child: Text(
-          "No follow requests yet.",
-          style: Styles.textStyle20.copyWith(color: AppColors.primary),
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Center(
+          child: Text(
+            l10n.noFollowRequests,
+            style: Styles.textStyle20.copyWith(
+              color: Colors.black,
+              fontWeight: FontWeight.w500,
+            ),
+            textAlign: TextAlign.center,
+          ),
         ),
       ),
     );

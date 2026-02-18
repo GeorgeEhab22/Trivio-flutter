@@ -31,7 +31,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String registrationSuccess(Object username) {
-    return 'أهلاً بك يا $username! تم إنشاء حسابك بنجاح.';
+    return 'أهلاً بك يا $username! تم إنشاء حسابك بنجاح';
   }
 
   @override
@@ -72,14 +72,14 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get forgotPasswordDesc =>
-      'لا تقلق! يحدث هذا دائماً. يرجى إدخال البريد الإلكتروني المرتبط بحسابك.';
+      'لا تقلق! يحدث هذا دائماً. يرجى إدخال البريد الإلكتروني المرتبط بحسابك';
 
   @override
   String get resendCodeTitle => 'إعادة إرسال رمز التحقق';
 
   @override
   String get resendCodeDesc =>
-      'يرجى إعادة إدخال بريدك الإلكتروني. سنرسل لك رمزاً جديداً لتفعيل حسابك.';
+      'يرجى إعادة إدخال بريدك الإلكتروني. سنرسل لك رمزاً جديداً لتفعيل حسابك';
 
   @override
   String get sendOtpBtn => 'إرسال الرمز';
@@ -269,10 +269,10 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get skeletonLoadingText =>
-      'جاري تحميل المحتوى للمنشورات.\nسطر إضافي لتحسين المظهر.';
+      'جاري تحميل المحتوى للمنشورات.\nسطر إضافي لتحسين المظهر';
 
   @override
-  String get errNoPosts => 'لا توجد منشورات في الجدول الزمني الخاص بك.';
+  String get errNoPosts => 'لا توجد منشورات في الجدول الزمني الخاص بك';
 
   @override
   String get reportPostSuccess => 'تم الإبلاغ عن المنشور بنجاح';
@@ -512,4 +512,65 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get cancelBtn => 'الغاء';
+
+  @override
+  String get followers => 'المتابعين';
+
+  @override
+  String get editProfile => 'تعديل الملف الشخصي';
+
+  @override
+  String get shareProfile => 'مشاركة الملف الشخصي';
+
+  @override
+  String get followRequests => 'طلبات المتابعة';
+
+  @override
+  String get noFollowRequests => 'لا يوجد طلبات متابعة حالياً';
+
+  @override
+  String get noFollowersYet => 'لا يوجد متابعين حالياً';
+
+  @override
+  String get noFollowingYet => 'لا تتابع أحداً';
+
+  @override
+  String get profileSettings => 'إعدادات الملف الشخصي';
+
+  @override
+  String get accountSettings => 'إعدادات الحساب';
+
+  @override
+  String get accountSettingsSub => 'إدارة تفاصيل حسابك وتفضيلاتك.';
+
+  @override
+  String get privacySettings => 'إعدادات الخصوصية';
+
+  @override
+  String get privacySettingsSub => 'التحكم في من يرى منشوراتك ونشاطك.';
+
+  @override
+  String get notificationPrefs => 'تفضيلات الإشعارات';
+
+  @override
+  String get notificationPrefsSub => 'تخصيص تنبيهات الإشعارات الخاصة بك.';
+
+  @override
+  String get appPrefs => 'تفضيلات التطبيق';
+
+  @override
+  String get appPrefsSub => 'ضبط اللغة، المظهر، واستهلاك البيانات.';
+
+  @override
+  String get requireFollow => 'طلب الموافقة على المتابعة';
+
+  @override
+  String get requireFollowSub => 'الموافقة على المتابعين يدوياً.';
+
+  @override
+  String get searchableProfile => 'ملف شخصي قابل للبحث';
+
+  @override
+  String get searchableProfileSub =>
+      'السماح لملفك الشخصي بالظهور في نتائج البحث.';
 }

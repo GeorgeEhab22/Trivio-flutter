@@ -18,35 +18,39 @@ class SettingsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 15),
-      child: Row(
-        children: [
-          SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title, style: Styles.textStyle18),
-                SizedBox(height: 5),
-                Text(
-                  subtitle,
-                  style:
-                      Styles.textStyle16.copyWith(color: AppColors.darkGrey),
-                  softWrap: true,
-                ),
-              ],
+    final bool isArabic = Localizations.localeOf(context).languageCode == 'ar';
+
+    return InkWell( 
+      onTap: !isToggle ? onpressed : null,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title, style: Styles.textStyle18),
+                  const SizedBox(height: 5),
+                  Text(
+                    subtitle,
+                    style: Styles.textStyle16.copyWith(color: AppColors.darkGrey),
+                    softWrap: true,
+                  ),
+                ],
+              ),
             ),
-          ),
-          !isToggle
-              ? IconButton(
-                  onPressed: onpressed,
-                  icon: Icon(Icons.keyboard_arrow_right),
-                  highlightColor: AppColors.primary,
-                  padding: EdgeInsets.zero,
-                )
-              : ToggleSwitch(),
-        ],
+            const SizedBox(width: 10),
+            if (!isToggle)
+              Icon(
+                isArabic ? Icons.keyboard_arrow_left : Icons.keyboard_arrow_right,
+                color: AppColors.darkGrey,
+              )
+            else
+              const ToggleSwitch(),
+          ],
+        ),
       ),
     );
   }
