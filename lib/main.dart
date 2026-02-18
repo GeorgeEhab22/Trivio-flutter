@@ -49,7 +49,7 @@ class MyApp extends StatelessWidget {
 
     return MultiBlocProvider( 
       providers: [
-        BlocProvider(create: (context) => di.sl<PostCubit>()),
+        BlocProvider(create: (context) => di.sl<PostCubit>()..fetchPosts()),
     BlocProvider(create: (context) => di.sl<GroupPostsCubit>()),
     BlocProvider(create: (context) => di.sl<PostInteractionCubit>()),
         BlocProvider(create: (_) => di.sl<ThemeCubit>()),

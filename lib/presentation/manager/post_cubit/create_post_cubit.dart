@@ -92,7 +92,7 @@ class CreatePostCubit extends Cubit<CreatePostState> {
             media: _media,
             type: type,
           );
-
+if (isClosed) return;
     result.fold(
       (failure) => emit(_mapFailureToState(failure)),
       (createdPost) {

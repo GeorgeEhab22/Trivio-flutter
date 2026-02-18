@@ -17,25 +17,27 @@ class PostLoading extends PostState {
 
 class PostLoaded extends PostState {
   final List<Post> posts;
+  final bool hasReachedMax; // Added to track pagination end
 
-  const PostLoaded( this.posts);
+  const PostLoaded(this.posts, {this.hasReachedMax = false});
 
   @override
-  List<Object?> get props => [posts];
+  List<Object?> get props => [posts, hasReachedMax];
 }
 
 class PostsLoadingMore extends PostState {
   final List<Post> posts;
 
-  const PostsLoadingMore( this.posts);
+  const PostsLoadingMore(this.posts);
 
   @override
   List<Object?> get props => [posts];
 }
+
 class PostsSingleLoaded extends PostState {
   final Post post;
 
-  const PostsSingleLoaded( this.post);
+  const PostsSingleLoaded(this.post);
 
   @override
   List<Object?> get props => [post];
@@ -45,7 +47,7 @@ class PostsLoadingMoreError extends PostState {
   final String message;
   final List<Post> posts;
 
- const PostsLoadingMoreError(this.message, this.posts);
+  const PostsLoadingMoreError(this.message, this.posts);
 
   @override
   List<Object?> get props => [message, posts];
@@ -54,13 +56,11 @@ class PostsLoadingMoreError extends PostState {
 class PostError extends PostState {
   final String message;
 
-  const PostError( this.message);
+  const PostError(this.message);
 
   @override
   List<Object?> get props => [message];
 }
-
- // edit post
 
 class EditPostLoading extends PostState {
   final String postId;
@@ -82,7 +82,6 @@ class EditPostError extends PostState {
   List<Object> get props => [postId, message];
 }
 
-// delete post
 class DeletePostLoading extends PostState {
   final String postId;
   const DeletePostLoading({required this.postId});
