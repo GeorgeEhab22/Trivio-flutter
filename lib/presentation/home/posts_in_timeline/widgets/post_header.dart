@@ -1,4 +1,5 @@
 import 'package:auth/presentation/home/posts_in_timeline/widgets/follow_button.dart';
+import 'package:auth/presentation/manager/group_cubit/get_group_posts/group_posts_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -56,6 +57,7 @@ class PostHeader extends StatelessWidget {
                   final postInteractionCubit = context
                       .read<PostInteractionCubit>();
                   final postCubit = context.read<PostCubit>();
+                  final groupPostCubit = context.read<GroupPostsCubit>();
                   showModalBottomSheet(
                     context: context,
                     backgroundColor: Colors.transparent,
@@ -64,6 +66,7 @@ class PostHeader extends StatelessWidget {
                       providers: [
                         BlocProvider.value(value: postInteractionCubit),
                         BlocProvider.value(value: postCubit),
+                        BlocProvider.value(value: groupPostCubit),
                       ],
                       child: OptionsBottomSheet(
                         post: post,

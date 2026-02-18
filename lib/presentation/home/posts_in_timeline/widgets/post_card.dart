@@ -1,6 +1,8 @@
 import 'package:auth/presentation/home/posts_in_timeline/widgets/post_content.dart';
 import 'package:auth/presentation/home/posts_in_timeline/widgets/post_footer.dart';
 import 'package:auth/presentation/home/posts_in_timeline/widgets/post_header.dart';
+import 'package:auth/presentation/manager/group_cubit/get_group_posts/group_posts_cubit.dart';
+import 'package:auth/presentation/manager/group_cubit/get_group_posts/group_posts_state.dart';
 import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -48,7 +50,14 @@ class PostCard extends StatelessWidget {
               }
 
               final postCubitState = context.watch<PostCubit>().state;
-              final isDeleting = postCubitState is DeletePostLoading && postCubitState.postId == post.postID;
+              final groupPostsCubitState = context
+                  .watch<GroupPostsCubit>()
+                  .state;
+              final isDeleting =
+                  (groupPostsCubitState is GroupPostsDeleting &&
+                      groupPostsCubitState.postId == post.postID) ||
+                  (postCubitState is DeletePostLoading &&
+                      postCubitState.postId == post.postID);
 
               return Opacity(
                 opacity: (isDeleting || state is ReportPostLoading) ? 0.5 : 1,

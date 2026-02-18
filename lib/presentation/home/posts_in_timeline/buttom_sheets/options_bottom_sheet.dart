@@ -2,6 +2,7 @@ import 'package:auth/common/functions/show_custom_dialog.dart';
 import 'package:auth/presentation/home/posts_in_timeline/buttom_sheets/report_reasons_buttom_sheet.dart';
 import 'package:auth/common/functions/custom_list_tile.dart';
 import 'package:auth/common/functions/custom_square_button.dart';
+import 'package:auth/presentation/manager/group_cubit/get_group_posts/group_posts_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -75,7 +76,9 @@ class OptionsBottomSheet extends StatelessWidget {
                       return Expanded(
                         child: CustomSquareButton(
                           label: isSaved ? 'Saved' : 'Save',
-                          icon: isSaved ? Icons.bookmark : Icons.bookmark_border,
+                          icon: isSaved
+                              ? Icons.bookmark
+                              : Icons.bookmark_border,
                           backgroundColor: Theme.of(context).cardColor,
                           onTap: () {
                             cubit.toggleSavePost(
@@ -162,6 +165,7 @@ class OptionsBottomSheet extends StatelessWidget {
               redColor: true,
               onTap: () {
                 final postCubit = context.read<PostCubit>();
+                final groupPostsCubit = context.read<GroupPostsCubit>();
                 context.pop();
                 showCustomDialog(
                   context: context,
@@ -170,7 +174,14 @@ class OptionsBottomSheet extends StatelessWidget {
                   confirmText: "Delete",
                   confirmTextColor: Colors.red,
                   onConfirm: () {
-                    postCubit.deletePost(post: post);
+                    if (post.location == 'group' && post.groupID != null) {
+                      groupPostsCubit.deletePost(
+                        groupId: post.groupID!,
+                        post: post,
+                      );
+                    } else {
+                      postCubit.deletePost(post: post);
+                    }
                   },
                 );
               },

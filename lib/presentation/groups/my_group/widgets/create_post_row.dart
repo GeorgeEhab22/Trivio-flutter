@@ -1,7 +1,7 @@
 import 'package:auth/common/functions/custom_square_button.dart';
 import 'package:auth/constants/colors.dart';
 import 'package:auth/presentation/home/add_post/add_post_bottom_sheet.dart';
-import 'package:auth/presentation/manager/group_cubit/get_group_posts/get_group_posts_cubit.dart';
+import 'package:auth/presentation/manager/group_cubit/get_group_posts/group_posts_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -22,7 +22,7 @@ class CreatePostRow extends StatelessWidget {
         Expanded(
           child: CustomSquareButton(
             onTap: () async {
-              final groupPostsCubit = context.read<GetGroupPostsCubit>();
+              final groupPostsCubit = context.read<GroupPostsCubit>();
               final result = await showModalBottomSheet(
                 context: context,
                 isScrollControlled: true,

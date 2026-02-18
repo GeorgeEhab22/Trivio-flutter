@@ -26,6 +26,7 @@ import 'package:auth/domain/usecases/group/cancel_request_use_case.dart';
 import 'package:auth/domain/usecases/group/decline_join_request_use_case.dart';
 import 'package:auth/domain/usecases/group/get_join_requests_use_case.dart';
 import 'package:auth/domain/usecases/group/group_posts/create_group_post_use_case.dart';
+import 'package:auth/domain/usecases/group/group_posts/delete_group_post_use_case.dart';
 import 'package:auth/domain/usecases/group/group_posts/get_group_posts_use_case.dart';
 import 'package:auth/domain/usecases/group/groups/create_group_use_case.dart';
 import 'package:auth/domain/usecases/group/groups/delete_group_use_case.dart';
@@ -75,7 +76,7 @@ import 'package:auth/presentation/manager/group_cubit/cancel_request/cancel_requ
 import 'package:auth/presentation/manager/group_cubit/change_member_role/change_member_role_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/decline_request/decline_request_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/get_group/get_group_cubit.dart';
-import 'package:auth/presentation/manager/group_cubit/get_group_posts/get_group_posts_cubit.dart';
+import 'package:auth/presentation/manager/group_cubit/get_group_posts/group_posts_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/get_groups/get_groups_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/get_join_requests/get_join_requests_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/get_joined_groups/get_joined_groups_cubit.dart';
@@ -211,7 +212,6 @@ Future<void> init() async {
         CreatePostCubit(createPostUseCase: sl(), createGroupPostUseCase: sl()),
   );
   sl.registerFactory(() => GetPostCubit(getPostUseCase: sl()));
-  
 
   sl.registerFactory(() => ThemeCubit());
 
@@ -303,7 +303,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => CreateGroupPostUseCase(sl()));
 
   // get group posts
-  sl.registerFactory(() => GetGroupPostsCubit(getGroupPostsUseCase: sl()));
+  sl.registerFactory(() => GroupPostsCubit(getGroupPostsUseCase: sl(),deleteGroupPostUseCase: sl(),));
   sl.registerLazySingleton(() => GetGroupPostsUseCase(sl()));
-
+  sl.registerLazySingleton(() => DeleteGroupPostUseCase(sl()));
 }

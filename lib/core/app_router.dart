@@ -23,7 +23,7 @@ import 'package:auth/presentation/manager/group_cubit/cancel_request/cancel_requ
 import 'package:auth/presentation/manager/group_cubit/change_member_role/change_member_role_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/decline_request/decline_request_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/get_group/get_group_cubit.dart';
-import 'package:auth/presentation/manager/group_cubit/get_group_posts/get_group_posts_cubit.dart';
+import 'package:auth/presentation/manager/group_cubit/get_group_posts/group_posts_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/get_groups/get_groups_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/get_join_requests/get_join_requests_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/get_joined_groups/get_joined_groups_cubit.dart';
@@ -35,7 +35,6 @@ import 'package:auth/presentation/manager/group_cubit/get_members_by_roles/membe
 import 'package:auth/presentation/manager/group_cubit/unban_member/unban_member_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/update_group/update_group_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
-import 'package:auth/presentation/manager/post_cubit/post_interaction_cubit.dart';
 import 'package:auth/presentation/reels/reels_page.dart';
 import 'package:auth/presentation/settings/settings_view.dart';
 import 'package:auth/presentation/settings/theme_view.dart';
@@ -317,11 +316,11 @@ GoRouter createRouter(bool isLoggedIn) {
                           ),
                           BlocProvider(
                             create: (context) =>
-                                di.sl<GetGroupPostsCubit>()
+                                di.sl<GroupPostsCubit>()
                                   ..getPosts(groupId: groupId),
                           ),
                           BlocProvider(create: (context) => di.sl<PostCubit>()),
-                          BlocProvider(create: (context) => di.sl<PostInteractionCubit>()),
+
                         ],
                         child: MyGroupView(groupId: groupId),
                       );

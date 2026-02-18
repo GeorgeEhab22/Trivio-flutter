@@ -1,7 +1,7 @@
 import 'package:auth/presentation/groups/widgets/dummy_for_skeletonizer.dart';
 import 'package:auth/presentation/home/posts_in_timeline/widgets/post_card.dart';
-import 'package:auth/presentation/manager/group_cubit/get_group_posts/get_group_posts_cubit.dart';
-import 'package:auth/presentation/manager/group_cubit/get_group_posts/get_group_posts_state.dart';
+import 'package:auth/presentation/manager/group_cubit/get_group_posts/group_posts_cubit.dart';
+import 'package:auth/presentation/manager/group_cubit/get_group_posts/group_posts_state.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -14,16 +14,16 @@ class MyGroupPosts extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<GetGroupPostsCubit, GetGroupPostsState>(
+    return BlocBuilder<GroupPostsCubit, GroupPostsState>(
       builder: (context, state) {
-        final groupPostsCubit = context.read<GetGroupPostsCubit>();
+        final groupPostsCubit = context.read<GroupPostsCubit>();
         final bool isPostsLoading =
-            state is GetGroupPostsLoading && groupPostsCubit.posts.isEmpty;
+            state is GroupPostsLoading && groupPostsCubit.posts.isEmpty;
         final posts = (groupPostsCubit.posts.isNotEmpty)
             ? groupPostsCubit.posts
             : DummyData.dummyPosts;
 
-        if (state is GetGroupPostsError && groupPostsCubit.posts.isEmpty) {
+        if (state is GroupPostsError && groupPostsCubit.posts.isEmpty) {
           return SliverFillRemaining(child: Center(child: Text(state.message)));
         }
 
@@ -53,7 +53,7 @@ class MyGroupPosts extends StatelessWidget {
                 );
               },
               childCount:
-                  posts.length + (state is GetGroupPostsLoadingMore ? 1 : 0),
+                  posts.length + (state is GroupPostsLoadingMore ? 1 : 0),
             ),
           ),
         );
