@@ -15,8 +15,16 @@ class GetJoinedGroupsCubit extends Cubit<GetJoinedGroupsState> {
     final result = await getJoinedGroupsUseCase(page: page, search: search);
 
     result.fold(
-      (failure) => emit(GetJoinedGroupsFailure(message: failure.message)),
-      (groups) => emit(GetJoinedGroupsSuccess(groups: groups)),
+      (failure) {
+        return emit(GetJoinedGroupsFailure(message: failure.message));
+      },
+      (groups) {
+        if (groups.isEmpty) {
+          emit(const GetJoinedGroupsEmpty());
+        } else {
+          emit(GetJoinedGroupsSuccess(groups: groups));
+        }
+      },
     );
   }
 }

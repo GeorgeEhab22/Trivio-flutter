@@ -17,10 +17,7 @@ abstract class GroupRepo {
   // 2 delete group
   Future<Either<Failure, String>> deleteGroup({required String groupId});
 
-  // 3 get group
-  Future<Either<Failure, Group>> getGroup({required String groupId});
-
-  // 4 update group
+  // 3update group
   Future<Either<Failure, Group>> updateGroup({
     required String groupId,
     String? name,
@@ -28,6 +25,9 @@ abstract class GroupRepo {
     XFile? coverImage,
     String? privacy,
   });
+
+  // 4 get group
+  Future<Either<Failure, Group>> getGroup({required String groupId});
 
   // 5 get groups
   Future<Either<Failure, List<Group>>> getGroups({
@@ -126,22 +126,23 @@ abstract class GroupRepo {
     List<String>? media,
   });
 
-  Future<Either<Failure, Post>> getGroupPostById(String groupId,String postId);
-  // 23 get group posts
+  // 23 get group post  by id
+  Future<Either<Failure, Post>> getGroupPostById(String groupId, String postId);
+  // 24 get group posts
   Future<Either<Failure, List<Post>>> getGroupPosts({
     required String groupId,
     int page = 1,
   });
-
-  // 24 get groups feed
+  // 25 get groups feed
   Future<Either<Failure, List<Post>>> getGroupsFeed({int page = 1});
 
-  // 25 get my groups
+  // 26 get my groups
   Future<Either<Failure, List<Group>>> getMyGroups({
     int page = 1,
     String? search,
   });
-  // 26 get joined groups
+
+  // 27 get joined groups
   Future<Either<Failure, List<Group>>> getJoinedGroups({
     int page = 1,
     String? search,

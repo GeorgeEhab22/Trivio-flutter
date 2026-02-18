@@ -14,8 +14,7 @@ class GroupRepoImpl implements GroupRepo {
 
   GroupRepoImpl({required this.remoteDataSource});
 
-  // --- 1. Core Group Actions ---
-
+  // 1-create group
   @override
   Future<Either<Failure, Group>> createGroup({
     required String name,
@@ -36,6 +35,7 @@ class GroupRepoImpl implements GroupRepo {
     }
   }
 
+  //2 -delete group
   @override
   Future<Either<Failure, String>> deleteGroup({required String groupId}) async {
     try {
@@ -48,20 +48,7 @@ class GroupRepoImpl implements GroupRepo {
     }
   }
 
-  @override
-  Future<Either<Failure, Group>> getGroup({required String groupId}) async {
-    try {
-      final model = await remoteDataSource.getGroup(groupId);
-      return Right(model);
-    } on ServerException catch (e) {
-      // print(e);
-      return Left(ServerFailure(e.message));
-    } catch (a) {
-      // print(a);
-      return Left(ServerFailure('Group not found'));
-    }
-  }
-
+  //3 -update group
   @override
   Future<Either<Failure, Group>> updateGroup({
     required String groupId,
@@ -86,6 +73,22 @@ class GroupRepoImpl implements GroupRepo {
     }
   }
 
+  // 4 -get group
+  @override
+  Future<Either<Failure, Group>> getGroup({required String groupId}) async {
+    try {
+      final model = await remoteDataSource.getGroup(groupId);
+      return Right(model);
+    } on ServerException catch (e) {
+      // print(e);
+      return Left(ServerFailure(e.message));
+    } catch (a) {
+      // print(a);
+      return Left(ServerFailure('Group not found'));
+    }
+  }
+
+  // 5 -get groups
   @override
   Future<Either<Failure, List<Group>>> getGroups({
     int page = 1,
@@ -104,12 +107,9 @@ class GroupRepoImpl implements GroupRepo {
     }
   }
 
-  // --- 2. Membership & Requests ---
-
+  // 6 -join group
   @override
   Future<Either<Failure, String>> joinGroup({required String groupId}) async {
-    // await Future.delayed(const Duration(seconds: 1));
-    //       return const Right('joined group successfully');
     try {
       final message = await remoteDataSource.joinGroup(groupId);
       return Right(message);
@@ -120,11 +120,9 @@ class GroupRepoImpl implements GroupRepo {
     }
   }
 
+  // 7 -leave group
   @override
   Future<Either<Failure, String>> leaveGroup({required String groupId}) async {
-    // await Future.delayed(const Duration(seconds: 1));
-    //       return const Right('Left group successfully');
-
     try {
       await remoteDataSource.leaveGroup(groupId);
       return const Right('Left group successfully');
@@ -135,13 +133,11 @@ class GroupRepoImpl implements GroupRepo {
     }
   }
 
+  // 8 -cancel join request
   @override
   Future<Either<Failure, String>> cancelRequest({
     required String groupId,
   }) async {
-    // await Future.delayed(const Duration(seconds: 1));
-    // return const Right('Request cancelled successfully');
-
     try {
       await remoteDataSource.cancelJoinRequest(groupId);
       return const Right('Request cancelled');
@@ -152,19 +148,17 @@ class GroupRepoImpl implements GroupRepo {
     }
   }
 
+  // 9 -get join requests
   @override
   Future<Either<Failure, List<JoinRequest>>> getJoinRequests({
     required String groupId,
     int page = 1,
   }) async {
-    // await Future.delayed(const Duration(seconds: 1));
-    // return Right(mockJoinRequests);
     try {
       final models = await remoteDataSource.getJoinRequests(
         groupId: groupId,
         page: page,
       );
-      // return Right(models.cast<JoinRequest>().toList());
       return Right(models);
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));
@@ -173,14 +167,12 @@ class GroupRepoImpl implements GroupRepo {
     }
   }
 
+  //10- accept join request
   @override
   Future<Either<Failure, String>> acceptJoinRequest({
     required String groupId,
     required String requestedId,
   }) async {
-    // await Future.delayed(const Duration(seconds: 1));
-    //     return const Right('Request accepted');
-
     try {
       await remoteDataSource.acceptJoinRequest(
         groupId: groupId,
@@ -190,20 +182,16 @@ class GroupRepoImpl implements GroupRepo {
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));
     } catch (e) {
-      // print("Accept request error : ${e.toString()}");
       return Left(ServerFailure('Failed to accept request'));
     }
   }
 
+  //11- decline join request
   @override
   Future<Either<Failure, String>> declineJoinRequest({
     required String groupId,
     required String requestedId,
   }) async {
-    // await Future.delayed(const Duration(seconds: 1));
-    // mockJoinRequests.removeWhere((req) => req.requestId == requestedId);
-    // return const Right('Request declined');
-
     try {
       await remoteDataSource.declineJoinRequest(
         groupId: groupId,
@@ -213,31 +201,17 @@ class GroupRepoImpl implements GroupRepo {
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));
     } catch (e) {
-      // print("Decline request error : ${e.toString()}");
       return Left(ServerFailure('Failed to decline request'));
     }
   }
 
-  // --- 3. Moderation & Roles ---
-
+  //12- change member role
   @override
   Future<Either<Failure, String>> changeMemberRole({
     required String groupId,
     required String userId,
     required String newRole,
   }) async {
-    // await Future.delayed(const Duration(seconds: 1));
-    // final index = mockList.indexWhere((m) => m.userId == userId);
-    // if (index != -1) {
-    //   mockList[index] = GroupMemberModel(
-    //     userId: mockList[index].userId,
-    //     userName: mockList[index].userName,
-    //     profileImageUrl: mockList[index].profileImageUrl,
-    //     role: newRole,
-    //     status: mockList[index].status,
-    //   );
-    // }
-    // return const Right('changed');
     try {
       await remoteDataSource.promoteMember(
         groupId: groupId,
@@ -252,14 +226,12 @@ class GroupRepoImpl implements GroupRepo {
     }
   }
 
+  // 13-kick member
   @override
   Future<Either<Failure, String>> kickMember({
     required String groupId,
     required String userId,
   }) async {
-    // await Future.delayed(const Duration(milliseconds: 500));
-    // mockList.removeWhere((m) => m.userId == userId);
-    // return const Right('Member kicked successfully');
     try {
       await remoteDataSource.kickMember(groupId: groupId, userId: userId);
       return const Right('Member kicked');
@@ -270,30 +242,12 @@ class GroupRepoImpl implements GroupRepo {
     }
   }
 
+  // 14-ban member
   @override
   Future<Either<Failure, String>> banMember({
     required String groupId,
     required String userId,
   }) async {
-    // await Future.delayed(const Duration(milliseconds: 500));
-
-    // final index = mockList.indexWhere((m) => m.userId == userId);
-    // if (index != -1) {
-    //   final user = mockList[index];
-
-    //   mockBannedList.add(
-    //     GroupMemberModel(
-    //       userId: user.userId,
-    //       userName: user.userName,
-    //       role: user.role,
-    //       profileImageUrl: user.profileImageUrl,
-    //       status: "banned",
-    //     ),
-    //   );
-
-    //   mockList.removeAt(index);
-    //   return const Right('Member banned successfully');
-    // }
     try {
       await remoteDataSource.banMember(groupId: groupId, userId: userId);
       return const Right('Member banned');
@@ -304,29 +258,12 @@ class GroupRepoImpl implements GroupRepo {
     }
   }
 
+  //15- unban member
   @override
   Future<Either<Failure, String>> unbanMember({
     required String groupId,
     required String userId,
   }) async {
-    // await Future.delayed(const Duration(milliseconds: 500));
-    // final index = mockBannedList.indexWhere((m) => m.userId == userId);
-    // if (index != -1) {
-    //   final user = mockBannedList[index];
-
-    //   mockList.add(
-    //     GroupMemberModel(
-    //       userId: user.userId,
-    //       userName: user.userName,
-    //       role: "member",
-    //       profileImageUrl: user.profileImageUrl,
-    //       status: "active",
-    //     ),
-    //   );
-
-    //   mockBannedList.removeAt(index);
-    //   return const Right('Member unbanned successfully');
-    // }
     try {
       await remoteDataSource.unbanMember(groupId: groupId, userId: userId);
       return const Right('Member unbanned');
@@ -337,14 +274,12 @@ class GroupRepoImpl implements GroupRepo {
     }
   }
 
+  //16- get members
   @override
   Future<Either<Failure, List<GroupMember>>> getGroupMembers({
     required String groupId,
     int page = 1,
   }) async {
-    // await Future.delayed(const Duration(seconds: 1));
-    // final onlyMembers = mockList.where((m) => m.role == "member").toList();
-    // return Right(onlyMembers);
     try {
       final models = await remoteDataSource.getMembers(
         groupId: groupId,
@@ -358,14 +293,12 @@ class GroupRepoImpl implements GroupRepo {
     }
   }
 
+  //17- get admins
   @override
   Future<Either<Failure, List<GroupMember>>> getGroupAdmins({
     required String groupId,
     int page = 1,
   }) async {
-    // await Future.delayed(const Duration(seconds: 1));
-    // final onlyMembers = mockList.where((m) => m.role == "admin").toList();
-    // return Right(onlyMembers);
     try {
       final models = await remoteDataSource.getAdmins(
         groupId: groupId,
@@ -379,14 +312,12 @@ class GroupRepoImpl implements GroupRepo {
     }
   }
 
+  //18- get moderators
   @override
   Future<Either<Failure, List<GroupMember>>> getGroupModerators({
     required String groupId,
     int page = 1,
   }) async {
-    // await Future.delayed(const Duration(seconds: 1));
-    // final onlyMembers = mockList.where((m) => m.role == "moderator").toList();
-    // return Right(onlyMembers);
     try {
       final models = await remoteDataSource.getModerators(
         groupId: groupId,
@@ -400,13 +331,12 @@ class GroupRepoImpl implements GroupRepo {
     }
   }
 
+  //19- get banned members
   @override
   Future<Either<Failure, List<GroupMember>>> getGroupBannedMembers({
     required String groupId,
     int page = 1,
   }) async {
-    // await Future.delayed(const Duration(milliseconds: 500));
-    // return Right(mockBannedList);
     try {
       final models = await remoteDataSource.getBannedMembers(
         groupId: groupId,
@@ -419,8 +349,46 @@ class GroupRepoImpl implements GroupRepo {
       return Left(ServerFailure('Failed to fetch members'));
     }
   }
-  // --- 4. Posts Management ---
 
+  // 20-get my groups
+  @override
+  Future<Either<Failure, List<Group>>> getMyGroups({
+    int page = 1,
+    String? search,
+  }) async {
+    try {
+      final models = await remoteDataSource.getMyGroups(
+        page: page,
+        search: search,
+      );
+      return Right(models);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } catch (_) {
+      return Left(ServerFailure('Failed to fetch my groups'));
+    }
+  }
+
+  //21- get joined groups
+  @override
+  Future<Either<Failure, List<Group>>> getJoinedGroups({
+    int page = 1,
+    String? search,
+  }) async {
+    try {
+      final models = await remoteDataSource.getJoinedGroups(
+        page: page,
+        search: search,
+      );
+      return Right(models);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } catch (_) {
+      return Left(ServerFailure('Failed to fetch joined groups'));
+    }
+  }
+
+  // 22-create group post
   @override
   Future<Either<Failure, Post>> createGroupPost({
     required String groupId,
@@ -443,6 +411,7 @@ class GroupRepoImpl implements GroupRepo {
     }
   }
 
+  // 23-delete group post
   @override
   Future<Either<Failure, String>> deleteGroupPost({
     required String groupId,
@@ -458,6 +427,7 @@ class GroupRepoImpl implements GroupRepo {
     }
   }
 
+  //24- edit group post
   @override
   Future<Either<Failure, Post>> editGroupPost({
     required String groupId,
@@ -479,6 +449,7 @@ class GroupRepoImpl implements GroupRepo {
     }
   }
 
+  // 25-get group post by id
   @override
   Future<Either<Failure, Post>> getGroupPostById(
     String groupId,
@@ -497,6 +468,7 @@ class GroupRepoImpl implements GroupRepo {
     }
   }
 
+  //26- get group posts
   @override
   Future<Either<Failure, List<Post>>> getGroupPosts({
     required String groupId,
@@ -515,6 +487,7 @@ class GroupRepoImpl implements GroupRepo {
     }
   }
 
+  //27- get group feed
   @override
   Future<Either<Failure, List<Post>>> getGroupsFeed({int page = 1}) async {
     try {
@@ -524,44 +497,6 @@ class GroupRepoImpl implements GroupRepo {
       return Left(ServerFailure(e.message));
     } catch (_) {
       return Left(ServerFailure('Failed to fetch feed'));
-    }
-  }
-  // ---  My Groups ---
-
-  @override
-  Future<Either<Failure, List<Group>>> getMyGroups({
-    int page = 1,
-    String? search,
-  }) async {
-    try {
-      final models = await remoteDataSource.getMyGroups(
-        page: page,
-        search: search,
-      );
-      return Right(models);
-    } on ServerException catch (e) {
-      return Left(ServerFailure(e.message));
-    } catch (_) {
-      return Left(ServerFailure('Failed to fetch my groups'));
-    }
-  }
-  // ---  Joined Groups ---
-
-  @override
-  Future<Either<Failure, List<Group>>> getJoinedGroups({
-    int page = 1,
-    String? search,
-  }) async {
-    try {
-      final models = await remoteDataSource.getJoinedGroups(
-        page: page,
-        search: search,
-      );
-      return Right(models);
-    } on ServerException catch (e) {
-      return Left(ServerFailure(e.message));
-    } catch (_) {
-      return Left(ServerFailure('Failed to fetch joined groups'));
     }
   }
 }

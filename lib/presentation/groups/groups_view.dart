@@ -3,6 +3,7 @@ import 'package:auth/core/styels.dart';
 import 'package:auth/presentation/groups/discover_groups_list_view.dart';
 import 'package:auth/presentation/groups/my_groups_list_view.dart';
 import 'package:auth/presentation/groups/widgets/groups_app_bar.dart';
+import 'package:auth/presentation/groups/widgets/groups_posts_feed.dart';
 import 'package:auth/presentation/groups/widgets/suggested_row_list.dart';
 import 'package:auth/presentation/groups/widgets/your_groups_row_list.dart';
 import 'package:auth/presentation/groups/joined_groups_list_view.dart';
@@ -51,7 +52,7 @@ class GroupsView extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    //TODO: Add posts from user's groups
+                    const GroupsPostsFeed(),
                   ],
                 ),
 

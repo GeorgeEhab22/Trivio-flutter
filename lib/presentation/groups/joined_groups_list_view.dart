@@ -14,6 +14,17 @@ class JoinedGroupsListView extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<GetJoinedGroupsCubit, GetJoinedGroupsState>(
       builder: (context, state) {
+        if (state is GetJoinedGroupsEmpty) {
+          return const SizedBox(
+            height: 110,
+            child: Center(
+              child: Text(
+                "You haven't joined any groups yet. Explore now!",
+                style: TextStyle(color: Colors.grey, fontSize: 14),
+              ),
+            ),
+          );
+        }
         if (state is GetJoinedGroupsFailure) {
           return Center(child: Text(state.message));
         }

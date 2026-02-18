@@ -24,3 +24,6 @@ class GetJoinedGroupsFailure extends GetJoinedGroupsState {
   @override
   List<Object?> get props => [message];
 }
+class GetJoinedGroupsEmpty extends GetJoinedGroupsState {
+  const GetJoinedGroupsEmpty();
+}
