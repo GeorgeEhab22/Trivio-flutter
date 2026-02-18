@@ -4,16 +4,19 @@ import 'package:auth/domain/entities/reaction_type.dart';
 import 'package:dartz/dartz.dart';
 import 'package:image_picker/image_picker.dart';
 
-abstract class PostRepository {
+abstract class PostRepo {
   Future<Either<Failure, Post>> createPost({
     String? caption,
-    List<XFile>? media, 
+    List<XFile>? media,
     required String type,
   });
 
-  Future<Either<Failure, Post>> fetchSinglePost(String postId);
+  Future<Either<Failure, Post>> getPost(String postId);
 
-  Future<Either<Failure, List<Post>>> fetchPosts({int page = 1, int limit = 20});
+  Future<Either<Failure, List<Post>>> fetchPosts({
+    int page = 1,
+    int limit = 20,
+  });
 
   Future<Either<Failure, Post>> commentOnPost({
     required String postId,

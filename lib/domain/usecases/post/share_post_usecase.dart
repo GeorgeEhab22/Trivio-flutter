@@ -4,9 +4,9 @@ import 'package:auth/domain/repositories/post_repo.dart';
 import 'package:dartz/dartz.dart';
 
 class SharePostUseCase {
-  final PostRepository repository;
+  final PostRepo repo;
 
-  SharePostUseCase(this.repository);
+  SharePostUseCase(this.repo);
 
   Future<Either<Failure, Post>> call({
     required String postId,
@@ -21,7 +21,7 @@ class SharePostUseCase {
       return const Left(ValidationFailure('User ID is required'));
     }
 
-    return await repository.sharePost(
+    return await repo.sharePost(
       postId: postId,
       userId: userId,
       additionalContent: additionalContent,

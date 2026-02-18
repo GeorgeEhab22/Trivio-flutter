@@ -7,7 +7,7 @@ import 'package:auth/domain/repositories/post_repo.dart';
 import 'package:dartz/dartz.dart';
 import 'package:image_picker/image_picker.dart';
 
-class PostRepositoryImpl implements PostRepository {
+class PostRepositoryImpl implements PostRepo {
   final PostsRemoteDataSource remoteDataSource;
 
   PostRepositoryImpl({required this.remoteDataSource});
@@ -26,7 +26,7 @@ class PostRepositoryImpl implements PostRepository {
         media: media ?? [], // Pass empty list if null
         type: type,
       );
-      
+
       return Right(model.toEntity());
     } on AuthException catch (e) {
       return Left(AuthFailure(e.message));
@@ -42,9 +42,9 @@ class PostRepositoryImpl implements PostRepository {
   }
 
   // ... (Rest of the file remains exactly the same)
-  
+
   @override
-  Future<Either<Failure, Post>> fetchSinglePost(String postId) async {
+  Future<Either<Failure, Post>> getPost(String postId) async {
     try {
       final model = await remoteDataSource.fetchSinglePost(postId);
       return Right(model.toEntity());

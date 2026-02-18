@@ -5,11 +5,11 @@ import 'package:dartz/dartz.dart';
 import 'package:image_picker/image_picker.dart';
 
 class CreatePostUseCase {
-  final PostRepository repository;
+  final PostRepo repo;
 
   static const int maxContentLength = 500;
 
-  CreatePostUseCase(this.repository);
+  CreatePostUseCase(this.repo);
 
   Future<Either<Failure, Post>> call({
     String? caption,
@@ -35,8 +35,7 @@ class CreatePostUseCase {
       );
     }
 
-
-    return await repository.createPost(
+    return await repo.createPost(
       caption: trimmedCaption,
       media: media??[], 
       type: type,

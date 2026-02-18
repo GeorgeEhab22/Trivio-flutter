@@ -425,14 +425,14 @@ class GroupRepoImpl implements GroupRepo {
   Future<Either<Failure, Post>> createGroupPost({
     required String groupId,
     String? caption,
-    List<String>? media,
+    List<XFile>? media,
     required String type,
   }) async {
     try {
       final model = await remoteDataSource.createGroupPost(
         groupId: groupId,
         caption: caption,
-        media: [],
+        media: media,
         type: type,
       );
       return Right(model.toEntity());
@@ -476,6 +476,24 @@ class GroupRepoImpl implements GroupRepo {
       return Left(ServerFailure(e.message));
     } catch (_) {
       return Left(ServerFailure('Failed to edit post'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, Post>> getGroupPostById(
+    String groupId,
+    String postId,
+  ) async {
+    try {
+      final model = await remoteDataSource.getGroupPostById(
+        groupId: groupId,
+        postId: postId,
+      );
+      return Right(model.toEntity());
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } catch (_) {
+      return Left(ServerFailure('Post not found or access denied'));
     }
   }
 

@@ -26,6 +26,7 @@ import 'package:auth/domain/usecases/group/cancel_request_use_case.dart';
 import 'package:auth/domain/usecases/group/decline_join_request_use_case.dart';
 import 'package:auth/domain/usecases/group/get_join_requests_use_case.dart';
 import 'package:auth/domain/usecases/group/group_posts/create_group_post_use_case.dart';
+import 'package:auth/domain/usecases/group/group_posts/get_group_posts_use_case.dart';
 import 'package:auth/domain/usecases/group/groups/create_group_use_case.dart';
 import 'package:auth/domain/usecases/group/groups/delete_group_use_case.dart';
 import 'package:auth/domain/usecases/group/groups/edit_group_use_case.dart';
@@ -47,15 +48,15 @@ import 'package:auth/domain/usecases/post/comment_on_post_usecase.dart';
 import 'package:auth/domain/usecases/post/create_post_usecase.dart';
 import 'package:auth/domain/usecases/post/delete_post_usecase.dart';
 import 'package:auth/domain/usecases/post/edit_post_usecase.dart';
-import 'package:auth/domain/usecases/post/fetch_posts_usecase.dart';
-import 'package:auth/domain/usecases/post/fetch_single_post_usecase.dart';
+import 'package:auth/domain/usecases/post/get_posts_usecase.dart';
+import 'package:auth/domain/usecases/post/get_post_usecase.dart';
 import 'package:auth/domain/usecases/post/react_to_post_usecase.dart';
 import 'package:auth/domain/usecases/post/remove_reaction_from_post_usecase.dart';
 import 'package:auth/domain/usecases/post/report_post_usecase.dart';
 import 'package:auth/domain/usecases/post/search_post_usecase.dart';
 import 'package:auth/domain/usecases/post/share_post_usecase.dart';
-import 'package:auth/domain/usecases/post/toggle_follow_user.dart';
-import 'package:auth/domain/usecases/post/toggle_save_post_usecase.dart';
+import 'package:auth/domain/usecases/post/follow_user.dart';
+import 'package:auth/domain/usecases/post/save_post_usecase.dart';
 import 'package:auth/domain/usecases/register/register_usecase.dart';
 import 'package:auth/domain/usecases/register/resend_verification_code.dart';
 import 'package:auth/domain/usecases/register/verify_code.dart';
@@ -74,6 +75,7 @@ import 'package:auth/presentation/manager/group_cubit/cancel_request/cancel_requ
 import 'package:auth/presentation/manager/group_cubit/change_member_role/change_member_role_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/decline_request/decline_request_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/get_group/get_group_cubit.dart';
+import 'package:auth/presentation/manager/group_cubit/get_group_posts/get_group_posts_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/get_groups/get_groups_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/get_join_requests/get_join_requests_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/get_joined_groups/get_joined_groups_cubit.dart';
@@ -85,6 +87,7 @@ import 'package:auth/presentation/manager/group_cubit/get_members_by_roles/membe
 import 'package:auth/presentation/manager/group_cubit/unban_member/unban_member_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/update_group/update_group_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/create_post_cubit.dart';
+import 'package:auth/presentation/manager/post_cubit/get_post/get_post_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/post_interaction_cubit.dart';
 import 'package:auth/presentation/manager/register_cubit/register_cubit.dart';
@@ -139,30 +142,32 @@ Future<void> init() async {
   sl.registerLazySingleton<PostsRemoteDataSource>(
     () => PostsRemoteDataSourceImpl(api: sl(), prefs: sl(), errorHandler: sl()),
   );
-  sl.registerLazySingleton<PostRepository>(
+  sl.registerLazySingleton<PostRepo>(
     () => PostRepositoryImpl(remoteDataSource: sl()),
   );
   sl.registerLazySingleton(() => CommentOnPostUseCase(sl()));
   sl.registerLazySingleton(() => CreatePostUseCase(sl()));
   sl.registerLazySingleton(() => DeletePostUseCase(sl()));
   sl.registerLazySingleton(() => EditPostUseCase(sl()));
-  sl.registerLazySingleton(() => FetchPostsUseCase(sl()));
-  sl.registerLazySingleton(() => FetchSinglePostUseCase(sl()));
+  sl.registerLazySingleton(() => GetPostsUseCase(sl()));
+  sl.registerLazySingleton(() => GetPostUseCase(sl()));
   sl.registerLazySingleton(() => ReactToPostUseCase(sl()));
   sl.registerLazySingleton(() => RemoveReactionFromPostUseCase(sl()));
   sl.registerLazySingleton(() => ReportPostUseCase(sl()));
   sl.registerLazySingleton(() => SearchPostsUseCase(sl()));
   sl.registerLazySingleton(() => SharePostUseCase(sl()));
-  sl.registerLazySingleton(() => ToggleFollowUserUseCase(sl()));
-  sl.registerLazySingleton(() => ToggleSavePostUseCase(sl()));
+  sl.registerLazySingleton(() => FollowUserUseCase(sl()));
+  sl.registerLazySingleton(() => SavePostUseCase(sl()));
 
-  sl.registerFactory(() => PostCubit(sl()));
+  sl.registerFactory(
+    () => PostCubit(getPostsUseCase: sl(), deletePostUseCase: sl()),
+  );
   sl.registerFactory(
     () => PostInteractionCubit(
       reactToPostUseCase: sl(),
       sharePostUseCase: sl(),
       commentOnPostUseCase: sl(),
-      toggleFollowUserUseCase: sl(),
+      followUserUseCase: sl(),
       toggleSavePostUseCase: sl(),
       reportPostUseCase: sl(),
       removeReactionFromPostUseCase: sl(),
@@ -201,7 +206,13 @@ Future<void> init() async {
     ),
   );
 
-  sl.registerFactory(() => CreatePostCubit(createPostUseCase: sl(),createGroupPostUseCase: sl()));
+  sl.registerFactory(
+    () =>
+        CreatePostCubit(createPostUseCase: sl(), createGroupPostUseCase: sl()),
+  );
+  sl.registerFactory(() => GetPostCubit(getPostUseCase: sl()));
+  
+
   sl.registerFactory(() => ThemeCubit());
 
   // groups
@@ -218,7 +229,7 @@ Future<void> init() async {
 
   // get group
   sl.registerLazySingleton(() => GetGroupUseCase(sl()));
-  sl.registerFactory(() => GetGroupCubit( getGroupUseCase: sl()));
+  sl.registerFactory(() => GetGroupCubit(getGroupUseCase: sl()));
 
   //get groups
   sl.registerLazySingleton(() => GetAllGroupsUseCase(sl()));
@@ -242,47 +253,57 @@ Future<void> init() async {
   sl.registerLazySingleton(() => CancelRequestUseCase(sl()));
   sl.registerFactory(() => CancelRequestGroupCubit(cancelRequestUseCase: sl()));
   //accept request
-  sl.registerLazySingleton(() => AcceptJoinRequestUseCase(sl(),));
+  sl.registerLazySingleton(() => AcceptJoinRequestUseCase(sl()));
   sl.registerFactory(() => AcceptRequestCubit(acceptJoinRequestUseCase: sl()));
   // declie request
   sl.registerLazySingleton(() => DeclineJoinRequestUseCase(sl()));
-  sl.registerFactory(() => DeclineRequestCubit(declineJoinRequestUseCase: sl()));
+  sl.registerFactory(
+    () => DeclineRequestCubit(declineJoinRequestUseCase: sl()),
+  );
   // get requests
   sl.registerLazySingleton(() => GetJoinRequestsUseCase(sl()));
   sl.registerFactory(() => GetJoinRequestsCubit(getJoinRequestsUseCase: sl()));
   // change member role
-  sl.registerLazySingleton(()=> ChangeMemberRoleUseCase(sl()));
-  sl.registerFactory(() => ChangeMemberRoleCubit(changeMemberRoleUseCase: sl()));
+  sl.registerLazySingleton(() => ChangeMemberRoleUseCase(sl()));
+  sl.registerFactory(
+    () => ChangeMemberRoleCubit(changeMemberRoleUseCase: sl()),
+  );
   // get members
-  sl.registerLazySingleton(()=> GetGroupMembersUseCase(sl()));
+  sl.registerLazySingleton(() => GetGroupMembersUseCase(sl()));
   // get admins
-  sl.registerLazySingleton(()=> GetGroupAdminsUseCase(sl()));
+  sl.registerLazySingleton(() => GetGroupAdminsUseCase(sl()));
   // get moderators
-  sl.registerLazySingleton(()=> GetGroupModeratorsUseCase(sl()));
+  sl.registerLazySingleton(() => GetGroupModeratorsUseCase(sl()));
   // get banned members
-  sl.registerLazySingleton(()=> GetGroupBannedMembersUseCase(sl()));
-  sl.registerFactory(()=> GetBannedMembersCubit(getGroupBannedMembersUseCase: sl()));
+  sl.registerLazySingleton(() => GetGroupBannedMembersUseCase(sl()));
+  sl.registerFactory(
+    () => GetBannedMembersCubit(getGroupBannedMembersUseCase: sl()),
+  );
   // kick member
-  sl.registerLazySingleton(()=> KickMemberUseCase(sl()));
-  sl.registerFactory(()=> KickMemberCubit(kickMemberUseCase: sl()));
+  sl.registerLazySingleton(() => KickMemberUseCase(sl()));
+  sl.registerFactory(() => KickMemberCubit(kickMemberUseCase: sl()));
   // ban member
-  sl.registerLazySingleton(()=> BanMemberUseCase(sl()));
-  sl.registerFactory(()=> BanMemberCubit(banMemberUseCase: sl()));
+  sl.registerLazySingleton(() => BanMemberUseCase(sl()));
+  sl.registerFactory(() => BanMemberCubit(banMemberUseCase: sl()));
   // unban member
-  sl.registerLazySingleton(()=> UnbanMemberUseCase(sl()));  
-  sl.registerFactory(()=> UnbanMemberCubit(unbanMemberUseCase: sl()));
+  sl.registerLazySingleton(() => UnbanMemberUseCase(sl()));
+  sl.registerFactory(() => UnbanMemberCubit(unbanMemberUseCase: sl()));
   // group members
   sl.registerFactory(() => GroupMembersCubit(sl(), sl(), sl()));
 
   // get my groups
-  sl.registerLazySingleton(()=> GetMyGroupsUseCase(sl()));
+  sl.registerLazySingleton(() => GetMyGroupsUseCase(sl()));
   sl.registerFactory(() => GetMyGroupsCubit(getMyGroupsUseCase: sl()));
 
-// get joined groups
-  sl.registerLazySingleton(()=> GetJoinedGroupsUseCase(sl()));
+  // get joined groups
+  sl.registerLazySingleton(() => GetJoinedGroupsUseCase(sl()));
   sl.registerFactory(() => GetJoinedGroupsCubit(getJoinedGroupsUseCase: sl()));
 
-// create group post
-sl.registerLazySingleton(() => CreateGroupPostUseCase(sl()));
- 
+  // create group post
+  sl.registerLazySingleton(() => CreateGroupPostUseCase(sl()));
+
+  // get group posts
+  sl.registerFactory(() => GetGroupPostsCubit(getGroupPostsUseCase: sl()));
+  sl.registerLazySingleton(() => GetGroupPostsUseCase(sl()));
+
 }

@@ -84,7 +84,7 @@ class CreatePostCubit extends Cubit<CreatePostState> {
         ? await createGroupPostUseCase(
             groupId: groupId,
             caption: caption,
-            media: _media.map((file) => file.path).toList(),
+            media: _media,
             type: "private",
           )
         : await createPostUseCase(

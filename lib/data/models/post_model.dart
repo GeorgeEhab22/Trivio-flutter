@@ -4,10 +4,9 @@ import 'package:auth/domain/entities/mentions.dart';
 import 'package:auth/domain/entities/reaction_type.dart';
 
 class PostModel extends Post {
-  final int updateCount;               // maps "__v"
+  final int updateCount; // maps "__v"
   @override
-  final List<String> media;            // server media URLs / filenames
-  final String? location;
+  final List<String> media; // server media URLs / filenames
   final int views;
   final DummyReactionCounter reactionCounts;
 
@@ -16,22 +15,37 @@ class PostModel extends Post {
     required this.updateCount,
     required this.reactionCounts,
     required this.media,
-    required super.authorId,           // from Post entity
-    required super.type,               // from Post entity
+    required super.authorId, // from Post entity
+    required super.type, // from Post entity
     super.caption,
+    super.location,
     super.mentions,
-    this.location,
     this.views = 0,
     super.flagged,
+    super.groupID,
+    super.groupName,
+    super.groupCoverImage,
   });
 
   /// Accepts either the whole response or just the `post` map.
   factory PostModel.fromJson(Map<String, dynamic> json) {
     final Map<String, dynamic> raw =
         (json['data'] != null && json['data']['post'] != null)
-            ? json['data']['post'] as Map<String, dynamic>
-            : json;
+        ? json['data']['post'] as Map<String, dynamic>
+        : json;
+//  get group id as object that contain name and id and cover
+    final dynamic groupData = raw['groupID'];
+    String? gID;
+    String? gName;
+    String? gCover;
 
+    if (groupData is String) {
+      gID = groupData;
+    } else if (groupData is Map<String, dynamic>) {
+      gID = groupData['_id'];
+      gName = groupData['name'];
+      gCover = groupData['coverImage'] ?? groupData['logo'];
+    }
     // --- reactionCounts ---
     final Map<String, dynamic> reactionMap =
         raw['reactionCounts'] as Map<String, dynamic>? ?? {};
@@ -69,12 +83,15 @@ class PostModel extends Post {
       authorId: raw['authorID'] as String? ?? '',
       type: raw['type'] as String? ?? 'public',
       caption: raw['caption'] as String?,
+      location: raw['location'] as String?,
       mentions: mentions,
       media: mediaList,
-      location: raw['location'] as String?,
       views: (raw['views'] ?? 0) as int,
       flagged: (raw['flagged'] ?? false) as bool,
       reactionCounts: dummyReactions,
+      groupID: gID,
+      groupName: gName,
+      groupCoverImage: gCover,
     );
   }
 
@@ -88,12 +105,9 @@ class PostModel extends Post {
       'mentions': [
         if (mentions != null)
           for (int i = 0; i < mentions!.userIds.length; i++)
-            {
-              '_id': mentions!.userIds[i],
-              'username': mentions!.usernames[i],
-            }
+            {'_id': mentions!.userIds[i], 'username': mentions!.usernames[i]},
       ],
-      'media': media, 
+      'media': media,
       'location': location,
       'views': views,
       'flagged': flagged,
@@ -105,6 +119,9 @@ class PostModel extends Post {
         'angry': reactionCounts.angryCount,
         'wow': reactionCounts.wowCount,
       },
+      'groupID': groupID,
+      'groupName': groupName,
+      'groupCoverImage': groupCoverImage,
     };
   }
 
@@ -114,18 +131,21 @@ class PostModel extends Post {
       type: type,
       caption: caption,
       mentions: mentions,
+      location: location,
       media: media,
       flagged: flagged,
       reactions: reactions,
       postID: postID,
-
+      groupID: groupID,
+      groupName: groupName,
+      groupCoverImage: groupCoverImage,
     );
   }
 
   factory PostModel.fromEntity(Post post) {
     return PostModel(
-      postID: '',             
-      updateCount: 0,           
+      postID: '',
+      updateCount: 0,
       authorId: post.authorId,
       type: post.type,
       caption: post.caption,

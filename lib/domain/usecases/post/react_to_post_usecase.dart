@@ -6,9 +6,9 @@ import 'package:auth/domain/repositories/post_repo.dart';
 import 'package:dartz/dartz.dart';
 
 class ReactToPostUseCase {
-  final PostRepository repository;
+  final PostRepo repo;
 
-  ReactToPostUseCase(this.repository);
+  ReactToPostUseCase(this.repo);
 
   Future<Either<Failure, Post>> call({
     required String postId,
@@ -33,7 +33,7 @@ class ReactToPostUseCase {
     //   return const Left(ValidationFailure('Reaction type is required'));
     // }
 
-    return await repository.reactToPost(
+    return await repo.reactToPost(
       postId: postId,
       userId: userId,
       reactionType: reactionType,

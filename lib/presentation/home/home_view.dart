@@ -15,7 +15,7 @@ class HomeView extends StatelessWidget {
 
     return BlocListener<PostCubit, PostState>(
       listener: (context, state) {
-        if (state is DeletePostSuccess) {
+        if (state is  DeletePostSuccess) {
           showCustomSnackBar(context, 'Post deleted successfully', true);
         }
         if (state is DeletePostError) {

@@ -4,15 +4,15 @@ import 'package:auth/domain/repositories/post_repo.dart';
 import 'package:dartz/dartz.dart';
 
 class SearchPostsUseCase {
-  final PostRepository repository;
+  final PostRepo repo;
 
-  SearchPostsUseCase(this.repository);
+  SearchPostsUseCase(this.repo);
 
   Future<Either<Failure, List<Post>>> call(String query) async {
     if (query.trim().isEmpty) {
       return const Left(ValidationFailure('Search query cannot be empty'));
     }
 
-    return await repository.searchPosts(query);
+    return await repo.searchPosts(query);
   }
 }

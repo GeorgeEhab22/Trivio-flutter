@@ -12,8 +12,8 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (context) => di.sl<PostCubit>()..fetchPosts()),
         BlocProvider(create: (context) => di.sl<PostInteractionCubit>()),
+        BlocProvider(create: (context) => di.sl<PostCubit>()),
       ],
       child: const HomeView(),
     );

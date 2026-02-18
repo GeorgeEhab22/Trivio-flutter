@@ -4,9 +4,9 @@ import 'package:auth/domain/repositories/post_repo.dart';
 import 'package:dartz/dartz.dart';
 
 class DeletePostUseCase {
-  final PostRepository repository;
+  final PostRepo repo;
 
-  DeletePostUseCase(this.repository);
+  DeletePostUseCase(this.repo);
 
   Future<Either<Failure, void>> call(String postId) async {
     if (postId.trim().isEmpty) {
@@ -17,6 +17,6 @@ class DeletePostUseCase {
       return const Left(ValidationFailure('Invalid Post ID'));
     }
 
-    return await repository.deletePost(postId);
+    return await repo.deletePost(postId);
   }
 }

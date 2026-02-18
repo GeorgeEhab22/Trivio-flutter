@@ -21,6 +21,7 @@ class PostHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isGroupPost = post.location == "group";
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       child: Row(
@@ -30,11 +31,16 @@ class PostHeader extends StatelessWidget {
             child: AuthorInfo(
               authorName:"messi",
               showTimeInline: false,
+              isGroupPost: isGroupPost,
+              groupImage: post.groupCoverImage,
+              groupName: post.groupName,
+              
             ),
           ),
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
+              if (!isGroupPost)
               FollowButton(
                 currentUserId: currentUserId,
                 authorId: post.authorId ?? '',
@@ -42,9 +48,13 @@ class PostHeader extends StatelessWidget {
               ),
               
               IconButton(
-                icon: Icon(Icons.more_vert, color: Theme.of(context).iconTheme.color),
+                icon: Icon(
+                  Icons.more_vert,
+                  color: Theme.of(context).iconTheme.color,
+                ),
                 onPressed: () {
-                  final postInteractionCubit = context.read<PostInteractionCubit>();
+                  final postInteractionCubit = context
+                      .read<PostInteractionCubit>();
                   final postCubit = context.read<PostCubit>();
                   showModalBottomSheet(
                     context: context,

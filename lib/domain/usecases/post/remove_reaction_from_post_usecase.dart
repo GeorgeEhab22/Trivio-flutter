@@ -5,9 +5,9 @@ import 'package:auth/domain/repositories/post_repo.dart';
 import 'package:dartz/dartz.dart';
 
 class RemoveReactionFromPostUseCase {
-  final PostRepository repository;
+  final PostRepo repo;
 
-  RemoveReactionFromPostUseCase(this.repository);
+  RemoveReactionFromPostUseCase(this.repo);
 
   Future<Either<Failure, Post>> call({
     required String postId,
@@ -27,7 +27,7 @@ class RemoveReactionFromPostUseCase {
       return const Left(ValidationFailure('Invalid User ID'));
     }
 
-    return await repository.removeReactionFromPost(
+    return await repo.removeReactionFromPost(
       postId: postId,
       userId: userId,
     );

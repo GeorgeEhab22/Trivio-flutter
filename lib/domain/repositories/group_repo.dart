@@ -108,7 +108,7 @@ abstract class GroupRepo {
   Future<Either<Failure, Post>> createGroupPost({
     required String groupId,
     String? caption,
-    List<String>? media,
+    List<XFile>? media,
     required String type,
   });
 
@@ -126,6 +126,7 @@ abstract class GroupRepo {
     List<String>? media,
   });
 
+  Future<Either<Failure, Post>> getGroupPostById(String groupId,String postId);
   // 23 get group posts
   Future<Either<Failure, List<Post>>> getGroupPosts({
     required String groupId,

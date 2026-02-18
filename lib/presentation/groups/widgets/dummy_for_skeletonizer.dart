@@ -1,4 +1,5 @@
 import 'package:auth/domain/entities/group.dart';
+import 'package:auth/domain/entities/post.dart';
 
 class DummyData {
   static final List<Group> dummyGroups = List.generate(
@@ -22,5 +23,20 @@ class DummyData {
     membersCount: 0,
     moderatorsCount: 0,
     adminsCount: 0,
+  );
+  static final List<Post> dummyPosts = List.generate(
+    5,
+    (index) => const Post(
+      postID: '',
+      authorId: '',
+      caption: 'This is a placeholder for the post caption that should be long enough to show multiple lines of skeleton loading effect.',
+      type: 'text',
+      ),
+  );
+  static const Post dummyPost = Post(
+    postID: '',
+    authorId: '',
+    caption: 'Loading more content...',
+    type: 'text',
   );
 }

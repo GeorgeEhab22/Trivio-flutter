@@ -8,11 +8,14 @@ class Post extends Equatable {
   final String? postID;
   final String? caption;
   final String type;
-  final Mentions ? mentions; 
+  final Mentions? mentions;
   final bool? flagged;
   final List<Reaction>? reactions;
-  final List <String> ? media;
-
+  final List<String>? media;
+  final String? location;
+  final String? groupID;
+  final String? groupName;
+  final String? groupCoverImage;
 
   const Post({
     this.authorId,
@@ -23,7 +26,41 @@ class Post extends Equatable {
     this.mentions,
     this.reactions,
     this.media,
+    this.location,
+    this.groupID,
+    this.groupName,
+    this.groupCoverImage,
   });
+  //TODO : delete copy with when take group id as object in backend
+ Post copyWith({
+    String? authorId,
+    String? postID,
+    String? caption,
+    String? type,
+    Mentions? mentions,
+    bool? flagged,
+    List<Reaction>? reactions,
+    List<String>? media,
+    String? location,
+    String? groupID,
+    String? groupName,
+    String? groupCoverImage,
+  }) {
+    return Post(
+      authorId: authorId ?? this.authorId,
+      postID: postID ?? this.postID,
+      caption: caption ?? this.caption,
+      type: type ?? this.type,
+      mentions: mentions ?? this.mentions,
+      flagged: flagged ?? this.flagged,
+      reactions: reactions ?? this.reactions,
+      media: media ?? this.media,
+      location: location ?? this.location,
+      groupID: groupID ?? this.groupID,
+      groupName: groupName ?? this.groupName,
+      groupCoverImage: groupCoverImage ?? this.groupCoverImage,
+    );
+  }
 
   int get likesCount => reactions?.length ?? 0;
   //int get commentsCount => comments.length;
@@ -34,5 +71,7 @@ class Post extends Equatable {
     caption,
     type,
     mentions,
+    location,
+    groupID,
   ];
 }

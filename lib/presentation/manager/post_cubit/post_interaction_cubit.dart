@@ -8,8 +8,8 @@ import 'package:auth/domain/usecases/post/react_to_post_usecase.dart';
 import 'package:auth/domain/usecases/post/remove_reaction_from_post_usecase.dart';
 import 'package:auth/domain/usecases/post/report_post_usecase.dart';
 import 'package:auth/domain/usecases/post/share_post_usecase.dart';
-import 'package:auth/domain/usecases/post/toggle_follow_user.dart';
-import 'package:auth/domain/usecases/post/toggle_save_post_usecase.dart';
+import 'package:auth/domain/usecases/post/follow_user.dart';
+import 'package:auth/domain/usecases/post/save_post_usecase.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -23,8 +23,8 @@ class PostInteractionCubit extends Cubit<PostInteractionState> {
   final EditPostUseCase editPostUseCase;
   final ReportPostUseCase reportPostUseCase;
   final SharePostUseCase sharePostUseCase;
-  final ToggleSavePostUseCase toggleSavePostUseCase;
-  final ToggleFollowUserUseCase toggleFollowUserUseCase;
+  final SavePostUseCase toggleSavePostUseCase;
+  final FollowUserUseCase followUserUseCase;
 
   PostInteractionCubit({
     required this.reactToPostUseCase,
@@ -35,7 +35,7 @@ class PostInteractionCubit extends Cubit<PostInteractionState> {
     required this.reportPostUseCase,
     required this.sharePostUseCase,
     required this.toggleSavePostUseCase,
-    required this.toggleFollowUserUseCase,
+    required this.followUserUseCase,
   }) : super(PostInteractionInitial());
 
   // react to post
@@ -131,7 +131,12 @@ class PostInteractionCubit extends Cubit<PostInteractionState> {
         );
       },
       (post) {
-        emit(ReactToPostSuccess(postId: post.postID??'', reactionType: reactionType));
+        emit(
+          ReactToPostSuccess(
+            postId: post.postID ?? '',
+            reactionType: reactionType,
+          ),
+        );
       },
     );
   }
@@ -166,7 +171,6 @@ class PostInteractionCubit extends Cubit<PostInteractionState> {
       },
     );
   }
-
 
   Future<void> sharePost({
     required String postId,
@@ -257,7 +261,7 @@ class PostInteractionCubit extends Cubit<PostInteractionState> {
     final newStatus = !currentFollowStatus;
     emit(PostFollowUpdated(isFollowing: newStatus));
 
-    final result = await toggleFollowUserUseCase( 
+    final result = await followUserUseCase(
       followedUserId: followeeId,
       followerUserId: followerId,
     );

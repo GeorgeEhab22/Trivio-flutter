@@ -2,6 +2,7 @@ import 'package:auth/core/errors/failure.dart';
 import 'package:auth/domain/entities/post.dart';
 import 'package:auth/domain/repositories/group_repo.dart';
 import 'package:dartz/dartz.dart';
+import 'package:image_picker/image_picker.dart';
 
 class CreateGroupPostUseCase {
   final GroupRepo groupRepo;
@@ -10,7 +11,7 @@ class CreateGroupPostUseCase {
   Future<Either<Failure, Post>> call({
     required String groupId,
     String? caption,
-    List<String>? media,
+    List<XFile>? media,
     required String type,
   }) async {
     final trimmedCaption = caption?.trim() ?? '';

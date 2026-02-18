@@ -3,10 +3,10 @@ import 'package:auth/domain/entities/post.dart';
 import 'package:auth/domain/repositories/post_repo.dart';
 import 'package:dartz/dartz.dart';
 
-class ToggleSavePostUseCase {
-  final PostRepository repository;
+class SavePostUseCase {
+  final PostRepo repo;
 
-  ToggleSavePostUseCase(this.repository);
+  SavePostUseCase(this.repo);
 
   Future<Either<Failure, Post>> call({
     required String postId,
@@ -20,9 +20,6 @@ class ToggleSavePostUseCase {
       return const Left(ValidationFailure('User ID is required'));
     }
 
-    return await repository.toggleSavePost(
-      postId: postId,
-      userId: userId,
-    );
+    return await repo.toggleSavePost(postId: postId, userId: userId);
   }
 }

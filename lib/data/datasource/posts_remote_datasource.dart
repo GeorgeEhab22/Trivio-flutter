@@ -159,16 +159,20 @@ class PostsRemoteDataSourceImpl implements PostsRemoteDataSource {
     }
   }
 
-  @override
-  Future<PostModel> fetchSinglePost(String postId) async {
-    try {
-      final response = await api.get("${ApiEndpoints.fetchSinglePost}$postId");
-      return PostModel.fromJson(response['data'][0]);
-    } catch (e) {
-      errorHandler.handleDioError(e);
-      rethrow;
-    }
+ @override
+Future<PostModel> fetchSinglePost(String postId) async {
+  try {
+    final response = await api.get(
+      "${ApiEndpoints.fetchSinglePost}/$postId",
+      options: _getAuthOptions(), 
+    );
+    
+    return PostModel.fromJson(response['data']['post']);
+  } catch (e) {
+    errorHandler.handleDioError(e);
+    rethrow;
   }
+}
 
   @override
   Future<PostModel> editPost({

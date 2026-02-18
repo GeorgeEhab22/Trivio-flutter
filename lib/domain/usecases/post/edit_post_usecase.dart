@@ -5,9 +5,9 @@ import 'package:auth/domain/repositories/post_repo.dart';
 import 'package:dartz/dartz.dart';
 
 class EditPostUseCase {
-  final PostRepository repository;
+  final PostRepo repo;
 
-  EditPostUseCase(this.repository);
+  EditPostUseCase(this.repo);
 
   Future<Either<Failure, Post>> call({
     required String postId,
@@ -33,12 +33,10 @@ class EditPostUseCase {
     if (newContent.trim().isEmpty &&
         (newImageUrl == null || newImageUrl.isEmpty) &&
         (newVideoUrl == null || newVideoUrl.isEmpty)) {
-      return const Left(
-        ValidationFailure('Post must have text or media'),
-      );
+      return const Left(ValidationFailure('Post must have text or media'));
     }
 
-    return await repository.editPost(
+    return await repo.editPost(
       postId: postId,
       userId: userId,
       newContent: newContent,

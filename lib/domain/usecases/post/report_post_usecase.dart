@@ -3,9 +3,9 @@ import 'package:auth/domain/repositories/post_repo.dart';
 import 'package:dartz/dartz.dart';
 
 class ReportPostUseCase {
-  final PostRepository repository;
+  final PostRepo repo;
 
-  ReportPostUseCase(this.repository);
+  ReportPostUseCase(this.repo);
 
   Future<Either<Failure,void>> call({
     required String postId,
@@ -24,7 +24,7 @@ class ReportPostUseCase {
       return const Left(ValidationFailure('Reason is required'));
     }
 
-    return await repository.reportPost(
+    return await repo.reportPost(
       postId: postId,
       userId: userId,
       reason: reason,

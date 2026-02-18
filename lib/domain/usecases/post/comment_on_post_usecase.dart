@@ -4,9 +4,9 @@ import 'package:auth/domain/repositories/post_repo.dart';
 import 'package:dartz/dartz.dart';
 
 class CommentOnPostUseCase {
-  final PostRepository repository;
+  final PostRepo repo;
 
-  CommentOnPostUseCase(this.repository);
+  CommentOnPostUseCase(this.repo);
 
   Future<Either<Failure, Post>> call({
     required String postId,
@@ -23,7 +23,7 @@ class CommentOnPostUseCase {
       return const Left(ValidationFailure('Comment cannot be empty'));
     }
 
-    return await repository.commentOnPost(
+    return await repo.commentOnPost(
       postId: postId,
       userId: userId,
       comment: comment,

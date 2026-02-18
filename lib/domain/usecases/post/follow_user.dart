@@ -2,10 +2,10 @@ import 'package:auth/core/errors/failure.dart';
 import 'package:auth/domain/repositories/post_repo.dart';
 import 'package:dartz/dartz.dart';
 
-class ToggleFollowUserUseCase {
-  final PostRepository repository;
+class FollowUserUseCase {
+  final PostRepo repo;
 
-  ToggleFollowUserUseCase(this.repository);
+  FollowUserUseCase(this.repo);
 
   Future<Either<Failure, void>> call({
     required String followedUserId,
@@ -19,7 +19,7 @@ class ToggleFollowUserUseCase {
       return const Left(ValidationFailure('Follower user ID is required'));
     }
 
-    return await repository.toggleFollowUser(
+    return await repo.toggleFollowUser(
       followerId: followerUserId,
       followeeId: followedUserId,
     );
