@@ -1,11 +1,10 @@
 class FootballMapper {
-  /// Consolidated map for Teams, Competitions, Areas, and Statuses
   static const Map<String, String> translations = {
-    // --- AREAS (Countries & Continents) ---
+    // --- AREAS & COMPETITIONS ---
     "World": "العالم",
     "Europe": "أوروبا",
-    // --- COMPETITIONS ---
     "Premier League": "الدوري الإنجليزي الممتاز",
+    "Championship": "دوري البطولة الإنجليزية",
     "Primera Division": "الدوري الإسباني",
     "Serie A": "الدوري الإيطالي",
     "Ligue 1": "الدوري الفرنسي",
@@ -15,9 +14,9 @@ class FootballMapper {
 
     // --- MATCH STATUSES ---
     "SCHEDULED": "مجدولة",
-    "TIMED": "محددة بوقت",
+    "TIMED": "لم تبدأ",
     "IN_PLAY": "مباشرة",
-    "PAUSED": "متوقفة",
+    "PAUSED": "استراحة",
     "FINISHED": "انتهت",
     "POSTPONED": "مؤجلة",
     "SUSPENDED": "معلقة",
@@ -48,46 +47,54 @@ class FootballMapper {
     // --- LA LIGA (PD) ---
     "Real Madrid CF": "ريال مدريد",
     "FC Barcelona": "برشلونة",
-    "Atlético Madrid": "أتلتيكو مدريد",
-    "Real Sociedad": "ريال سوسيداد",
-    "Real Betis": "ريال بيتيس",
+    "Club Atlético de Madrid": "أتلتيكو مدريد",
+    "Real Sociedad de Fútbol": "ريال سوسيداد",
+    "Real Betis Balompié": "ريال بيتيس",
     "Sevilla FC": "إشبيلية",
     "Villarreal CF": "فياريال",
     "Valencia CF": "فالنسيا",
     "Athletic Club": "أتلتيك بيلباو",
     "Girona FC": "جيرونا",
-    "Celta de Vigo": "سيلتا فيغو",
+    "RC Celta de Vigo": "سيلتا فيغو",
     "RCD Mallorca": "مايوركا",
     "CA Osasuna": "أوساسونا",
     "Getafe CF": "خيتافي",
-    "Rayo Vallecano": "رايو فايكانو",
+    "Rayo Vallecano de Madrid": "رايو فايكانو",
     "Deportivo Alavés": "ألافيس",
     "Granada CF": "غرناطة",
     "UD Las Palmas": "لاس بالماس",
     "Cádiz CF": "قادش",
     "UD Almería": "ألميريا",
+    "Real Valladolid CF": "ريال فيلاديد",
+    "RCD Espanyol de Barcelona": "إسبانيول",
+    "Real Zaragoza": "ريال سرقسطة",
+    "Levante UD": "ليفانتي",
+    
 
     // --- SERIE A (SA) ---
     "Inter Milan": "إنتر ميلان",
+    "FC Internazionale Milano": "إنتر ميلان",
     "Juventus FC": "يوفنتوس",
     "AC Milan": "ميلان",
     "SSC Napoli": "نابولي",
+    "Como 1907": "كومو",
     "AS Roma": "روما",
     "SS Lazio": "لاتسيو",
     "ACF Fiorentina": "فيورنتينا",
     "Atalanta BC": "أتالانتا",
-    "Bologna FC": "بولونيا",
+    "Bologna FC 1909": "بولونيا",
     "Torino FC": "تورينو",
-    "US Monza": "مونزا",
+    "AC Monza": "مونزا",
     "Genoa CFC": "جنوى",
     "US Lecce": "ليتشي",
     "Udinese Calcio": "أودينيزي",
     "Hellas Verona FC": "هيلاس فيرونا",
     "Empoli FC": "إمبولي",
     "US Salernitana 1919": "ساليرنيتانا",
-    "Sassuolo Calcio": "ساسولو",
+    "US Sassuolo Calcio": "ساسولو",
     "Frosinone Calcio": "فروزينوني",
     "Cagliari Calcio": "كالياري",
+    
 
     // --- BUNDESLIGA (BL1) ---
     "FC Bayern München": "بايرن ميونخ",
@@ -108,6 +115,10 @@ class FootballMapper {
     "VfL Bochum 1848": "بوخوم",
     "SV Darmstadt 98": "دارمشتات",
     "1. FC Heidenheim 1846": "هايدنهايم",
+    "1. FC Kaiserslautern": "كايزيرلايترن",
+    "FC Ingolstadt 04": "انجولستات",
+    "FC Schalke 04": "شالكي",
+    "Borussia Monchengladbach": "بوروسيا مونشنغلادباخ",
 
     // --- LIGUE 1 (FL1) ---
     "Paris Saint-Germain FC": "باريس سان جيرمان",
@@ -128,11 +139,9 @@ class FootballMapper {
     "Le Havre AC": "لو هافر",
     "FC Metz": "ميتز",
     "Clermont Foot 63": "كليرمونت",
+    
 
-    // --- WORLD CUP (WC) 2026 ---
-    "USA": "الولايات المتحدة",
-    "Mexico": "المكسيك",
-    "Canada": "كندا",
+    // --- WORLD CUP (WC) 2026 / COUNTRIES ---
     "Argentina": "الأرجنتين",
     "Brazil": "البرازيل",
     "France": "فرنسا",
@@ -140,47 +149,44 @@ class FootballMapper {
     "Spain": "إسبانيا",
     "England": "إنجلترا",
     "Portugal": "البرتغال",
-    "Italy": "إيطاليا",
-    "Belgium": "بلجيكا",
     "Netherlands": "هولندا",
+    "Belgium": "بلجيكا",
     "Croatia": "كرواتيا",
+    "Uruguay": "أوروغواي",
     "Morocco": "المغرب",
     "Senegal": "السنغال",
-    "Algeria": "الجزائر",
-    "Uruguay": "أوروغواي",
-    "Colombia": "كولومبيا",
-    "Ecuador": "الإكوادور",
-    "Nigeria": "نيجيريا",
-    "Ivory Coast": "ساحل العاج",
-    "Tunisia": "تونس",
-    "Qatar": "قطر",
-    "Jordan": "الأردن",
-    "Uzbekistan": "أوزبكستان",
+    "Egypt": "مصر",
+    "Saudi Arabia": "السعودية",
+    "Japan": "اليابان",
+    "South Korea": "كوريا الجنوبية",
+    "USA": "الولايات المتحدة",
+    "Mexico": "المكسيك",
+    "Canada": "كندا",
 
-    // --- NON-TOP 5 CHAMPIONS LEAGUE (CL) ---
-    "PSV Eindhoven": "بي إس في آيندهوفن",
+    // --- CHAMPIONS LEAGUE (CL) ---
+    "PSV Eindhoven": "آيندهوفن",
     "Ajax": "أياكس",
     "Feyenoord": "فينورد",
-    "Sporting CP": "سبورتينغ لشبونة",
+    "Sporting Clube de Portugal": "سبورتينغ لشبونة",
     "Sport Lisboa e Benfica": "بنفيكا",
     "FC Porto": "بورتو",
-    "Club Brugge": "كلوب بروج",
+    "Club Brugge KV": "كلوب بروج",
     "Galatasaray SK": "غالطة سراي",
-    "Fenerbahce": "فنربخشة",
+    "Fenerbahçe SK": "فنربخشة",
     "Celtic FC": "سلتيك",
     "Rangers FC": "رينجرز",
-    "Red Bull Salzburg": "ريد بول سالزبورغ",
-    "Shakhtar Donetsk": "شاختار دونيتسك",
-    "Sparta Praha": "سبارتا براغ",
-    "Slavia Praha": "سلافيا براغ",
+    "FC Red Bull Salzburg": "ريد بول سالزبورغ",
+    "FC Shakhtar Donetsk": "شاختار دونيتسك",
+    "AC Sparta Praha": "سبارتا براغ",
+    "SK Slavia Praha": "سلافيا براغ",
     "Olympiacos FC": "أولمبياكوس",
     "PAOK FC": "باوك",
-    "Panathinaikos FC": "باناثينايكوس",
-    "Bodo/Glimt": "بودو غليمت",
-    "FC Copenhagen": "كوبنهاجن",
+    "FK Bodø/Glimt": "بودو غليمت",
+    "FC København": "كوبنهاجن",
+    "PAE Olympiakos SFP": "أولمبياكوس",
+    "Qarabağ Ağdam FK": "قرباغ",
   };
 
-  /// Main translation logic
   static String translate(String? key) {
     if (key == null || key.isEmpty) return "";
     return translations[key] ?? key;
