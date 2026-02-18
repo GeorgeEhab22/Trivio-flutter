@@ -26,6 +26,7 @@ import 'package:auth/presentation/manager/group_cubit/change_member_role/change_
 import 'package:auth/presentation/manager/group_cubit/decline_request/decline_request_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/get_group/get_group_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/get_group_feed/get_groups_posts_feed_cubit.dart';
+import 'package:auth/presentation/manager/group_cubit/get_group_posts/group_posts_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/get_groups/get_groups_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/get_join_requests/get_join_requests_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/get_joined_groups/get_joined_groups_cubit.dart';
@@ -226,13 +227,11 @@ GoRouter createRouter(bool isLoggedIn) {
                     routes: [
                       GoRoute(
                         path: 'followers',
-                        builder: (context, state) =>
-                            const FollowersListView(),
+                        builder: (context, state) => const FollowersListView(),
                       ),
                       GoRoute(
                         path: 'following',
-                        builder: (context, state) =>
-                            const FollowingListView(),
+                        builder: (context, state) => const FollowingListView(),
                       ),
                       GoRoute(
                         path: 'settings',
@@ -388,6 +387,9 @@ GoRouter createRouter(bool isLoggedIn) {
                           ),
                           BlocProvider(
                             create: (context) => di.sl<UpdateGroupCubit>(),
+                          ),
+                          BlocProvider(
+                            create: (context) => di.sl<GroupPostsCubit>(),
                           ),
                         ],
                         child: MyGroupView(groupId: groupId),

@@ -3,7 +3,6 @@ import 'package:auth/constants/colors.dart';
 import 'package:auth/core/app_router.dart';
 import 'package:auth/core/theme_reveal_animation.dart';
 import 'package:auth/l10n/app_localizations.dart';
-import 'package:auth/presentation/manager/group_cubit/get_group_posts/group_posts_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/post_interaction_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_cubit.dart';
@@ -50,7 +49,6 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider( 
       providers: [
         BlocProvider(create: (context) => di.sl<PostCubit>()..fetchPosts()),
-    BlocProvider(create: (context) => di.sl<GroupPostsCubit>()),
     BlocProvider(create: (context) => di.sl<PostInteractionCubit>()),
         BlocProvider(create: (_) => di.sl<ThemeCubit>()),
         BlocProvider(create: (_) => di.sl<LocaleCubit>()), 
