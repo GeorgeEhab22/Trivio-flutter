@@ -141,25 +141,7 @@ class FollowUserError extends PostInteractionState {
 }
 
 
- // edit post
 
-class EditPostLoading extends PostInteractionState {
-  final String postId;
-  const EditPostLoading({required this.postId});
-}
-
-class EditPostSuccess extends PostInteractionState {
-  final Post updatedPost;
-  const EditPostSuccess({required this.updatedPost});
-  @override
-  List<Object> get props => [updatedPost];
-}
-
-class EditPostError extends PostInteractionState {
-  final String postId;
-  final String message;
-  const EditPostError({required this.postId, required this.message});
-}
 
 
 

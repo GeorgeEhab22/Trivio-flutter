@@ -1,8 +1,8 @@
 import 'package:auth/common/functions/copy_to_clipboard.dart';
 import 'package:auth/constants/colors.dart';
+import 'package:auth/core/app_routes.dart';
 import 'package:auth/domain/entities/comment.dart';
 import 'package:auth/presentation/authentication/widgets/show_custom_snackbar.dart';
-import 'package:auth/presentation/home/comments/pages/comment_edit_page.dart';
 import 'package:auth/presentation/manager/comment_cubit/comment_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -147,6 +147,7 @@ class BottomSheetManager {
     }
   }
 
+  // TODO : handle states
   static void showActions(
     BuildContext context, {
     required Comment comment,
@@ -219,7 +220,7 @@ class BottomSheetManager {
                     textColor: Theme.of(context).textTheme.bodyMedium?.color,
                     onTap: () {
                       context.pop();
-                      navigateToEditPage(context, comment, cubit);
+                      context.push(AppRoutes.editCaption);
                     },
                   ),
                 if (comment.editedAt != null)

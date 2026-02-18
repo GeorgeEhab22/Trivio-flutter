@@ -30,24 +30,24 @@ class PostHeader extends StatelessWidget {
         children: [
           Expanded(
             child: AuthorInfo(
-              authorName:"messi",
+              authorName: "messi",
               showTimeInline: false,
               isGroupPost: isGroupPost,
               groupImage: post.groupCoverImage,
               groupName: post.groupName,
-              
             ),
           ),
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              if (!isGroupPost)
-              FollowButton(
-                currentUserId: currentUserId,
-                authorId: post.authorId ?? '',
-                initialFollowStatus: isFollowing,
-              ),
-              
+              if (!isGroupPost) ...[
+                if (post.authorId != currentUserId)
+                  FollowButton(
+                    currentUserId: currentUserId,
+                    authorId: post.authorId ?? '',
+                    initialFollowStatus: isFollowing,
+                  ),
+              ],
               IconButton(
                 icon: Icon(
                   Icons.more_vert,

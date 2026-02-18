@@ -6,7 +6,6 @@ import 'package:auth/presentation/manager/group_cubit/get_group_posts/group_post
 import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:auth/injection_container.dart' as di;
 import 'package:auth/domain/entities/post.dart';
 import 'package:auth/domain/entities/reaction_type.dart';
 import 'package:auth/presentation/manager/post_cubit/post_interaction_cubit.dart';
@@ -29,83 +28,79 @@ class PostCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => di.sl<PostInteractionCubit>(),
-      child: Builder(
-        builder: (innerContext) {
-          return BlocConsumer<PostInteractionCubit, PostInteractionState>(
-            listener: (context, state) {
-              final l10n = AppLocalizations.of(context)!;
-              if (state is ReportPostSuccess) {
-                showCustomSnackBar(context, l10n.reportPostSuccess, true);
-              }
-              if (state is ReportPostError) {
-                showCustomSnackBar(context, state.message, false);
-              }
-              if (state is FollowUserError) {
-                showCustomSnackBar(context, state.message, false);
-              }
+    return BlocConsumer<PostInteractionCubit, PostInteractionState>(
+      listener: (context, state) {
+        final l10n = AppLocalizations.of(context)!;
+        if (state is ReportPostSuccess) {
+          showCustomSnackBar(context, l10n.reportPostSuccess, true);
+        }
+        if (state is ReportPostError) {
+          showCustomSnackBar(context, state.message, false);
+        }
+        if (state is FollowUserError) {
+          showCustomSnackBar(context, state.message, false);
+        }
+      },
+      builder: (context, state) {
+        if (state is ReportPostSuccess) {
+          return const SizedBox.shrink();
+        }
+
+        final postCubitState = context.watch<PostCubit>().state;
+        
+        bool isDeleting = false;
+        try {
+           final groupPostsCubitState = context.watch<GroupPostsCubit>().state;
+           isDeleting = (groupPostsCubitState is GroupPostsDeleting &&
+                        groupPostsCubitState.postId == post.postID);
+        } catch (_) {}
+
+        if (postCubitState is DeletePostLoading && postCubitState.postId == post.postID) {
+          isDeleting = true;
+        }
+
+        return Opacity(
+          opacity: (isDeleting || state is ReportPostLoading) ? 0.5 : 1,
+          child: InkWell(
+            onTap: () {
+              // TODO : fetch single post
             },
-            builder: (context, state) {
-              if (state is ReportPostSuccess) {
-                return const SizedBox.shrink();
-              }
-
-              final postCubitState = context.watch<PostCubit>().state;
-              final groupPostsCubitState = context
-                  .watch<GroupPostsCubit>()
-                  .state;
-              final isDeleting =
-                  (groupPostsCubitState is GroupPostsDeleting &&
-                      groupPostsCubitState.postId == post.postID) ||
-                  (postCubitState is DeletePostLoading &&
-                      postCubitState.postId == post.postID);
-
-              return Opacity(
-                opacity: (isDeleting || state is ReportPostLoading) ? 0.5 : 1,
-                child: InkWell(
-                  onTap: () {
-                    // TODO : fetch single post
-                  },
-                  borderRadius: BorderRadius.circular(16),
-                  child: Card(
-                    margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                    color: Theme.of(context).appBarTheme.backgroundColor,
-                    elevation: 0.2,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 6),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          PostHeader(
-                            post: post,
-                            currentUserId: currentUserId,
-                            isFollowing: isFollowing,
-                          ),
-                          PostContent(post: post),
-                          const SizedBox(height: 8),
-                          const Divider(
-                            height: 1,
-                            color: Color(0xFFF3F4F6),
-                            thickness: 0.7,
-                            indent: 12,
-                            endIndent: 12,
-                          ),
-                          PostFooter(
-                            post: post,
-                            currentUserId: currentUserId,
-                            currentReaction: currentReaction,
-                          ),
-                        ],
-                      ),
+            borderRadius: BorderRadius.circular(16),
+            child: Card(
+              margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+              color: Theme.of(context).appBarTheme.backgroundColor,
+              elevation: 0.2,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 6),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    PostHeader(
+                      post: post,
+                      currentUserId: currentUserId,
+                      isFollowing: isFollowing,
                     ),
-                  ),
+                    PostContent(post: post),
+                    const SizedBox(height: 8),
+                    const Divider(
+                      height: 1,
+                      color: Color(0xFFF3F4F6),
+                      thickness: 0.7,
+                      indent: 12,
+                      endIndent: 12,
+                    ),
+                    PostFooter(
+                      post: post,
+                      currentUserId: currentUserId,
+                      currentReaction: currentReaction,
+                    ),
+                  ],
                 ),
-              );
-            },
-          );
-        },
-      ),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

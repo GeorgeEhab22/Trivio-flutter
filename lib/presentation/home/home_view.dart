@@ -24,16 +24,28 @@ class HomeView extends StatelessWidget {
           // Use the localized error helper we discussed or show state message
           showCustomSnackBar(context, state.message, false);
         }
+        if (state is EditPostSuccess) {
+          showCustomSnackBar(context, 'Post updated successfully', true);
+        }
+        if (state is EditPostError) {
+          showCustomSnackBar(context, state.message, false);
+        }
       },
       child: Scaffold(
         body: SafeArea(
           child: Stack(
             children: [
               NotificationListener<ScrollNotification>(
-                onNotification: (scrollInfo) =>
-                    _handlePagination(scrollInfo, cubit),
+                onNotification: (notification) {
+                  if (notification is ScrollEndNotification &&
+                      notification.metrics.extentAfter < 500) {
+                    context.read<PostCubit>().loadMorePosts();
+                  }
+                  return false;
+                },
                 child: RefreshIndicator(
-                  onRefresh: () async => await cubit.fetchPosts(refresh: true),
+                  onRefresh: () =>
+                      context.read<PostCubit>().fetchPosts(refresh: true),
                   child: const CustomScrollView(
                     slivers: [
                       SliverAppBar(
@@ -56,14 +68,6 @@ class HomeView extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  bool _handlePagination(ScrollNotification scrollInfo, PostCubit cubit) {
-    if (scrollInfo.metrics.pixels >= scrollInfo.metrics.maxScrollExtent * 0.9 &&
-        !cubit.isLoadingMore) {
-      cubit.loadMorePosts();
-    }
-    return false;
   }
 
   Widget _buildAddPostFAB(BuildContext context, PostCubit cubit) {

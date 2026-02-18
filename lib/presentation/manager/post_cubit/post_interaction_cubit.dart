@@ -2,8 +2,6 @@ import 'package:auth/core/errors/failure.dart';
 import 'package:auth/domain/entities/post.dart';
 import 'package:auth/domain/entities/reaction_type.dart';
 import 'package:auth/domain/usecases/post/comment_on_post_usecase.dart';
-import 'package:auth/domain/usecases/post/delete_post_usecase.dart';
-import 'package:auth/domain/usecases/post/edit_post_usecase.dart';
 import 'package:auth/domain/usecases/post/react_to_post_usecase.dart';
 import 'package:auth/domain/usecases/post/remove_reaction_from_post_usecase.dart';
 import 'package:auth/domain/usecases/post/report_post_usecase.dart';
@@ -19,8 +17,6 @@ class PostInteractionCubit extends Cubit<PostInteractionState> {
   final ReactToPostUseCase reactToPostUseCase;
   final RemoveReactionFromPostUseCase removeReactionFromPostUseCase;
   final CommentOnPostUseCase commentOnPostUseCase;
-  final DeletePostUseCase deletePostUseCase;
-  final EditPostUseCase editPostUseCase;
   final ReportPostUseCase reportPostUseCase;
   final SharePostUseCase sharePostUseCase;
   final SavePostUseCase toggleSavePostUseCase;
@@ -30,8 +26,6 @@ class PostInteractionCubit extends Cubit<PostInteractionState> {
     required this.reactToPostUseCase,
     required this.removeReactionFromPostUseCase,
     required this.commentOnPostUseCase,
-    required this.deletePostUseCase,
-    required this.editPostUseCase,
     required this.reportPostUseCase,
     required this.sharePostUseCase,
     required this.toggleSavePostUseCase,
@@ -278,31 +272,6 @@ class PostInteractionCubit extends Cubit<PostInteractionState> {
       (_) {
         emit(FollowUserSuccess(userId: followeeId, isFollowing: newStatus));
       },
-    );
-  }
-
-  // edit post
-  Future<void> editPost({
-    required String postId,
-    required String userId,
-    required String newContent,
-    String? newImageUrl,
-    String? newVideoUrl,
-  }) async {
-    emit(EditPostLoading(postId: postId));
-
-    final result = await editPostUseCase(
-      postId: postId,
-      userId: userId,
-      newContent: newContent,
-      newImageUrl: newImageUrl,
-      newVideoUrl: newVideoUrl,
-    );
-
-    result.fold(
-      (failure) =>
-          emit(EditPostError(postId: postId, message: failure.message)),
-      (updatedPost) => emit(EditPostSuccess(updatedPost: updatedPost)),
     );
   }
 

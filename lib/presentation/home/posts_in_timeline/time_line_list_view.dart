@@ -12,10 +12,8 @@ class TimelineListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     // final l10n = AppLocalizations.of(context)!;
-    
-   
+
     return BlocConsumer<PostCubit, PostState>(
       listener: (context, state) {
         if (state is PostsLoadingMoreError) {
@@ -25,35 +23,47 @@ class TimelineListView extends StatelessWidget {
       },
       builder: (context, state) {
         final cubit = context.read<PostCubit>();
-        final bool isLoading = state is PostLoading && cubit.posts.isEmpty;
-        final posts = (state is PostLoaded || cubit.posts.isNotEmpty)
+        final bool isInitialLoading =
+            state is PostLoading && cubit.posts.isEmpty;
+        final displayPosts = cubit.posts.isNotEmpty
             ? cubit.posts
             : DummyData.dummyPosts;
+
         if (state is PostError && cubit.posts.isEmpty) {
           return SliverFillRemaining(child: Center(child: Text(state.message)));
         }
-        return Skeletonizer.sliver(
-          enabled: isLoading,
-          child: SliverList(
-            delegate: SliverChildBuilderDelegate((context, index) {
-              if (index >= posts.length) {
-                return Skeletonizer(
-                  enabled: true,
-                  child: PostCard(
-                    post: DummyData.dummyPost,
-                    currentUserId: '1',
-                    isFollowing: false,
-                  ),
-                );
-              }
 
-              return PostCard(
-                post: posts[index],
-                //TODO: add currentUserId after login
-                currentUserId: '1',
-                isFollowing: false,
-              );
-            }, childCount: posts.length + (state is PostsLoadingMore ? 1 : 0)),
+        if (state is PostLoaded && cubit.posts.isEmpty) {
+          return const SliverFillRemaining(
+            child: Center(
+              child: Text("No posts available yet. Be the first to post!"),
+            ),
+          );
+        }
+        return Skeletonizer.sliver(
+          enabled: isInitialLoading,
+          child: SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (context, index) {
+                if (index >= cubit.posts.length) {
+                  return const Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Center(
+                      child: CircularProgressIndicator(color: Colors.green),
+                    ),
+                  );
+                }
+
+                return PostCard(
+                  post: displayPosts[index],
+                  currentUserId:
+                      '69336fced7a76ac6c1738d5a', 
+                  isFollowing: false,
+                );
+              },
+              childCount:
+                  cubit.posts.length + (state is PostsLoadingMore ? 1 : 0),
+            ),
           ),
         );
       },

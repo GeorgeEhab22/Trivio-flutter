@@ -1,4 +1,5 @@
 import 'package:auth/common/functions/show_custom_dialog.dart';
+import 'package:auth/core/app_routes.dart';
 import 'package:auth/presentation/home/posts_in_timeline/buttom_sheets/report_reasons_buttom_sheet.dart';
 import 'package:auth/common/functions/custom_list_tile.dart';
 import 'package:auth/common/functions/custom_square_button.dart';
@@ -29,6 +30,7 @@ class OptionsBottomSheet extends StatelessWidget {
         ? Colors.grey[700]
         : Colors.grey[300];
     final cubit = context.read<PostInteractionCubit>();
+    final postCubit = context.read<PostCubit>();
 
     return Container(
       decoration: BoxDecoration(
@@ -107,10 +109,30 @@ class OptionsBottomSheet extends StatelessWidget {
 
             const SizedBox(height: 12),
             const Divider(height: 1),
-
+            // if (post.authorId == currentUserId)
+            CustomListTile(
+              icon: Icons.edit,
+              text: 'Edit post',
+              onTap: () {
+                context.pop();
+                context.push(
+                  AppRoutes.editCaption,
+                  extra: {
+                    'initialText': post.caption,
+                    'title': 'Edit post',
+                    'onSave': (String newText) {
+                      postCubit.editPost(
+                        postId: post.postID ?? '',
+                        newCaption: newText,
+                      );
+                    },
+                  },
+                );
+              },
+            ),
             CustomListTile(
               icon: Icons.visibility_off_outlined,
-              text: l10n.notInterested,
+              text: 'Not Interested',
               onTap: () {
                 // TODO use the cubit to mark the post as not interested
               },

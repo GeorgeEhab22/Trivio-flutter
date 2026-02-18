@@ -11,7 +11,7 @@ import '../../common/api_service.dart';
 abstract class PostsRemoteDataSource {
   Future<PostModel> createPost({
     String? caption,
-    List<XFile>? media, 
+    List<XFile>? media,
     required String type,
   });
 
@@ -21,11 +21,8 @@ abstract class PostsRemoteDataSource {
 
   Future<PostModel> editPost({
     required String postId,
-    required String userId,
-    required String newContent,
-    String? newImageUrl,
-    String? newVideoUrl,
-    List<String>? newTags,
+    String? newCaption,
+    String? newType,
   });
 
   Future<void> deletePost(String postId);
@@ -82,9 +79,7 @@ class PostsRemoteDataSourceImpl implements PostsRemoteDataSource {
     if (token == null) {
       throw AuthException('No auth token found');
     }
-    return Options(headers: {
-      'Authorization': 'Bearer $token',
-    });
+    return Options(headers: {'Authorization': 'Bearer $token'});
   }
 
   @override
@@ -101,7 +96,7 @@ class PostsRemoteDataSourceImpl implements PostsRemoteDataSource {
       type = type.toLowerCase();
 
       final formData = FormData.fromMap({
-        'caption': caption??'',
+        'caption': caption ?? '',
         'type': type,
       });
 
@@ -111,10 +106,7 @@ class PostsRemoteDataSourceImpl implements PostsRemoteDataSource {
 
           if (kIsWeb) {
             final bytes = await file.readAsBytes();
-            multipartFile = MultipartFile.fromBytes(
-              bytes,
-              filename: file.name,
-            );
+            multipartFile = MultipartFile.fromBytes(bytes, filename: file.name);
           } else {
             multipartFile = await MultipartFile.fromFile(
               file.path,
@@ -129,11 +121,7 @@ class PostsRemoteDataSourceImpl implements PostsRemoteDataSource {
       final response = await api.post(
         ApiEndpoints.createPost,
         data: formData,
-        options: Options(
-          headers: {
-            'Authorization': 'Bearer $token',
-          },
-        ),
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
 
       return PostModel.fromJson(response['data']['post']);
@@ -143,20 +131,23 @@ class PostsRemoteDataSourceImpl implements PostsRemoteDataSource {
     }
   }
 
-  @override
-  Future<List<PostModel>> fetchPosts({int page = 1, int limit = 20}) async {
-    try {
-      final response = await api.get(
-        "${ApiEndpoints.fetchPosts}?page=$page&limit=$limit",
-      );
-
-      final data = response['data'] as List;
+ @override
+Future<List<PostModel>> fetchPosts({int page = 1, int limit = 20}) async {
+  try {
+    final response = await api.get(
+      "${ApiEndpoints.fetchPosts}?page=$page&limit=$limit",
+    );
+    if (response['data'] != null && response['data']['posts'] != null) {
+      final List data = response['data']['posts']; 
       return data.map((e) => PostModel.fromJson(e)).toList();
-    } catch (e) {
-      errorHandler.handleDioError(e);
-      rethrow;
+    } else {
+      return []; 
     }
+  } catch (e) {
+    errorHandler.handleDioError(e);
+    rethrow;
   }
+}
 
  @override
 Future<PostModel> fetchSinglePost(String postId) async {
@@ -165,7 +156,6 @@ Future<PostModel> fetchSinglePost(String postId) async {
       "${ApiEndpoints.fetchSinglePost}/$postId",
       options: _getAuthOptions(), 
     );
-    
     return PostModel.fromJson(response['data']['post']);
   } catch (e) {
     errorHandler.handleDioError(e);
@@ -176,26 +166,16 @@ Future<PostModel> fetchSinglePost(String postId) async {
   @override
   Future<PostModel> editPost({
     required String postId,
-    required String userId,
-    required String newContent,
-    String? newImageUrl,
-    String? newVideoUrl,
-    List<String>? newTags,
+    String? newCaption,
+    String? newType,
   }) async {
     try {
       final response = await api.patch(
-        "${ApiEndpoints.editPost}$postId",
-        data: {
-          'userId': userId,
-          'content': newContent,
-          'imageUrl': newImageUrl,
-          'videoUrl': newVideoUrl,
-          'tags': newTags ?? [],
-        },
+        "${ApiEndpoints.editPost}/$postId",
+        data: {'caption': newCaption},
         options: _getAuthOptions(), // Added Auth
       );
-
-      return PostModel.fromJson(response['data'][0]);
+      return PostModel.fromJson(response['data']['post']);
     } catch (e) {
       errorHandler.handleDioError(e);
       rethrow;
@@ -224,10 +204,7 @@ Future<PostModel> fetchSinglePost(String postId) async {
     try {
       final response = await api.post(
         "${ApiEndpoints.sharePost}$postId",
-        data: {
-          'userId': userId,
-          'content': additionalContent,
-        },
+        data: {'userId': userId, 'content': additionalContent},
         options: _getAuthOptions(), // Added Auth
       );
 
@@ -334,8 +311,7 @@ Future<PostModel> fetchSinglePost(String postId) async {
   @override
   Future<List<PostModel>> searchPosts(String query) async {
     try {
-      final response =
-          await api.get("${ApiEndpoints.searchPosts}?q=$query");
+      final response = await api.get("${ApiEndpoints.searchPosts}?q=$query");
 
       final data = response['data'] as List;
       return data.map((e) => PostModel.fromJson(e)).toList();

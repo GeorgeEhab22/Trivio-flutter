@@ -57,6 +57,7 @@ class PostRepositoryImpl implements PostRepo {
   }
 
   @override
+
   Future<Either<Failure, List<Post>>> fetchPosts({
     int page = 1,
     int limit = 20,
@@ -104,20 +105,15 @@ class PostRepositoryImpl implements PostRepo {
   @override
   Future<Either<Failure, Post>> editPost({
     required String postId,
-    required String userId,
-    required String newContent,
-    String? newImageUrl,
-    String? newVideoUrl,
-    List<String>? newTags,
+    String? newCaption,
+    String? newType,
   }) async {
     try {
       final model = await remoteDataSource.editPost(
         postId: postId,
-        userId: userId,
-        newContent: newContent,
-        newImageUrl: newImageUrl,
-        newVideoUrl: newVideoUrl,
-        newTags: newTags,
+        newCaption: newCaption,
+        newType: newType
+
       );
       return Right(model.toEntity());
     } on AuthException catch (e) {

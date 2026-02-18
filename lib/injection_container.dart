@@ -217,7 +217,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => SavePostUseCase(sl()));
 sl.registerLazySingleton(() => CommentOnPostUseCase(sl()));
   sl.registerFactory(
-    () => PostCubit(getPostsUseCase: sl(), deletePostUseCase: sl()),
+    () => PostCubit(getPostsUseCase: sl(), deletePostUseCase: sl(),editPostUseCase: sl()),
   );
 
   sl.registerFactory(
@@ -229,8 +229,6 @@ sl.registerLazySingleton(() => CommentOnPostUseCase(sl()));
       toggleSavePostUseCase: sl(),
       reportPostUseCase: sl(),
       removeReactionFromPostUseCase: sl(),
-      deletePostUseCase: sl(),
-      editPostUseCase: sl(),
     ),
   );
 

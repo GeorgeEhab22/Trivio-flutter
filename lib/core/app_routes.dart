@@ -21,6 +21,9 @@ class AppRoutes {
   static const String activeStates = 'settings/active_states';
   static const String saved = '/settings/saved';
   static const String search = '/search';
+  
+  // edit post cartion
+  static const String editCaption = '/app/home/edit';
 
 // groups
   static const String groups = '/settings/groups';

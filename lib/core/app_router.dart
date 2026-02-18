@@ -37,6 +37,7 @@ import 'package:auth/presentation/manager/group_cubit/get_members_by_roles/membe
 import 'package:auth/presentation/manager/group_cubit/unban_member/unban_member_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/update_group/update_group_cubit.dart';
 import 'package:auth/presentation/manager/sigin_in_cubit/forget_password_otp_cubit.dart';
+import 'package:auth/presentation/home/widgets/edit_page.dart';
 import 'package:auth/presentation/reels/reels_page.dart';
 import 'package:auth/presentation/settings/settings_view.dart';
 import 'package:auth/presentation/settings/theme_view.dart';
@@ -170,6 +171,22 @@ GoRouter createRouter(bool isLoggedIn) {
                     path: 'home',
                     pageBuilder: (context, state) =>
                         NoTransitionPage(child: const HomePage()),
+                    routes: [
+                      //TODO: move this router int profile page and refactor edit page
+                      GoRoute(
+                        path: 'edit',
+                        builder: (context, state) {
+                          final args =
+                              state.extra as Map<String, dynamic>? ?? {};
+
+                          return EditPage(
+                            initialText: args['initialText'],
+                            title: args['title'],
+                            onSave: args['onSave'],
+                          );
+                        },
+                      ),
+                    ],
                   ),
                 ],
               ),
