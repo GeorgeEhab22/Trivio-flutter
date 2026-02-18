@@ -2,6 +2,7 @@ import 'package:auth/common/basic_app_button.dart';
 import 'package:auth/common/functions/code_box_handlers.dart';
 import 'package:auth/constants/colors.dart';
 import 'package:auth/core/styels.dart';
+import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/authentication/signIn/forget_password_otp_listener.dart';
 import 'package:auth/presentation/authentication/widgets/change_email_button.dart';
 import 'package:auth/presentation/authentication/widgets/forget_password_code_box_list.dart';
@@ -13,7 +14,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ForgetPasswordOtp extends StatefulWidget {
   final String email;
-
   const ForgetPasswordOtp({super.key, required this.email});
 
   @override
@@ -35,7 +35,7 @@ class _ForgetPasswordOtpState extends State<ForgetPasswordOtp> {
   @override
   void initState() {
     super.initState();
-context.read<RequestOTPCubit>().startResendTimer();
+    context.read<RequestOTPCubit>().startResendTimer();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _focusNodes[0].requestFocus();
     });
@@ -49,6 +49,8 @@ context.read<RequestOTPCubit>().startResendTimer();
     for (var node in _focusNodes) {
       node.dispose();
     }
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 
@@ -58,16 +60,18 @@ context.read<RequestOTPCubit>().startResendTimer();
       final password = _passwordController.text;
       final confirmPassword = _confirmPasswordController.text;
       context.read<ForgetPasswordOTPCubit>().verifyOtp(
-        otp,
-        widget.email,
-        password,
-        confirmPassword,
-      );
+            otp,
+            widget.email,
+            password,
+            confirmPassword,
+          );
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return BlocListener<ForgetPasswordOTPCubit, ForgetPasswordOTPState>(
       listener: (context, state) {
         ForgetPasswordOtpListener.handleStateChanges(context, state);
@@ -77,7 +81,6 @@ context.read<RequestOTPCubit>().startResendTimer();
       },
       child: Scaffold(
         backgroundColor: Colors.grey[50],
-
         body: Form(
           key: _formKey,
           child: SafeArea(
@@ -87,7 +90,6 @@ context.read<RequestOTPCubit>().startResendTimer();
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   const SizedBox(height: 40),
-
                   Container(
                     width: 80,
                     height: 80,
@@ -101,21 +103,15 @@ context.read<RequestOTPCubit>().startResendTimer();
                       color: AppColors.primary,
                     ),
                   ),
-
                   const SizedBox(height: 32),
-
-                  const Text('OTP', style: Styles.textStyle30),
-
+                  Text(l10n.otpHeader, style: Styles.textStyle30),
                   const SizedBox(height: 12),
-
                   Text(
-                    'Enter the 6-digit OTP sent to',
+                    l10n.enterOtpSentTo,
                     style: Styles.textStyle14.copyWith(color: Colors.grey[600]),
                     textAlign: TextAlign.center,
                   ),
-
                   const SizedBox(height: 4),
-
                   Text(
                     widget.email,
                     style: Styles.textStyle14.copyWith(
@@ -123,10 +119,9 @@ context.read<RequestOTPCubit>().startResendTimer();
                       fontWeight: FontWeight.bold,
                     ),
                     textAlign: TextAlign.center,
+                    textDirection: TextDirection.ltr, 
                   ),
-
                   const SizedBox(height: 48),
-
                   ForgetPasswordCodeBoxList(
                     controllers: _controllers,
                     focusNodes: _focusNodes,
@@ -140,8 +135,8 @@ context.read<RequestOTPCubit>().startResendTimer();
                       setState(() => _isPasswordVisible = !_isPasswordVisible);
                     },
                     onSubmit: _handleNewPassword,
-                    label: "Password",
-                    hint: "Enter your password",
+                    label: l10n.password,
+                    hint: l10n.enterPassword,
                   ),
                   const SizedBox(height: 20),
                   PasswordField(
@@ -155,21 +150,17 @@ context.read<RequestOTPCubit>().startResendTimer();
                       );
                     },
                     onSubmit: _handleNewPassword,
-                    label: "Confirm Password",
-                    hint: "Re-enter your password",
+                    label: l10n.confirmPassword,
+                    hint: l10n.reEnterPassword,
                     isConfirm: true,
                   ),
-
                   const SizedBox(height: 48),
-
                   BlocBuilder<ForgetPasswordOTPCubit, ForgetPasswordOTPState>(
                     builder: (context, state) {
                       final isLoading = state is ForgetPasswordOTPLoading;
                       return BasicAppButton(
-                        onPressed: isLoading
-                            ? null
-                            : () => _handleNewPassword(),
-                        title: isLoading ? 'resetting...' : 'reset password',
+                        onPressed: isLoading ? null : () => _handleNewPassword(),
+                        title: isLoading ? l10n.resetting : l10n.resetPassword,
                       );
                     },
                   ),

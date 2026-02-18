@@ -1,4 +1,5 @@
 import 'package:auth/constants/colors.dart';
+import 'package:auth/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -13,6 +14,8 @@ void showCustomDialog({
   showDialog(
     context: context,
     builder: (BuildContext context) {
+      final l10n = AppLocalizations.of(context)!;
+
       return AlertDialog(
         backgroundColor:Theme.of(context).cardColor,
         surfaceTintColor: Colors.transparent,
@@ -22,7 +25,7 @@ void showCustomDialog({
         actions: [
           TextButton(
             onPressed: () => context.pop(),
-            child: const Text("Cancel", style: TextStyle(color: Colors.grey)),
+            child: Text(l10n.cancelBtn, style: const TextStyle(color: Colors.grey)),
           ),
           TextButton(
             onPressed: () {

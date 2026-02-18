@@ -1,14 +1,18 @@
 import 'package:auth/common/functions/custom_list_tile.dart';
 import 'package:auth/core/app_routes.dart';
 import 'package:auth/common/functions/custom_square_button.dart';
+import 'package:auth/core/language_switch_button.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:auth/l10n/app_localizations.dart';
 
 class SettingsView extends StatelessWidget {
   const SettingsView({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
         surfaceTintColor: Colors.transparent,
@@ -29,9 +33,9 @@ class SettingsView extends StatelessWidget {
             size: 25,
           ),
         ),
-        title: const Text(
-          'Menu',
-          style: TextStyle(fontWeight: FontWeight.w600),
+        title: Text(
+          l10n.menu,
+          style: const TextStyle(fontWeight: FontWeight.w600),
         ),
       ),
       body: ListView(
@@ -52,7 +56,7 @@ class SettingsView extends StatelessWidget {
                         children: [
                           Expanded(
                             child: CustomSquareButton(
-                              label: 'Saved',
+                              label: l10n.saved,
                               icon: Icons.bookmark_border,
                               backgroundColor: Theme.of(
                                 context,
@@ -67,7 +71,7 @@ class SettingsView extends StatelessWidget {
                           const SizedBox(width: 12),
                           Expanded(
                             child: CustomSquareButton(
-                              label: 'Groups',
+                              label: l10n.groups,
                               icon: Icons.groups_2_outlined,
                               backgroundColor: Theme.of(
                                 context,
@@ -86,7 +90,7 @@ class SettingsView extends StatelessWidget {
                         children: [
                           Expanded(
                             child: CustomSquareButton(
-                              label: 'Posts',
+                              label: l10n.posts,
                               icon: Icons.featured_play_list_outlined,
                               backgroundColor: Theme.of(
                                 context,
@@ -101,7 +105,7 @@ class SettingsView extends StatelessWidget {
                           const SizedBox(width: 12),
                           Expanded(
                             child: CustomSquareButton(
-                              label: 'Reels',
+                              label: l10n.reels,
                               icon: Icons.video_library_outlined,
                               backgroundColor: Theme.of(
                                 context,
@@ -121,10 +125,9 @@ class SettingsView extends StatelessWidget {
 
                 const SizedBox(height: 20),
 
-                // Spacer(),
                 CustomListTile(
                   icon: Icons.notifications_none,
-                  text: 'Notifications',
+                  text: l10n.notifications,
                   withArrow: true,
                   onTap: () {
                     context.push(AppRoutes.notifications);
@@ -133,7 +136,7 @@ class SettingsView extends StatelessWidget {
                 const Divider(),
                 CustomListTile(
                   icon: Icons.mode_night_outlined,
-                  text: 'Theme',
+                  text: l10n.theme,
                   withArrow: true,
                   onTap: () {
                     context.push(AppRoutes.theme);
@@ -143,7 +146,7 @@ class SettingsView extends StatelessWidget {
                 const Divider(),
                 CustomListTile(
                   icon: Icons.block_flipped,
-                  text: 'Blocked',
+                  text: l10n.blocked,
                   withArrow: true,
                   redColor: true,
                   onTap: () {
@@ -154,14 +157,17 @@ class SettingsView extends StatelessWidget {
                 const Divider(),
                 CustomListTile(
                   icon: Icons.toggle_on_outlined,
-                  text: 'Active status',
+                  text: l10n.activeStatus,
                   withArrow: true,
                   onTap: () {
                     context.push(AppRoutes.activeStates);
                   },
                 ),
-
-                const SizedBox(height: 20),
+                const Divider(),
+                const Align(
+                  alignment: AlignmentDirectional.topStart,
+                  child: LanguageSwitchButton(),
+                ),
               ],
             ),
           ),

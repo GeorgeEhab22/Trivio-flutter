@@ -1,4 +1,5 @@
 import 'package:auth/core/validator.dart';
+import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/authentication/widgets/requirement_indecator.dart';
 import 'package:flutter/material.dart';
 import 'package:auth/core/vanishing_item.dart';
@@ -22,23 +23,9 @@ class UsernameField extends StatefulWidget {
 
 class _UsernameFieldState extends State<UsernameField> {
   late final VanishingItemController<String> _vanishingController;
-  late final Validator regEx;
-
-  final _requirements = <String, Requirement>{
-    'minLength': Requirement(
-      label: 'At least 3 characters',
-      check: (username) => username.length >= 3,
-    ),
-    'noSpaces': Requirement(
-      label: 'No spaces allowed',
-      check: (username) => !username.contains(' '),
-    ),
-    'validChars': Requirement(
-      label: 'Only letters, numbers, and underscores',
-      check: (username) =>
-          Validator.isValidUsername(username),
-    ),
-  };
+  
+  late final Map<String, Requirement> _requirements;
+  bool _requirementsInitialized = false;
 
   String? _errorText;
   bool _hasTouched = false;
@@ -48,6 +35,29 @@ class _UsernameFieldState extends State<UsernameField> {
     super.initState();
     _vanishingController = VanishingItemController<String>();
     widget.controller.addListener(_validateUsername);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_requirementsInitialized) {
+      final l10n = AppLocalizations.of(context)!;
+      _requirements = {
+        'minLength': Requirement(
+          label: l10n.reqUsernameMinLength,
+          check: (username) => username.length >= 3,
+        ),
+        'noSpaces': Requirement(
+          label: l10n.reqNoSpaces,
+          check: (username) => !username.contains(' '),
+        ),
+        'validChars': Requirement(
+          label: l10n.reqUsernameChars,
+          check: (username) => Validator.isValidUsername(username),
+        ),
+      };
+      _requirementsInitialized = true;
+    }
   }
 
   @override
@@ -61,7 +71,7 @@ class _UsernameFieldState extends State<UsernameField> {
     final username = widget.controller.text.trim();
     if (username.isNotEmpty) _hasTouched = true;
     if (_errorText != null) {
-      final newError = _defaultValidator(username);
+      final newError = _localizedValidator(username);
       if (newError == null) {
         setState(() => _errorText = null);
       } else if (newError != _errorText) {
@@ -70,18 +80,15 @@ class _UsernameFieldState extends State<UsernameField> {
     }
 
     bool shouldRebuild = false;
-
     for (final entry in _requirements.entries) {
       final key = entry.key;
       final req = entry.value;
-
       final oldMet = req.isMet;
       final newMet = req.check(username);
 
       if (oldMet != newMet) {
         req.isMet = newMet;
         shouldRebuild = true;
-
         if (newMet) {
           req.wasMet = true;
           _vanishingController.scheduleHide(key);
@@ -90,21 +97,17 @@ class _UsernameFieldState extends State<UsernameField> {
         }
       }
     }
-
     if (shouldRebuild) setState(() {});
   }
 
   bool get _allRequirementsMet => _requirements.values.every((r) => r.isMet);
-
-  bool get _hasBrokenRequirements =>
-      _requirements.values.any((r) => r.wasMet && !r.isMet);
+  bool get _hasBrokenRequirements => _requirements.values.any((r) => r.wasMet && !r.isMet);
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
-    final showErrors =
-        widget.showValidation && _hasTouched && _hasBrokenRequirements;
-
+    final showErrors = widget.showValidation && _hasTouched && _hasBrokenRequirements;
     final allValid = _allRequirementsMet && _hasTouched;
 
     return Column(
@@ -115,15 +118,16 @@ class _UsernameFieldState extends State<UsernameField> {
           textInputAction: TextInputAction.next,
           onFieldSubmitted: (_) => widget.onSubmit?.call(),
           decoration: InputDecoration(
-            labelText: "Username",
-            hintText: "Enter your username",
+            labelText: l10n.labelUsername,
+            hintText: l10n.hintUsername,
             errorText: _errorText,
             suffixIcon: allValid
                 ? const Icon(Icons.check_circle, color: Colors.green, size: 20)
                 : null,
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(6)),
           ).applyDefaults(theme.inputDecorationTheme),
-          validator: (value){
-             final error = _defaultValidator(value);
+          validator: (value) {
+            final error = _localizedValidator(value);
             setState(() => _errorText = error);
             return error;
           },
@@ -144,13 +148,12 @@ class _UsernameFieldState extends State<UsernameField> {
     );
   }
 
-  String? _defaultValidator(String? value) {
+  String? _localizedValidator(String? value) {
+    final l10n = AppLocalizations.of(context)!;
     final trimmed = value?.trim() ?? '';
-    if (trimmed.isEmpty) return "Username is required";
-    if (trimmed.length < 3) return "Username must be at least 3 characters";
-    if (!Validator.isValidUsername(trimmed)) {
-      return "Only letters, numbers, and underscores are allowed";
-    }
+    if (trimmed.isEmpty) return l10n.errUsernameRequired;
+    if (trimmed.length < 3) return l10n.errUsernameTooShort;
+    if (!Validator.isValidUsername(trimmed)) return l10n.errUsernameChars;
     return null;
   }
 }

@@ -51,6 +51,7 @@ class _AnimatedSnackBarState extends State<AnimatedSnackBar>
 
   @override
   void dispose() {
+    _controller.stop();
     _controller.dispose();
     super.dispose();
   }

@@ -7,6 +7,7 @@ import 'package:auth/presentation/manager/comment_cubit/comment_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:auth/l10n/app_localizations.dart';
 
 class BottomSheetManager {
   static void showMediaSourceSheet(
@@ -14,6 +15,7 @@ class BottomSheetManager {
     bool isVideo, {
     required void Function(List<XFile> files) onPicked,
   }) {
+    final l10n = AppLocalizations.of(context)!;
     showModalBottomSheet(
       context: context,
       useRootNavigator: true,
@@ -32,7 +34,7 @@ class BottomSheetManager {
                     Icons.photo_library,
                     color: Theme.of(context).iconTheme.color,
                   ),
-                  title: const Text("Choose from Gallery"),
+                  title: Text(l10n.chooseFromGallery),
                   onTap: () async {
                     sheetContext.pop();
                     await pickMedia(
@@ -52,7 +54,7 @@ class BottomSheetManager {
                     Icons.camera_alt,
                     color: Theme.of(context).iconTheme.color,
                   ),
-                  title: const Text("Use Camera"),
+                  title: Text(l10n.useCamera),
                   onTap: () async {
                     sheetContext.pop();
                     await pickMedia(
@@ -108,6 +110,7 @@ class BottomSheetManager {
     BuildContext context,
     Function(String) onChange,
   ) async {
+    final l10n = AppLocalizations.of(context)!;
     final String? selected = await showModalBottomSheet<String>(
       context: context,
       useRootNavigator: true,
@@ -121,14 +124,14 @@ class BottomSheetManager {
             children: <Widget>[
               ListTile(
                 leading: const Icon(Icons.public),
-                title: const Text("Public"),
+                title: Text(l10n.privacyPublic),
                 onTap: () => context.pop('Public'),
                 iconColor: Theme.of(context).iconTheme.color,
                 textColor: Theme.of(context).textTheme.bodyMedium?.color,
               ),
               ListTile(
                 leading: const Icon(Icons.lock),
-                title: const Text("Private"),
+                title: Text(l10n.privacyPrivate),
                 onTap: () => context.pop('Private'),
                 iconColor: Theme.of(context).iconTheme.color,
                 textColor: Theme.of(context).textTheme.bodyMedium?.color,
@@ -144,21 +147,21 @@ class BottomSheetManager {
     }
   }
 
-
-// TODO : handle states 
   static void showActions(
     BuildContext context, {
     required Comment comment,
     required bool isOwner,
     required CommentCubit cubit,
   }) {
+    final l10n = AppLocalizations.of(context)!;
     final handleBarColor = Theme.of(context).brightness == Brightness.dark
         ? Colors.grey[700]
         : Colors.grey[300];
+
     showModalBottomSheet(
       context: context,
       useRootNavigator: true,
-      backgroundColor:Theme.of( context).scaffoldBackgroundColor,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -173,38 +176,34 @@ class BottomSheetManager {
                 height: 4,
                 margin: const EdgeInsets.only(bottom: 10),
                 decoration: BoxDecoration(
-                  color:handleBarColor,
+                  color: handleBarColor,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
               if (isOwner) ...[
                 actionTile(
                   icon: Icons.reply_outlined,
-                  label: 'Reply',
+                  label: l10n.reply,
                   textColor: Theme.of(context).textTheme.bodyMedium?.color,
                   onTap: () {
                     context.pop();
                     cubit.triggerReply(comment);
                   },
                 ),
-
                 divider(),
-
                 actionTile(
                   icon: Icons.copy_outlined,
-                  label: 'Copy comment',
+                  label: l10n.copyComment,
                   textColor: Theme.of(context).textTheme.bodyMedium?.color,
                   onTap: () async {
                     context.pop();
                     copyToClipboard(context, comment.text);
                   },
                 ),
-
                 divider(),
-
                 actionTile(
                   icon: Icons.delete_outline,
-                  label: 'Delete',
+                  label: l10n.delete,
                   textColor: Theme.of(context).textTheme.bodyMedium?.color,
                   iconColor: Colors.redAccent,
                   onTap: () {
@@ -212,24 +211,21 @@ class BottomSheetManager {
                     cubit.deleteComment(comment.id);
                   },
                 ),
-
                 divider(),
-
                 if (comment.editedAt == null)
                   actionTile(
                     icon: Icons.edit_outlined,
-                    label: 'Edit',
+                    label: l10n.edit,
                     textColor: Theme.of(context).textTheme.bodyMedium?.color,
                     onTap: () {
                       context.pop();
                       navigateToEditPage(context, comment, cubit);
                     },
                   ),
-
                 if (comment.editedAt != null)
                   actionTile(
                     icon: Icons.history,
-                    label: 'View Edit History',
+                    label: l10n.viewEditHistory,
                     textColor: Theme.of(context).textTheme.bodyMedium?.color,
                     onTap: () {
                       context.pop();
@@ -240,43 +236,37 @@ class BottomSheetManager {
               if (!isOwner) ...[
                 actionTile(
                   icon: Icons.reply_outlined,
-                  label: 'Reply',
+                  label: l10n.reply,
                   textColor: Theme.of(context).textTheme.bodyMedium?.color,
                   onTap: () {
                     context.pop();
                     cubit.triggerReply(comment);
                   },
                 ),
-
                 divider(),
-
                 actionTile(
                   icon: Icons.copy_outlined,
-                  label: 'Copy comment',
+                  label: l10n.copyComment,
                   textColor: Theme.of(context).textTheme.bodyMedium?.color,
                   onTap: () async {
                     context.pop();
                     copyToClipboard(context, comment.text);
                   },
                 ),
-
                 divider(),
-
                 actionTile(
                   icon: Icons.flag_outlined,
-                  label: 'Report comment',
+                  label: l10n.reportComment,
                   textColor: Theme.of(context).textTheme.bodyMedium?.color,
                   onTap: () {
                     context.pop();
                     cubit.reportComment(comment.id);
                   },
                 ),
-
                 divider(),
-
                 actionTile(
                   icon: Icons.hide_source_outlined,
-                  label: 'Hide comment',
+                  label: l10n.hideComment,
                   textColor: Theme.of(context).textTheme.bodyMedium?.color,
                   onTap: () {
                     context.pop();

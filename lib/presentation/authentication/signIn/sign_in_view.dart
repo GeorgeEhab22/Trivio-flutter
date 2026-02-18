@@ -1,11 +1,11 @@
 import 'package:auth/core/styels.dart';
+import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/authentication/widgets/auth_action_button.dart';
 import 'package:auth/presentation/authentication/widgets/forget_password_button.dart';
 import 'package:auth/presentation/authentication/widgets/google_field.dart';
+import 'package:auth/core/language_switch_button.dart';
 import 'package:auth/presentation/manager/sigin_in_cubit/sign_in_cubit.dart';
 import 'package:auth/presentation/manager/sigin_in_cubit/sign_in_state.dart';
-
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../widgets/email_field.dart';
@@ -25,6 +25,7 @@ class _SignInPageState extends State<SignInPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isPasswordVisible = false;
+
   @override
   void dispose() {
     _emailController.dispose();
@@ -35,15 +36,23 @@ class _SignInPageState extends State<SignInPage> {
   void _handleSignIn() {
     if (_formKey.currentState!.validate()) {
       context.read<SignInCubit>().signIn(
-        email: _emailController.text.trim(),
-        password: _passwordController.text,
-      );
+            email: _emailController.text.trim(),
+            password: _passwordController.text,
+          );
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        forceMaterialTransparency: true,
+        actions: const[LanguageSwitchButton()],
+      ),
       body: BlocListener<SignInCubit, SignInState>(
         listener: (context, state) =>
             SignInListener.handleStateChanges(context, state),
@@ -53,7 +62,7 @@ class _SignInPageState extends State<SignInPage> {
             key: _formKey,
             child: Column(
               children: [
-                const Text('Sign in', style: Styles.textStyle30),
+                Text(l10n.signIn, style: Styles.textStyle30),
                 const SizedBox(height: 60),
                 EmailField(controller: _emailController, isLogin: true),
                 const SizedBox(height: 20),
@@ -65,12 +74,15 @@ class _SignInPageState extends State<SignInPage> {
                     setState(() => _isPasswordVisible = !_isPasswordVisible);
                   },
                   onSubmit: _handleSignIn,
+                  // Ensure your PasswordField accepts these:
+                  label: l10n.password,
+                  hint: l10n.enterPassword,
                 ),
                 const SizedBox(height: 20),
                 AuthActionButton<SignInCubit, SignInState, SignInLoading>(
                   onPressed: _handleSignIn,
-                  title: "Sign In",
-                  loadingText: "Signing In...",
+                  title: l10n.signIn,
+                  loadingText: l10n.signingIn,
                   isLoading: (state) => state is SignInLoading,
                 ),
                 const GoogleField(isLogin: true),

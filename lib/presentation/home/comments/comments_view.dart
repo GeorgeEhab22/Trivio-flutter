@@ -4,6 +4,7 @@ import 'package:auth/presentation/home/comments/widgets/input_field/input_field_
 import 'package:auth/presentation/manager/comment_cubit/comment_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:auth/l10n/app_localizations.dart';
 
 class CommentsView extends StatefulWidget {
   final String postId;
@@ -28,7 +29,6 @@ class _CommentsViewState extends State<CommentsView> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final cubit = context.read<CommentCubit>();
-
       cubit.getComments(widget.postId);
     });
   }
@@ -42,11 +42,13 @@ class _CommentsViewState extends State<CommentsView> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    
     return Container(
       height: MediaQuery.of(context).size.height * 0.95,
       decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       ),
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom,
@@ -67,8 +69,8 @@ class _CommentsViewState extends State<CommentsView> {
                   borderRadius: BorderRadius.circular(3),
                 ),
               ),
-              // Title
-              const Text("Comments", style: Styles.textStyle20),
+              // Title - Localized
+              Text(l10n.commentsTitle, style: Styles.textStyle20),
               const SizedBox(height: 5),
             ],
           ),

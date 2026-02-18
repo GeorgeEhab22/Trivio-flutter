@@ -1,5 +1,6 @@
 import 'package:auth/constants/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:auth/l10n/app_localizations.dart';
 
 class MediaButtonsRow extends StatelessWidget {
   final VoidCallback onPickImage;
@@ -13,6 +14,7 @@ class MediaButtonsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     const iconColor = AppColors.primary;
 
     final buttonStyle = OutlinedButton.styleFrom(
@@ -30,9 +32,9 @@ class MediaButtonsRow extends StatelessWidget {
               style: buttonStyle,
               onPressed: onPickImage,
               icon: const Icon(Icons.image, color: iconColor),
-              label: const Text(
-                "Image",
-                style: TextStyle(color: iconColor),
+              label: Text(
+                l10n.image, // Localized
+                style: const TextStyle(color: iconColor),
               ),
             ),
           ),
@@ -42,9 +44,9 @@ class MediaButtonsRow extends StatelessWidget {
               style: buttonStyle,
               onPressed: onPickVideo,
               icon: const Icon(Icons.videocam, color: iconColor),
-              label: const Text(
-                "Video",
-                style: TextStyle(color: iconColor),
+              label: Text(
+                l10n.video, // Localized
+                style: const TextStyle(color: iconColor),
               ),
             ),
           ),

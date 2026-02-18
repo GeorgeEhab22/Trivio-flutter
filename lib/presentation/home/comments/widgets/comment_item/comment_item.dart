@@ -9,6 +9,7 @@ import 'package:auth/domain/entities/comment.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'comment_header.dart';
 import '../lists/comment_replies_list.dart';
+import 'package:auth/l10n/app_localizations.dart';
 
 class CommentItem extends StatelessWidget {
   final Comment comment;
@@ -28,31 +29,32 @@ class CommentItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final bool isOwner = comment.authorId == currentUserId;
+    final l10n = AppLocalizations.of(context)!;
     final bool isReply = comment.isReply;
 
     final Widget content = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         CommentHeader(
-          isOwner: true,//TODO : later remove true and use isOwner
-          comment: comment, 
+          isOwner: true, // TODO: Use actual isOwner logic later
+          comment: comment,
         ),
 
         Padding(
-          padding: const EdgeInsets.only(left: 56, right: 16),
+          padding: const EdgeInsetsDirectional.only(start: 56, end: 16),
           child: ExpandableText(
             text: comment.text,
             previewLines: 2,
             canCollapse: false,
-          )),
+          ),
+        ),
 
         Padding(
-          padding: const EdgeInsets.only(left: 56, right: 16),
+          padding: const EdgeInsetsDirectional.only(start: 56, end: 16),
           child: Row(
             children: [
               BlocProvider(
-                create: (context) =>di.sl<PostInteractionCubit>(),
+                create: (context) => di.sl<PostInteractionCubit>(),
                 child: ReactionAction(
                   postId: comment.id,
                   userId: currentUserId,
@@ -61,7 +63,7 @@ class CommentItem extends StatelessWidget {
                 ),
               ),
               TextButton(
-                onPressed: (){
+                onPressed: () {
                   if (onReplyTap != null) {
                     onReplyTap!(comment);
                   }
@@ -70,20 +72,19 @@ class CommentItem extends StatelessWidget {
                   padding: EdgeInsets.zero,
                   minimumSize: const Size(50, 30),
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  alignment: Alignment.centerLeft,
+                  // alignment: Alignment.centerLeft, // Removed to allow auto-alignment
                 ),
-                child: const Text(
-                  "Reply",
-                  style: TextStyle(color: AppColors.lightGrey, fontSize: 13),
+                child: Text(
+                  l10n.reply,
+                  style: const TextStyle(color: AppColors.lightGrey, fontSize: 13),
                 ),
               ),
-              // Add Like Button here later
             ],
           ),
         ),
         if (replies.isNotEmpty)
           Padding(
-            padding: EdgeInsets.only(left: isReply ? 40.0 : 50.0),
+            padding: EdgeInsetsDirectional.only(start: isReply ? 40.0 : 50.0),
             child: CommentRepliesList(
               replies: replies,
               currentUserId: currentUserId,
@@ -95,7 +96,7 @@ class CommentItem extends StatelessWidget {
 
     if (isReply) {
       return Container(
-        margin: const EdgeInsets.only(left: 40, bottom: 8),
+        margin: const EdgeInsetsDirectional.only(start: 40, bottom: 8),
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
           color: Colors.grey[50],

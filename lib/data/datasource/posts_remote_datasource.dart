@@ -138,7 +138,6 @@ class PostsRemoteDataSourceImpl implements PostsRemoteDataSource {
 
       return PostModel.fromJson(response['data']['post']);
    } catch (e) {
-      print ('Error in createPost: $e');
       errorHandler.handleDioError(e);
       rethrow;
     }

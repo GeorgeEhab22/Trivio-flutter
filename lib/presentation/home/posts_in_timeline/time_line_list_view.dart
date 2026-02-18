@@ -5,15 +5,21 @@ import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:skeletonizer/skeletonizer.dart';
+// import 'package:auth/l10n/app_localizations.dart';
 
 class TimelineListView extends StatelessWidget {
   const TimelineListView({super.key});
 
   @override
   Widget build(BuildContext context) {
+
+    // final l10n = AppLocalizations.of(context)!;
+    
+   
     return BlocConsumer<PostCubit, PostState>(
       listener: (context, state) {
         if (state is PostsLoadingMoreError) {
+          // Use localized helper if state.message is a technical key
           showCustomSnackBar(context, state.message, false);
         }
       },

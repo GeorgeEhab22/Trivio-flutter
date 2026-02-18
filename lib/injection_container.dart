@@ -6,14 +6,18 @@ import 'package:auth/data/datasource/auth_remote_datasource.dart';
 import 'package:auth/data/datasource/comments_remote_datasource.dart';
 import 'package:auth/data/datasource/groups_remote_datasource.dart';
 import 'package:auth/data/datasource/posts_remote_datasource.dart';
+import 'package:auth/data/datasource/stats_local_datasource.dart';
+import 'package:auth/data/datasource/stats_remote_datasource.dart';
 import 'package:auth/data/repositories/auth_repo_impl.dart';
 import 'package:auth/data/repositories/comment_repo_impl.dart';
 import 'package:auth/data/repositories/group_repo_impl.dart';
 import 'package:auth/data/repositories/post_repo_impl.dart';
+import 'package:auth/data/repositories/stats_repo_impl.dart';
 import 'package:auth/domain/repositories/auth_repo.dart';
 import 'package:auth/domain/repositories/comment_repo.dart';
 import 'package:auth/domain/repositories/group_repo.dart';
 import 'package:auth/domain/repositories/post_repo.dart';
+import 'package:auth/domain/repositories/stats_repo.dart';
 import 'package:auth/domain/usecases/comment/add_comment_usecase.dart';
 import 'package:auth/domain/usecases/comment/delete_comment_usecase.dart';
 import 'package:auth/domain/usecases/comment/edit_comment_usecase.dart';
@@ -67,6 +71,7 @@ import 'package:auth/domain/usecases/sign_in/request_otp.dart';
 
 import 'package:auth/domain/usecases/sign_in/signin_usecase.dart';
 import 'package:auth/domain/usecases/sign_in/verify_otp.dart';
+import 'package:auth/domain/usecases/stats/stats_usecase.dart';
 import 'package:auth/presentation/manager/comment_cubit/comment_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/ban_member/ban_member_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/create_group/create_group_cubit.dart';
@@ -89,66 +94,95 @@ import 'package:auth/presentation/manager/group_cubit/leave_group/leave_group_cu
 import 'package:auth/presentation/manager/group_cubit/get_members_by_roles/members_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/unban_member/unban_member_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/update_group/update_group_cubit.dart';
+import 'package:auth/presentation/manager/locale_cubit/locale_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/create_post_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/get_post/get_post_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/post_interaction_cubit.dart';
 import 'package:auth/presentation/manager/register_cubit/register_cubit.dart';
+import 'package:auth/presentation/manager/sigin_in_cubit/request_otp/request_otp_cubit.dart';
 import 'package:auth/presentation/manager/sigin_in_cubit/sign_in_cubit.dart';
+import 'package:auth/presentation/manager/stats_cubit/stats_cubit.dart';
 import 'package:auth/presentation/manager/theme_cubit/theme_cubit.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final sl = GetIt.instance;
 
 Future<void> init() async {
+  // 1. External & Core
   await dotenv.load(fileName: ".env");
-
-  String baseUrl;
-  if (kIsWeb) {
-    baseUrl = dotenv.env['LOCAL_URL']!;
-  } else if (Platform.isAndroid || Platform.isIOS) {
-    baseUrl = dotenv.env['MOBILE_URL']!;
-  } else {
-    baseUrl = dotenv.env['LOCAL_URL']!;
-  }
   final prefs = await SharedPreferences.getInstance();
+  await Hive.initFlutter();
+  final statslocal = StatsLocalDatasource();
+  await statslocal.init();
+
+  String baseUrl = kIsWeb
+      ? dotenv.env['LOCAL_URL']!
+      : (Platform.isAndroid || Platform.isIOS
+            ? dotenv.env['MOBILE_URL']!
+            : dotenv.env['LOCAL_URL']!);
+
+  sl.registerLazySingleton(() => Dio());
   sl.registerLazySingleton(() => prefs);
   sl.registerLazySingleton(() => ApiService(baseUrl: baseUrl));
   sl.registerLazySingleton(() => ErrorHandler());
+  sl.registerFactory(() => LocaleCubit());
+
+  // ==========================================================================
+  // FEATURE: AUTHENTICATION
+  // ==========================================================================
   sl.registerLazySingleton<AuthRemoteDataSource>(
     () => AuthRemoteDataSourceImpl(api: sl(), prefs: sl(), errorHandler: sl()),
   );
-
   sl.registerLazySingleton<AuthRepository>(
     () => AuthRepositoryImpl(remoteDataSource: sl()),
   );
 
+  // UseCases
   sl.registerLazySingleton(() => SignInUseCase(sl()));
   sl.registerLazySingleton(() => GoogleSignInAndRegisterUseCase(sl()));
-
   sl.registerLazySingleton(() => RegisterUseCase(sl()));
   sl.registerLazySingleton(() => VerifyCode(sl()));
   sl.registerLazySingleton(() => ResendVerificationCode(sl()));
   sl.registerLazySingleton(() => SendPasswordResetOtp(sl()));
   sl.registerLazySingleton(() => VerifyOTP(sl()));
 
+  // Cubits
   sl.registerFactory(
     () => SignInCubit(signInUseCase: sl(), googleSignInUseCase: sl()),
   );
-
   sl.registerFactory(() => RegisterCubit(registerUseCase: sl()));
+  sl.registerFactory(() => RequestOTPCubit(sendPasswordResetOtp: sl()));
 
-  //posts
+  // ==========================================================================
+  // FEATURE: STATS (Football Data)
+  // ==========================================================================
+  sl.registerLazySingleton<StatsLocalDatasource>(() => StatsLocalDatasource());
+  sl.registerLazySingleton<StatsRemoteDatasource>(
+    () => StatsRemoteDatasourceImpl(sl(), sl()),
+  );
+  sl.registerLazySingleton<StatsRepository>(
+    () => StatsRepoImpl(remoteDatasource: sl(), localDatasource: sl()),
+  );
+  sl.registerLazySingleton(() => StatsUseCase(sl()));
+  sl.registerFactory(() => StatsCubit(sl()));
+
+  // ==========================================================================
+  // FEATURE: POSTS
+  // ==========================================================================
   sl.registerLazySingleton<PostsRemoteDataSource>(
     () => PostsRemoteDataSourceImpl(api: sl(), prefs: sl(), errorHandler: sl()),
   );
   sl.registerLazySingleton<PostRepo>(
     () => PostRepositoryImpl(remoteDataSource: sl()),
   );
-  sl.registerLazySingleton(() => CommentOnPostUseCase(sl()));
+
+  // UseCases
   sl.registerLazySingleton(() => CreatePostUseCase(sl()));
   sl.registerLazySingleton(() => DeletePostUseCase(sl()));
   sl.registerLazySingleton(() => EditPostUseCase(sl()));
@@ -161,7 +195,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => SharePostUseCase(sl()));
   sl.registerLazySingleton(() => FollowUserUseCase(sl()));
   sl.registerLazySingleton(() => SavePostUseCase(sl()));
-
+sl.registerLazySingleton(() => CommentOnPostUseCase(sl()));
   sl.registerFactory(
     () => PostCubit(getPostsUseCase: sl(), deletePostUseCase: sl()),
   );
@@ -178,7 +212,10 @@ Future<void> init() async {
       editPostUseCase: sl(),
     ),
   );
-  // comments
+
+  // ==========================================================================
+  // FEATURE: COMMENTS
+  // ==========================================================================
   sl.registerLazySingleton<CommentsRemoteDataSource>(
     () => CommentsRemoteDataSourceImpl(
       api: sl(),
@@ -189,6 +226,8 @@ Future<void> init() async {
   sl.registerLazySingleton<CommentRepository>(
     () => CommentRepositoryImpl(remoteDataSource: sl()),
   );
+
+  // UseCases
   sl.registerLazySingleton(() => AddCommentUseCase(sl()));
   sl.registerLazySingleton(() => DeleteCommentUseCase(sl()));
   sl.registerLazySingleton(() => EditCommentUseCase(sl()));
@@ -197,6 +236,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => MentionUsersInCommentUseCase(sl()));
   sl.registerLazySingleton(() => ReactToCommentUseCase(sl()));
 
+  // Cubit
   sl.registerFactory(
     () => CommentCubit(
       addCommentUseCase: sl(),
@@ -215,7 +255,6 @@ Future<void> init() async {
   );
   sl.registerFactory(() => GetPostCubit(getPostUseCase: sl()));
 
-  sl.registerFactory(() => ThemeCubit());
 
   // groups
   sl.registerLazySingleton<GroupRemoteDataSource>(
@@ -312,4 +351,8 @@ Future<void> init() async {
   // get groups posts feed
     sl.registerFactory(() => GetGroupsPostsFeedCubit(getGroupsPostsFeedUseCase: sl()));
   sl.registerLazySingleton(() => GetGroupsPostsFeedUseCase(sl()));
+  // ==========================================================================
+  // CORE / GLOBAL
+  // ==========================================================================
+  sl.registerFactory(() => ThemeCubit(prefs));
 }

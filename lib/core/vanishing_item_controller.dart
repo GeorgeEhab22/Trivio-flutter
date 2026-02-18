@@ -37,6 +37,7 @@ class VanishingItemController<T> extends ChangeNotifier {
 
   @override
   void dispose() {
+    
     _hiddenItems.clear();
     super.dispose();
   }

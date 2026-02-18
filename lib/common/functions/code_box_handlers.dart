@@ -12,12 +12,13 @@ class CodeBoxHandlers {
     List<TextEditingController> controllers,
     BuildContext context,
     VoidCallback? onComplete, 
+    bool isForVerification,
   ) {
     if (value.isEmpty && index > 0) {
       focusNodes[index - 1].requestFocus();
     } else if (value.isNotEmpty && index < 5) {
       focusNodes[index + 1].requestFocus();
-    } else if (index == 5 && value.isNotEmpty) {
+    } else if (index == 5 && value.isNotEmpty && isForVerification) {
       handleVerifyCode(context, controllers); 
     }
   }

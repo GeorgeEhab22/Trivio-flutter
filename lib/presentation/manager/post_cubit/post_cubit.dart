@@ -30,10 +30,14 @@ class PostCubit extends Cubit<PostState> {
     final result = await getPostsUseCase(page: page, limit: 10);
 
     result.fold(
-      (failure) => emit(PostError(failure.message)),
+      (failure) {
+        if (isClosed) return; 
+        emit(PostError(failure.message));
+      },
       (newPosts) {
         posts = newPosts;
         page++;
+        if (isClosed) return; 
         emit(PostLoaded(List.from(posts)));
       },
     );

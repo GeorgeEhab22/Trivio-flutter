@@ -1,11 +1,15 @@
 import 'package:auth/common/functions/show_custom_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:auth/l10n/app_localizations.dart';
 
 class ChatInfoView extends StatelessWidget {
   const ChatInfoView({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    const String dummyUserName = "User Name";
+
     return Scaffold(
       appBar: AppBar(surfaceTintColor: Colors.transparent, elevation: 0),
       body: Padding(
@@ -16,7 +20,7 @@ class ChatInfoView extends StatelessWidget {
             const CircleAvatar(radius: 50, child: Icon(Icons.person, size: 50)),
             const SizedBox(height: 15),
             const Text(
-              "User Name",
+              dummyUserName,
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 25),
@@ -24,35 +28,35 @@ class ChatInfoView extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _buildRowButtons(context, Icons.call, "Call", () {
+                _buildRowButtons(context, Icons.call, l10n.callAction, () {
                   showCustomDialog(
                     context: context,
-                    title: "Calling...",
-                    content: "Call \"user name\"",
-                    confirmText: "Call",
+                    title: l10n.calling,
+                    content: l10n.callUser(dummyUserName),
+                    confirmText: l10n.callAction,
                     onConfirm: () {
                       //TODO: later add call functionality
                     },
                   );
                 }),
                 const SizedBox(width: 30),
-                _buildRowButtons(context, Icons.videocam, "Video", () {
+                _buildRowButtons(context, Icons.videocam, l10n.video, () {
                   showCustomDialog(
                     context: context,
-                    title: "Video Calling...",
-                    content: "Video Call \"user name\"",
-                    confirmText: "Call",
+                    title: l10n.videoCalling,
+                    content: l10n.videoCallUser(dummyUserName),
+                    confirmText: l10n.callAction,
                     onConfirm: () {
                       //TODO: later add video call functionality
                     },
                   );
                 }),
                 const SizedBox(width: 30),
-                _buildRowButtons(context, Icons.person, "Profile", () {
+                _buildRowButtons(context, Icons.person, l10n.profile, () {
                   // TODO : add go to profile
                 }),
                 const SizedBox(width: 30),
-                _buildRowButtons(context, Icons.notifications, "Mute", () {
+                _buildRowButtons(context, Icons.notifications, l10n.mute, () {
                   // TODO : add mute functionality
                 }),
               ],
@@ -60,12 +64,13 @@ class ChatInfoView extends StatelessWidget {
             const SizedBox(height: 30),
 
             Align(
-              alignment: Alignment.centerLeft,
+              // AlignmentDirectional handles RTL automatically
+              alignment: AlignmentDirectional.centerStart,
               child: Padding(
-                padding: const EdgeInsets.only(left: 8.0),
+                padding: const EdgeInsetsDirectional.only(start: 8.0),
                 child: Text(
-                  "Options",
-                  style: TextStyle(
+                  l10n.options,
+                  style: const TextStyle(
                     fontSize: 12,
                     color: Colors.grey,
                     fontWeight: FontWeight.bold,
@@ -74,33 +79,33 @@ class ChatInfoView extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 5),
-            _buildColumnButtons(context, Icons.group, "Create Group Chat", () {
+            _buildColumnButtons(context, Icons.group, l10n.createGroupChat, () {
               //TODO :add group chat functionality
             }),
-            SizedBox(height: 10),
-            _buildColumnButtons(context, Icons.block, "Block", () {
+            const SizedBox(height: 10),
+            _buildColumnButtons(context, Icons.block, l10n.block, () {
               showCustomDialog(
                 context: context,
-                title: "Block User",
-                content: "Are you sure you want to block this user?",
-                confirmText: "Block",
+                title: l10n.blockUserTitle,
+                content: l10n.blockUserConfirm,
+                confirmText: l10n.block,
                 confirmTextColor: Colors.red,
                 onConfirm: () {
                   //TODO: later add block functionality
                 },
               );
             }),
-            SizedBox(height: 10),
-            _buildColumnButtons(context, Icons.report, "Report", () {
+            const SizedBox(height: 10),
+            _buildColumnButtons(context, Icons.report, l10n.report, () {
               //TODO : show report list and add functionality
             }),
-            SizedBox(height: 10),
-            _buildColumnButtons(context, Icons.delete, "Delete Chat", () {
+            const SizedBox(height: 10),
+            _buildColumnButtons(context, Icons.delete, l10n.deleteChatTitle, () {
               showCustomDialog(
                 context: context,
-                title: "Delete Chat",
-                content: "Are you sure you want to delete this chat?",
-                confirmText: "Delete",
+                title: l10n.deleteChatTitle,
+                content: l10n.deleteChatConfirm,
+                confirmText: l10n.delete,
                 confirmTextColor: Colors.red,
                 onConfirm: () {
                   //TODO: later add delete functionality

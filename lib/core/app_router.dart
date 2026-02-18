@@ -1,4 +1,6 @@
 import 'package:auth/core/custom_bottom_navigation_bar.dart';
+import 'package:auth/domain/usecases/sign_in/verify_otp.dart';
+import 'package:auth/presentation/authentication/signIn/forget_password_otp_view.dart';
 import 'package:auth/presentation/chats/chat_info_button/chat_info_view.dart';
 import 'package:auth/presentation/chats/chat_screen/chat_view.dart';
 import 'package:auth/presentation/chats/messages_screen/messages_view.dart';
@@ -24,7 +26,6 @@ import 'package:auth/presentation/manager/group_cubit/change_member_role/change_
 import 'package:auth/presentation/manager/group_cubit/decline_request/decline_request_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/get_group/get_group_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/get_group_feed/get_groups_posts_feed_cubit.dart';
-import 'package:auth/presentation/manager/group_cubit/get_group_posts/group_posts_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/get_groups/get_groups_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/get_join_requests/get_join_requests_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/get_joined_groups/get_joined_groups_cubit.dart';
@@ -35,8 +36,7 @@ import 'package:auth/presentation/manager/group_cubit/leave_group/leave_group_cu
 import 'package:auth/presentation/manager/group_cubit/get_members_by_roles/members_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/unban_member/unban_member_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/update_group/update_group_cubit.dart';
-import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
-import 'package:auth/presentation/manager/post_cubit/post_interaction_cubit.dart';
+import 'package:auth/presentation/manager/sigin_in_cubit/forget_password_otp_cubit.dart';
 import 'package:auth/presentation/reels/reels_page.dart';
 import 'package:auth/presentation/settings/settings_view.dart';
 import 'package:auth/presentation/settings/theme_view.dart';
@@ -89,9 +89,10 @@ CustomTransitionPage buildAnimatedPage({
 
 GoRouter createRouter(bool isLoggedIn) {
   return GoRouter(
-    initialLocation: AppRoutes.groups,
+    // initialLocation: AppRoutes.groups,
     // initialLocation:isLoggedIn ? '/app/home' : '/signin',
     // initialLocation: '/signin',
+    initialLocation: isLoggedIn ? '/app/home' : '/signin',
     routes: [
       GoRoute(
         path: AppRoutes.signIn,
@@ -133,6 +134,24 @@ GoRouter createRouter(bool isLoggedIn) {
           );
         },
       ),
+      GoRoute(
+        path: AppRoutes.forgetPasswordOtp,
+        builder: (context, state) {
+          final email = state.extra as String? ?? '';
+
+          return MultiBlocProvider(
+            providers: [
+              BlocProvider(
+                create: (context) =>
+                    ForgetPasswordOTPCubit(verifyOTP: di.sl<VerifyOTP>()),
+              ),
+              BlocProvider(create: (context) => di.sl<RequestOTPCubit>()),
+            ],
+            child: ForgetPasswordOtp(email: email),
+          );
+        },
+      ),
+      GoRoute(path: '/theme', builder: (context, state) => const ThemeView()),
       GoRoute(
         path: '/app',
         builder: (context, state) => const SizedBox.shrink(),
@@ -245,12 +264,6 @@ GoRouter createRouter(bool isLoggedIn) {
                         create: (context) =>
                             di.sl<GetGroupsPostsFeedCubit>()..fetchFeed(),
                       ),
-                      BlocProvider(
-                        create: (context) =>
-                            di.sl<GroupPostsCubit>(),
-                      ),
-                      BlocProvider(create: (context) => di.sl<PostCubit>()),
-                      BlocProvider(create: (context) => di.sl<PostInteractionCubit>()),
                     ],
                     child: const GroupsView(),
                   );
@@ -332,12 +345,6 @@ GoRouter createRouter(bool isLoggedIn) {
                           BlocProvider(
                             create: (context) => di.sl<UpdateGroupCubit>(),
                           ),
-                          BlocProvider(
-                            create: (context) =>
-                                di.sl<GroupPostsCubit>()
-                                  ..getPosts(groupId: groupId),
-                          ),
-                          BlocProvider(create: (context) => di.sl<PostCubit>()),
                         ],
                         child: MyGroupView(groupId: groupId),
                       );

@@ -1,4 +1,5 @@
 import 'package:auth/common/functions/format_time.dart';
+import 'package:auth/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:auth/constants/colors.dart';
 import 'package:auth/core/styels.dart';
@@ -29,6 +30,7 @@ class AuthorInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final defaultAuthorStyle = Styles.textStyle16.copyWith(
       fontWeight: FontWeight.w600,
       color: Theme.of(context).textTheme.bodyMedium?.color,
@@ -38,13 +40,11 @@ class AuthorInfo extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         isGroupPost ? _buildGroupAvatar(context) : _buildSingleAvatar(context),
-
         const SizedBox(width: 10),
-
         Expanded(
           child: showTimeInline && !isGroupPost
               ? _buildInlineText(defaultAuthorStyle)
-              : _buildStackedText(defaultAuthorStyle),
+              : _buildStackedText(defaultAuthorStyle, l10n),
         ),
       ],
     );
@@ -98,13 +98,13 @@ class AuthorInfo extends StatelessWidget {
     );
   }
 
-  Widget _buildStackedText(TextStyle defaultAuthorStyle) {
+  Widget _buildStackedText(TextStyle defaultAuthorStyle, AppLocalizations l10n) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          isGroupPost ? (groupName ?? "Group Name") : authorName,
+          isGroupPost ? (groupName ?? l10n.defaultGroupName) : authorName,
           style: authorTextStyle ?? defaultAuthorStyle,
           overflow: TextOverflow.ellipsis,
           maxLines: 1,
@@ -127,6 +127,8 @@ class AuthorInfo extends StatelessWidget {
             Text(
               formatTime(createdAt),
               style: Styles.textStyle14.copyWith(color: AppColors.lightGrey),
+              // Time relative strings (like "2m ago") should be LTR
+              textDirection: TextDirection.ltr, 
             ),
           ],
         ),

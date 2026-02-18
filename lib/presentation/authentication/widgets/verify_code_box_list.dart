@@ -26,6 +26,7 @@ class VerifyCodeBoxList extends StatelessWidget {
           focusNodes: focusNodes,
           onComplete: onComplete,
           enabled: !isLoading,
+          isForVerification: true,
         );
       },
     );

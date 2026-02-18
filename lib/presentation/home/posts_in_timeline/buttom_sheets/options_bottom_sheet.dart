@@ -10,6 +10,7 @@ import 'package:auth/domain/entities/post.dart';
 import 'package:auth/presentation/manager/post_cubit/post_interaction_cubit.dart';
 import 'package:auth/common/functions/copy_to_clipboard.dart';
 import 'package:go_router/go_router.dart';
+import 'package:auth/l10n/app_localizations.dart';
 
 class OptionsBottomSheet extends StatelessWidget {
   final Post post;
@@ -23,6 +24,7 @@ class OptionsBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final handleBarColor = Theme.of(context).brightness == Brightness.dark
         ? Colors.grey[700]
         : Colors.grey[300];
@@ -31,7 +33,7 @@ class OptionsBottomSheet extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).appBarTheme.backgroundColor,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       ),
       padding: const EdgeInsets.only(top: 10, bottom: 20),
       child: SafeArea(
@@ -56,7 +58,6 @@ class OptionsBottomSheet extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // save post => doneeeeeeeee
                   BlocBuilder<PostInteractionCubit, PostInteractionState>(
                     buildWhen: (previous, current) {
                       return current is PostSaveUpdated ||
@@ -75,10 +76,8 @@ class OptionsBottomSheet extends StatelessWidget {
                       }
                       return Expanded(
                         child: CustomSquareButton(
-                          label: isSaved ? 'Saved' : 'Save',
-                          icon: isSaved
-                              ? Icons.bookmark
-                              : Icons.bookmark_border,
+                          label: isSaved ? l10n.saved : l10n.save,
+                          icon: isSaved ? Icons.bookmark : Icons.bookmark_border,
                           backgroundColor: Theme.of(context).cardColor,
                           onTap: () {
                             cubit.toggleSavePost(
@@ -94,12 +93,11 @@ class OptionsBottomSheet extends StatelessWidget {
                   const SizedBox(width: 8),
                   Expanded(
                     child: CustomSquareButton(
-                      label: 'Copy Link',
+                      label: l10n.copyLink,
                       icon: Icons.link_outlined,
                       backgroundColor: Theme.of(context).cardColor,
                       onTap: () {
-                        //TODO : later copy the right post link..
-                        copyToClipboard(context, post.caption ?? 'No Link');
+                        copyToClipboard(context, post.caption ?? l10n.noLink);
                       },
                     ),
                   ),
@@ -110,29 +108,17 @@ class OptionsBottomSheet extends StatelessWidget {
             const SizedBox(height: 12),
             const Divider(height: 1),
 
-            // Options List
-            // if (post.isEdited)
-            //   ListActionTile(
-            //     icon: Icons.history,
-            //     text: 'View Edit History',
-            //     color: Theme.of(context).iconTheme.color!,
-            //     onTap: () {
-            //       context.pop();
-            //       // TODO : go to View Edit History page
-            //     },
-            //   ),
             CustomListTile(
               icon: Icons.visibility_off_outlined,
-              text: 'Not Interested',
+              text: l10n.notInterested,
               onTap: () {
                 // TODO use the cubit to mark the post as not interested
               },
             ),
 
-            // report => doneeeeeeeee
             CustomListTile(
               icon: Icons.report_gmailerrorred_outlined,
-              text: 'Report',
+              text: l10n.report,
               redColor: true,
               onTap: () {
                 showModalBottomSheet(
@@ -161,7 +147,7 @@ class OptionsBottomSheet extends StatelessWidget {
             // if (post.authorId == currentUserId)
             CustomListTile(
               icon: Icons.delete_rounded,
-              text: 'Delete',
+              text: l10n.delete,
               redColor: true,
               onTap: () {
                 final postCubit = context.read<PostCubit>();
@@ -169,9 +155,9 @@ class OptionsBottomSheet extends StatelessWidget {
                 context.pop();
                 showCustomDialog(
                   context: context,
-                  title: "Delete Post",
-                  content: "Are you sure you want to delete this post?",
-                  confirmText: "Delete",
+                  title:l10n.deletePostTitle,
+                  content: l10n.deletePostConfirm,
+                  confirmText: l10n.delete,
                   confirmTextColor: Colors.red,
                   onConfirm: () {
                     if (post.location == 'group' && post.groupID != null) {
