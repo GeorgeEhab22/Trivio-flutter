@@ -40,8 +40,12 @@ import 'package:auth/presentation/manager/sigin_in_cubit/forget_password_otp_cub
 import 'package:auth/presentation/reels/reels_page.dart';
 import 'package:auth/presentation/settings/settings_view.dart';
 import 'package:auth/presentation/settings/theme_view.dart';
+import 'package:auth/presentation/user/follow_requests_view.dart';
+import 'package:auth/presentation/user/followers_list_view.dart';
+import 'package:auth/presentation/user/following_list_view.dart';
 import 'package:auth/presentation/user/user_profile_settings_view.dart';
 import 'package:auth/presentation/stats/stats_view.dart';
+import 'package:auth/presentation/user/user_profile_view.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -90,7 +94,6 @@ CustomTransitionPage buildAnimatedPage({
 GoRouter createRouter(bool isLoggedIn) {
   return GoRouter(
     // initialLocation: AppRoutes.groups,
-    // initialLocation:isLoggedIn ? '/app/home' : '/signin',
     // initialLocation: '/signin',
     initialLocation: isLoggedIn ? '/app/home' : '/signin',
     routes: [
@@ -202,7 +205,31 @@ GoRouter createRouter(bool isLoggedIn) {
                   GoRoute(
                     path: 'profile',
                     pageBuilder: (context, state) =>
-                        NoTransitionPage(child: const UserProfileSettings()),
+                        NoTransitionPage(child: UserProfileView()),
+                    routes: [
+                      GoRoute(
+                        path: 'followers',
+                        builder: (context, state) =>
+                            const FollowersListView(),
+                      ),
+                      GoRoute(
+                        path: 'following',
+                        builder: (context, state) =>
+                            const FollowingListView(),
+                      ),
+                      GoRoute(
+                        path: 'settings',
+                        builder: (context, state) =>
+                            const UserProfileSettings(),
+                        routes: [
+                          GoRoute(
+                            path: 'requests',
+                            builder: (context, state) =>
+                                const FollowRequestsView(),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ],
               ),

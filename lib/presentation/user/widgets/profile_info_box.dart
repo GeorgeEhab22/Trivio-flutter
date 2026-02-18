@@ -7,12 +7,14 @@ class ProfileInfoBox extends StatelessWidget {
   final String username;
   final String userAbout;
   final String? avatarUrl;
+  final ValueNotifier<bool> isFollowing;
 
-  const ProfileInfoBox({
+  ProfileInfoBox({
     super.key,
     this.username = "Username",
     this.userAbout = "about",
     this.avatarUrl,
+    required this.isFollowing,
   });
 
   @override
@@ -64,14 +66,20 @@ class ProfileInfoBox extends StatelessWidget {
                           customBorder: const CircleBorder(),
                           onTap: () {
                             // TODO: handle follow of the profile
+                            isFollowing.value = !isFollowing.value;
                           },
-                          child: const SizedBox(
+                          child: SizedBox(
                             width: 32,
                             height: 32,
-                            child: Icon(
-                              Icons.add,
-                              size: 18,
-                              color: Colors.white,
+                            child: ValueListenableBuilder<bool>(
+                              valueListenable: isFollowing,
+                              builder: (context, isFollowing, _) {
+                                return Icon(
+                                  isFollowing ? Icons.check : Icons.add,
+                                  size: 18,
+                                  color: Colors.white,
+                                );
+                              },
                             ),
                           ),
                         ),

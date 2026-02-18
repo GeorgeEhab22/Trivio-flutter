@@ -7,8 +7,9 @@ import 'package:auth/constants/colors.dart';
 import 'package:go_router/go_router.dart';
 
 class UserProfileView extends StatelessWidget {
-  const UserProfileView({super.key});
+  UserProfileView({super.key});
 
+  final ValueNotifier<bool> followNotifier = ValueNotifier(false);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,13 +21,13 @@ class UserProfileView extends StatelessWidget {
             IconButton(
               onPressed: () {
                 //share profile
-              }, 
-            icon: Icon(Icons.share)
+              },
+              icon: Icon(Icons.share),
             ),
 
             IconButton(
               onPressed: () {
-                GoRouter.of(context).push(AppRoutes.userProfileSettings);
+                GoRouter.of(context).push(AppRoutes.profileSettings);
               },
               icon: Icon(Icons.menu),
             ),
@@ -35,21 +36,16 @@ class UserProfileView extends StatelessWidget {
         shape: Border(bottom: BorderSide(color: AppColors.lightGrey, width: 2)),
       ),
       body: ListView(
-        
         children: [
-          ProfileInfoBox(),
+          ProfileInfoBox(isFollowing: followNotifier),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12),
             child: Align(
               alignment: Alignment.topLeft,
-              child: Text(
-                "Posts",
-                style: Styles.textStyle30,
-              ),
+              child: Text("Posts", style: Styles.textStyle30),
             ),
             // posts here
-          )
-
+          ),
         ],
       ),
     );

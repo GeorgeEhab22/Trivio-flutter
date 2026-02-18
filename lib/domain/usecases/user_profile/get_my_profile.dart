@@ -3,12 +3,12 @@ import 'package:auth/domain/entities/user_profile.dart';
 import 'package:auth/domain/repositories/user_profile_repo.dart';
 import 'package:dartz/dartz.dart';
 
-class GetUserProfileInfoUsecase {
+class GetMyProfile {
   final UserProfileRepo repository;
 
-  GetUserProfileInfoUsecase({required this.repository});
+  GetMyProfile(this.repository);
 
-  Future<Either<Failure, UserProfile>> call(String userId) async{
-    return await repository.getUserProfileInfo(userId);
+  Future<Either<Failure, UserProfile>> call() async {
+    return await repository.getMyProfile();
   }
 }

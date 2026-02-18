@@ -6,6 +6,7 @@ import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/manager/group_cubit/get_group_posts/group_posts_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/post_interaction_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/profile_cubit.dart';
 import 'package:auth/presentation/manager/theme_cubit/theme_cubit.dart';
 import 'package:auth/presentation/manager/locale_cubit/locale_cubit.dart'; // Import this
 import 'package:device_preview/device_preview.dart';
@@ -53,6 +54,8 @@ class MyApp extends StatelessWidget {
     BlocProvider(create: (context) => di.sl<PostInteractionCubit>()),
         BlocProvider(create: (_) => di.sl<ThemeCubit>()),
         BlocProvider(create: (_) => di.sl<LocaleCubit>()), 
+                BlocProvider(create: (context) => ProfileCubit(getMyProfile: di.sl())),
+
       ],
       child: BlocBuilder<LocaleCubit, Locale>( 
         builder: (context, localeState) {
@@ -144,7 +147,7 @@ class MyApp extends StatelessWidget {
 
 Future<void> _setupDevMode() async {
   final prefs = await SharedPreferences.getInstance();
-  
+
   // 1. Paste your long JWT string here
 const String devToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MzM2ZmNlZDdhNzZhYzZjMTczOGQ1YSIsInVzZXJuYW1lIjoic2hpbWFhIiwiZW1haWwiOiJrc2hpbWFhMTQxMEBnbWFpbC5jb20iLCJpYXQiOjE3NzA1NDc2ODh9.Kn42u5KCyax6fGfrMqQeaRdqmJJqLSgv2otGVkAON1M";
   await prefs.setString('auth_token', devToken);

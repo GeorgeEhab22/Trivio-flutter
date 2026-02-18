@@ -18,6 +18,12 @@ import 'package:auth/domain/repositories/comment_repo.dart';
 import 'package:auth/domain/repositories/group_repo.dart';
 import 'package:auth/domain/repositories/post_repo.dart';
 import 'package:auth/domain/repositories/stats_repo.dart';
+import 'package:auth/data/datasource/follow_remote_datasource.dart';
+import 'package:auth/data/datasource/profile_remote_datasource.dart';
+import 'package:auth/data/repositories/follow_repo_impl.dart';
+import 'package:auth/data/repositories/profile_repo_impl.dart';
+import 'package:auth/domain/repositories/follow_repo.dart';
+import 'package:auth/domain/repositories/user_profile_repo.dart';
 import 'package:auth/domain/usecases/comment/add_comment_usecase.dart';
 import 'package:auth/domain/usecases/comment/delete_comment_usecase.dart';
 import 'package:auth/domain/usecases/comment/edit_comment_usecase.dart';
@@ -50,6 +56,15 @@ import 'package:auth/domain/usecases/group/members/get_group_members_use_case.da
 import 'package:auth/domain/usecases/group/members/get_group_moderators_use_case.dart';
 import 'package:auth/domain/usecases/group/members/kick_member_use_case.dart';
 import 'package:auth/domain/usecases/group/members/unban_member_use_case.dart';
+import 'package:auth/domain/usecases/follow/accept_follow_requests.dart';
+import 'package:auth/domain/usecases/follow/decline_follow_requests.dart';
+import 'package:auth/domain/usecases/follow/follow_user.dart';
+import 'package:auth/domain/usecases/follow/get_my_follow_requests.dart';
+import 'package:auth/domain/usecases/follow/get_my_followers.dart';
+import 'package:auth/domain/usecases/follow/get_my_following.dart';
+import 'package:auth/domain/usecases/follow/get_user_followers.dart';
+import 'package:auth/domain/usecases/follow/get_user_following.dart';
+import 'package:auth/domain/usecases/follow/unfollow_user.dart';
 import 'package:auth/domain/usecases/post/comment_on_post_usecase.dart';
 import 'package:auth/domain/usecases/post/create_post_usecase.dart';
 import 'package:auth/domain/usecases/post/delete_post_usecase.dart';
@@ -95,10 +110,15 @@ import 'package:auth/presentation/manager/group_cubit/get_members_by_roles/membe
 import 'package:auth/presentation/manager/group_cubit/unban_member/unban_member_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/update_group/update_group_cubit.dart';
 import 'package:auth/presentation/manager/locale_cubit/locale_cubit.dart';
+import 'package:auth/domain/usecases/user_profile/get_my_profile.dart';
+import 'package:auth/presentation/manager/follow_cubit/follow_cubit.dart';
+import 'package:auth/presentation/manager/follow_cubit/follow_request_cubit.dart';
+import 'package:auth/presentation/manager/follow_cubit/get_follow_info_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/create_post_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/get_post/get_post_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/post_interaction_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/profile_cubit.dart';
 import 'package:auth/presentation/manager/register_cubit/register_cubit.dart';
 import 'package:auth/presentation/manager/sigin_in_cubit/request_otp/request_otp_cubit.dart';
 import 'package:auth/presentation/manager/sigin_in_cubit/sign_in_cubit.dart';
@@ -199,6 +219,7 @@ sl.registerLazySingleton(() => CommentOnPostUseCase(sl()));
   sl.registerFactory(
     () => PostCubit(getPostsUseCase: sl(), deletePostUseCase: sl()),
   );
+
   sl.registerFactory(
     () => PostInteractionCubit(
       reactToPostUseCase: sl(),
@@ -355,4 +376,50 @@ sl.registerLazySingleton(() => CommentOnPostUseCase(sl()));
   // CORE / GLOBAL
   // ==========================================================================
   sl.registerFactory(() => ThemeCubit(prefs));
+
+  sl.registerLazySingleton<ProfileRemoteDataSource>(
+    () => ProfileRemoteDataSourceImpl(api: sl(), errorHandler: sl()),
+  );
+  sl.registerLazySingleton<UserProfileRepo>(
+    () => UserProfileRepositoryImpl(remoteDataSource: sl()),
+  );
+
+  sl.registerFactory(() => ProfileCubit(getMyProfile: sl()));
+  sl.registerLazySingleton(() => GetMyProfile(sl()));
+
+  //follow
+  sl.registerLazySingleton<FollowRemoteDataSource>(
+    () => FollowRemoteDataSourceImpl(api: sl(), errorHandler: sl()),
+  );
+  sl.registerLazySingleton<FollowRepo>(
+    () => FollowRepoImpl(remote: sl()),
+  );
+
+  sl.registerLazySingleton(() => FollowUser(sl()));
+  sl.registerLazySingleton(() => UnfollowUser(sl()));
+  sl.registerLazySingleton(() => GetMyFollowRequests(sl()));
+  sl.registerLazySingleton(() => AcceptFollowRequest(sl()));
+  sl.registerLazySingleton(() => DeclineFollowRequest(sl()));
+  sl.registerLazySingleton(() => GetUserFollowers(sl()));
+  sl.registerLazySingleton(() => GetUserFollowing(sl()));
+  sl.registerLazySingleton(() => GetMyFollowers(sl()));
+  sl.registerLazySingleton(() => GetMyFollowing(sl()));
+  sl.registerFactory(
+    () => FollowCubit(followUserUseCase: sl(), unfollowUserUseCase: sl()),
+  );
+  sl.registerFactory(
+    () => FollowRequestCubit(
+      getMyFollowRequestsUseCase: sl(),
+      acceptFollowRequestUseCase: sl(),
+      declineFollowRequestUseCase: sl(),
+    ),
+  );
+  sl.registerFactory(
+    () => FollowInfoCubit(
+      getUserFollowersUseCase: sl(),
+      getUserFollowingUseCase: sl(),
+      getMyFollowersUseCase: sl(),
+      getMyFollowingUseCase: sl(),
+    ),
+  );
 }

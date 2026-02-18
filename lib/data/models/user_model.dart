@@ -20,9 +20,9 @@ class UserModel extends User {
       id: json['_id'] ?? '',
       email: json['email'] ?? '',
       username: json['username'] ?? '',
-      isVerified: json['isVerfied'] ?? false, 
-      createdAt: DateTime.parse(json['createdAt']),
-      updatedAt: DateTime.parse(json['updatedAt']),
+      isVerified: json['isVerfied'] ?? false,
+      createdAt: DateTime.tryParse(json['createdAt']) ?? DateTime.now(),
+      updatedAt: DateTime.tryParse(json['updatedAt']) ?? DateTime.now(),
     );
   }
 
