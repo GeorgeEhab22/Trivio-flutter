@@ -1,6 +1,7 @@
 import 'package:auth/common/functions/custom_list_tile.dart';
 import 'package:auth/common/functions/show_custom_dialog.dart';
 import 'package:auth/core/styels.dart';
+import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/groups/manage_group/widgets/member_rule_row.dart';
 import 'package:auth/presentation/groups/widgets/common_group_buttom_sheet.dart';
 import 'package:flutter/material.dart';
@@ -28,33 +29,36 @@ class MemberRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return ListTile(
       leading: CircleAvatar(
         radius: 26,
         backgroundImage: NetworkImage(image ?? 'https://picsum.photos/500'),
       ),
       title: Padding(
-        padding: const EdgeInsets.only(left: 2.0),
-        child: Text(name ?? "name", style: Styles.textStyle16),
+        // Use directional padding for RTL support
+        padding: const EdgeInsets.symmetric(horizontal: 2.0),
+        child: Text(name ?? l10n.username, style: Styles.textStyle16),
       ),
       trailing: IconButton(
         onPressed: () {
           showCommonGroupBottomSheet(
             context: context,
-            title: "Ban user",
+            title: l10n.manageMember,
             actions: [
               CustomListTile(
                 icon: Icons.logout_rounded,
-                text: "Kick",
+                text: l10n.kick,
                 onTap: () {
                   showCustomDialog(
                     context: context,
-                    title: "Kick $name",
-                    content: "Are you sure you want to kick $name?",
-                    confirmText: "Kick",
+                    title: l10n.kickUserTitle(name ?? l10n.username),
+                    content: l10n.kickUserContent(name ?? l10n.username),
+                    confirmText: l10n.kick,
                     confirmTextColor: Colors.red,
                     onConfirm: () {
-                      onKick!();
+                      onKick?.call();
                       context.pop();
                     },
                   );
@@ -62,16 +66,16 @@ class MemberRow extends StatelessWidget {
               ),
               CustomListTile(
                 icon: Icons.person_off_outlined,
-                text: "Ban",
+                text: l10n.ban,
                 onTap: () {
                   showCustomDialog(
                     context: context,
-                    title: "Ban $name",
-                    content: "Are you sure you want to ban $name?",
-                    confirmText: "Ban",
+                    title: l10n.banUserTitle(name ?? l10n.username),
+                    content: l10n.banUserContent(name ?? l10n.username),
+                    confirmText: l10n.ban,
                     confirmTextColor: Colors.red,
                     onConfirm: () {
-                      onBan!();
+                      onBan?.call();
                       context.pop();
                     },
                   );
@@ -82,22 +86,24 @@ class MemberRow extends StatelessWidget {
         },
         icon: Icon(Icons.more_horiz, color: Theme.of(context).iconTheme.color),
       ),
-      subtitle: MemberRuleRow(role: role ?? "Member"),
+      subtitle: MemberRuleRow(role: role ?? "member"),
       onTap: () {
         showCommonGroupBottomSheet(
           context: context,
-          title: "Change role",
+          title: l10n.changeRole,
           actions: [
-            buildRoleOption(context, "member", Icons.person),
+            buildRoleOption(context, "member", Icons.person, l10n.member),
             buildRoleOption(
               context,
               "moderator",
               Icons.admin_panel_settings_outlined,
+              l10n.moderator,
             ),
             buildRoleOption(
               context,
               "admin",
               Icons.admin_panel_settings_rounded,
+              l10n.admin,
             ),
           ],
         );
@@ -109,10 +115,11 @@ class MemberRow extends StatelessWidget {
     BuildContext context,
     String roleValue,
     IconData icon,
+    String localizedLabel,
   ) {
     return CustomListTile(
       icon: icon,
-      text: roleValue[0].toUpperCase() + roleValue.substring(1),
+      text: localizedLabel,
       onTap: () {
         onRoleChanged?.call(roleValue);
         context.pop();

@@ -30,8 +30,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sendingCode => 'Sending code...';
 
   @override
-  String registrationSuccess(Object username) {
-    return 'Welcome, $username! Your account has been created.';
+  String registrationSuccess(String username) {
+    return 'Welcome, $username! Your account has been created';
   }
 
   @override
@@ -97,7 +97,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get passwordResetSent => 'Password reset OTP sent successfully!';
 
   @override
-  String get signIn => 'Sign in';
+  String get signIn => 'Sign In';
 
   @override
   String get signingIn => 'Signing In...';
@@ -271,7 +271,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get skeletonLoadingText =>
-      'Loading content lines for skeleton effect.\nSecond line for better UI.';
+      'Loading content lines for skeleton effect.\nSecond line for better UI';
 
   @override
   String get errNoPosts => 'No posts found in your timeline';
@@ -544,19 +544,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get accountSettingsSub =>
-      'Manage your account details and preferences.';
+      'Manage your account details and preferences';
 
   @override
   String get privacySettings => 'Privacy Settings';
 
   @override
-  String get privacySettingsSub => 'Control who sees your posts and activity.';
+  String get privacySettingsSub => 'Control who sees your posts and activity';
 
   @override
   String get notificationPrefs => 'Notification Preferences';
 
   @override
-  String get notificationPrefsSub => 'Customize your notification alerts.';
+  String get notificationPrefsSub => 'Customize your notification alerts';
 
   @override
   String get appPrefs => 'App Preferences';
@@ -576,4 +576,290 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get searchableProfileSub =>
       'Allow your profile to appear in search results';
+
+  @override
+  String get search => 'Search';
+
+  @override
+  String get yourGroups => 'Your groups';
+
+  @override
+  String get suggestedGroups => 'Suggested groups';
+
+  @override
+  String get fromYourGroups => 'From your groups';
+
+  @override
+  String get suggestedForYou => 'Suggested for you';
+
+  @override
+  String get noJoinedGroupsYet =>
+      'You haven\'t joined any groups yet. Explore now!';
+
+  @override
+  String get forYou => 'For you';
+
+  @override
+  String get joined => 'Joined';
+
+  @override
+  String get discover => 'Discover';
+
+  @override
+  String get myGroups => 'My groups';
+
+  @override
+  String get members => 'members';
+
+  @override
+  String get remove => 'Remove';
+
+  @override
+  String get noPostsInGroups => 'No posts in your groups yet. Join some!';
+
+  @override
+  String get updateSuccessful => 'Update Successful';
+
+  @override
+  String get manage => 'Manage';
+
+  @override
+  String get mostRelevant => 'Most relevant';
+
+  @override
+  String get about => 'About';
+
+  @override
+  String get editDescription => 'Edit description';
+
+  @override
+  String get home => 'Home';
+
+  @override
+  String get writeSomething => 'Write something...';
+
+  @override
+  String get reportedPosts => 'Reported Posts';
+
+  @override
+  String get pendingPosts => 'Pending Posts';
+
+  @override
+  String get approve => 'Approve';
+
+  @override
+  String get decline => 'Decline';
+
+  @override
+  String get noModeratorsFound => 'No Moderators found';
+
+  @override
+  String get moderator => 'Moderator';
+
+  @override
+  String get membersRequests => 'Members Requests';
+
+  @override
+  String get requestAcceptedSuccess => 'Request accepted successfully';
+
+  @override
+  String get requestDeclinedSuccess => 'Request declined successfully';
+
+  @override
+  String get noPendingRequests => 'No pending requests';
+
+  @override
+  String get accepted => 'Accepted';
+
+  @override
+  String get declined => 'Declined';
+
+  @override
+  String get acceptMemberTitle => 'Accept this member?';
+
+  @override
+  String acceptMemberContent(String userName) {
+    return 'Do you want to add $userName to the group?';
+  }
+
+  @override
+  String get declineRequestTitle => 'Decline request?';
+
+  @override
+  String get declineRequestContent =>
+      'Are you sure you want to decline this request?';
+
+  @override
+  String get noMembersFound => 'No members found';
+
+  @override
+  String get member => 'Member';
+
+  @override
+  String get manageGroup => 'Manage group';
+
+  @override
+  String get groupDeletedSuccess => 'Group deleted successfully';
+
+  @override
+  String get review => 'Review';
+
+  @override
+  String get communityAndPeople => 'Community & People';
+
+  @override
+  String get people => 'People';
+
+  @override
+  String get bannedMembers => 'Banned Members';
+
+  @override
+  String get shareGroup => 'Share group';
+
+  @override
+  String get linkCopied => 'Link copied to clipboard';
+
+  @override
+  String get leaveGroup => 'Leave group';
+
+  @override
+  String get leaveGroupTitle => 'Leave group?';
+
+  @override
+  String get leaveGroupContent => 'Are you sure you want to leave this group?';
+
+  @override
+  String get leave => 'Leave';
+
+  @override
+  String get deleteGroup => 'Delete group';
+
+  @override
+  String get deleteGroupTitle => 'Delete group?';
+
+  @override
+  String get deleteGroupContent =>
+      'Are you sure you want to delete this group?';
+
+  @override
+  String get noBannedMembersFound => 'No banned members found';
+
+  @override
+  String get username => 'Username';
+
+  @override
+  String get unban => 'Unban';
+
+  @override
+  String get unbanUserTitle => 'Unban user';
+
+  @override
+  String get unbanUserContent => 'Are you sure you want to unban this user?';
+
+  @override
+  String get noAdminsFound => 'No Admins found';
+
+  @override
+  String get admin => 'Admin';
+
+  @override
+  String get manageMember => 'Manage Member';
+
+  @override
+  String get kick => 'Kick';
+
+  @override
+  String get ban => 'Ban';
+
+  @override
+  String get changeRole => 'Change Role';
+
+  @override
+  String kickUserTitle(String name) {
+    return 'Kick $name';
+  }
+
+  @override
+  String kickUserContent(String name) {
+    return 'Are you sure you want to kick $name?';
+  }
+
+  @override
+  String banUserTitle(String name) {
+    return 'Ban $name';
+  }
+
+  @override
+  String banUserContent(String name) {
+    return 'Are you sure you want to ban $name?';
+  }
+
+  @override
+  String get moderators => 'Moderators';
+
+  @override
+  String get admins => 'Admins';
+
+  @override
+  String get privateGroupDescription =>
+      'Only members can see who\'s in the group and what they post.';
+
+  @override
+  String get join => 'Join';
+
+  @override
+  String get requested => 'Requested';
+
+  @override
+  String get cancelJoinRequest => 'Cancel join request';
+
+  @override
+  String get cancelJoinRequestContent =>
+      'Are you sure you want to cancel this request?';
+
+  @override
+  String get cancelRequest => 'Cancel Request';
+
+  @override
+  String get reportGroup => 'Report group';
+
+  @override
+  String get loading => 'Loading...';
+
+  @override
+  String get createGroup => 'Create group';
+
+  @override
+  String get name => 'Name';
+
+  @override
+  String get nameYourGroup => 'Name your group';
+
+  @override
+  String get description => 'Description';
+
+  @override
+  String get tellPeopleAboutGroup => 'Tell people what this group is about';
+
+  @override
+  String get next => 'Next';
+
+  @override
+  String get close => 'Close';
+
+  @override
+  String get groupCreatedSuccess => 'Group Created Successfully!';
+
+  @override
+  String get addCoverPhoto => 'Add a cover photo';
+
+  @override
+  String get addCoverPhotoSub =>
+      'Get noticed with an image that helps show what your group is all about.';
+
+  @override
+  String get creating => 'Creating...';
+
+  @override
+  String get getSeeAll => 'see all';
 }

@@ -1,3 +1,4 @@
+import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/groups/widgets/dummy_for_skeletonizer.dart';
 import 'package:auth/presentation/groups/widgets/group_item.dart';
 import 'package:auth/presentation/manager/group_cubit/get_joined_groups/get_joined_groups_cubit.dart';
@@ -11,15 +12,16 @@ class YourGroupsRowList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return BlocBuilder<GetJoinedGroupsCubit, GetJoinedGroupsState>(
       builder: (context, state) {
         final bool isLoading = state is GetJoinedGroupsLoading;
         if (state is GetJoinedGroupsEmpty) {
-          return const SizedBox(
+          return SizedBox(
             height: 110,
             child: Center(
               child: Text(
-                "You haven't joined any groups yet. Explore now!",
+                l10n.noJoinedGroupsYet,
                 style: TextStyle(color: Colors.grey, fontSize: 14),
               ),
             ),

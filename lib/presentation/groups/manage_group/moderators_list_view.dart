@@ -1,3 +1,4 @@
+import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/authentication/widgets/show_custom_snackbar.dart';
 import 'package:auth/presentation/groups/manage_group/widgets/member_row.dart';
 import 'package:auth/presentation/manager/group_cubit/ban_member/ban_member_cubit.dart';
@@ -18,6 +19,7 @@ class ModeratorsListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return MultiBlocListener(
       listeners: [
         BlocListener<ChangeMemberRoleCubit, ChangeMemberRoleState>(
@@ -71,7 +73,7 @@ class ModeratorsListView extends StatelessWidget {
             final moderators = state.moderators;
 
             if (moderators.isEmpty) {
-              return const Center(child: Text("No Moderators found"));
+              return Center(child: Text(l10n.noModeratorsFound));
             }
 
             return ListView.builder(
@@ -81,7 +83,7 @@ class ModeratorsListView extends StatelessWidget {
                 return MemberRow(
                   name: moderator.userName,
                   image: moderator.profileImageUrl,
-                  role: moderator.role ?? "Moderator",
+                  role: moderator.role ?? l10n.moderator,
                   onRoleChanged: (newRole) {
                     context.read<ChangeMemberRoleCubit>().changeMemberRole(
                       groupId: groupId,

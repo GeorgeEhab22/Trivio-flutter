@@ -30,7 +30,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get sendingCode => 'جاري إرسال الرمز...';
 
   @override
-  String registrationSuccess(Object username) {
+  String registrationSuccess(String username) {
     return 'أهلاً بك يا $username! تم إنشاء حسابك بنجاح';
   }
 
@@ -315,7 +315,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get reportDisclaimer =>
-      'تساعدنا ملاحظاتك في الحفاظ على أمان مجتمع كرة القدم.';
+      'تساعدنا ملاحظاتك في الحفاظ على أمان مجتمع كرة القدم';
 
   @override
   String get reportReasonSpam => 'محتوى غير مرغوب فيه';
@@ -541,36 +541,321 @@ class AppLocalizationsAr extends AppLocalizations {
   String get accountSettings => 'إعدادات الحساب';
 
   @override
-  String get accountSettingsSub => 'إدارة تفاصيل حسابك وتفضيلاتك.';
+  String get accountSettingsSub => 'إدارة تفاصيل حسابك وتفضيلاتك';
 
   @override
   String get privacySettings => 'إعدادات الخصوصية';
 
   @override
-  String get privacySettingsSub => 'التحكم في من يرى منشوراتك ونشاطك.';
+  String get privacySettingsSub => 'التحكم في من يرى منشوراتك ونشاطك';
 
   @override
   String get notificationPrefs => 'تفضيلات الإشعارات';
 
   @override
-  String get notificationPrefsSub => 'تخصيص تنبيهات الإشعارات الخاصة بك.';
+  String get notificationPrefsSub => 'تخصيص تنبيهات الإشعارات الخاصة بك';
 
   @override
   String get appPrefs => 'تفضيلات التطبيق';
 
   @override
-  String get appPrefsSub => 'ضبط اللغة، المظهر، واستهلاك البيانات.';
+  String get appPrefsSub => 'ضبط اللغة، المظهر، واستهلاك البيانات';
 
   @override
   String get requireFollow => 'طلب الموافقة على المتابعة';
 
   @override
-  String get requireFollowSub => 'الموافقة على المتابعين يدوياً.';
+  String get requireFollowSub => 'الموافقة على المتابعين يدوياً';
 
   @override
   String get searchableProfile => 'ملف شخصي قابل للبحث';
 
   @override
   String get searchableProfileSub =>
-      'السماح لملفك الشخصي بالظهور في نتائج البحث.';
+      'السماح لملفك الشخصي بالظهور في نتائج البحث';
+
+  @override
+  String get search => 'بحث';
+
+  @override
+  String get yourGroups => 'مجموعاتك';
+
+  @override
+  String get suggestedGroups => 'مجموعات مقترحة';
+
+  @override
+  String get fromYourGroups => 'من مجموعاتك';
+
+  @override
+  String get suggestedForYou => 'مقترح لك';
+
+  @override
+  String get noJoinedGroupsYet => 'لم تنضم إلى أي مجموعات بعد. استكشف الآن!';
+
+  @override
+  String get forYou => 'لك';
+
+  @override
+  String get joined => 'المنضمة';
+
+  @override
+  String get discover => 'استكشف';
+
+  @override
+  String get myGroups => 'مجموعاتي';
+
+  @override
+  String get members => 'عضو';
+
+  @override
+  String get remove => 'إزالة';
+
+  @override
+  String get noPostsInGroups =>
+      'لا توجد منشورات في مجموعاتك بعد. انضم إلى بعض المجموعات!';
+
+  @override
+  String get updateSuccessful => 'تم التحديث بنجاح';
+
+  @override
+  String get manage => 'إدارة';
+
+  @override
+  String get mostRelevant => 'الأكثر صلة';
+
+  @override
+  String get about => 'حول المجموعة';
+
+  @override
+  String get editDescription => 'تعديل الوصف';
+
+  @override
+  String get home => 'الرئيسية';
+
+  @override
+  String get writeSomething => 'اكتب شيئاً...';
+
+  @override
+  String get reportedPosts => 'المنشورات المبلّغ عنها';
+
+  @override
+  String get pendingPosts => 'منشورات في انتظار المراجعة';
+
+  @override
+  String get approve => 'موافقة';
+
+  @override
+  String get decline => 'رفض';
+
+  @override
+  String get noModeratorsFound => 'لم يتم العثور على مشرفين';
+
+  @override
+  String get moderator => 'مشرف';
+
+  @override
+  String get membersRequests => 'طلبات الأعضاء';
+
+  @override
+  String get requestAcceptedSuccess => 'تم قبول الطلب بنجاح';
+
+  @override
+  String get requestDeclinedSuccess => 'تم رفض الطلب بنجاح';
+
+  @override
+  String get noPendingRequests => 'لا توجد طلبات معلقة';
+
+  @override
+  String get accepted => 'تم القبول';
+
+  @override
+  String get declined => 'تم الرفض';
+
+  @override
+  String get acceptMemberTitle => 'قبول هذا العضو؟';
+
+  @override
+  String acceptMemberContent(String userName) {
+    return 'هل تريد إضافة $userName إلى المجموعة؟';
+  }
+
+  @override
+  String get declineRequestTitle => 'رفض الطلب؟';
+
+  @override
+  String get declineRequestContent => 'هل أنت متأكد أنك تريد رفض هذا الطلب؟';
+
+  @override
+  String get noMembersFound => 'لم يتم العثور على أعضاء';
+
+  @override
+  String get member => 'عضو';
+
+  @override
+  String get manageGroup => 'إدارة المجموعة';
+
+  @override
+  String get groupDeletedSuccess => 'تم حذف المجموعة بنجاح';
+
+  @override
+  String get review => 'مراجعة';
+
+  @override
+  String get communityAndPeople => 'المجتمع والأشخاص';
+
+  @override
+  String get people => 'الأشخاص';
+
+  @override
+  String get bannedMembers => 'الأعضاء المحظورون';
+
+  @override
+  String get shareGroup => 'مشاركة المجموعة';
+
+  @override
+  String get linkCopied => 'تم نسخ الرابط إلى الحافظة';
+
+  @override
+  String get leaveGroup => 'مغادرة المجموعة';
+
+  @override
+  String get leaveGroupTitle => 'مغادرة المجموعة؟';
+
+  @override
+  String get leaveGroupContent => 'هل أنت متأكد أنك تريد مغادرة هذه المجموعة؟';
+
+  @override
+  String get leave => 'مغادرة';
+
+  @override
+  String get deleteGroup => 'حذف المجموعة';
+
+  @override
+  String get deleteGroupTitle => 'حذف المجموعة؟';
+
+  @override
+  String get deleteGroupContent => 'هل أنت متأكد أنك تريد حذف هذه المجموعة؟';
+
+  @override
+  String get noBannedMembersFound => 'لم يتم العثور على أعضاء محظورين';
+
+  @override
+  String get username => 'اسم المستخدم';
+
+  @override
+  String get unban => 'إلغاء الحظر';
+
+  @override
+  String get unbanUserTitle => 'إلغاء حظر المستخدم';
+
+  @override
+  String get unbanUserContent =>
+      'هل أنت متأكد أنك تريد إلغاء حظر هذا المستخدم؟';
+
+  @override
+  String get noAdminsFound => 'لم يتم العثور على مسؤولين';
+
+  @override
+  String get admin => 'مسؤول';
+
+  @override
+  String get manageMember => 'إدارة العضو';
+
+  @override
+  String get kick => 'طرد';
+
+  @override
+  String get ban => 'حظر';
+
+  @override
+  String get changeRole => 'تغيير الرتبة';
+
+  @override
+  String kickUserTitle(String name) {
+    return 'طرد $name';
+  }
+
+  @override
+  String kickUserContent(String name) {
+    return 'هل أنت متأكد أنك تريد طرد $name؟';
+  }
+
+  @override
+  String banUserTitle(String name) {
+    return 'حظر $name';
+  }
+
+  @override
+  String banUserContent(String name) {
+    return 'هل أنت متأكد أنك تريد حظر $name؟';
+  }
+
+  @override
+  String get moderators => 'المشرفون';
+
+  @override
+  String get admins => 'المسؤولون';
+
+  @override
+  String get privateGroupDescription =>
+      'يمكن للأعضاء فقط رؤية من في المجموعة وما ينشرونه.';
+
+  @override
+  String get join => 'انضمام';
+
+  @override
+  String get requested => 'تم إرسال الطلب';
+
+  @override
+  String get cancelJoinRequest => 'إلغاء طلب الانضمام';
+
+  @override
+  String get cancelJoinRequestContent =>
+      'هل أنت متأكد أنك تريد إلغاء هذا الطلب؟';
+
+  @override
+  String get cancelRequest => 'إلغاء الطلب';
+
+  @override
+  String get reportGroup => 'إبلاغ عن المجموعة';
+
+  @override
+  String get loading => 'جارٍ التحميل...';
+
+  @override
+  String get createGroup => 'إنشاء مجموعة';
+
+  @override
+  String get name => 'الاسم';
+
+  @override
+  String get nameYourGroup => 'قم بتسمية مجموعتك';
+
+  @override
+  String get description => 'الوصف';
+
+  @override
+  String get tellPeopleAboutGroup => 'أخبر الأشخاص عن موضوع هذه المجموعة';
+
+  @override
+  String get next => 'التالي';
+
+  @override
+  String get close => 'إغلاق';
+
+  @override
+  String get groupCreatedSuccess => 'تم إنشاء المجموعة بنجاح!';
+
+  @override
+  String get addCoverPhoto => 'أضف صورة غلاف';
+
+  @override
+  String get addCoverPhotoSub =>
+      'اجعل مجموعتك ملحوظة بصورة تساعد في إظهار ما تدور حوله مجموعتك.';
+
+  @override
+  String get creating => 'جارٍ الإنشاء...';
+
+  @override
+  String get getSeeAll => 'إظهار الكل';
 }

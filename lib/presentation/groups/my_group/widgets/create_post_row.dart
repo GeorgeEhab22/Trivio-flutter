@@ -1,5 +1,6 @@
 import 'package:auth/common/functions/custom_square_button.dart';
 import 'package:auth/constants/colors.dart';
+import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/home/add_post/add_post_bottom_sheet.dart';
 import 'package:auth/presentation/manager/group_cubit/get_group_posts/group_posts_cubit.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +13,8 @@ class CreatePostRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Row(
       children: [
         const CircleAvatar(
@@ -36,7 +39,7 @@ class CreatePostRow extends StatelessWidget {
                 );
               }
             },
-            label: "Write something",
+            label: l10n.writeSomething, // Localized
             borderRadius: 20,
             height: 12,
             backgroundColor: Theme.of(context).cardColor,

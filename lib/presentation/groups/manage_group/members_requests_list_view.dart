@@ -1,5 +1,6 @@
 import 'package:auth/common/functions/show_custom_dialog.dart';
 import 'package:auth/core/styels.dart';
+import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/authentication/widgets/show_custom_snackbar.dart';
 import 'package:auth/presentation/manager/group_cubit/accept_request/accept_request_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/accept_request/accept_request_state.dart';
@@ -16,6 +17,8 @@ class MembersRequestsListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return MultiBlocListener(
       listeners: [
         BlocListener<AcceptRequestCubit, AcceptRequestState>(
@@ -23,7 +26,7 @@ class MembersRequestsListView extends StatelessWidget {
             if (state is AcceptRequestSuccess) {
               showCustomSnackBar(
                 context,
-                "Request accepted successfully",
+                l10n.requestAcceptedSuccess,
                 true,
               );
             }
@@ -37,7 +40,7 @@ class MembersRequestsListView extends StatelessWidget {
             if (state is DeclineRequestSuccess) {
               showCustomSnackBar(
                 context,
-                "Request declined successfully",
+                l10n.requestDeclinedSuccess,
                 true,
               );
             }
@@ -48,25 +51,25 @@ class MembersRequestsListView extends StatelessWidget {
         ),
       ],
       child: Scaffold(
-        appBar: AppBar(title: const Text('Members requests')),
+        appBar: AppBar(title: Text(l10n.membersRequests)),
         body: BlocBuilder<GetJoinRequestsCubit, GetJoinRequestsState>(
           builder: (context, state) {
             if (state is GetJoinRequestsLoading) {
               return const Center(child: CircularProgressIndicator());
             } else if (state is GetJoinRequestsEmpty) {
-              return const Center(
+              return Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.person_search_rounded,
                       size: 80,
                       color: Colors.grey,
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     Text(
-                      "No pending requests",
-                      style: TextStyle(color: Colors.grey, fontSize: 18),
+                      l10n.noPendingRequests,
+                      style: const TextStyle(color: Colors.grey, fontSize: 18),
                     ),
                   ],
                 ),
@@ -84,30 +87,26 @@ class MembersRequestsListView extends StatelessWidget {
                         radius: 26,
                         backgroundImage: NetworkImage(
                           'https://picsum.photos/500',
-                        ), //
+                        ),
                       ),
                       title: Text(
                         request.userName,
                         style: Styles.textStyle16,
-                      ), //
+                      ),
                       subtitle: Text(request.userEmail),
                       trailing: Builder(
                         builder: (context) {
-                          final acceptState = context
-                              .watch<AcceptRequestCubit>()
-                              .state;
-                          final declineState = context
-                              .watch<DeclineRequestCubit>()
-                              .state;
+                          final acceptState = context.watch<AcceptRequestCubit>().state;
+                          final declineState = context.watch<DeclineRequestCubit>().state;
 
                           if (acceptState is AcceptRequestSuccess &&
                               acceptState.requestId == request.requestId) {
-                            return const Text("Accepted");
+                            return Text(l10n.accepted);
                           }
 
                           if (declineState is DeclineRequestSuccess &&
                               declineState.requestId == request.requestId) {
-                            return const Text("Declined");
+                            return Text(l10n.declined);
                           }
 
                           return Row(
@@ -117,36 +116,30 @@ class MembersRequestsListView extends StatelessWidget {
                                 icon: const Icon(Icons.check),
                                 onPressed: () => showCustomDialog(
                                   context: context,
-                                  title: "Accept this member?",
+                                  title: l10n.acceptMemberTitle,
                                   onConfirm: () {
-                                    context
-                                        .read<AcceptRequestCubit>()
-                                        .acceptRequest(
+                                    context.read<AcceptRequestCubit>().acceptRequest(
                                           groupId: groupId,
                                           requestId: request.requestId,
                                         );
                                   },
-                                  content:
-                                      "Do you want to add ${request.userName} to the group?",
+                                  content: l10n.acceptMemberContent(request.userName),
                                 ),
                               ),
                               IconButton(
                                 icon: const Icon(Icons.close),
                                 onPressed: () => showCustomDialog(
                                   context: context,
-                                  title: "Decline request?",
-                                  confirmText: "Decline",
+                                  title: l10n.declineRequestTitle,
+                                  confirmText: l10n.decline,
                                   confirmTextColor: Colors.red,
                                   onConfirm: () {
-                                    context
-                                        .read<DeclineRequestCubit>()
-                                        .declineRequest(
+                                    context.read<DeclineRequestCubit>().declineRequest(
                                           groupId: groupId,
                                           requestId: request.requestId,
                                         );
                                   },
-                                  content:
-                                      "Are you sure you want to decline this request?",
+                                  content: l10n.declineRequestContent,
                                 ),
                               ),
                             ],

@@ -1,6 +1,7 @@
 import 'package:auth/common/functions/custom_square_button.dart';
 import 'package:auth/core/styels.dart';
 import 'package:auth/injection_container.dart' as di;
+import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/groups/group_preview/widgets/group_image.dart';
 import 'package:auth/presentation/groups/group_preview/widgets/join_group_button.dart';
 import 'package:auth/presentation/manager/group_cubit/cancel_request/cancel_request_group_cubit.dart';
@@ -87,7 +88,7 @@ class SuggestCard extends StatelessWidget {
                           const SizedBox(height: 16),
 
                           if (isRow)
-                            buildRowButtons()
+                            buildRowButtons(context)
                           else
                             buildColumnButtons(),
                         ],
@@ -103,7 +104,8 @@ class SuggestCard extends StatelessWidget {
     );
   }
 
-  Widget buildRowButtons() {
+  Widget buildRowButtons(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Row(
       children: [
         Expanded(
@@ -115,7 +117,7 @@ class SuggestCard extends StatelessWidget {
         const SizedBox(width: 8),
         Expanded(
           child: CustomSquareButton(
-            label: "Remove",
+            label: l10n.remove,
             onTap: onRemoveSuggestion ?? () {},
             backgroundColor: Colors.grey[200],
             textColor: Colors.black,

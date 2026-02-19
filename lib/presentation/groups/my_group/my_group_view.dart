@@ -2,6 +2,7 @@ import 'package:auth/common/functions/custom_square_button.dart';
 import 'package:auth/constants/colors.dart';
 import 'package:auth/core/app_routes.dart';
 import 'package:auth/core/styels.dart';
+import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/authentication/widgets/show_custom_snackbar.dart';
 import 'package:auth/presentation/groups/my_group/widgets/create_post_row.dart';
 import 'package:auth/presentation/groups/my_group/widgets/my_group_cover_image.dart';
@@ -24,12 +25,14 @@ class MyGroupView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: const MyGroupAppBar(),
       body: BlocListener<UpdateGroupCubit, UpdateGroupState>(
         listener: (context, state) {
           if (state is UpdateGroupSuccess) {
-            showCustomSnackBar(context, "Update Successful", true);
+            showCustomSnackBar(context, l10n.updateSuccessful, true);
           }
           if (state is UpdateGroupFailure) {
             showCustomSnackBar(context, state.message, false);
@@ -76,7 +79,7 @@ class MyGroupView extends StatelessWidget {
                               const SizedBox(height: 20),
 
                               CustomSquareButton(
-                                label: "Manage",
+                                label: l10n.manage,
                                 height: 13,
                                 isExpanded: true,
                                 row: true,
@@ -96,8 +99,8 @@ class MyGroupView extends StatelessWidget {
                               const SizedBox(height: 16),
                               const Divider(),
                               const SizedBox(height: 16),
-                              const Text(
-                                "Most relevant",
+                              Text(
+                                l10n.mostRelevant,
                                 style: Styles.textStyle16,
                               ),
                               const SizedBox(height: 12),

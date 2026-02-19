@@ -1,5 +1,6 @@
 import 'package:auth/common/functions/bottom_sheet_manager.dart';
 import 'package:auth/common/functions/custom_square_button.dart';
+import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/groups/group_preview/widgets/group_image.dart';
 import 'package:auth/presentation/manager/group_cubit/update_group/update_group_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/update_group/update_group_state.dart';
@@ -18,12 +19,14 @@ class MyGroupCoverImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Stack(
       children: [
         GroupImage(image: coverImage),
-        Positioned(
+        PositionedDirectional( // Changed to handle RTL automatically
           bottom: 12,
-          right: 12,
+          end: 12, // Using 'end' instead of 'right'
           child: BlocBuilder<UpdateGroupCubit, UpdateGroupState>(
             builder: (context, state) {
               if (state is UpdateGroupLoading &&
@@ -34,7 +37,7 @@ class MyGroupCoverImage extends StatelessWidget {
                 );
               }
               return CustomSquareButton(
-                label: "Edit",
+                label: l10n.edit, // Localized
                 leadingIcon: Icons.edit,
                 height: 9,
                 row: true,

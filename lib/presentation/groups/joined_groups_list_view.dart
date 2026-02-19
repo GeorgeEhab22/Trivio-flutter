@@ -1,4 +1,5 @@
 import 'package:auth/core/styels.dart';
+import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/groups/widgets/dummy_for_skeletonizer.dart';
 import 'package:auth/presentation/groups/widgets/group_item.dart';
 import 'package:auth/presentation/manager/group_cubit/get_joined_groups/get_joined_groups_cubit.dart';
@@ -12,15 +13,17 @@ class JoinedGroupsListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return BlocBuilder<GetJoinedGroupsCubit, GetJoinedGroupsState>(
       builder: (context, state) {
         if (state is GetJoinedGroupsEmpty) {
-          return const SizedBox(
+          return SizedBox(
             height: 110,
             child: Center(
               child: Text(
-                "You haven't joined any groups yet. Explore now!",
-                style: TextStyle(color: Colors.grey, fontSize: 14),
+                l10n.noJoinedGroupsYet, // Localized
+                style: const TextStyle(color: Colors.grey, fontSize: 14),
+                textAlign: TextAlign.center,
               ),
             ),
           );
@@ -62,11 +65,9 @@ class JoinedGroupsListView extends StatelessWidget {
                         const SizedBox(width: 6),
                         Flexible(
                           child: Text(
-                            'Search',
+                            l10n.search, // Localized
                             style: Styles.textStyle16.copyWith(
-                              color: Theme.of(
-                                context,
-                              ).textTheme.bodyMedium?.color,
+                              color: Theme.of(context).textTheme.bodyMedium?.color,
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),

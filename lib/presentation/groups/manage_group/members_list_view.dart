@@ -1,3 +1,4 @@
+import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/authentication/widgets/show_custom_snackbar.dart';
 import 'package:auth/presentation/groups/manage_group/widgets/member_row.dart';
 import 'package:auth/presentation/manager/group_cubit/ban_member/ban_member_cubit.dart';
@@ -17,6 +18,8 @@ class MembersListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return MultiBlocListener(
       listeners: [
         BlocListener<ChangeMemberRoleCubit, ChangeMemberRoleState>(
@@ -24,9 +27,9 @@ class MembersListView extends StatelessWidget {
             if (state is ChangeMemberRoleSuccess) {
               showCustomSnackBar(context, state.message, true);
               context.read<GroupMembersCubit>().updateMemberRoleLocally(
-                state.userId,
-                state.newRole,
-              );
+                    state.userId,
+                    state.newRole,
+                  );
             }
           },
         ),
@@ -35,8 +38,8 @@ class MembersListView extends StatelessWidget {
             if (state is BanMemberSuccess) {
               showCustomSnackBar(context, state.message, true);
               context.read<GroupMembersCubit>().removeMemberLocally(
-                state.userId,
-              );
+                    state.userId,
+                  );
             }
             if (state is BanMemberFailure) {
               showCustomSnackBar(context, state.message, false);
@@ -48,8 +51,8 @@ class MembersListView extends StatelessWidget {
             if (state is KickMemberSuccess) {
               showCustomSnackBar(context, state.message, true);
               context.read<GroupMembersCubit>().removeMemberLocally(
-                state.userId,
-              );
+                    state.userId,
+                  );
             }
           },
         ),
@@ -63,7 +66,7 @@ class MembersListView extends StatelessWidget {
             final members = state.members;
 
             if (members.isEmpty) {
-              return const Center(child: Text("No members found"));
+              return Center(child: Text(l10n.noMembersFound));
             }
             return ListView.builder(
               itemCount: members.length,
@@ -72,22 +75,22 @@ class MembersListView extends StatelessWidget {
                 return MemberRow(
                   name: member.userName,
                   image: member.profileImageUrl,
-                  role: member.role ?? "Member",
+                  role: member.role ?? l10n.member,
                   onRoleChanged: (newRole) {
                     context.read<ChangeMemberRoleCubit>().changeMemberRole(
-                      groupId: groupId,
-                      userId: member.userId!,
-                      newRole: newRole,
-                    );
+                          groupId: groupId,
+                          userId: member.userId!,
+                          newRole: newRole,
+                        );
                   },
                   onBan: () => context.read<BanMemberCubit>().banMember(
-                    groupId: groupId,
-                    targetUserId: member.userId!,
-                  ),
+                        groupId: groupId,
+                        targetUserId: member.userId!,
+                      ),
                   onKick: () => context.read<KickMemberCubit>().kickMember(
-                    groupId: groupId,
-                    targetUserId: member.userId!,
-                  ),
+                        groupId: groupId,
+                        targetUserId: member.userId!,
+                      ),
                 );
               },
             );

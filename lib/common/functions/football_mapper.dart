@@ -145,6 +145,7 @@ class FootballMapper {
     "Argentina": "الأرجنتين",
     "Brazil": "البرازيل",
     "France": "فرنسا",
+    "Italy": "إيطاليا",
     "Germany": "ألمانيا",
     "Spain": "إسبانيا",
     "England": "إنجلترا",

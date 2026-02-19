@@ -143,8 +143,8 @@ abstract class AppLocalizations {
   /// No description provided for @registrationSuccess.
   ///
   /// In en, this message translates to:
-  /// **'Welcome, {username}! Your account has been created.'**
-  String registrationSuccess(Object username);
+  /// **'Welcome, {username}! Your account has been created'**
+  String registrationSuccess(String username);
 
   /// No description provided for @verificationSuccess.
   ///
@@ -269,7 +269,7 @@ abstract class AppLocalizations {
   /// No description provided for @signIn.
   ///
   /// In en, this message translates to:
-  /// **'Sign in'**
+  /// **'Sign In'**
   String get signIn;
 
   /// No description provided for @signingIn.
@@ -605,7 +605,7 @@ abstract class AppLocalizations {
   /// No description provided for @skeletonLoadingText.
   ///
   /// In en, this message translates to:
-  /// **'Loading content lines for skeleton effect.\nSecond line for better UI.'**
+  /// **'Loading content lines for skeleton effect.\nSecond line for better UI'**
   String get skeletonLoadingText;
 
   /// No description provided for @errNoPosts.
@@ -1133,7 +1133,7 @@ abstract class AppLocalizations {
   /// No description provided for @accountSettingsSub.
   ///
   /// In en, this message translates to:
-  /// **'Manage your account details and preferences.'**
+  /// **'Manage your account details and preferences'**
   String get accountSettingsSub;
 
   /// No description provided for @privacySettings.
@@ -1145,7 +1145,7 @@ abstract class AppLocalizations {
   /// No description provided for @privacySettingsSub.
   ///
   /// In en, this message translates to:
-  /// **'Control who sees your posts and activity.'**
+  /// **'Control who sees your posts and activity'**
   String get privacySettingsSub;
 
   /// No description provided for @notificationPrefs.
@@ -1157,7 +1157,7 @@ abstract class AppLocalizations {
   /// No description provided for @notificationPrefsSub.
   ///
   /// In en, this message translates to:
-  /// **'Customize your notification alerts.'**
+  /// **'Customize your notification alerts'**
   String get notificationPrefsSub;
 
   /// No description provided for @appPrefs.
@@ -1195,6 +1195,546 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Allow your profile to appear in search results'**
   String get searchableProfileSub;
+
+  /// No description provided for @search.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get search;
+
+  /// No description provided for @yourGroups.
+  ///
+  /// In en, this message translates to:
+  /// **'Your groups'**
+  String get yourGroups;
+
+  /// No description provided for @suggestedGroups.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggested groups'**
+  String get suggestedGroups;
+
+  /// No description provided for @fromYourGroups.
+  ///
+  /// In en, this message translates to:
+  /// **'From your groups'**
+  String get fromYourGroups;
+
+  /// No description provided for @suggestedForYou.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggested for you'**
+  String get suggestedForYou;
+
+  /// No description provided for @noJoinedGroupsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'You haven\'t joined any groups yet. Explore now!'**
+  String get noJoinedGroupsYet;
+
+  /// No description provided for @forYou.
+  ///
+  /// In en, this message translates to:
+  /// **'For you'**
+  String get forYou;
+
+  /// No description provided for @joined.
+  ///
+  /// In en, this message translates to:
+  /// **'Joined'**
+  String get joined;
+
+  /// No description provided for @discover.
+  ///
+  /// In en, this message translates to:
+  /// **'Discover'**
+  String get discover;
+
+  /// No description provided for @myGroups.
+  ///
+  /// In en, this message translates to:
+  /// **'My groups'**
+  String get myGroups;
+
+  /// No description provided for @members.
+  ///
+  /// In en, this message translates to:
+  /// **'members'**
+  String get members;
+
+  /// No description provided for @remove.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get remove;
+
+  /// No description provided for @noPostsInGroups.
+  ///
+  /// In en, this message translates to:
+  /// **'No posts in your groups yet. Join some!'**
+  String get noPostsInGroups;
+
+  /// No description provided for @updateSuccessful.
+  ///
+  /// In en, this message translates to:
+  /// **'Update Successful'**
+  String get updateSuccessful;
+
+  /// No description provided for @manage.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage'**
+  String get manage;
+
+  /// No description provided for @mostRelevant.
+  ///
+  /// In en, this message translates to:
+  /// **'Most relevant'**
+  String get mostRelevant;
+
+  /// No description provided for @about.
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get about;
+
+  /// No description provided for @editDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit description'**
+  String get editDescription;
+
+  /// No description provided for @home.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get home;
+
+  /// No description provided for @writeSomething.
+  ///
+  /// In en, this message translates to:
+  /// **'Write something...'**
+  String get writeSomething;
+
+  /// No description provided for @reportedPosts.
+  ///
+  /// In en, this message translates to:
+  /// **'Reported Posts'**
+  String get reportedPosts;
+
+  /// No description provided for @pendingPosts.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending Posts'**
+  String get pendingPosts;
+
+  /// No description provided for @approve.
+  ///
+  /// In en, this message translates to:
+  /// **'Approve'**
+  String get approve;
+
+  /// No description provided for @decline.
+  ///
+  /// In en, this message translates to:
+  /// **'Decline'**
+  String get decline;
+
+  /// No description provided for @noModeratorsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No Moderators found'**
+  String get noModeratorsFound;
+
+  /// No description provided for @moderator.
+  ///
+  /// In en, this message translates to:
+  /// **'Moderator'**
+  String get moderator;
+
+  /// No description provided for @membersRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'Members Requests'**
+  String get membersRequests;
+
+  /// No description provided for @requestAcceptedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Request accepted successfully'**
+  String get requestAcceptedSuccess;
+
+  /// No description provided for @requestDeclinedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Request declined successfully'**
+  String get requestDeclinedSuccess;
+
+  /// No description provided for @noPendingRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'No pending requests'**
+  String get noPendingRequests;
+
+  /// No description provided for @accepted.
+  ///
+  /// In en, this message translates to:
+  /// **'Accepted'**
+  String get accepted;
+
+  /// No description provided for @declined.
+  ///
+  /// In en, this message translates to:
+  /// **'Declined'**
+  String get declined;
+
+  /// No description provided for @acceptMemberTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept this member?'**
+  String get acceptMemberTitle;
+
+  /// No description provided for @acceptMemberContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Do you want to add {userName} to the group?'**
+  String acceptMemberContent(String userName);
+
+  /// No description provided for @declineRequestTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Decline request?'**
+  String get declineRequestTitle;
+
+  /// No description provided for @declineRequestContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to decline this request?'**
+  String get declineRequestContent;
+
+  /// No description provided for @noMembersFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No members found'**
+  String get noMembersFound;
+
+  /// No description provided for @member.
+  ///
+  /// In en, this message translates to:
+  /// **'Member'**
+  String get member;
+
+  /// No description provided for @manageGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage group'**
+  String get manageGroup;
+
+  /// No description provided for @groupDeletedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Group deleted successfully'**
+  String get groupDeletedSuccess;
+
+  /// No description provided for @review.
+  ///
+  /// In en, this message translates to:
+  /// **'Review'**
+  String get review;
+
+  /// No description provided for @communityAndPeople.
+  ///
+  /// In en, this message translates to:
+  /// **'Community & People'**
+  String get communityAndPeople;
+
+  /// No description provided for @people.
+  ///
+  /// In en, this message translates to:
+  /// **'People'**
+  String get people;
+
+  /// No description provided for @bannedMembers.
+  ///
+  /// In en, this message translates to:
+  /// **'Banned Members'**
+  String get bannedMembers;
+
+  /// No description provided for @shareGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Share group'**
+  String get shareGroup;
+
+  /// No description provided for @linkCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Link copied to clipboard'**
+  String get linkCopied;
+
+  /// No description provided for @leaveGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave group'**
+  String get leaveGroup;
+
+  /// No description provided for @leaveGroupTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave group?'**
+  String get leaveGroupTitle;
+
+  /// No description provided for @leaveGroupContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to leave this group?'**
+  String get leaveGroupContent;
+
+  /// No description provided for @leave.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave'**
+  String get leave;
+
+  /// No description provided for @deleteGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete group'**
+  String get deleteGroup;
+
+  /// No description provided for @deleteGroupTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete group?'**
+  String get deleteGroupTitle;
+
+  /// No description provided for @deleteGroupContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this group?'**
+  String get deleteGroupContent;
+
+  /// No description provided for @noBannedMembersFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No banned members found'**
+  String get noBannedMembersFound;
+
+  /// No description provided for @username.
+  ///
+  /// In en, this message translates to:
+  /// **'Username'**
+  String get username;
+
+  /// No description provided for @unban.
+  ///
+  /// In en, this message translates to:
+  /// **'Unban'**
+  String get unban;
+
+  /// No description provided for @unbanUserTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Unban user'**
+  String get unbanUserTitle;
+
+  /// No description provided for @unbanUserContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to unban this user?'**
+  String get unbanUserContent;
+
+  /// No description provided for @noAdminsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No Admins found'**
+  String get noAdminsFound;
+
+  /// No description provided for @admin.
+  ///
+  /// In en, this message translates to:
+  /// **'Admin'**
+  String get admin;
+
+  /// No description provided for @manageMember.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage Member'**
+  String get manageMember;
+
+  /// No description provided for @kick.
+  ///
+  /// In en, this message translates to:
+  /// **'Kick'**
+  String get kick;
+
+  /// No description provided for @ban.
+  ///
+  /// In en, this message translates to:
+  /// **'Ban'**
+  String get ban;
+
+  /// No description provided for @changeRole.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Role'**
+  String get changeRole;
+
+  /// No description provided for @kickUserTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Kick {name}'**
+  String kickUserTitle(String name);
+
+  /// No description provided for @kickUserContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to kick {name}?'**
+  String kickUserContent(String name);
+
+  /// No description provided for @banUserTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ban {name}'**
+  String banUserTitle(String name);
+
+  /// No description provided for @banUserContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to ban {name}?'**
+  String banUserContent(String name);
+
+  /// No description provided for @moderators.
+  ///
+  /// In en, this message translates to:
+  /// **'Moderators'**
+  String get moderators;
+
+  /// No description provided for @admins.
+  ///
+  /// In en, this message translates to:
+  /// **'Admins'**
+  String get admins;
+
+  /// No description provided for @privateGroupDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Only members can see who\'s in the group and what they post.'**
+  String get privateGroupDescription;
+
+  /// No description provided for @join.
+  ///
+  /// In en, this message translates to:
+  /// **'Join'**
+  String get join;
+
+  /// No description provided for @requested.
+  ///
+  /// In en, this message translates to:
+  /// **'Requested'**
+  String get requested;
+
+  /// No description provided for @cancelJoinRequest.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel join request'**
+  String get cancelJoinRequest;
+
+  /// No description provided for @cancelJoinRequestContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to cancel this request?'**
+  String get cancelJoinRequestContent;
+
+  /// No description provided for @cancelRequest.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel Request'**
+  String get cancelRequest;
+
+  /// No description provided for @reportGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Report group'**
+  String get reportGroup;
+
+  /// No description provided for @loading.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading...'**
+  String get loading;
+
+  /// No description provided for @createGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Create group'**
+  String get createGroup;
+
+  /// No description provided for @name.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get name;
+
+  /// No description provided for @nameYourGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Name your group'**
+  String get nameYourGroup;
+
+  /// No description provided for @description.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get description;
+
+  /// No description provided for @tellPeopleAboutGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell people what this group is about'**
+  String get tellPeopleAboutGroup;
+
+  /// No description provided for @next.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get next;
+
+  /// No description provided for @close.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get close;
+
+  /// No description provided for @groupCreatedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Group Created Successfully!'**
+  String get groupCreatedSuccess;
+
+  /// No description provided for @addCoverPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a cover photo'**
+  String get addCoverPhoto;
+
+  /// No description provided for @addCoverPhotoSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Get noticed with an image that helps show what your group is all about.'**
+  String get addCoverPhotoSub;
+
+  /// No description provided for @creating.
+  ///
+  /// In en, this message translates to:
+  /// **'Creating...'**
+  String get creating;
+
+  /// No description provided for @getSeeAll.
+  ///
+  /// In en, this message translates to:
+  /// **'see all'**
+  String get getSeeAll;
 }
 
 class _AppLocalizationsDelegate

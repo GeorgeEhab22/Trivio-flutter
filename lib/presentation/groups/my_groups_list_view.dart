@@ -1,4 +1,5 @@
 import 'package:auth/core/styels.dart';
+import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/groups/widgets/dummy_for_skeletonizer.dart';
 import 'package:auth/presentation/groups/widgets/group_item.dart';
 import 'package:auth/presentation/manager/group_cubit/get_my_groups/get_my_groups_cubit.dart';
@@ -12,6 +13,7 @@ class MyGroupsListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return BlocBuilder<GetMyGroupsCubit, GetMyGroupsState>(
       builder: (context, state) {
         if (state is GetMyGroupsFailure) {
@@ -51,11 +53,9 @@ class MyGroupsListView extends StatelessWidget {
                         const SizedBox(width: 6),
                         Flexible(
                           child: Text(
-                            'Search',
+                            l10n.search, // Localized
                             style: Styles.textStyle16.copyWith(
-                              color: Theme.of(
-                                context,
-                              ).textTheme.bodyMedium?.color,
+                              color: Theme.of(context).textTheme.bodyMedium?.color,
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),

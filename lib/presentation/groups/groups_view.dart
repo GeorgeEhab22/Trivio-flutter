@@ -1,5 +1,6 @@
 import 'package:auth/common/functions/see_all_header.dart';
 import 'package:auth/core/styels.dart';
+import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/groups/discover_groups_list_view.dart';
 import 'package:auth/presentation/groups/my_groups_list_view.dart';
 import 'package:auth/presentation/groups/widgets/groups_app_bar.dart';
@@ -14,6 +15,7 @@ class GroupsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return DefaultTabController(
       length: 4,
       child: Scaffold(
@@ -26,7 +28,7 @@ class GroupsView extends StatelessWidget {
                   padding: const EdgeInsets.only(top: 8, left: 8.0),
                   children: [
                     SeeAllHeader(
-                      title: "Your groups",
+                      title: l10n.yourGroups, // Localized
                       onSeeAll: () {
                         DefaultTabController.of(context).animateTo(1);
                       },
@@ -34,7 +36,7 @@ class GroupsView extends StatelessWidget {
                     const YourGroupsRowList(),
 
                     SeeAllHeader(
-                      title: "Suggested groups",
+                      title: l10n.suggestedGroups, // Localized
                       onSeeAll: () {
                         DefaultTabController.of(context).animateTo(2);
                       },
@@ -44,10 +46,10 @@ class GroupsView extends StatelessWidget {
 
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: const Row(
+                      child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text("From your groups", style: Styles.textStyle18),
+                          Text(l10n.fromYourGroups, style: Styles.textStyle18), // Localized
                         ],
                       ),
                     ),

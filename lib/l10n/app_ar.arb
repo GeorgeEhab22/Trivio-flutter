@@ -8,6 +8,11 @@
   "sendCode": "إرسال الرمز",
   "sendingCode": "جاري إرسال الرمز...",
   "registrationSuccess": "أهلاً بك يا {username}! تم إنشاء حسابك بنجاح",
+  "@registrationSuccess": {
+    "placeholders": {
+      "username": { "type": "String" }
+    }
+  },
   "verificationSuccess": "تم التحقق بنجاح!",
   "codeResent": "تم إعادة إرسال رمز التحقق!",
   "verificationCode": "رمز التحقق",
@@ -36,6 +41,11 @@
   "didNotReceiveOtp": "لم يصلك رمز التحقق؟ ",
   "changeEmail": "تغيير البريد الإلكتروني",
   "canChangeIn": "يمكنك التغيير خلال {seconds} ثانية",
+  "@canChangeIn": {
+    "placeholders": {
+      "seconds": { "type": "String" }
+    }
+  },
   "orDivider": "أو",
   "labelUsernameEmail": "اسم المستخدم أو البريد الإلكتروني",
   "labelEmail": "البريد الإلكتروني",
@@ -109,6 +119,11 @@
   "noCommentsYet": "لا توجد تعليقات بعد",
   "addCommentHint": "أضف تعليقاً...",
   "replyingTo": "الرد على {userName}",
+  "@replyingTo": {
+    "placeholders": {
+      "userName": { "type": "String" }
+    }
+  },
   "reply": "رد",
   "privacyPublic": "عام",
   "privacyPrivate": "خاص",
@@ -158,7 +173,6 @@
   "videoCallUser": "مكالمة فيديو بـ \"{userName}\"",
   "profile": "الملف الشخصي",
   "options": "خيارات",
-  "video": "فيديو",
   "createGroupChat": "إنشاء دردشة جماعية",
   "block": "حظر",
   "blockUserTitle": "حظر المستخدم",
@@ -173,21 +187,6 @@
   "noFollowingYet": "لا تتابع أحداً",
   "profileSettings": "إعدادات الملف الشخصي",
   "accountSettings": "إعدادات الحساب",
-  "accountSettingsSubtitle": "إدارة تفاصيل حسابك وتفضيلاتك",
-  "privacySettings": "إعدادات الخصوصية",
-  "privacySettingsSubtitle": "التحكم في من يرى منشوراتك ونشاطك",
-  "notificationPreferences": "تفضيلات الإشعارات",
-  "notificationPreferencesSubtitle": "تخصيص تنبيهات الإشعارات الخاصة بك",
-  "appPreferences": "تفضيلات التطبيق",
-  "appPreferencesSubtitle": "ضبط اللغة، المظهر، واستهلاك البيانات",
-  "requireFollowRequests": "طلب الموافقة على المتابعة",
-  "requireFollowRequestsSubtitle": "الموافقة على المتابعين يدوياً",
-  "searchableProfile": "ملف شخصي قابل للبحث",
-  "searchableProfileSubtitle": "السماح لملفك الشخصي بالظهور في نتائج البحث",
-  "profileSettings": "إعدادات الملف الشخصي",
-  "followRequests": "طلبات المتابعة",
-  "editProfile": "تعديل الملف الشخصي",
-  "accountSettings": "إعدادات الحساب",
   "accountSettingsSub": "إدارة تفاصيل حسابك وتفضيلاتك",
   "privacySettings": "إعدادات الخصوصية",
   "privacySettingsSub": "التحكم في من يرى منشوراتك ونشاطك",
@@ -198,5 +197,120 @@
   "requireFollow": "طلب الموافقة على المتابعة",
   "requireFollowSub": "الموافقة على المتابعين يدوياً",
   "searchableProfile": "ملف شخصي قابل للبحث",
-  "searchableProfileSub": "السماح لملفك الشخصي بالظهور في نتائج البحث"
+  "searchableProfileSub": "السماح لملفك الشخصي بالظهور في نتائج البحث",
+  "search": "بحث",
+  "yourGroups": "مجموعاتك",
+  "suggestedGroups": "مجموعات مقترحة",
+  "fromYourGroups": "من مجموعاتك",
+  "suggestedForYou": "مقترح لك",
+  "noJoinedGroupsYet": "لم تنضم إلى أي مجموعات بعد. استكشف الآن!",
+  "forYou": "لك",
+  "joined": "المنضمة",
+  "discover": "استكشف",
+  "myGroups": "مجموعاتي",
+  "members": "عضو",
+  "remove": "إزالة",
+  "noPostsInGroups": "لا توجد منشورات في مجموعاتك بعد. انضم إلى بعض المجموعات!",
+  "updateSuccessful": "تم التحديث بنجاح",
+  "manage": "إدارة",
+  "mostRelevant": "الأكثر صلة",
+  "about": "حول المجموعة",
+  "editDescription": "تعديل الوصف",
+  "home": "الرئيسية",
+  "writeSomething": "اكتب شيئاً...",
+  "reportedPosts": "المنشورات المبلّغ عنها",
+  "pendingPosts": "منشورات في انتظار المراجعة",
+  "approve": "موافقة",
+  "decline": "رفض",
+  "noModeratorsFound": "لم يتم العثور على مشرفين",
+  "moderator": "مشرف",
+  "membersRequests": "طلبات الأعضاء",
+  "requestAcceptedSuccess": "تم قبول الطلب بنجاح",
+  "requestDeclinedSuccess": "تم رفض الطلب بنجاح",
+  "noPendingRequests": "لا توجد طلبات معلقة",
+  "accepted": "تم القبول",
+  "declined": "تم الرفض",
+  "acceptMemberTitle": "قبول هذا العضو؟",
+  "acceptMemberContent": "هل تريد إضافة {userName} إلى المجموعة؟",
+  "@acceptMemberContent": {
+    "placeholders": {
+      "userName": { "type": "String" }
+    }
+  },
+  "declineRequestTitle": "رفض الطلب؟",
+  "declineRequestContent": "هل أنت متأكد أنك تريد رفض هذا الطلب؟",
+  "noMembersFound": "لم يتم العثور على أعضاء",
+  "member": "عضو",
+  "manageGroup": "إدارة المجموعة",
+  "groupDeletedSuccess": "تم حذف المجموعة بنجاح",
+  "review": "مراجعة",
+  "communityAndPeople": "المجتمع والأشخاص",
+  "people": "الأشخاص",
+  "bannedMembers": "الأعضاء المحظورون",
+  "shareGroup": "مشاركة المجموعة",
+  "linkCopied": "تم نسخ الرابط إلى الحافظة",
+  "leaveGroup": "مغادرة المجموعة",
+  "leaveGroupTitle": "مغادرة المجموعة؟",
+  "leaveGroupContent": "هل أنت متأكد أنك تريد مغادرة هذه المجموعة؟",
+  "leave": "مغادرة",
+  "deleteGroup": "حذف المجموعة",
+  "deleteGroupTitle": "حذف المجموعة؟",
+  "deleteGroupContent": "هل أنت متأكد أنك تريد حذف هذه المجموعة؟",
+  "noBannedMembersFound": "لم يتم العثور على أعضاء محظورين",
+  "username": "اسم المستخدم",
+  "unban": "إلغاء الحظر",
+  "unbanUserTitle": "إلغاء حظر المستخدم",
+  "unbanUserContent": "هل أنت متأكد أنك تريد إلغاء حظر هذا المستخدم؟",
+  "noAdminsFound": "لم يتم العثور على مسؤولين",
+  "admin": "مسؤول",
+  "manageMember": "إدارة العضو",
+  "kick": "طرد",
+  "ban": "حظر",
+  "changeRole": "تغيير الرتبة",
+  "kickUserTitle": "طرد {name}",
+  "@kickUserTitle": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "kickUserContent": "هل أنت متأكد أنك تريد طرد {name}؟",
+  "@kickUserContent": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "banUserTitle": "حظر {name}",
+  "@banUserTitle": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "banUserContent": "هل أنت متأكد أنك تريد حظر {name}؟",
+  "@banUserContent": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "moderators": "المشرفون",
+  "admins": "المسؤولون",
+  "privateGroupDescription": "يمكن للأعضاء فقط رؤية من في المجموعة وما ينشرونه.",
+  "join": "انضمام",
+  "requested": "تم إرسال الطلب",
+  "cancelJoinRequest": "إلغاء طلب الانضمام",
+  "cancelJoinRequestContent": "هل أنت متأكد أنك تريد إلغاء هذا الطلب؟",
+  "cancelRequest": "إلغاء الطلب",
+  "reportGroup": "إبلاغ عن المجموعة",
+  "loading": "جارٍ التحميل...",
+  "createGroup": "إنشاء مجموعة",
+  "name": "الاسم",
+  "nameYourGroup": "قم بتسمية مجموعتك",
+  "description": "الوصف",
+  "tellPeopleAboutGroup": "أخبر الأشخاص عن موضوع هذه المجموعة",
+  "next": "التالي",
+  "close": "إغلاق",
+  "groupCreatedSuccess": "تم إنشاء المجموعة بنجاح!",
+  "addCoverPhoto": "أضف صورة غلاف",
+  "addCoverPhotoSub": "اجعل مجموعتك ملحوظة بصورة تساعد في إظهار ما تدور حوله مجموعتك.",
+  "creating": "جارٍ الإنشاء...",
+  "getSeeAll": "إظهار الكل"
 }

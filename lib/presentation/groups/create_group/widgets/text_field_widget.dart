@@ -24,8 +24,8 @@ Widget textFieldWidget({
                   color: isFocused
                       ? primaryColor
                       : (hasError
-                            ? errorColor
-                            : Colors.grey.withValues(alpha: 0.5)),
+                          ? errorColor
+                          : Colors.grey.withValues(alpha: 0.5)),
                   width: (isFocused || hasError) ? 2 : 0.8,
                 ),
               ),
@@ -34,13 +34,12 @@ Widget textFieldWidget({
                 child: TextField(
                   controller: controller,
                   maxLines: maxLines,
-                  onChanged: (value) =>onChanged?.call(value),
+                  onChanged: (value) => onChanged?.call(value),
                   decoration: InputDecoration(
                     labelText: hint,
                     errorStyle: const TextStyle(height: 0),
                     labelStyle: const TextStyle(color: Colors.grey),
                     floatingLabelStyle: const TextStyle(color: primaryColor),
-
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: const BorderSide(color: Colors.transparent),
@@ -49,7 +48,6 @@ Widget textFieldWidget({
                       borderRadius: BorderRadius.circular(12),
                       borderSide: const BorderSide(color: Colors.transparent),
                     ),
-
                     contentPadding: const EdgeInsets.symmetric(
                       horizontal: 16,
                       vertical: 16,
@@ -58,10 +56,9 @@ Widget textFieldWidget({
                 ),
               ),
             ),
-
-            if (hasError&&!isFocused)
+            if (hasError && !isFocused)
               Padding(
-                padding: const EdgeInsets.only(top: 8, left: 8),
+                padding: const EdgeInsetsDirectional.only(top: 8, start: 8),
                 child: Text(
                   errorText,
                   style: const TextStyle(color: errorColor, fontSize: 12),

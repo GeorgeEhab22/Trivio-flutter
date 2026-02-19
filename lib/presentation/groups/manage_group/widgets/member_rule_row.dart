@@ -1,4 +1,5 @@
 import 'package:auth/core/styels.dart';
+import 'package:auth/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class MemberRuleRow extends StatelessWidget {
@@ -7,20 +8,25 @@ class MemberRuleRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String currentRole = role?.toLowerCase() ?? "member";
+    final l10n = AppLocalizations.of(context)!;
+    final String roleKey = role?.toLowerCase() ?? "member";
 
     IconData roleIcon;
     Color roleColor;
+    String localizedRole;
 
-    if (currentRole == 'admin') {
+    if (roleKey == 'admin') {
       roleIcon = Icons.admin_panel_settings_rounded;
-      roleColor = Colors.amber; 
-    } else if (currentRole == 'moderator') {
+      roleColor = Colors.amber;
+      localizedRole = l10n.admin;
+    } else if (roleKey == 'moderator') {
       roleIcon = Icons.verified_user_rounded;
-      roleColor = Colors.blue; 
+      roleColor = Colors.blue;
+      localizedRole = l10n.moderator;
     } else {
       roleIcon = Icons.person_rounded;
       roleColor = Colors.grey;
+      localizedRole = l10n.member;
     }
 
     return Row(
@@ -41,7 +47,7 @@ class MemberRuleRow extends StatelessWidget {
               ),
               const SizedBox(width: 4),
               Text(
-                currentRole[0].toUpperCase() + currentRole.substring(1),
+                localizedRole,
                 style: Styles.textStyle14.copyWith(
                   color: Theme.of(context).textTheme.bodySmall?.color,
                   fontWeight: FontWeight.w500,

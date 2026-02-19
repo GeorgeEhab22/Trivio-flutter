@@ -3,6 +3,7 @@ import 'package:auth/common/functions/custom_square_button.dart';
 import 'package:auth/constants/colors.dart';
 import 'package:auth/core/app_routes.dart';
 import 'package:auth/core/styels.dart';
+import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/authentication/widgets/show_custom_snackbar.dart';
 import 'package:auth/presentation/manager/group_cubit/create_group/create_group_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/create_group/create_group_state.dart';
@@ -17,6 +18,8 @@ class AddCoverPhotoView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
     const String defaultAssetPath = 'assets/images/Football Community.png';
 
     return Scaffold(
@@ -28,7 +31,7 @@ class AddCoverPhotoView extends StatelessWidget {
         leading: IconButton(
           onPressed: () => context.pop(),
           icon: Icon(
-            Icons.arrow_back_ios_new_rounded,
+            isArabic ? Icons.arrow_back_ios_rounded : Icons.arrow_back_ios_new_rounded,
             color: Theme.of(context).iconTheme.color,
             size: 25,
           ),
@@ -37,8 +40,8 @@ class AddCoverPhotoView extends StatelessWidget {
       body: BlocConsumer<CreateGroupCubit, CreateGroupState>(
         listener: (context, state) {
           if (state is CreateGroupSuccess) {
-            showCustomSnackBar(context, "Group Created Successfully!", true);
-            context.go(AppRoutes.myGroup,extra: state.group.groupId);
+            showCustomSnackBar(context, l10n.groupCreatedSuccess, true);
+            context.go(AppRoutes.myGroup, extra: state.group.groupId);
           }
           if (state is CreateGroupFailure) {
             showCustomSnackBar(context, state.message, false);
@@ -53,13 +56,13 @@ class AddCoverPhotoView extends StatelessWidget {
                 child: ListView(
                   padding: const EdgeInsets.all(16),
                   children: [
-                    const Text(
-                      "Add a cover photo",
+                    Text(
+                      l10n.addCoverPhoto,
                       style: Styles.textStyleBold20,
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      "Get noticed with an image that helps show what your group is all about.",
+                      l10n.addCoverPhotoSub,
                       style: Styles.textStyle14.copyWith(color: Colors.grey),
                     ),
                     const SizedBox(height: 32),
@@ -80,32 +83,31 @@ class AddCoverPhotoView extends StatelessWidget {
                           ),
                           child: cubit.groupCoverImage != null
                               ? (kIsWeb
-                                    ? Image.network(
-                                        cubit.groupCoverImage!.path,
-                                        fit: BoxFit.cover,
-                                      )
-                                    : Image.file(
-                                        File(cubit.groupCoverImage!.path),
-                                        fit: BoxFit.cover,
-                                      ))
+                                  ? Image.network(
+                                      cubit.groupCoverImage!.path,
+                                      fit: BoxFit.cover,
+                                    )
+                                  : Image.file(
+                                      File(cubit.groupCoverImage!.path),
+                                      fit: BoxFit.cover,
+                                    ))
                               : Image.asset(
                                   defaultAssetPath,
                                   fit: BoxFit.cover,
                                 ),
                         ),
 
-                        Positioned(
+                        PositionedDirectional(
                           bottom: 12,
-                          right: 12,
+                          end: 12,
                           child: CustomSquareButton(
-                            label: "Edit",
+                            label: l10n.edit,
                             backgroundColor: Theme.of(context).cardColor.withValues(alpha: 0.8),
                             textColor: Colors.white,
                             textStyle: Styles.textStyle14,
                             height: 10,
                             onTap: () {
-                              final currentCubit = context
-                                  .read<CreateGroupCubit>();
+                              final currentCubit = context.read<CreateGroupCubit>();
                               BottomSheetManager.showMediaSourceSheet(
                                 context,
                                 false,
@@ -128,8 +130,8 @@ class AddCoverPhotoView extends StatelessWidget {
                 padding: const EdgeInsets.all(16),
                 child: CustomSquareButton(
                   label: state is CreateGroupLoading
-                      ? "Creating..."
-                      : "Create group",
+                      ? l10n.creating
+                      : l10n.createGroup,
                   backgroundColor: AppColors.primary,
                   textColor: Colors.white,
                   textStyle: Styles.textStyle16,

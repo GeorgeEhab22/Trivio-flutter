@@ -1,4 +1,5 @@
 import 'package:auth/constants/colors.dart';
+import 'package:auth/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class GroupsTabBar extends StatelessWidget implements PreferredSizeWidget {
@@ -7,30 +8,27 @@ class GroupsTabBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context)!;
 
     return TabBar(
       isScrollable: true,
       tabAlignment: TabAlignment.start,
-
       splashFactory: NoSplash.splashFactory,
       overlayColor: WidgetStateProperty.all(Colors.transparent),
       labelPadding: const EdgeInsets.symmetric(horizontal: 0),
-
       indicatorSize: TabBarIndicatorSize.label,
       indicator: BoxDecoration(
         borderRadius: BorderRadius.circular(24),
         color: AppColors.primary.withValues(alpha: isDark ? 0.2 : 0.1),
       ),
-
       labelColor: AppColors.primary,
       unselectedLabelColor: isDark ? Colors.grey[400] : Colors.grey[700],
-
       padding: const EdgeInsets.only(left: 8, bottom: 8),
       tabs: [
-        buildTab("For you", isDark),
-        buildTab("Joined", isDark),
-        buildTab("Discover", isDark),
-        buildTab("My groups", isDark),
+        buildTab(l10n.forYou, isDark),
+        buildTab(l10n.joined, isDark),
+        buildTab(l10n.discover, isDark),
+        buildTab(l10n.myGroups, isDark),
       ],
     );
   }

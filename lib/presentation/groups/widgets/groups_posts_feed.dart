@@ -1,3 +1,4 @@
+import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/home/posts_in_timeline/widgets/post_card.dart';
 import 'package:auth/presentation/manager/group_cubit/get_group_feed/get_groups_posts_feed_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/get_group_feed/get_groups_posts_feed_state.dart';
@@ -9,6 +10,7 @@ class GroupsPostsFeed extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return BlocBuilder<GetGroupsPostsFeedCubit, GetGroupsPostsFeedState>(
       builder: (context, state) {
         if (state is GetGroupsPostsFeedLoading) {
@@ -17,9 +19,7 @@ class GroupsPostsFeed extends StatelessWidget {
           return Center(child: Text(state.message));
         } else if (state is GetGroupsPostsFeedLoaded) {
           if (state.posts.isEmpty) {
-            return const Center(
-              child: Text("No posts in your groups yet. Join some!"),
-            );
+            return Center(child: Text(l10n.noPostsInGroups));
           }
 
           return ListView.builder(

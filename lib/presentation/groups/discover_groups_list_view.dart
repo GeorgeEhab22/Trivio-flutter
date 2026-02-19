@@ -1,4 +1,5 @@
 import 'package:auth/core/app_routes.dart';
+import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/groups/widgets/dummy_for_skeletonizer.dart';
 import 'package:auth/presentation/groups/widgets/suggest_card.dart';
 import 'package:auth/presentation/manager/group_cubit/get_groups/get_groups_cubit.dart';
@@ -13,6 +14,7 @@ class DiscoverGroupsListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     double screenWidth = MediaQuery.of(context).size.width;
     double availableWidth = (screenWidth - 42) / 2;
 
@@ -30,12 +32,12 @@ class DiscoverGroupsListView extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: CustomScrollView(
             slivers: [
-              const SliverToBoxAdapter(
+              SliverToBoxAdapter(
                 child: Padding(
-                  padding: EdgeInsets.symmetric(vertical: 16),
+                  padding: const EdgeInsets.symmetric(vertical: 16),
                   child: Text(
-                    "Suggested for you",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    l10n.suggestedForYou, // Localized
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),
               ),

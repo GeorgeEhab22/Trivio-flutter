@@ -1,5 +1,6 @@
 import 'package:auth/common/functions/custom_list_tile.dart';
 import 'package:auth/core/app_routes.dart';
+import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/groups/group_feed/widgets/leave_group_button.dart';
 import 'package:auth/presentation/groups/widgets/common_group_buttom_sheet.dart';
 import 'package:auth/presentation/manager/group_cubit/leave_group/leave_group_cubit.dart';
@@ -12,6 +13,9 @@ class GroupFeedAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
+
     return AppBar(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       surfaceTintColor: Colors.transparent,
@@ -21,7 +25,7 @@ class GroupFeedAppBar extends StatelessWidget implements PreferredSizeWidget {
       leading: IconButton(
         onPressed: () => context.pop(),
         icon: Icon(
-          Icons.arrow_back_ios_new_rounded,
+          isArabic ? Icons.arrow_back_ios_rounded : Icons.arrow_back_ios_new_rounded,
           color: Theme.of(context).iconTheme.color,
           size: 25,
         ),
@@ -45,7 +49,7 @@ class GroupFeedAppBar extends StatelessWidget implements PreferredSizeWidget {
               actions: [
                 CustomListTile(
                   icon: Icons.link,
-                  text: "Copy link",
+                  text: l10n.copyLink,
                   onTap: () {
                     context.pop();
                     //TODO: copy link
@@ -57,7 +61,7 @@ class GroupFeedAppBar extends StatelessWidget implements PreferredSizeWidget {
                 ),
                 CustomListTile(
                   icon: Icons.report_gmailerrorred,
-                  text: "Report group",
+                  text: l10n.reportGroup,
                   onTap: () {
                     context.pop();
                     //TODO: show report group button sheet

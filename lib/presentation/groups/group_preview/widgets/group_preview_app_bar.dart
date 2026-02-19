@@ -1,5 +1,6 @@
 import 'package:auth/common/functions/custom_list_tile.dart';
 import 'package:auth/core/app_routes.dart';
+import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/groups/widgets/common_group_buttom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -10,6 +11,9 @@ class GroupPreviewAppBar extends StatelessWidget
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
+
     return AppBar(
       surfaceTintColor: Colors.transparent,
       elevation: 0.5,
@@ -18,7 +22,8 @@ class GroupPreviewAppBar extends StatelessWidget
       leading: IconButton(
         onPressed: () => context.pop(),
         icon: Icon(
-          Icons.arrow_back_ios_new_rounded,
+          // Switches direction based on locale
+          isArabic ? Icons.arrow_back_ios_rounded : Icons.arrow_back_ios_new_rounded,
           color: Theme.of(context).iconTheme.color,
           size: 25,
         ),
@@ -41,7 +46,7 @@ class GroupPreviewAppBar extends StatelessWidget
               actions: [
                 CustomListTile(
                   icon: Icons.link,
-                  text: "Copy link",
+                  text: l10n.copyLink, // Localized
                   onTap: () {
                     context.pop();
                     //TODO: copy link
@@ -49,7 +54,7 @@ class GroupPreviewAppBar extends StatelessWidget
                 ),
                 CustomListTile(
                   icon: Icons.report_gmailerrorred,
-                  text: "Report group",
+                  text: l10n.reportGroup, // Localized
                   onTap: () {
                     context.pop();
                     //TODO: show report group button sheet

@@ -1,5 +1,6 @@
 import 'package:auth/common/functions/custom_list_tile.dart';
 import 'package:auth/core/styels.dart';
+import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/authentication/widgets/show_custom_snackbar.dart';
 import 'package:auth/presentation/groups/widgets/common_group_buttom_sheet.dart';
 import 'package:auth/presentation/home/widgets/exbandable_text.dart';
@@ -47,6 +48,7 @@ class _MyGroupDescriptionState extends State<MyGroupDescription> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!; 
     return BlocConsumer<UpdateGroupCubit, UpdateGroupState>(
       listener: (context, state) {
         if (state is UpdateGroupSuccess) {
@@ -65,7 +67,7 @@ class _MyGroupDescriptionState extends State<MyGroupDescription> {
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                const Text("About", style: Styles.textStyle18),
+                Text(l10n.about, style: Styles.textStyle18),
                 if (isEditingDesc) const Spacer(),
                 const SizedBox(width: 2),
                 if (isEditingDesc)
@@ -78,7 +80,7 @@ class _MyGroupDescriptionState extends State<MyGroupDescription> {
                         actions: [
                           CustomListTile(
                             icon: Icons.edit,
-                            text: "Edit description",
+                            text: l10n.editDescription,
                             onTap: () {
                               context.pop();
                               setState(() => isEditingDesc = true);

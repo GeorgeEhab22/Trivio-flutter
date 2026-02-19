@@ -1,4 +1,5 @@
 import 'package:auth/constants/colors.dart';
+import 'package:auth/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class PeopleTabBar extends StatelessWidget implements PreferredSizeWidget {
@@ -8,6 +9,7 @@ class PeopleTabBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context)!;
 
     return TabBar(
       isScrollable: true,
@@ -26,11 +28,12 @@ class PeopleTabBar extends StatelessWidget implements PreferredSizeWidget {
       labelColor: AppColors.primary,
       unselectedLabelColor: isDark ? Colors.grey[400] : Colors.grey[700],
 
-      padding: const EdgeInsets.only(left: 8, bottom: 8),
+      // Changed to EdgeInsetsDirectional to handle RTL (Arabic) correctly
+      padding: const EdgeInsetsDirectional.only(start: 8, bottom: 8),
       tabs: [
-        buildTab("Members", isDark),
-        buildTab("Moderators", isDark),
-        buildTab("Admins", isDark),
+        buildTab(l10n.members, isDark),
+        buildTab(l10n.moderators, isDark),
+        buildTab(l10n.admins, isDark),
       ],
     );
   }

@@ -1,5 +1,6 @@
 import 'package:auth/core/app_routes.dart';
 import 'package:auth/core/styels.dart';
+import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/groups/widgets/groups_tab_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -9,6 +10,9 @@ class GroupsAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
+
     return AppBar(
       surfaceTintColor: Colors.transparent,
       elevation: 0.5,
@@ -17,14 +21,12 @@ class GroupsAppBar extends StatelessWidget implements PreferredSizeWidget {
       leading: IconButton(
         onPressed: () => context.pop(),
         icon: Icon(
-          Icons.arrow_back_ios_new_rounded,
+          isArabic ? Icons.arrow_back_ios_rounded : Icons.arrow_back_ios_new_rounded,
           color: Theme.of(context).iconTheme.color,
           size: 25,
         ),
       ),
-
-      title: Text("Groups", style: Styles.textStyle20),
-
+      title: Text(l10n.groups, style: Styles.textStyle20),
       actions: [
         IconButton(
           icon: Icon(
@@ -32,8 +34,7 @@ class GroupsAppBar extends StatelessWidget implements PreferredSizeWidget {
             color: Theme.of(context).iconTheme.color,
             size: 28,
           ),
-          onPressed: () {
-            context.push(AppRoutes.createGroup);},
+          onPressed: () => context.push(AppRoutes.createGroup),
         ),
         IconButton(
           icon: Icon(
@@ -41,12 +42,10 @@ class GroupsAppBar extends StatelessWidget implements PreferredSizeWidget {
             color: Theme.of(context).iconTheme.color,
             size: 28,
           ),
-          onPressed: () {
-            //TODO ADD SEARCH GROUPS
-          },
+          onPressed: () { /* TODO */ },
         ),
       ],
-      bottom: GroupsTabBar(),
+      bottom: const GroupsTabBar(),
     );
   }
 

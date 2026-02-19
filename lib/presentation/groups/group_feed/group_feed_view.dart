@@ -2,6 +2,7 @@ import 'package:auth/common/functions/custom_square_button.dart';
 import 'package:auth/constants/colors.dart';
 import 'package:auth/core/app_routes.dart';
 import 'package:auth/core/styels.dart';
+import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/authentication/widgets/show_custom_snackbar.dart';
 import 'package:auth/presentation/groups/group_feed/widgets/group_feed_app_bar.dart';
 import 'package:auth/presentation/groups/group_feed/widgets/leave_group_button.dart';
@@ -25,10 +26,11 @@ class GroupFeedView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return BlocListener<LeaveGroupCubit, LeaveGroupState>(
       listener: (context, state) {
         if (state is LeaveGroupSuccess) {
-          // showCustomSnackBar(context, "Left group successfully", true);
           context.go(AppRoutes.groupPreview, extra: groupId);
         }
         if (state is LeaveGroupFailure) {
@@ -75,11 +77,10 @@ class GroupFeedView extends StatelessWidget {
                             const SizedBox(height: 20),
 
                             CustomSquareButton(
-                              label: "Joined",
+                              label: l10n.joined, // Localized "Joined"
                               height: 13,
                               onTap: () {
-                                final leaveGroupCubit = context
-                                    .read<LeaveGroupCubit>();
+                                final leaveGroupCubit = context.read<LeaveGroupCubit>();
                                 showCommonGroupBottomSheet(
                                   context: context,
                                   actions: [
@@ -103,7 +104,6 @@ class GroupFeedView extends StatelessWidget {
 
                             Row(
                               children: [
-                                //TODO change to actual user image
                                 const CircleAvatar(
                                   radius: 20,
                                   backgroundImage: NetworkImage(
@@ -124,19 +124,14 @@ class GroupFeedView extends StatelessWidget {
                                             ),
                                       );
                                     },
-                                    label: "Write something",
-                                    borderColor: Theme.of(
-                                      context,
-                                    ).colorScheme.outlineVariant,
+                                    label: l10n.writeSomething, // Localized
+                                    borderColor: Theme.of(context).colorScheme.outlineVariant,
                                     borderRadius: 20,
                                     height: 12,
-                                    backgroundColor: Theme.of(
-                                      context,
-                                    ).cardColor,
+                                    backgroundColor: Theme.of(context).cardColor,
                                     alignment: CrossAxisAlignment.start,
                                   ),
                                 ),
-                                // SizedBox(width: ),
                                 IconButton(
                                   onPressed: () {},
                                   icon: Icon(
@@ -150,12 +145,11 @@ class GroupFeedView extends StatelessWidget {
                             const Divider(),
                             const SizedBox(height: 16),
 
-                            const Text(
-                              "Most relevant",
+                            Text(
+                              l10n.mostRelevant, // Localized "Most relevant"
                               style: Styles.textStyle16,
                             ),
                             const SizedBox(height: 12),
-                            //TODO: show posts of group here
                           ],
                         ),
                       ),

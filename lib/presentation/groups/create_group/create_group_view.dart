@@ -2,6 +2,7 @@ import 'package:auth/common/functions/custom_square_button.dart';
 import 'package:auth/constants/colors.dart';
 import 'package:auth/core/app_routes.dart';
 import 'package:auth/core/styels.dart';
+import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/groups/create_group/widgets/text_field_widget.dart';
 import 'package:auth/presentation/groups/group_preview/widgets/private_row.dart';
 import 'package:auth/presentation/manager/group_cubit/create_group/create_group_cubit.dart';
@@ -38,6 +39,7 @@ class _CreateGroupViewState extends State<CreateGroupView> {
   
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final cubit = context.read<CreateGroupCubit>();
     final state = context.watch<CreateGroupCubit>().state;
     String? nameError;
@@ -61,8 +63,9 @@ class _CreateGroupViewState extends State<CreateGroupView> {
             color: Theme.of(context).iconTheme.color,
             size: 25,
           ),
+          tooltip: l10n.close, // Localized tooltip
         ),
-        title: const Text("Create group", style: Styles.textStyle18),
+        title: Text(l10n.createGroup, style: Styles.textStyle18),
       ),
       body: Column(
         children: [
@@ -70,11 +73,11 @@ class _CreateGroupViewState extends State<CreateGroupView> {
             child: ListView(
               padding: const EdgeInsets.all(16),
               children: [
-                const Text("Name", style: Styles.textStyle18),
+                Text(l10n.name, style: Styles.textStyle18),
                 const SizedBox(height: 12),
                 textFieldWidget(
-                  controller:nameController,
-                  hint: "Name your group",
+                  controller: nameController,
+                  hint: l10n.nameYourGroup,
                   errorText: nameError,
                   onChanged: (val) {
                     cubit.updateName(nameController.text);
@@ -86,11 +89,11 @@ class _CreateGroupViewState extends State<CreateGroupView> {
                 const Divider(thickness: 0.5),
                 const SizedBox(height: 12),
 
-                const Text("Description", style: Styles.textStyle18),
+                Text(l10n.description, style: Styles.textStyle18),
                 const SizedBox(height: 12),
                 textFieldWidget(
                   controller: descController,
-                  hint: "Tell people what this group is about",
+                  hint: l10n.tellPeopleAboutGroup,
                   maxLines: 5,
                   errorText: descError,
                   onChanged: (val) {
@@ -106,7 +109,7 @@ class _CreateGroupViewState extends State<CreateGroupView> {
           Padding(
             padding: const EdgeInsets.all(16),
             child: CustomSquareButton(
-              label: "Next",
+              label: l10n.next,
               backgroundColor: AppColors.primary,
               textColor: Colors.white,
               textStyle: Styles.textStyle16,
@@ -116,7 +119,6 @@ class _CreateGroupViewState extends State<CreateGroupView> {
                   context.push(AppRoutes.addCoverPhoto);
                 }
               },
-              // isExpanded: true,
             ),
           ),
         ],
