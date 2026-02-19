@@ -36,7 +36,7 @@ class _CreateGroupViewState extends State<CreateGroupView> {
     descController.dispose();
     super.dispose();
   }
-  
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -45,9 +45,8 @@ class _CreateGroupViewState extends State<CreateGroupView> {
     String? nameError;
     String? descError;
 
-    if (state is CreateGroupInitial) {
-      nameError = state.nameError;
-      descError = state.descError;
+    if (state is CreateGroupInitial && state.nameError == "empty_name") {
+      nameError = l10n.nameRequiredError; // Use localized string here
     }
 
     return Scaffold(
@@ -63,7 +62,7 @@ class _CreateGroupViewState extends State<CreateGroupView> {
             color: Theme.of(context).iconTheme.color,
             size: 25,
           ),
-          tooltip: l10n.close, // Localized tooltip
+          tooltip: l10n.close,
         ),
         title: Text(l10n.createGroup, style: Styles.textStyle18),
       ),

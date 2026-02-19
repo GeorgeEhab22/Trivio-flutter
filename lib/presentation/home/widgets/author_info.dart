@@ -43,8 +43,8 @@ class AuthorInfo extends StatelessWidget {
         const SizedBox(width: 10),
         Expanded(
           child: showTimeInline && !isGroupPost
-              ? _buildInlineText(defaultAuthorStyle)
-              : _buildStackedText(defaultAuthorStyle, l10n),
+              ? _buildInlineText(context, defaultAuthorStyle)
+              : _buildStackedText(context, defaultAuthorStyle, l10n),
         ),
       ],
     );
@@ -66,9 +66,9 @@ class AuthorInfo extends StatelessWidget {
             clipBehavior: Clip.antiAlias,
             child: getImage(groupImage),
           ),
-          Positioned(
+          PositionedDirectional(
             bottom: 0,
-            right: 0,
+            end: 0, 
             child: Container(
               padding: const EdgeInsets.all(2),
               decoration: BoxDecoration(
@@ -98,10 +98,9 @@ class AuthorInfo extends StatelessWidget {
     );
   }
 
-  Widget _buildStackedText(TextStyle defaultAuthorStyle, AppLocalizations l10n) {
+  Widget _buildStackedText(BuildContext context, TextStyle defaultAuthorStyle, AppLocalizations l10n) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
       children: [
         Text(
           isGroupPost ? (groupName ?? l10n.defaultGroupName) : authorName,
@@ -125,9 +124,10 @@ class AuthorInfo extends StatelessWidget {
               ),
             ],
             Text(
-              formatTime(createdAt),
+              // Passed context to formatTime for localization
+              formatTime(context, createdAt),
               style: Styles.textStyle14.copyWith(color: AppColors.lightGrey),
-              // Time relative strings (like "2m ago") should be LTR
+              // Direction LTR ensures time stamps like "5m" don't flip to "m5"
               textDirection: TextDirection.ltr, 
             ),
           ],
@@ -136,7 +136,7 @@ class AuthorInfo extends StatelessWidget {
     );
   }
 
-  Widget _buildInlineText(TextStyle defaultAuthorStyle) {
+  Widget _buildInlineText(BuildContext context, TextStyle defaultAuthorStyle) {
     return Row(
       children: [
         Flexible(
@@ -148,8 +148,9 @@ class AuthorInfo extends StatelessWidget {
         ),
         const SizedBox(width: 4),
         Text(
-          formatTime(createdAt),
+          formatTime(context, createdAt),
           style: Styles.textStyle14.copyWith(color: AppColors.lightGrey),
+          textDirection: TextDirection.ltr,
         ),
       ],
     );
@@ -163,10 +164,6 @@ class AuthorInfo extends StatelessWidget {
       url,
       fit: BoxFit.cover,
       errorBuilder: (context, error, stackTrace) => const Icon(Icons.person, color: Colors.grey),
-      loadingBuilder: (context, child, loadingProgress) {
-        if (loadingProgress == null) return child;
-        return const Icon(Icons.person, color: Colors.grey);
-      },
     );
   }
 }

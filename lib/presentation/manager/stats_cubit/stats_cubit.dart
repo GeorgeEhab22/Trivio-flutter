@@ -6,28 +6,26 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 part 'stats_state.dart';
 
 class StatsCubit extends Cubit<StatsState> {
-   final StatsUseCase statsUseCase;
-  StatsCubit( this.statsUseCase) : super(StatsInitial());
+  final StatsUseCase statsUseCase;
+  StatsCubit(this.statsUseCase) : super(StatsInitial());
 
- Future<void> loadStats() async {
-  // 1. Immediate exit if the Cubit was closed during a restart
-  if (isClosed) return; 
-
-  emit(StatsLoading());
-  
-  try {
-    final result = await statsUseCase.call();
-    
-    // 2. Check AGAIN after the async Hive/Network call
-    if (isClosed) return; 
-
-    result.fold(
-      (failure) => emit(StatsError(message: failure.message)),
-      (matches) => emit(StatsLoaded(matches: matches)),
-    );
-  } catch (e) {
+  Future<void> loadStats() async {
     if (isClosed) return;
-    emit(StatsError(message: "Failed to load data.")); 
+
+    emit(StatsLoading());
+
+    try {
+      final result = await statsUseCase.call();
+
+      if (isClosed) return;
+
+      result.fold(
+        (failure) => emit(StatsError(message: failure.message)),
+        (matches) => emit(StatsLoaded(matches: matches)),
+      );
+    } catch (e) {
+      if (isClosed) return;
+      emit(const StatsError(message: "failed_to_load"));
+    }
   }
-}
 }

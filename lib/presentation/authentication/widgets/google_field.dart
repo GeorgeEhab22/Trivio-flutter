@@ -22,7 +22,6 @@ class GoogleField extends StatelessWidget {
         const SignInDivider(),
         const SizedBox(height: 20),
         SocialSignInButton(
-          // Localized: "Sign in with Google" or "Continue with Google"
           text: l10n.signInWithGoogle, 
           onPressed: () {
             SocialAuthService().googleSignInHandler(() {

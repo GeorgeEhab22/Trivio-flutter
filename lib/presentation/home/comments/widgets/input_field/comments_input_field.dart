@@ -36,7 +36,6 @@ class CommentInputField extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      // Localized: "Replying to $replyingToUser"
                       l10n.replyingTo(replyingToUser!), 
                       style: TextStyle(
                         color: Theme.of(context).textTheme.bodyMedium?.color,

@@ -24,11 +24,7 @@ class MembersRequestsListView extends StatelessWidget {
         BlocListener<AcceptRequestCubit, AcceptRequestState>(
           listener: (context, state) {
             if (state is AcceptRequestSuccess) {
-              showCustomSnackBar(
-                context,
-                l10n.requestAcceptedSuccess,
-                true,
-              );
+              showCustomSnackBar(context, l10n.requestAcceptedSuccess, true);
             }
             if (state is AcceptRequestFailure) {
               showCustomSnackBar(context, state.message, false);
@@ -38,11 +34,7 @@ class MembersRequestsListView extends StatelessWidget {
         BlocListener<DeclineRequestCubit, DeclineRequestState>(
           listener: (context, state) {
             if (state is DeclineRequestSuccess) {
-              showCustomSnackBar(
-                context,
-                l10n.requestDeclinedSuccess,
-                true,
-              );
+              showCustomSnackBar(context, l10n.requestDeclinedSuccess, true);
             }
             if (state is DeclineRequestFailure) {
               showCustomSnackBar(context, state.message, false);
@@ -90,14 +82,20 @@ class MembersRequestsListView extends StatelessWidget {
                         ),
                       ),
                       title: Text(
-                        request.userName,
+                        request.userName.isEmpty
+                            ? l10n.unknownUser
+                            : request.userName,
                         style: Styles.textStyle16,
                       ),
                       subtitle: Text(request.userEmail),
                       trailing: Builder(
                         builder: (context) {
-                          final acceptState = context.watch<AcceptRequestCubit>().state;
-                          final declineState = context.watch<DeclineRequestCubit>().state;
+                          final acceptState = context
+                              .watch<AcceptRequestCubit>()
+                              .state;
+                          final declineState = context
+                              .watch<DeclineRequestCubit>()
+                              .state;
 
                           if (acceptState is AcceptRequestSuccess &&
                               acceptState.requestId == request.requestId) {
@@ -118,12 +116,16 @@ class MembersRequestsListView extends StatelessWidget {
                                   context: context,
                                   title: l10n.acceptMemberTitle,
                                   onConfirm: () {
-                                    context.read<AcceptRequestCubit>().acceptRequest(
+                                    context
+                                        .read<AcceptRequestCubit>()
+                                        .acceptRequest(
                                           groupId: groupId,
                                           requestId: request.requestId,
                                         );
                                   },
-                                  content: l10n.acceptMemberContent(request.userName),
+                                  content: l10n.acceptMemberContent(
+                                    request.userName,
+                                  ),
                                 ),
                               ),
                               IconButton(
@@ -134,7 +136,9 @@ class MembersRequestsListView extends StatelessWidget {
                                   confirmText: l10n.decline,
                                   confirmTextColor: Colors.red,
                                   onConfirm: () {
-                                    context.read<DeclineRequestCubit>().declineRequest(
+                                    context
+                                        .read<DeclineRequestCubit>()
+                                        .declineRequest(
                                           groupId: groupId,
                                           requestId: request.requestId,
                                         );

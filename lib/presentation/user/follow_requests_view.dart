@@ -8,7 +8,6 @@ class FollowRequestsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Access localized strings
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(

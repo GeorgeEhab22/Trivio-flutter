@@ -90,7 +90,7 @@ class SuggestCard extends StatelessWidget {
                           if (isRow)
                             buildRowButtons(context)
                           else
-                            buildColumnButtons(),
+                            buildColumnButtons(context),
                         ],
                       ),
                     ),
@@ -127,7 +127,8 @@ class SuggestCard extends StatelessWidget {
     );
   }
 
-  Widget buildColumnButtons() {
+  Widget buildColumnButtons(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -139,7 +140,7 @@ class SuggestCard extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         CustomSquareButton(
-          label: "Remove",
+          label: l10n.remove,
           onTap: onRemoveSuggestion ?? () {},
           backgroundColor: Colors.grey[200],
           textColor: Colors.black,

@@ -77,7 +77,7 @@ class GroupFeedView extends StatelessWidget {
                             const SizedBox(height: 20),
 
                             CustomSquareButton(
-                              label: l10n.joined, // Localized "Joined"
+                              label: l10n.joined, 
                               height: 13,
                               onTap: () {
                                 final leaveGroupCubit = context.read<LeaveGroupCubit>();
@@ -146,7 +146,7 @@ class GroupFeedView extends StatelessWidget {
                             const SizedBox(height: 16),
 
                             Text(
-                              l10n.mostRelevant, // Localized "Most relevant"
+                              l10n.mostRelevant, 
                               style: Styles.textStyle16,
                             ),
                             const SizedBox(height: 12),

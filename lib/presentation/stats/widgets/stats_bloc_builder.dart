@@ -1,6 +1,7 @@
 import 'package:auth/constants/colors.dart';
 import 'package:auth/core/styels.dart';
 import 'package:auth/data/models/stats_dart/matches.dart';
+import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/manager/stats_cubit/stats_cubit.dart';
 import 'package:auth/presentation/stats/widgets/match_tile.dart';
 import 'package:flutter/material.dart';
@@ -13,14 +14,16 @@ class StatsBlocBuilder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-
+    final l10n = AppLocalizations.of(context)!;
     return BlocBuilder<StatsCubit, StatsState>(
       builder: (context, state) {
         if (state is StatsLoading) {
           return Skeletonizer(
             enabled: true,
-            effect:  PulseEffect(
-              from: isDark ? AppColors.darkGrey.withValues(alpha: .1) : AppColors.customGrey.withValues(alpha: .1),
+            effect: PulseEffect(
+              from: isDark
+                  ? AppColors.darkGrey.withValues(alpha: .1)
+                  : AppColors.customGrey.withValues(alpha: .1),
 
               to: AppColors.primary.withValues(alpha: 0.2),
               duration: const Duration(milliseconds: 1500),
@@ -35,7 +38,7 @@ class StatsBlocBuilder extends StatelessWidget {
           final matches = state.matches;
           if (matches.isEmpty) {
             return Center(
-              child: Text("No matches found", style: Styles.textStyle16),
+              child: Text(l10n.noMatchesFound, style: Styles.textStyle16),
             );
           }
           return ListView.builder(
@@ -45,7 +48,12 @@ class StatsBlocBuilder extends StatelessWidget {
             },
           );
         } else if (state is StatsError) {
-          return Center(child: Text(state.message, style: Styles.textStyle16));
+         
+          final displayMessage = state.message == "failed_to_load"
+              ? l10n.failedToLoadData
+              : state.message;
+
+          return Center(child: Text(displayMessage));
         }
         return const SizedBox.shrink();
       },

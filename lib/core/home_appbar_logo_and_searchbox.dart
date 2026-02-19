@@ -1,4 +1,5 @@
 import 'package:auth/constants/colors.dart';
+import 'package:auth/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class HomeAppBarLogoAndSearchBox extends StatelessWidget {
@@ -6,6 +7,7 @@ class HomeAppBarLogoAndSearchBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Row(
       children: [
         const Text(
@@ -36,10 +38,9 @@ class HomeAppBarLogoAndSearchBox extends StatelessWidget {
               children: [
                 Icon(Icons.search, color: AppColors.iconsColor, size: 20),
                 const SizedBox(width: 6),
-                // allow text to ellipsize
-                const Flexible(
+                 Flexible(
                   child: Text(
-                    'Search',
+                    l10n.search,
                     style: TextStyle(color: Color(0xFF565d6d), fontSize: 14),
                     overflow: TextOverflow.ellipsis,
                   ),

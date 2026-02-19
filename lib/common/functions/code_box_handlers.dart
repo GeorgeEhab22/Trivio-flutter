@@ -1,3 +1,4 @@
+import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/authentication/widgets/show_custom_snackbar.dart';
 import 'package:auth/presentation/manager/register_cubit/verify_code_cubit.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +12,7 @@ class CodeBoxHandlers {
     List<FocusNode> focusNodes,
     List<TextEditingController> controllers,
     BuildContext context,
-    VoidCallback? onComplete, 
+    VoidCallback? onComplete,
     bool isForVerification,
   ) {
     if (value.isEmpty && index > 0) {
@@ -19,9 +20,10 @@ class CodeBoxHandlers {
     } else if (value.isNotEmpty && index < 5) {
       focusNodes[index + 1].requestFocus();
     } else if (index == 5 && value.isNotEmpty && isForVerification) {
-      handleVerifyCode(context, controllers); 
+      handleVerifyCode(context, controllers);
     }
   }
+
   static void onKeyEvent(
     KeyEvent event,
     int index,
@@ -35,6 +37,7 @@ class CodeBoxHandlers {
       focusNodes[index - 1].requestFocus();
     }
   }
+
   static void clearCode(
     List<TextEditingController> controllers,
     List<FocusNode> focusNodes,
@@ -44,16 +47,18 @@ class CodeBoxHandlers {
     }
     focusNodes[0].requestFocus();
   }
+
   static void handleVerifyCode(
     BuildContext context,
     List<TextEditingController> controllers,
   ) {
     String code = controllers.map((c) => c.text).join();
+    final l10n = AppLocalizations.of(context)!;
     if (code.length == 6) {
       context.read<VerifyCodeCubit>().verify(code);
     } else {
       clearCode(controllers, []);
-      showCustomSnackBar(context, 'Please enter all 6 digits', false);
+      showCustomSnackBar(context, l10n.errInvalidCode, false);
     }
   }
 }

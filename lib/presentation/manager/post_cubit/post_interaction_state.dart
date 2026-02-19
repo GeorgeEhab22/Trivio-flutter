@@ -151,8 +151,7 @@ class FollowUserError extends PostInteractionState {
 class ReportPostLoading extends PostInteractionState {}
 
 class ReportPostSuccess extends PostInteractionState {
-  final String message;
-  const ReportPostSuccess({required this.message});
+  const ReportPostSuccess();
 }
 
 class ReportPostError extends PostInteractionState {

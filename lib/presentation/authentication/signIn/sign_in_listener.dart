@@ -13,7 +13,15 @@ class SignInListener {
       showCustomSnackBar(context, l10n.welcomeBack, true);
       context.go(AppRoutes.home);
     } else if (state is SignInFailure) {
-      showCustomSnackBar(context, state.message, false);
+      String errorMessage = state.message;
+
+      if (state.message == "cancelled") {
+        errorMessage = l10n.googleSignInCancelled;
+      } else if (state.message == "failed") {
+        errorMessage = l10n.googleSignInFailed;
+      }
+
+      showCustomSnackBar(context, errorMessage, false);
     }
   }
 }

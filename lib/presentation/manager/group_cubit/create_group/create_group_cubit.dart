@@ -11,8 +11,8 @@ class CreateGroupCubit extends Cubit<CreateGroupState> {
   XFile? groupCoverImage;
 
   CreateGroupCubit({required CreateGroupUseCase createGroupUseCase})
-    : _createGroupUseCase = createGroupUseCase,
-      super(const CreateGroupInitial());
+      : _createGroupUseCase = createGroupUseCase,
+        super(const CreateGroupInitial());
 
   void updateName(String val) => name = val;
   void updateDescription(String val) => description = val;
@@ -23,15 +23,15 @@ class CreateGroupCubit extends Cubit<CreateGroupState> {
   }
 
   bool validateFields() {
-    String? nameErr;
+    bool hasError = false;
+    
     if (name?.trim().isEmpty ?? true) {
-      nameErr = "Write your group name";
+      // We pass a key or empty string instead of a hardcoded English sentence
+      emit(const CreateGroupInitial(nameError: "empty_name"));
+      hasError = true;
     }
 
-    if (nameErr != null) {
-      emit(CreateGroupInitial(nameError: nameErr));
-      return false;
-    }
+    if (hasError) return false;
 
     emit(const CreateGroupInitial());
     return true;
@@ -41,7 +41,7 @@ class CreateGroupCubit extends Cubit<CreateGroupState> {
     emit(const CreateGroupLoading());
 
     final result = await _createGroupUseCase(
-      name: name?.trim()??"",
+      name: name?.trim() ?? "",
       description: description?.trim(),
       coverImage: groupCoverImage,
     );

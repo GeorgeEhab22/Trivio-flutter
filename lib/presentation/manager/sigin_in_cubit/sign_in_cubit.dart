@@ -35,7 +35,7 @@ class SignInCubit extends Cubit<SignInState> {
       if (idToken == null) {
         emit(
           const SignInFailure(
-            message: "Google sign-in cancelled",
+            message: "cancelled", 
             errorType: "auth",
           ),
         );
@@ -45,13 +45,12 @@ class SignInCubit extends Cubit<SignInState> {
       final result = await _googleSignInUseCase(idToken: idToken);
       result.fold(
         (failure) => emit(_mapFailureToState(failure)),
-        (_) => emit(SignInSuccess()),
+        (_) => emit(const SignInSuccess()),
       );
-      emit(const SignInSuccess());
     } catch (e) {
       emit(
         const SignInFailure(
-          message: "Google sign-in failed",
+          message: "failed", 
           errorType: "auth",
         ),
       );
@@ -59,7 +58,6 @@ class SignInCubit extends Cubit<SignInState> {
   }
 
   SignInFailure _mapFailureToState(Failure failure) {
-
     switch (failure.runtimeType) {
       case const (ValidationFailure):
         return SignInFailure(message: failure.message, errorType: 'validation');

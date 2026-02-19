@@ -293,11 +293,10 @@ class PostInteractionCubit extends Cubit<PostInteractionState> {
     result.fold(
       (failure) => emit(ReportPostError(message: failure.message)),
       (_) =>
-          emit(const ReportPostSuccess(message: "Post reported successfully")),
+          emit(const ReportPostSuccess()),
     );
   }
 
-  // Helper to clear states (useful when reusing the cubit)
   void resetState() {
     emit(PostInteractionInitial());
   }

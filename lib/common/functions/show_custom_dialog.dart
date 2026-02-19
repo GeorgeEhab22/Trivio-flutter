@@ -7,7 +7,7 @@ void showCustomDialog({
   required BuildContext context,
   required String title,
   required String content,
-  String confirmText = "Accept",
+  String? confirmText, 
   Color? confirmTextColor,
   VoidCallback? onConfirm,
 }) {
@@ -17,7 +17,7 @@ void showCustomDialog({
       final l10n = AppLocalizations.of(context)!;
 
       return AlertDialog(
-        backgroundColor:Theme.of(context).cardColor,
+        backgroundColor: Theme.of(context).cardColor,
         surfaceTintColor: Colors.transparent,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         title: Text(title),
@@ -25,7 +25,10 @@ void showCustomDialog({
         actions: [
           TextButton(
             onPressed: () => context.pop(),
-            child: Text(l10n.cancelBtn, style: const TextStyle(color: Colors.grey)),
+            child: Text(
+              l10n.cancelBtn, 
+              style: const TextStyle(color: Colors.grey),
+            ),
           ),
           TextButton(
             onPressed: () {
@@ -33,7 +36,7 @@ void showCustomDialog({
               context.pop();
             },
             child: Text(
-              confirmText,
+              confirmText ?? l10n.accept, 
               style: TextStyle(
                 color: confirmTextColor ?? AppColors.primary,
                 fontWeight: FontWeight.bold,

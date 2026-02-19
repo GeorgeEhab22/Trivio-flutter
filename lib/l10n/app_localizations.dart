@@ -1735,6 +1735,114 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'see all'**
   String get getSeeAll;
+
+  /// No description provided for @errorPickingMedia.
+  ///
+  /// In en, this message translates to:
+  /// **'Error picking media'**
+  String get errorPickingMedia;
+
+  /// No description provided for @accept.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept'**
+  String get accept;
+
+  /// No description provided for @unknownUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown User'**
+  String get unknownUser;
+
+  /// No description provided for @noPostsAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No posts available yet. Be the first to post!'**
+  String get noPostsAvailable;
+
+  /// No description provided for @nameRequiredError.
+  ///
+  /// In en, this message translates to:
+  /// **'Please write your group name'**
+  String get nameRequiredError;
+
+  /// No description provided for @googleSignInCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Google sign-in was cancelled'**
+  String get googleSignInCancelled;
+
+  /// No description provided for @googleSignInFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Google sign-in failed. Please try again.'**
+  String get googleSignInFailed;
+
+  /// No description provided for @networkError.
+  ///
+  /// In en, this message translates to:
+  /// **'Please check your internet connection.'**
+  String get networkError;
+
+  /// No description provided for @failedToLoadData.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load football data. Please check your connection.'**
+  String get failedToLoadData;
+
+  /// No description provided for @matches.
+  ///
+  /// In en, this message translates to:
+  /// **'matches'**
+  String get matches;
+
+  /// No description provided for @noMatchesFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No Matches Found'**
+  String get noMatchesFound;
+
+  /// No description provided for @errInvalidCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter all 6 digits'**
+  String get errInvalidCode;
+
+  /// No description provided for @copied.
+  ///
+  /// In en, this message translates to:
+  /// **'Copied to clipboard'**
+  String get copied;
+
+  /// No description provided for @justNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Just now'**
+  String get justNow;
+
+  /// No description provided for @minuteLetter.
+  ///
+  /// In en, this message translates to:
+  /// **'m'**
+  String get minuteLetter;
+
+  /// No description provided for @hourLetter.
+  ///
+  /// In en, this message translates to:
+  /// **'h'**
+  String get hourLetter;
+
+  /// No description provided for @dayLetter.
+  ///
+  /// In en, this message translates to:
+  /// **'d'**
+  String get dayLetter;
+
+  /// No description provided for @weekLetter.
+  ///
+  /// In en, this message translates to:
+  /// **'w'**
+  String get weekLetter;
 }
 
 class _AppLocalizationsDelegate

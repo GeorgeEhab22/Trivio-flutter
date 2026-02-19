@@ -511,7 +511,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get blockUserConfirm => 'هل أنت متأكد من رغبتك في حظر هذا المستخدم؟';
 
   @override
-  String get cancelBtn => 'الغاء';
+  String get cancelBtn => 'إلغاء';
 
   @override
   String get followers => 'المتابعين';
@@ -858,4 +858,59 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get getSeeAll => 'إظهار الكل';
+
+  @override
+  String get errorPickingMedia => 'خطأ أثناء اختيار الوسائط';
+
+  @override
+  String get accept => 'موافق';
+
+  @override
+  String get unknownUser => 'مستخدم مجهول';
+
+  @override
+  String get noPostsAvailable =>
+      'لا توجد منشورات متاحة حالياً. كن أول من ينشر!';
+
+  @override
+  String get nameRequiredError => 'يرجى كتابة اسم المجموعة';
+
+  @override
+  String get googleSignInCancelled => 'تم إلغاء تسجيل الدخول بـ Google';
+
+  @override
+  String get googleSignInFailed => 'فشل تسجيل الدخول بـ Google. حاول مرة أخرى.';
+
+  @override
+  String get networkError => 'يرجى التحقق من اتصال الإنترنت الخاص بك.';
+
+  @override
+  String get failedToLoadData => 'فشل تحميل البيانات. يرجى التحقق من الاتصال.';
+
+  @override
+  String get matches => 'المباريات';
+
+  @override
+  String get noMatchesFound => 'لا توجد مباريات';
+
+  @override
+  String get errInvalidCode => 'يرجى إدخال جميع الأرقام الستة';
+
+  @override
+  String get copied => 'تم النسخ الى الحافظة';
+
+  @override
+  String get justNow => 'الآن';
+
+  @override
+  String get minuteLetter => 'د';
+
+  @override
+  String get hourLetter => 'س';
+
+  @override
+  String get dayLetter => 'ي';
+
+  @override
+  String get weekLetter => 'أ';
 }

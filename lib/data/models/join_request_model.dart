@@ -17,7 +17,7 @@ class JoinRequestModel extends JoinRequest {
       requestId: json['_id'] ?? '',
       groupId: json['groupId'] ?? '',
       userId: userData['_id'] ?? '',
-      userName: userData['name'] ?? "Unknown",
+      userName: userData['name'] ?? "",
       userEmail: userData['email'] ?? "",
       status: json['status'] ?? 'pending',
     );

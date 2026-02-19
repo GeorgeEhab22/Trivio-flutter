@@ -862,4 +862,60 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get getSeeAll => 'see all';
+
+  @override
+  String get errorPickingMedia => 'Error picking media';
+
+  @override
+  String get accept => 'Accept';
+
+  @override
+  String get unknownUser => 'Unknown User';
+
+  @override
+  String get noPostsAvailable =>
+      'No posts available yet. Be the first to post!';
+
+  @override
+  String get nameRequiredError => 'Please write your group name';
+
+  @override
+  String get googleSignInCancelled => 'Google sign-in was cancelled';
+
+  @override
+  String get googleSignInFailed => 'Google sign-in failed. Please try again.';
+
+  @override
+  String get networkError => 'Please check your internet connection.';
+
+  @override
+  String get failedToLoadData =>
+      'Failed to load football data. Please check your connection.';
+
+  @override
+  String get matches => 'matches';
+
+  @override
+  String get noMatchesFound => 'No Matches Found';
+
+  @override
+  String get errInvalidCode => 'Please enter all 6 digits';
+
+  @override
+  String get copied => 'Copied to clipboard';
+
+  @override
+  String get justNow => 'Just now';
+
+  @override
+  String get minuteLetter => 'm';
+
+  @override
+  String get hourLetter => 'h';
+
+  @override
+  String get dayLetter => 'd';
+
+  @override
+  String get weekLetter => 'w';
 }

@@ -1,5 +1,6 @@
 import 'package:auth/constants/paths.dart';
 import 'package:auth/core/app_routes.dart';
+import 'package:auth/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -10,6 +11,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Padding(
       padding: const EdgeInsets.only(left: 16, right: 16),
       child: Row(
@@ -51,7 +53,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                   // allow text to ellipsize
                   Flexible(
                     child: Text(
-                      'Search',
+                      l10n.search,
                       style: TextStyle(
                         color: Theme.of(context).textTheme.bodyMedium?.color,
                         fontSize: 14,

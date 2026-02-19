@@ -38,6 +38,7 @@ class BottomSheetManager {
                   onTap: () async {
                     sheetContext.pop();
                     await pickMedia(
+                      context: context,
                       isVideo: isVideo,
                       fromCamera: false,
                       onError: (message) {
@@ -58,6 +59,7 @@ class BottomSheetManager {
                   onTap: () async {
                     sheetContext.pop();
                     await pickMedia(
+                      context: context,
                       isVideo: isVideo,
                       fromCamera: true,
                       onError: (message) {
@@ -78,11 +80,14 @@ class BottomSheetManager {
   }
 
   static Future<void> pickMedia({
+    required BuildContext context,
     required bool isVideo,
     required bool fromCamera,
     required void Function(List<XFile> files) onPicked,
     required void Function(String message) onError,
   }) async {
+    final l10n = AppLocalizations.of(context)!;
+
     try {
       final ImagePicker picker = ImagePicker();
       if (isVideo) {
@@ -102,7 +107,7 @@ class BottomSheetManager {
         }
       }
     } catch (e) {
-      onError("Error picking media: $e");
+      onError("${l10n.errorPickingMedia}: $e");
     }
   }
 
