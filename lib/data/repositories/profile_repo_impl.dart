@@ -52,4 +52,43 @@ class UserProfileRepositoryImpl implements UserProfileRepo {
       return Left(ServerFailure(e.toString()));
     }
   }
+  @override
+  Future<Either<Failure, List<String>>> getFavTeams() async {
+    try {
+      final teams = await remoteDataSource.getFavTeams();
+      return Right(teams);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<String>>> getFavPlayers() async {
+    try {
+      final players = await remoteDataSource.getFavPlayers();
+      return Right(players);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, Unit>> removeFavTeams(List<String> teams) async {
+    try {
+      await remoteDataSource.removeFavTeams(teams);
+      return const Right(unit); 
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, Unit>> removeFavPlayers(List<String> players) async {
+    try {
+      await remoteDataSource.removeFavPlayers(players);
+      return const Right(unit);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    }
+  }
 }

@@ -9,7 +9,13 @@ import '../models/user_profile_model.dart';
 abstract class ProfileRemoteDataSource {
   /// 1️⃣ Get detailed info about the currently authenticated user
   Future<UserProfileModel> getMyProfile();
+
+  // interests
   Future<UserProfileModel> updateInterests(Map<String, dynamic> data);
+  Future<List<String>> getFavTeams();
+  Future<List<String>> getFavPlayers();
+  Future<void> removeFavTeams(List<String> teams);
+  Future<void> removeFavPlayers(List<String> players);
 }
 
 class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
@@ -50,6 +56,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
     }
   }
 
+// interests
   @override
   Future<UserProfileModel> updateInterests(Map<String, dynamic> data) async {
     try {
@@ -69,5 +76,34 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       errorHandler.handleDioError(e);
       rethrow;
     }
+  }
+  @override
+  Future<List<String>> getFavTeams() async {
+    final response = await api.get(ApiEndpoints.favTeams, options: _getAuthOptions());
+    return List<String>.from(response['data']['teams']);
+  }
+
+  @override
+  Future<List<String>> getFavPlayers() async {
+    final response = await api.get(ApiEndpoints.favPlayers, options: _getAuthOptions());
+    return List<String>.from(response['data']['players']);
+  }
+
+  @override
+  Future<void> removeFavTeams(List<String> teams) async {
+    await api.delete(
+      ApiEndpoints.removeFavTeams,
+      data: {'teams': teams},
+      options: _getAuthOptions(),
+    );
+  }
+
+  @override
+  Future<void> removeFavPlayers(List<String> players) async {
+    await api.delete(
+      ApiEndpoints.removeFavPlayers,
+      data: {'players': players},
+      options: _getAuthOptions(),
+    );
   }
 }
