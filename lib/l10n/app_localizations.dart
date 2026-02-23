@@ -1843,6 +1843,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'w'**
   String get weekLetter;
+
+  /// No description provided for @trivio.
+  ///
+  /// In en, this message translates to:
+  /// **'Trivio'**
+  String get trivio;
 }
 
 class _AppLocalizationsDelegate

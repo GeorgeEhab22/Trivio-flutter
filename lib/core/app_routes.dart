@@ -53,4 +53,8 @@ class AppRoutes {
   static const String requests = '/app/profile/settings/requests';
   static const String followersList = '/app/profile/followers';
   static const String followingList = '/app/profile/following';
+
+  // interests
+  static const String selectTeams = '/select-teams';
+  static const String selectPlayers = '/select-teams/select-players';
 }

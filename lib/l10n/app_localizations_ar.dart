@@ -913,4 +913,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get weekLetter => 'أ';
+
+  @override
+  String get trivio => 'Trivio';
 }

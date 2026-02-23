@@ -11,7 +11,7 @@ class SignInListener {
 
     if (state is SignInSuccess) {
       showCustomSnackBar(context, l10n.welcomeBack, true);
-      context.go(AppRoutes.home);
+      context.go(AppRoutes.selectTeams);
     } else if (state is SignInFailure) {
       String errorMessage = state.message;
 
