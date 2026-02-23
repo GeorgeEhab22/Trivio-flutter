@@ -77,4 +77,5 @@ class ApiEndpoints {
 
   //profile
   static const String myProfile = '/api/v1/users/me';
+  static const String updateProfile = '/api/v1/users/me/update-profile';
 }

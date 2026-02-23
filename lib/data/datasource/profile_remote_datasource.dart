@@ -7,16 +7,14 @@ import '../models/user_profile_model.dart';
 abstract class ProfileRemoteDataSource {
   /// 1️⃣ Get detailed info about the currently authenticated user
   Future<UserProfileModel> getMyProfile();
+  Future<UserProfileModel> updateInterests(Map<String, dynamic> data);
 }
 
 class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   final ApiService api;
   final ErrorHandler errorHandler;
 
-  ProfileRemoteDataSourceImpl({
-    required this.api,
-    required this.errorHandler,
-  });
+  ProfileRemoteDataSourceImpl({required this.api, required this.errorHandler});
 
   @override
   Future<UserProfileModel> getMyProfile() async {
@@ -34,6 +32,23 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
         throw ServerException('Failed to fetch user profile');
       }
     } catch (e) {
+      errorHandler.handleDioError(e);
+      rethrow;
+    }
+  }
+
+  @override
+  Future<UserProfileModel> updateInterests(Map<String, dynamic> data) async {
+    try {
+      final response = await api.patch(ApiEndpoints.updateProfile, data: data);
+      print(response);
+      if (response["status"] == "success") {
+        return UserProfileModel.fromJson(response['data']['user']);
+      } else {
+        throw ServerException('Failed to update interests');
+      }
+    } catch (e) {
+      print(e);
       errorHandler.handleDioError(e);
       rethrow;
     }

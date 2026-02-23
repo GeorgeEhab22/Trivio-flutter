@@ -6,6 +6,9 @@ class UserProfile {
   final String privacy;
   final int followersCount;
   final int followingCount;
+
+  final List<String> favTeams;
+  final List<String> favPlayers;
   
 
   const UserProfile({
@@ -16,5 +19,7 @@ class UserProfile {
     this.privacy = "public",
     this.followersCount = 0,
     this.followingCount = 0,
+    this.favTeams = const [],
+    this.favPlayers = const [],
   });
 }

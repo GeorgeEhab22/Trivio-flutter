@@ -29,4 +29,27 @@ class UserProfileRepositoryImpl implements UserProfileRepo {
       return Left(ServerFailure(e.message));
     }
   }
+
+  @override
+  Future<Either<Failure, UserProfile>> updateInterests({
+    required List<String> favTeams,
+    required List<String> favPlayers,
+  }) async {
+    try {
+      final Map<String, dynamic> updateData = {
+        'favTeams': favTeams,
+        'favPlayers': favPlayers,
+      };
+
+      final model = await remoteDataSource.updateInterests(updateData);
+      print(model);
+      return Right(model.toEntity());
+    } on ServerException catch (e) {
+      print(e);
+      return Left(ServerFailure(e.message));
+    } catch (e) {
+      print(e);
+      return Left(ServerFailure(e.toString()));
+    }
+  }
 }
