@@ -1,6 +1,8 @@
 import 'package:auth/common/api_endpoints.dart';
 import 'package:auth/common/functions/handle_dio_error.dart';
 import 'package:auth/data/core/error/exceptions.dart';
+import 'package:dio/dio.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../common/api_service.dart';
 import '../models/user_profile_model.dart';
 
@@ -12,9 +14,20 @@ abstract class ProfileRemoteDataSource {
 
 class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   final ApiService api;
+  final SharedPreferences prefs;
   final ErrorHandler errorHandler;
 
-  ProfileRemoteDataSourceImpl({required this.api, required this.errorHandler});
+  ProfileRemoteDataSourceImpl({
+    required this.api,
+    required this.prefs,
+    required this.errorHandler,
+  });
+
+  Options _getAuthOptions() {
+    final token = prefs.getString('auth_token');
+    if (token == null) throw AuthException('No auth token found');
+    return Options(headers: {'Authorization': 'Bearer $token'});
+  }
 
   @override
   Future<UserProfileModel> getMyProfile() async {
@@ -40,7 +53,11 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   @override
   Future<UserProfileModel> updateInterests(Map<String, dynamic> data) async {
     try {
-      final response = await api.patch(ApiEndpoints.updateProfile, data: data);
+      final response = await api.patch(
+        ApiEndpoints.updateProfile,
+        data: data,
+        options: _getAuthOptions(),
+      );
       print(response);
       if (response["status"] == "success") {
         return UserProfileModel.fromJson(response['data']['user']);

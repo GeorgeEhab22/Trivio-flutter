@@ -1,11 +1,11 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:auth/domain/usecases/user_profile/select_interests_use_case.dart';
+import 'package:auth/domain/usecases/user_profile/select_interests.dart';
 import 'select_interests_state.dart';
 
 class SelectInterestsCubit extends Cubit<SelectInterestsState> {
-  final SelectInterestsUseCase updateInterestsUseCase;
+  final SelectInterestsUseCase selectInterestsUseCase;
 
-  SelectInterestsCubit({required this.updateInterestsUseCase})
+  SelectInterestsCubit({required this.selectInterestsUseCase})
     : super(const SelectInterestsInitial());
 
   void toggleTeam(String teamName) {
@@ -54,7 +54,7 @@ class SelectInterestsCubit extends Cubit<SelectInterestsState> {
 
       emit(SelectInterestsLoading());
 
-      final result = await updateInterestsUseCase(
+      final result = await selectInterestsUseCase(
         favTeams: currentState.selectedTeams,
         favPlayers: currentState.selectedPlayers,
       );

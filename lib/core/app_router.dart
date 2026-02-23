@@ -39,6 +39,7 @@ import 'package:auth/presentation/manager/group_cubit/leave_group/leave_group_cu
 import 'package:auth/presentation/manager/group_cubit/get_members_by_roles/members_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/unban_member/unban_member_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/update_group/update_group_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/interests/select_interests_cubit.dart';
 import 'package:auth/presentation/manager/sigin_in_cubit/forget_password_otp_cubit.dart';
 import 'package:auth/presentation/home/widgets/edit_page.dart';
 import 'package:auth/presentation/reels/reels_page.dart';
@@ -160,19 +161,29 @@ GoRouter createRouter(bool isLoggedIn) {
           );
         },
       ),
-      GoRoute(
-        path: AppRoutes.selectTeams,
-        builder: (context, state) {
-          final bool isEdit = state.extra as bool? ?? false;
-          return SelectTeamsView(isEditTeams: isEdit);
+      ShellRoute(
+        builder: (context, state, child) {
+          return BlocProvider(
+            create: (context) => di.sl<SelectInterestsCubit>(),
+            child: child,
+          );
         },
         routes: [
           GoRoute(
-            path: 'select-players',
+            path: AppRoutes.selectTeams,
             builder: (context, state) {
               final bool isEdit = state.extra as bool? ?? false;
-              return SelectPlayersView(isEditPlayers: isEdit);
+              return SelectTeamsView(isEditTeams: isEdit);
             },
+            routes: [
+              GoRoute(
+                path: 'select-players',
+                builder: (context, state) {
+                  final bool isEdit = state.extra as bool? ?? false;
+                  return SelectPlayersView(isEditPlayers: isEdit);
+                },
+              ),
+            ],
           ),
         ],
       ),

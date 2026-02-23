@@ -3,15 +3,15 @@ import 'package:auth/core/styels.dart';
 import 'package:flutter/material.dart';
 
 class SelectionItem extends StatefulWidget {
-  final String teamName;
-  final String teamLogo;
+  final String itemName;
+  final String itemLogo;
   final bool isSelected; 
   final VoidCallback onTap;
 
   const SelectionItem({
     super.key,
-    required this.teamName,
-    required this.teamLogo,
+    required this.itemName,
+    required this.itemLogo,
     required this.isSelected,
     required this.onTap,
   });
@@ -24,7 +24,6 @@ class _SelectionItemState extends State<SelectionItem>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
-  bool _internalSelected = false;
 
   @override
   void initState() {
@@ -35,32 +34,25 @@ class _SelectionItemState extends State<SelectionItem>
     );
     _animation = CurvedAnimation(parent: _controller, curve: Curves.easeInOut);
 
-    _internalSelected = widget.isSelected;
-    if (_internalSelected) _controller.value = 1.0;
+    if (widget.isSelected) _controller.value = 1.0;
   }
-
+@override
+  void didUpdateWidget(covariant SelectionItem oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.isSelected != oldWidget.isSelected) {
+      widget.isSelected ? _controller.forward() : _controller.reverse();
+    }
+  }
   @override
   void dispose() {
     _controller.dispose();
     super.dispose();
   }
 
-  void _handleTap() {
-    setState(() {
-      _internalSelected = !_internalSelected;
-      if (_internalSelected) {
-        _controller.forward();
-      } else {
-        _controller.reverse();
-      }
-    });
-    widget.onTap();
-  }
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: _handleTap,
+      onTap: widget.onTap,
       child: Stack(
         clipBehavior: Clip.none,
         alignment: Alignment.bottomCenter,
@@ -78,13 +70,13 @@ class _SelectionItemState extends State<SelectionItem>
               children: [
                 CircleAvatar(
                   radius: 28,
-                  backgroundImage: NetworkImage(widget.teamLogo),
+                  backgroundImage: NetworkImage(widget.itemLogo),
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  widget.teamName,
+                  widget.itemName,
                   style: Styles.textStyle14.copyWith(
-                    fontWeight: _internalSelected
+                    fontWeight: widget.isSelected
                         ? FontWeight.bold
                         : FontWeight.normal,
                   ),

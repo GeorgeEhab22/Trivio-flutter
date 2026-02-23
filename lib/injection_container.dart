@@ -87,6 +87,7 @@ import 'package:auth/domain/usecases/sign_in/request_otp.dart';
 import 'package:auth/domain/usecases/sign_in/signin_usecase.dart';
 import 'package:auth/domain/usecases/sign_in/verify_otp.dart';
 import 'package:auth/domain/usecases/stats/stats_usecase.dart';
+import 'package:auth/domain/usecases/user_profile/select_interests.dart';
 import 'package:auth/presentation/manager/comment_cubit/comment_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/ban_member/ban_member_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/create_group/create_group_cubit.dart';
@@ -118,6 +119,7 @@ import 'package:auth/presentation/manager/post_cubit/create_post_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/get_post/get_post_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/post_interaction_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/interests/select_interests_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_cubit.dart';
 import 'package:auth/presentation/manager/register_cubit/register_cubit.dart';
 import 'package:auth/presentation/manager/sigin_in_cubit/request_otp/request_otp_cubit.dart';
@@ -376,7 +378,7 @@ sl.registerLazySingleton(() => CommentOnPostUseCase(sl()));
   sl.registerFactory(() => ThemeCubit(prefs));
 
   sl.registerLazySingleton<ProfileRemoteDataSource>(
-    () => ProfileRemoteDataSourceImpl(api: sl(), errorHandler: sl()),
+    () => ProfileRemoteDataSourceImpl(api: sl(),prefs: sl(), errorHandler: sl()),
   );
   sl.registerLazySingleton<UserProfileRepo>(
     () => UserProfileRepositoryImpl(remoteDataSource: sl()),
@@ -420,4 +422,8 @@ sl.registerLazySingleton(() => CommentOnPostUseCase(sl()));
       getMyFollowingUseCase: sl(),
     ),
   );
+
+  // select interest
+  sl.registerFactory(() => SelectInterestsCubit(selectInterestsUseCase: sl()));
+  sl.registerLazySingleton(() => SelectInterestsUseCase(sl()));
 }

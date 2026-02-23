@@ -2,9 +2,13 @@ import 'package:auth/common/functions/custom_square_button.dart';
 import 'package:auth/constants/colors.dart';
 import 'package:auth/core/app_routes.dart';
 import 'package:auth/core/styels.dart';
+import 'package:auth/presentation/authentication/widgets/show_custom_snackbar.dart';
 import 'package:auth/presentation/interests/widgets/search_box.dart';
 import 'package:auth/presentation/interests/widgets/selection_item.dart';
+import 'package:auth/presentation/manager/profile_cubit/interests/select_interests_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/interests/select_interests_state.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class SelectPlayersView extends StatelessWidget {
@@ -44,27 +48,43 @@ class SelectPlayersView extends StatelessWidget {
 
           SearchBox(),
 
-          Expanded(
-            child: GridView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                crossAxisSpacing: 15,
-                mainAxisSpacing: 15,
-                childAspectRatio: 0.82,
-              ),
-              itemCount: 10,
-              itemBuilder: (context, index) {
-                return SelectionItem(
-                  teamName: "Player $index",
-                  teamLogo: "https://picsum.photos/200",
-                  isSelected: true,
-                  onTap: () {
-                    // TODO : use update user info cubit (players)
+          BlocConsumer<SelectInterestsCubit, SelectInterestsState>(
+            listener: (context, state) {
+              if (state is SelectInterestsSuccess) {
+                isEditPlayers ? context.pop() : context.go(AppRoutes.home);
+              }
+              if (state is SelectInterestsError) {
+                showCustomSnackBar(context, state.message, false);
+              }
+            },
+            builder: (context, state) {
+              final cubit = context.read<SelectInterestsCubit>();
+              final selectedPlayers = (state is SelectInterestsInitial)
+                  ? state.selectedPlayers
+                  : <String>[];
+              return Expanded(
+                child: GridView.builder(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    crossAxisSpacing: 15,
+                    mainAxisSpacing: 15,
+                    childAspectRatio: 0.82,
+                  ),
+                  itemCount: 10,
+                  itemBuilder: (context, index) {
+                    return SelectionItem(
+                      itemName: "Player $index",
+                      itemLogo: "https://picsum.photos/200",
+                      isSelected: selectedPlayers.contains("Player $index"),
+                      onTap: () {
+                        cubit.togglePlayer("Player $index");
+                      },
+                    );
                   },
-                );
-              },
-            ),
+                ),
+              );
+            },
           ),
           if (!isEditPlayers) ...[
             Padding(
@@ -86,7 +106,7 @@ class SelectPlayersView extends StatelessWidget {
                     height: 11,
                     backgroundColor: AppColors.primary.withValues(alpha: 0.9),
                     onTap: () {
-                      context.go(AppRoutes.home);
+                      context.read<SelectInterestsCubit>().submitInterests();
                     },
                   ),
                 ],
