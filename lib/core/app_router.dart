@@ -16,6 +16,7 @@ import 'package:auth/presentation/groups/manage_group/pending_posts_view.dart';
 import 'package:auth/presentation/groups/manage_group/people_view/people_view.dart';
 import 'package:auth/presentation/groups/manage_group/reported_posts_view.dart';
 import 'package:auth/presentation/groups/my_group/my_group_view.dart';
+import 'package:auth/presentation/interests/select_players_view.dart';
 import 'package:auth/presentation/interests/select_teams_view.dart';
 import 'package:auth/presentation/manager/group_cubit/ban_member/ban_member_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/create_group/create_group_cubit.dart';
@@ -161,10 +162,10 @@ GoRouter createRouter(bool isLoggedIn) {
         path: AppRoutes.selectTeams,
         builder: (context, state) => const SelectTeamsView(),
         routes: [
-          // GoRoute(
-          //   path: 'select-players',
-          //   builder: (context, state) => const SelectPlayersView(),
-          // ),
+          GoRoute(
+            path: 'select-players',
+            builder: (context, state) => const SelectPlayersView(),
+          ),
         ],
       ),
       GoRoute(path: '/theme', builder: (context, state) => const ThemeView()),

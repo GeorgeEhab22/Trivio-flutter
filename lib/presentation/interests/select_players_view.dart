@@ -7,11 +7,12 @@ import 'package:auth/presentation/interests/widgets/selection_item.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-class SelectTeamsView extends StatelessWidget {
-  const SelectTeamsView({super.key});
+class SelectPlayersView extends StatelessWidget {
+  const SelectPlayersView({super.key});
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -27,14 +28,14 @@ class SelectTeamsView extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Choose your teams",
+                  "Choose your players",
                   style: Styles.textStyle20.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  "Select your interested teams to get better recommendations",
+                  "Select your interested players to get better recommendations",
                   style: Styles.textStyle14.copyWith(color: Colors.grey),
                 ),
               ],
@@ -52,12 +53,12 @@ class SelectTeamsView extends StatelessWidget {
                 mainAxisSpacing: 15,
                 childAspectRatio: 0.82,
               ),
-              itemCount: 15,
+              itemCount: 10,
               itemBuilder: (context, index) {
                 return SelectionItem(
-                  teamName: "Team $index",
+                  teamName: "Player $index",
                   teamLogo: "https://picsum.photos/200",
-                  isSelected: false,
+                  isSelected: true,
                   onTap: () {},
                 );
               },
@@ -70,23 +71,23 @@ class SelectTeamsView extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 CustomSquareButton(
-                  label: "Skip",
+                  label: "Back",
                   height: 11,
                   backgroundColor: Theme.of(context).cardColor,
                   onTap: () {
-                    context.go(AppRoutes.home);
+                    context.pop();
                   },
                 ),
                 CustomSquareButton(
-                  label: "Next",
-                  textColor: Colors.white,
+                  label: "Home",
                   row: true,
-                  trailingIcon: Icons.arrow_forward_ios,
-                  iconColor: Colors.white,
+                  leadingIcon: Icons.home_outlined,
+                  iconColor:  Colors.white,
+                  textColor: Colors.white,
                   height: 11,
                   backgroundColor: AppColors.primary.withValues(alpha: 0.9),
                   onTap: () {
-                    context.push(AppRoutes.selectPlayers);
+                    context.go(AppRoutes.home);
                   },
                 ),
               ],
