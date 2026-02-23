@@ -8,11 +8,11 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class SelectPlayersView extends StatelessWidget {
-  const SelectPlayersView({super.key});
+  final bool isEditPlayers;
+  const SelectPlayersView({super.key, this.isEditPlayers = false});
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -28,7 +28,7 @@ class SelectPlayersView extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Choose your players",
+                  "Your favourite players",
                   style: Styles.textStyle20.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -59,40 +59,59 @@ class SelectPlayersView extends StatelessWidget {
                   teamName: "Player $index",
                   teamLogo: "https://picsum.photos/200",
                   isSelected: true,
-                  onTap: () {},
+                  onTap: () {
+                    // TODO : use update user info cubit (players)
+                  },
                 );
               },
             ),
           ),
-
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                CustomSquareButton(
-                  label: "Back",
-                  height: 11,
-                  backgroundColor: Theme.of(context).cardColor,
-                  onTap: () {
-                    context.pop();
-                  },
-                ),
-                CustomSquareButton(
-                  label: "Home",
-                  row: true,
-                  leadingIcon: Icons.home_outlined,
-                  iconColor:  Colors.white,
-                  textColor: Colors.white,
-                  height: 11,
-                  backgroundColor: AppColors.primary.withValues(alpha: 0.9),
-                  onTap: () {
-                    context.go(AppRoutes.home);
-                  },
-                ),
-              ],
+          if (!isEditPlayers) ...[
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  CustomSquareButton(
+                    label: "Back",
+                    height: 11,
+                    backgroundColor: Theme.of(context).cardColor,
+                    onTap: () {
+                      context.pop();
+                    },
+                  ),
+                  CustomSquareButton(
+                    label: "Finish",
+                    textColor: Colors.white,
+                    height: 11,
+                    backgroundColor: AppColors.primary.withValues(alpha: 0.9),
+                    onTap: () {
+                      context.go(AppRoutes.home);
+                    },
+                  ),
+                ],
+              ),
             ),
-          ),
+          ] else ...[
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  CustomSquareButton(
+                    label: "Update",
+                    textColor: Colors.white,
+                    height: 11,
+                    backgroundColor: AppColors.primary.withValues(alpha: 0.9),
+                    onTap: () {
+                      // TODO : first get selected players and then use update user info cubit (players)
+                      context.pop();
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ],
         ],
       ),
     );

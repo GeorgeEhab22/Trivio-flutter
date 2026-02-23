@@ -97,7 +97,9 @@ CustomTransitionPage buildAnimatedPage({
 
 GoRouter createRouter(bool isLoggedIn) {
   return GoRouter(
+    // initialLocation: AppRoutes.profileSettings,
     initialLocation: AppRoutes.selectTeams,
+
     // initialLocation: '/signin',
     // initialLocation: isLoggedIn ? '/app/home' : '/signin',
     routes: [
@@ -160,11 +162,17 @@ GoRouter createRouter(bool isLoggedIn) {
       ),
       GoRoute(
         path: AppRoutes.selectTeams,
-        builder: (context, state) => const SelectTeamsView(),
+        builder: (context, state) {
+          final bool isEdit = state.extra as bool? ?? false;
+          return SelectTeamsView(isEditTeams: isEdit);
+        },
         routes: [
           GoRoute(
             path: 'select-players',
-            builder: (context, state) => const SelectPlayersView(),
+            builder: (context, state) {
+              final bool isEdit = state.extra as bool? ?? false;
+              return SelectPlayersView(isEditPlayers: isEdit);
+            },
           ),
         ],
       ),

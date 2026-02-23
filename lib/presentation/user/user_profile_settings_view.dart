@@ -85,6 +85,22 @@ class UserProfileSettings extends StatelessWidget {
                     ),
                     Divider(color: AppColors.lightGrey, height: 1),
                     SettingsRow(
+                      title:"My favourite teams",
+                      subtitle:"",
+                      onpressed: () {
+                        context.push(AppRoutes.selectTeams, extra: true);
+                      },
+                    ),
+                    Divider(color: AppColors.lightGrey, height: 1),
+                    SettingsRow(
+                      title: "My favourite players",
+                      subtitle: "",
+                      onpressed: () {
+                        context.push(AppRoutes.selectPlayers, extra: true);
+                      },
+                    ),
+                    Divider(color: AppColors.lightGrey, height: 1),
+                    SettingsRow(
                       title: l10n.requireFollow,
                       subtitle: l10n.requireFollowSub,
                       onpressed: () {},

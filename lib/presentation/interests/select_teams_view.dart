@@ -8,7 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class SelectTeamsView extends StatelessWidget {
-  const SelectTeamsView({super.key});
+  final bool isEditTeams;
+  const SelectTeamsView({super.key, this.isEditTeams = false});
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +28,7 @@ class SelectTeamsView extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Choose your teams",
+                  "Your favourite teams",
                   style: Styles.textStyle20.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -58,40 +59,62 @@ class SelectTeamsView extends StatelessWidget {
                   teamName: "Team $index",
                   teamLogo: "https://picsum.photos/200",
                   isSelected: false,
-                  onTap: () {},
+                  onTap: () {
+                    // TODO : use update user info cubit (teams)
+                  },
                 );
               },
             ),
           ),
-
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                CustomSquareButton(
-                  label: "Skip",
-                  height: 11,
-                  backgroundColor: Theme.of(context).cardColor,
-                  onTap: () {
-                    context.go(AppRoutes.home);
-                  },
-                ),
-                CustomSquareButton(
-                  label: "Next",
-                  textColor: Colors.white,
-                  row: true,
-                  trailingIcon: Icons.arrow_forward_ios,
-                  iconColor: Colors.white,
-                  height: 11,
-                  backgroundColor: AppColors.primary.withValues(alpha: 0.9),
-                  onTap: () {
-                    context.push(AppRoutes.selectPlayers);
-                  },
-                ),
-              ],
+          if (!isEditTeams) ...[
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  CustomSquareButton(
+                    label: "Skip",
+                    height: 11,
+                    backgroundColor: Theme.of(context).cardColor,
+                    onTap: () {
+                      context.go(AppRoutes.home);
+                    },
+                  ),
+                  CustomSquareButton(
+                    label: "Next",
+                    textColor: Colors.white,
+                    row: true,
+                    trailingIcon: Icons.arrow_forward_ios,
+                    iconColor: Colors.white,
+                    height: 11,
+                    backgroundColor: AppColors.primary.withValues(alpha: 0.9),
+                    onTap: () {
+                      context.push(AppRoutes.selectPlayers);
+                    },
+                  ),
+                ],
+              ),
             ),
-          ),
+          ] else ...[
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  CustomSquareButton(
+                    label: "Update",
+                    textColor: Colors.white,
+                    height: 11,
+                    backgroundColor: AppColors.primary.withValues(alpha: 0.9),
+                    onTap: () {
+                      // TODO : fitst get selected teams and then use update user info cubit (teams)
+                      context.pop();
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ],
         ],
       ),
     );
