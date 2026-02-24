@@ -123,8 +123,6 @@ import 'package:auth/presentation/manager/post_cubit/create_post_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/get_post/get_post_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/post_interaction_cubit.dart';
-import 'package:auth/presentation/manager/profile_cubit/interests/fav_players_cubit.dart';
-import 'package:auth/presentation/manager/profile_cubit/interests/fav_teams_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/interests/select_interests_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_cubit.dart';
 import 'package:auth/presentation/manager/register_cubit/register_cubit.dart';
@@ -430,16 +428,11 @@ sl.registerLazySingleton(() => CommentOnPostUseCase(sl()));
   );
 
   // select interest
-  sl.registerFactory(() => SelectInterestsCubit(selectInterestsUseCase: sl()));
+  sl.registerFactory(() => SelectInterestsCubit(selectInterestsUseCase: sl(),getFavPlayersUseCase: sl(),getFavTeamsUseCase: sl(),removeFavPlayersUseCase: sl(),removeFavTeamsUseCase: sl()));
   sl.registerLazySingleton(() => SelectInterestsUseCase(sl()));
 
-  //fav players
-  sl.registerFactory(() => FavPlayersCubit(getFavPlayersUseCase: sl(),removeFavPlayersUseCase: sl()));
   sl.registerLazySingleton(() => GetFavPlayersUseCase(sl()));
-  sl.registerLazySingleton(() => RemoveFavPlayersUseCase(sl()));
-
-  //fav teams
-  sl.registerFactory(()=>FavTeamsCubit(getFavTeamsUseCase: sl(),removeFavTeamsUseCase: sl()));
+  sl.registerLazySingleton(() => RemoveFavPlayersUseCase(sl()));  
   sl.registerLazySingleton(() => GetFavTeamsUseCase(sl()));
   sl.registerLazySingleton(() => RemoveFavTeamsUseCase(sl()));
 }

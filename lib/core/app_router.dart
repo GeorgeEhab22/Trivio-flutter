@@ -16,8 +16,8 @@ import 'package:auth/presentation/groups/manage_group/pending_posts_view.dart';
 import 'package:auth/presentation/groups/manage_group/people_view/people_view.dart';
 import 'package:auth/presentation/groups/manage_group/reported_posts_view.dart';
 import 'package:auth/presentation/groups/my_group/my_group_view.dart';
-import 'package:auth/presentation/interests/select_players_view.dart';
-import 'package:auth/presentation/interests/select_teams_view.dart';
+import 'package:auth/presentation/interests/favourite_players_view.dart';
+import 'package:auth/presentation/interests/favourite_teams_view.dart';
 import 'package:auth/presentation/manager/group_cubit/ban_member/ban_member_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/create_group/create_group_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/delete_group/delete_group_cubit.dart';
@@ -173,14 +173,20 @@ GoRouter createRouter(bool isLoggedIn) {
             path: AppRoutes.selectTeams,
             builder: (context, state) {
               final bool isEdit = state.extra as bool? ?? false;
-              return SelectTeamsView(isEditTeams: isEdit);
+              if (isEdit) {
+                context.read<SelectInterestsCubit>().getFavTeams();
+              }
+              return FavouriteTeamsView(isEditTeams: isEdit);
             },
             routes: [
               GoRoute(
                 path: 'select-players',
                 builder: (context, state) {
                   final bool isEdit = state.extra as bool? ?? false;
-                  return SelectPlayersView(isEditPlayers: isEdit);
+                  if (isEdit) {
+                    context.read<SelectInterestsCubit>().getFavPlayers();
+                  }
+                  return FavouritePlayersView(isEditPlayers: isEdit);
                 },
               ),
             ],

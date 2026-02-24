@@ -42,13 +42,13 @@ class UserProfileRepositoryImpl implements UserProfileRepo {
       };
 
       final model = await remoteDataSource.updateInterests(updateData);
-      print(model);
+      // print(model);
       return Right(model.toEntity());
     } on ServerException catch (e) {
-      print(e);
+      // print(e);
       return Left(ServerFailure(e.message));
     } catch (e) {
-      print(e);
+      // print(e);
       return Left(ServerFailure(e.toString()));
     }
   }

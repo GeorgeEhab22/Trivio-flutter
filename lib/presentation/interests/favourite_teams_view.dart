@@ -11,9 +11,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-class SelectTeamsView extends StatelessWidget {
+class FavouriteTeamsView extends StatelessWidget {
   final bool isEditTeams;
-  const SelectTeamsView({super.key, this.isEditTeams = false});
+  const FavouriteTeamsView({super.key, this.isEditTeams = false});
 
   @override
   Widget build(BuildContext context) {
@@ -73,14 +73,14 @@ class SelectTeamsView extends StatelessWidget {
                     mainAxisSpacing: 15,
                     childAspectRatio: 0.82,
                   ),
-                  itemCount: 15,
+                  itemCount: 6,
                   itemBuilder: (context, index) {
                     return SelectionItem(
                       itemName: "Team $index",
                       itemLogo: "https://picsum.photos/200",
                       isSelected: selectedTeams.contains("Team $index"),
                       onTap: () {
-                        cubit.toggleTeam("Team $index");
+                        cubit.toggleTeam("Team $index", isEdit: isEditTeams);
                       },
                     );
                   },

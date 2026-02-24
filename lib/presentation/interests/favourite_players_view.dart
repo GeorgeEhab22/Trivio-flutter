@@ -11,9 +11,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-class SelectPlayersView extends StatelessWidget {
+class FavouritePlayersView extends StatelessWidget {
   final bool isEditPlayers;
-  const SelectPlayersView({super.key, this.isEditPlayers = false});
+  const FavouritePlayersView({super.key, this.isEditPlayers = false});
 
   @override
   Widget build(BuildContext context) {
@@ -78,7 +78,10 @@ class SelectPlayersView extends StatelessWidget {
                       itemLogo: "https://picsum.photos/200",
                       isSelected: selectedPlayers.contains("Player $index"),
                       onTap: () {
-                        cubit.togglePlayer("Player $index");
+                        cubit.togglePlayer(
+                          "Player $index",
+                          isEdit: isEditPlayers,
+                        );
                       },
                     );
                   },
@@ -124,8 +127,7 @@ class SelectPlayersView extends StatelessWidget {
                     height: 11,
                     backgroundColor: AppColors.primary.withValues(alpha: 0.9),
                     onTap: () {
-                      // TODO : first get selected players and then use update user info cubit (players)
-                      context.pop();
+                      context.read<SelectInterestsCubit>().submitInterests();
                     },
                   ),
                 ],

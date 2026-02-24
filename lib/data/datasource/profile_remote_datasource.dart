@@ -65,14 +65,14 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
         data: data,
         options: _getAuthOptions(),
       );
-      print(response);
+      // print(response);
       if (response["status"] == "success") {
         return UserProfileModel.fromJson(response['data']['user']);
       } else {
         throw ServerException('Failed to update interests');
       }
     } catch (e) {
-      print(e);
+      // print(e);
       errorHandler.handleDioError(e);
       rethrow;
     }
@@ -91,7 +91,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
 
   @override
   Future<void> removeFavTeams(List<String> teams) async {
-    await api.delete(
+    await api.patch(
       ApiEndpoints.removeFavTeams,
       data: {'teams': teams},
       options: _getAuthOptions(),
@@ -100,7 +100,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
 
   @override
   Future<void> removeFavPlayers(List<String> players) async {
-    await api.delete(
+    await api.patch(
       ApiEndpoints.removeFavPlayers,
       data: {'players': players},
       options: _getAuthOptions(),

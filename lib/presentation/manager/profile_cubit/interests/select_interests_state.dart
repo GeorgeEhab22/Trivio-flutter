@@ -15,6 +15,16 @@ class SelectInterestsInitial extends SelectInterestsState {
     this.selectedPlayers = const [],
   });
 
+  SelectInterestsInitial copyWith({
+    List<String>? selectedTeams,
+    List<String>? selectedPlayers,
+  }) {
+    return SelectInterestsInitial(
+      selectedTeams: selectedTeams ?? this.selectedTeams,
+      selectedPlayers: selectedPlayers ?? this.selectedPlayers,
+    );
+  }
+
   @override
   List<Object?> get props => [selectedTeams, selectedPlayers];
 }
