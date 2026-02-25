@@ -18,13 +18,17 @@ class FollowRequestCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      elevation: 0, // Remove elevation
+      color: Colors.transparent, // No background color
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: const BorderSide(color: AppColors.lightGrey, width: 1), // Optional: thin border for definition
+      ),
       child: Padding(
         padding: const EdgeInsets.all(12.0),
         child: Row(
           children: [
-            // Follower Avatar
             CircleAvatar(
               radius: 25,
               backgroundColor: AppColors.lightGrey,
@@ -36,8 +40,6 @@ class FollowRequestCard extends StatelessWidget {
                   : null,
             ),
             const SizedBox(width: 12),
-            
-            // Follower Name
             Expanded(
               child: Text(
                 follower.name,
@@ -46,24 +48,45 @@ class FollowRequestCard extends StatelessWidget {
               ),
             ),
             
-            // Accept/Decline Actions
+            // Square Action Buttons
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                IconButton(
-                  onPressed: onAccept,
-                  icon: const Icon(Icons.check_circle, color: Colors.green, size: 28),
-                  tooltip: 'Accept',
+                _buildSquareButton(
+                  icon: Icons.check,
+                  color: Colors.green,
+                  onTap: onAccept,
                 ),
-                IconButton(
-                  onPressed: onDecline,
-                  icon: const Icon(Icons.cancel, color: Colors.red, size: 28),
-                  tooltip: 'Decline',
+                const SizedBox(width: 8),
+                _buildSquareButton(
+                  icon: Icons.close,
+                  color: Colors.red,
+                  onTap: onDecline,
                 ),
               ],
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildSquareButton({
+    required IconData icon,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: 35,
+        width: 35,
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.1), // Light background for the square
+          borderRadius: BorderRadius.circular(8), // Small radius for "square" look
+          border: Border.all(color: color, width: 1.5),
+        ),
+        child: Icon(icon, color: color, size: 20),
       ),
     );
   }

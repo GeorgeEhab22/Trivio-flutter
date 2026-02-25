@@ -1,18 +1,19 @@
 import 'package:auth/constants/colors.dart';
 import 'package:auth/core/styels.dart';
 import 'package:auth/domain/entities/follow.dart';
+import 'package:auth/domain/entities/user_profile_preview.dart';
 import 'package:flutter/material.dart';
 
 class FollowInfoList extends StatelessWidget {
-  final List data;
+  final List<dynamic> data;
+  final bool isFollowingList;
   final VoidCallback? onLoadMore;
   final bool hasReachedMax;
-  final bool isFollowingList; // true if we are looking at who the user IS FOLLOWING
 
   const FollowInfoList({
     super.key,
     required this.data,
-    required this.isFollowingList,
+    this.isFollowingList = false,
     this.onLoadMore,
     this.hasReachedMax = true,
   });
@@ -20,7 +21,7 @@ class FollowInfoList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (data.isEmpty) {
-      return const Center(child: Text("No users found."));
+      return const Center(child: Text("No users found.", style: Styles.textStyle20));
     }
 
     return ListView.builder(
@@ -28,32 +29,49 @@ class FollowInfoList extends StatelessWidget {
       itemBuilder: (context, index) {
         if (index >= data.length) {
           onLoadMore?.call();
-          return const Center(child: CircularProgressIndicator());
+          return const Center(child: Padding(
+            padding: EdgeInsets.all(8.0),
+            child: CircularProgressIndicator(),
+          ));
         }
 
-        final followItem = data[index];
+        final item = data[index];
         
-        // MAPPING LOGIC BASED ON BACKEND DOCS:
-        // If showing "Following" (Endpoint 9), the person you follow is in 'userId'
-        // If showing "Followers" (Endpoint 8), the person following you is in 'followerId'
-        final UserReference targetRef = isFollowingList 
-            ? followItem.user 
-            : followItem.follower;
+        // --- Mapping both types to the same UI variables ---
+        String name;
+        String? avatar;
+        String id;
 
-        final String displayName = targetRef.preview?.name ?? "User ${targetRef.id}";
-        final String? avatar = targetRef.preview?.avatarUrl;
+        if (item is Follow) {
+          final targetRef = isFollowingList ? item.user : item.follower;
+          name = targetRef.preview?.name ?? "User";
+          avatar = targetRef.preview?.avatarUrl;
+          id = targetRef.id;
+        } else if (item is UserProfilePreview) {
+          name = item.name;
+          avatar = item.avatarUrl;
+          id = item.id;
+        } else {
+          return const SizedBox.shrink();
+        }
 
         return ListTile(
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
           leading: CircleAvatar(
+            radius: 25,
             backgroundColor: AppColors.lightGrey,
-            backgroundImage: avatar != null ? NetworkImage(avatar) : null,
-            child: avatar == null ? const Icon(Icons.person, color: Colors.grey) : null,
+            backgroundImage: (avatar != null && avatar.isNotEmpty) 
+                ? NetworkImage(avatar) 
+                : null,
+            child: (avatar == null || avatar.isEmpty) 
+                ? const Icon(Icons.person, color: Colors.grey) 
+                : null,
           ),
-          title: Text(displayName, style: Styles.textStyle20),
-          subtitle: Text(targetRef.preview != null ? "@${targetRef.id.substring(0,5)}" : ""),
-          trailing: const Icon(Icons.chevron_right),
+          title: Text(name, style: Styles.textStyle20),
+          subtitle: Text("@${id.length > 8 ? id.substring(0, 8) : id}", style: const TextStyle(color: Colors.grey)),
+          trailing: const Icon(Icons.chevron_right, color: AppColors.primary),
           onTap: () {
-             // Navigate to profile using targetRef.id
+            // Navigate to profile using 'id'
           },
         );
       },

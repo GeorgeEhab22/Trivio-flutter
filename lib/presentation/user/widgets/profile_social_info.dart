@@ -30,12 +30,12 @@ class ProfileSocialInfo extends StatelessWidget {
           StatItem(
             label: "followers",
             count: numberOfFollowers,
-            onTap: () => context.push(AppRoutes.followersList),
+            onTap: () => context.push(AppRoutes.followerInfo),
           ),
           StatItem(
             label: "following",
             count: numberOfFollowing,
-            onTap: () => context.push(AppRoutes.followingList),
+            onTap: () => context.push(AppRoutes.followerInfo),
           ),
           StatItem(
             label: "posts",

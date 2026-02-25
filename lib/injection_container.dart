@@ -54,15 +54,19 @@ import 'package:auth/domain/usecases/sign_in/request_otp.dart';
 
 import 'package:auth/domain/usecases/sign_in/signin_usecase.dart';
 import 'package:auth/domain/usecases/sign_in/verify_otp.dart';
+import 'package:auth/domain/usecases/user_profile/change_password.dart';
 import 'package:auth/domain/usecases/user_profile/get_my_profile.dart';
+import 'package:auth/domain/usecases/user_profile/get_suggestions.dart';
+import 'package:auth/domain/usecases/user_profile/update_profile.dart';
 import 'package:auth/presentation/manager/comment_cubit/comment_cubit.dart';
 import 'package:auth/presentation/manager/follow_cubit/follow_cubit.dart';
-import 'package:auth/presentation/manager/follow_cubit/follow_request_cubit.dart';
 import 'package:auth/presentation/manager/follow_cubit/get_follow_info_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/create_post_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/post_interaction_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/profile_social_info_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/profile_update_cubit.dart';
 import 'package:auth/presentation/manager/register_cubit/register_cubit.dart';
 import 'package:auth/presentation/manager/sigin_in_cubit/sign_in_cubit.dart';
 import 'package:auth/presentation/manager/theme_cubit/theme_cubit.dart';
@@ -86,7 +90,9 @@ Future<void> init() async {
   }
   final prefs = await SharedPreferences.getInstance();
   sl.registerLazySingleton(() => prefs);
-  sl.registerLazySingleton(() => ApiService(baseUrl: baseUrl));
+  sl.registerLazySingleton(() => ApiService(baseUrl: baseUrl, getToken: () async {
+    return await sl<AuthRemoteDataSource>().getToken();
+  }));
   sl.registerLazySingleton(() => ErrorHandler());
   sl.registerLazySingleton<AuthRemoteDataSource>(
     () => AuthRemoteDataSourceImpl(api: sl(), prefs: sl(), errorHandler: sl()),
@@ -186,10 +192,29 @@ Future<void> init() async {
   sl.registerLazySingleton<UserProfileRepo>(
     () => UserProfileRepositoryImpl(remoteDataSource: sl()),
   );
-
   sl.registerFactory(() => ProfileCubit(getMyProfile: sl()));
   sl.registerLazySingleton(() => GetMyProfile(sl()));
+  sl.registerLazySingleton(() => UpdateProfile(sl()));
+  sl.registerLazySingleton(() => ChangePassword(sl()));
+  sl.registerFactory(
+  () => ProfileUpdateCubit(
+    updateProfileUseCase: sl(),
+    changePasswordUseCase: sl(),
+  ),
+);
 
+  sl.registerFactory(
+    () => ProfileSocialInfoCubit(
+      getMyFollowersUseCase: sl(),
+      getMyFollowingUseCase: sl(),
+      getUserFollowersUseCase: sl(),
+      getUserFollowingUseCase: sl(),
+      getMyFollowRequestsUseCase: sl(),
+      acceptFollowRequest: sl(),
+      declineFollowRequest: sl(),
+      getSuggestionsUseCase: sl()
+    ),
+  );
   //follow
   sl.registerLazySingleton<FollowRemoteDataSource>(
     () => FollowRemoteDataSourceImpl(api: sl(), errorHandler: sl()),
@@ -207,22 +232,14 @@ Future<void> init() async {
   sl.registerLazySingleton(() => GetUserFollowing(sl()));
   sl.registerLazySingleton(() => GetMyFollowers(sl()));
   sl.registerLazySingleton(() => GetMyFollowing(sl()));
+  sl.registerLazySingleton(() => GetSuggestions(sl()));
   sl.registerFactory(
     () => FollowCubit(followUserUseCase: sl(), unfollowUserUseCase: sl()),
-  );
-  sl.registerFactory(
-    () => FollowRequestCubit(
-      getMyFollowRequestsUseCase: sl(),
-      acceptFollowRequestUseCase: sl(),
-      declineFollowRequestUseCase: sl(),
-    ),
   );
   sl.registerFactory(
     () => FollowInfoCubit(
       getUserFollowersUseCase: sl(),
       getUserFollowingUseCase: sl(),
-      getMyFollowersUseCase: sl(),
-      getMyFollowingUseCase: sl(),
     ),
   );
 }

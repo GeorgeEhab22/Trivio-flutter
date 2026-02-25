@@ -3,12 +3,9 @@ import 'package:auth/presentation/chats/chat_info_button/chat_info_view.dart';
 import 'package:auth/presentation/chats/chat_screen/chat_view.dart';
 import 'package:auth/presentation/chats/messages_screen/messages_view.dart';
 import 'package:auth/presentation/manager/follow_cubit/follow_cubit.dart';
-import 'package:auth/presentation/manager/follow_cubit/follow_request_cubit.dart';
-import 'package:auth/presentation/manager/follow_cubit/get_follow_info_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/profile_social_info_cubit.dart';
 import 'package:auth/presentation/reels/reels_page.dart';
-import 'package:auth/presentation/user/follow_requests_view.dart';
-import 'package:auth/presentation/user/followers_list_view.dart';
-import 'package:auth/presentation/user/following_list_view.dart';
+import 'package:auth/presentation/user/social_info_view.dart';
 import 'package:auth/presentation/user/user_profile_settings_view.dart';
 import 'package:auth/presentation/stats/stats_view.dart';
 import 'package:auth/presentation/user/user_profile_view.dart';
@@ -158,17 +155,17 @@ GoRouter createRouter(bool isLoggedIn) {
                     ),
                     routes: [
                       GoRoute(
-                        path: 'followers',
+                        path: 'follow_info',
                         builder: (context, state) => BlocProvider(
-                          create: (context) => di.sl<FollowInfoCubit>(),
-                          child: const FollowersListView(),
-                        ),
-                      ),
-                      GoRoute(
-                        path: 'following',
-                        builder: (context, state) => BlocProvider(
-                          create: (context) => di.sl<FollowInfoCubit>(),
-                          child: const FollowingListView(),
+                          create: (context) {
+                            final cubit = di.sl<ProfileSocialInfoCubit>();
+                            cubit.fetchFollowers(userId: null);
+                            cubit.fetchFollowing(userId: null);
+                            cubit.fetchRequests();
+
+                            return cubit;
+                          },
+                          child: const SocialInfoScreen(),
                         ),
                       ),
                       GoRoute(
@@ -177,15 +174,6 @@ GoRouter createRouter(bool isLoggedIn) {
                           create: (context) => di.sl<FollowCubit>(),
                           child: const UserProfileSettings(),
                         ),
-                        routes: [
-                          GoRoute(
-                            path: 'requests',
-                            builder: (context, state) => BlocProvider(
-                              create: (context) => di.sl<FollowRequestCubit>(),
-                              child: FollowRequestsView(),
-                            ),
-                          ),
-                        ],
                       ),
                     ],
                   ),

@@ -8,20 +8,9 @@ class ProfileCubit extends Cubit<ProfileState> {
   ProfileCubit({required this.getMyProfile})
       : super(ProfileInitial());
 
-  /// 🔹 Load profile
   Future<void> loadProfile() async {
     emit(ProfileLoading());
 
-    final result = await getMyProfile();
-
-    result.fold(
-      (failure) => emit(ProfileError(failure.message)),
-      (user) => emit(ProfileLoaded(user)),
-    );
-  }
-
-  /// 🔹 Optional: refresh profile without showing loading screen
-  Future<void> refreshProfile() async {
     final result = await getMyProfile();
 
     result.fold(
