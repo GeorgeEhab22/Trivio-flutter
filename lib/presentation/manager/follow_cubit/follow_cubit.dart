@@ -1,6 +1,5 @@
 import 'package:auth/domain/usecases/follow/follow_user.dart';
 import 'package:auth/domain/usecases/follow/unfollow_user.dart';
-import 'package:auth/dummydata.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'follow_state.dart';
 
@@ -36,7 +35,7 @@ class FollowCubit extends Cubit<FollowState> {
   }
 
   void debugForceSuccess() {
-    emit(FollowSuccess(follow: DummyFollowData.followModel));
+    emit(FollowSuccess());
   }
 
   void debugForceUnfollow() {

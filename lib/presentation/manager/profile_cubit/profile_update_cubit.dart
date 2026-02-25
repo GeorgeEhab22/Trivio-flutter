@@ -11,16 +11,35 @@ class ProfileUpdateCubit extends Cubit<ProfileUpdateState> {
   ProfileUpdateCubit({
     required this.updateProfileUseCase,
     required this.changePasswordUseCase,
-  }) : super(ProfileUpdateInitial());
+    String? initialName, // Add these
+    String? initialBio,
+  }) : super(ProfileUpdateInitialState(
+          name: initialName ?? '',
+          bio: initialBio ?? '',
+        ));
 
-  /// 🔹 Update Name, Bio, or Avatar
-  Future<void> updateProfileInfo({String? name, String? bio, File? image}) async {
+  /// 🔹 Update internal draft state as user types
+  void onInfoChanged({String? name, String? bio, File? image}) {
+    if (state is ProfileUpdateInitialState) {
+      emit((state as ProfileUpdateInitialState).copyWith(
+        name: name,
+        bio: bio,
+        image: image,
+      ));
+    }
+  }
+
+  /// 🔹 Submit the current draft to the API
+  Future<void> submitUpdate() async {
+    if (state is! ProfileUpdateInitialState) return;
+    
+    final draft = state as ProfileUpdateInitialState;
     emit(ProfileUpdateLoading());
 
     final result = await updateProfileUseCase(
-      username: name,
-      bio: bio,
-      avatarFile: image,
+      username: draft.name,
+      bio: draft.bio,
+      avatarFile: draft.image,
     );
 
     result.fold(
@@ -29,15 +48,6 @@ class ProfileUpdateCubit extends Cubit<ProfileUpdateState> {
     );
   }
 
-  /// 🔹 Change Password
-  Future<void> updatePassword(String current, String next) async {
-    emit(ProfileUpdateLoading());
-
-    final result = await changePasswordUseCase(current, next);
-
-    result.fold(
-      (failure) => emit(ProfileUpdateError(failure.message)),
-      (_) => emit(const ProfileUpdateSuccess("Password changed successfully!")),
-    );
-  }
+  // Helper to just update the image
+  void updateImage(File imageFile) => onInfoChanged(image: imageFile);
 }

@@ -22,4 +22,5 @@ class AppRoutes {
   static const String chatInfo = '/app/messages/chat/chat_info';
   static const String requests = '/app/profile/settings/requests';
   static const String followerInfo = '/app/profile/follow_info';
+  static const String editProfile = '/app/profile/settings/edit';
 }

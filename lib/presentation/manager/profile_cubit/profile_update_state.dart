@@ -1,30 +1,48 @@
+import 'dart:io';
 import 'package:equatable/equatable.dart';
 
 abstract class ProfileUpdateState extends Equatable {
   const ProfileUpdateState();
-
   @override
   List<Object?> get props => [];
 }
 
-class ProfileUpdateInitial extends ProfileUpdateState {}
+/// This state holds the current values in the form
+class ProfileUpdateInitialState extends ProfileUpdateState {
+  final String name;
+  final String bio;
+  final File? image;
 
-// Use this for both updating info and changing password
+  const ProfileUpdateInitialState({
+    this.name = '',
+    this.bio = '',
+    this.image,
+  });
+
+  ProfileUpdateInitialState copyWith({
+    String? name,
+    String? bio,
+    File? image,
+  }) {
+    return ProfileUpdateInitialState(
+      name: name ?? this.name,
+      bio: bio ?? this.bio,
+      image: image ?? this.image,
+    );
+  }
+
+  @override
+  List<Object?> get props => [name, bio, image];
+}
+
 class ProfileUpdateLoading extends ProfileUpdateState {}
 
-// Use this to show a success message or navigate back
 class ProfileUpdateSuccess extends ProfileUpdateState {
   final String message;
   const ProfileUpdateSuccess(this.message);
-
-  @override
-  List<Object?> get props => [message];
 }
 
 class ProfileUpdateError extends ProfileUpdateState {
   final String message;
   const ProfileUpdateError(this.message);
-
-  @override
-  List<Object?> get props => [message];
 }
