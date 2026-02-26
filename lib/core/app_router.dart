@@ -3,10 +3,14 @@ import 'package:auth/presentation/chats/chat_info_button/chat_info_view.dart';
 import 'package:auth/presentation/chats/chat_screen/chat_view.dart';
 import 'package:auth/presentation/chats/messages_screen/messages_view.dart';
 import 'package:auth/presentation/manager/follow_cubit/follow_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/change_password_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/profile_liked_posts_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_social_info_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_update_cubit.dart';
 import 'package:auth/presentation/reels/reels_page.dart';
+import 'package:auth/presentation/user/change_password_screen.dart';
 import 'package:auth/presentation/user/edit_profile_view.dart';
+import 'package:auth/presentation/user/liked_posts_view.dart';
 import 'package:auth/presentation/user/social_info_view.dart';
 import 'package:auth/presentation/user/user_profile_settings_view.dart';
 import 'package:auth/presentation/stats/stats_view.dart';
@@ -181,9 +185,24 @@ GoRouter createRouter(bool isLoggedIn) {
                             path: 'edit',
                             pageBuilder: (context, state) => NoTransitionPage(
                               child: BlocProvider(
-                                create: (context) => di.sl<ProfileUpdateCubit>(),
+                                create: (context) =>
+                                    di.sl<ProfileUpdateCubit>(),
                                 child: EditProfileScreen(),
                               ),
+                            ),
+                          ),
+                          GoRoute(
+                            path: 'liked_posts',
+                            builder: (context, state) => BlocProvider(
+                              create: (context) => di.sl<LikedPostsCubit>(),
+                              child: const LikedPostsScreen(),
+                            ),
+                          ),
+                          GoRoute(
+                            path: 'change_password',
+                            builder: (context, state) => BlocProvider(
+                              create: (context) => di.sl<ChangePasswordCubit>(),
+                              child: ChangePasswordScreen(),
                             ),
                           ),
                         ],

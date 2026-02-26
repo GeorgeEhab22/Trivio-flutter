@@ -52,9 +52,25 @@ class UserProfileSettings extends StatelessWidget {
                     ),
                     Divider(color: AppColors.lightGrey),
                     SettingsRow(
+                      title: "Liked Posts",
+                      subtitle: "View and manage the posts you've liked.",
+                      onpressed: () {
+                        GoRouter.of(context).push(AppRoutes.likedPosts);
+                      },
+                    ),
+                    Divider(color: AppColors.lightGrey),
+                    SettingsRow(
                       title: "Privacy Settings",
                       subtitle: "Control who sees your posts and activity.",
                       onpressed: () {},
+                    ),
+                    Divider(color: AppColors.lightGrey),
+                    SettingsRow(
+                      title: "Change Password",
+                      subtitle: "Update your security credentials.",
+                      onpressed: () {
+                        GoRouter.of(context).push(AppRoutes.changePassword);
+                      },
                     ),
                     Divider(color: AppColors.lightGrey),
                     SettingsRow(

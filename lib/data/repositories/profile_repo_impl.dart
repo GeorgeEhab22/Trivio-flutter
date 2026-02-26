@@ -1,6 +1,7 @@
 import 'package:auth/core/errors/failure.dart';
 import 'package:auth/data/core/error/exceptions.dart';
 import 'package:auth/data/datasource/profile_remote_datasource.dart';
+import 'package:auth/domain/entities/post.dart';
 import 'package:auth/domain/entities/user_profile.dart';
 import 'package:auth/domain/entities/user_profile_preview.dart';
 import 'package:auth/domain/repositories/user_profile_repo.dart';
@@ -74,7 +75,7 @@ class UserProfileRepositoryImpl implements UserProfileRepo {
   }
 
   @override
-  Future<Either<Failure, List<String>>> getLikedPostsIds() async {
+  Future<Either<Failure, List<Post>>> getLikedPostsIds() async {
     try {
       final likedPostsIds = await remoteDataSource.getLikedPostsIds();
       return Right(likedPostsIds);

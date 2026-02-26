@@ -55,6 +55,7 @@ import 'package:auth/domain/usecases/sign_in/request_otp.dart';
 import 'package:auth/domain/usecases/sign_in/signin_usecase.dart';
 import 'package:auth/domain/usecases/sign_in/verify_otp.dart';
 import 'package:auth/domain/usecases/user_profile/change_password.dart';
+import 'package:auth/domain/usecases/user_profile/get_liked.dart';
 import 'package:auth/domain/usecases/user_profile/get_my_profile.dart';
 import 'package:auth/domain/usecases/user_profile/get_suggestions.dart';
 import 'package:auth/domain/usecases/user_profile/update_profile.dart';
@@ -64,7 +65,9 @@ import 'package:auth/presentation/manager/follow_cubit/get_follow_info_cubit.dar
 import 'package:auth/presentation/manager/post_cubit/create_post_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/post_interaction_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/change_password_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/profile_liked_posts_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_social_info_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_update_cubit.dart';
 import 'package:auth/presentation/manager/register_cubit/register_cubit.dart';
@@ -242,4 +245,8 @@ Future<void> init() async {
       getUserFollowingUseCase: sl(),
     ),
   );
+  // inside init()
+  sl.registerFactory(() => LikedPostsCubit(getLikedPostsUseCase: sl()));
+  sl.registerLazySingleton(() => GetLikedPostsIds(sl()));
+  sl.registerFactory(() => ChangePasswordCubit(changePasswordUseCase: sl()));
 }

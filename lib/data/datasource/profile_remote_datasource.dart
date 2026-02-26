@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:auth/common/api_endpoints.dart';
 import 'package:auth/common/functions/handle_dio_error.dart';
 import 'package:auth/data/core/error/exceptions.dart';
+import 'package:auth/domain/entities/post.dart';
 import 'package:auth/domain/entities/user_profile_preview.dart';
 import 'package:dio/dio.dart';
 import '../../common/api_service.dart';
@@ -16,7 +17,7 @@ abstract class ProfileRemoteDataSource {
   });
   Future<void> changePassword(String currentPassword, String newPassword);
   Future<List<UserProfilePreview>> getSuggestions();
-  Future<List<String>> getLikedPostsIds();
+  Future<List<Post>> getLikedPostsIds();
 }
 
 class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
@@ -124,10 +125,10 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   // }
 
   @override
-  Future<List<String>> getLikedPostsIds() async {
+  Future<List<Post>> getLikedPostsIds() async {
     try {
       final response = await api.get(ApiEndpoints.likedPostsIds);
-      return List<String>.from(response['data']['likedPosts']);
+      return List<Post>.from(response['data']['likedPosts']);
     } catch (e) {
       throw _handleError(e);
     }

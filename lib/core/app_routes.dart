@@ -23,4 +23,6 @@ class AppRoutes {
   static const String requests = '/app/profile/settings/requests';
   static const String followerInfo = '/app/profile/follow_info';
   static const String editProfile = '/app/profile/settings/edit';
+  static const String changePassword = '/app/profile/settings/change_password';
+  static const String likedPosts = '/app/profile/settings/liked_posts';
 }
