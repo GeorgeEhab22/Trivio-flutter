@@ -1,4 +1,5 @@
 import 'package:auth/core/styels.dart';
+import 'package:auth/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class SearchBox extends StatelessWidget {
@@ -6,6 +7,7 @@ class SearchBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       child: Container(
@@ -22,7 +24,7 @@ class SearchBox extends StatelessWidget {
             Expanded(
               child: TextField(
                 decoration: InputDecoration(
-                  hintText: "Search",
+                  hintText: l10n.search,
                   hintStyle: Styles.textStyle16.copyWith(color: Colors.grey),
                   border: InputBorder.none,
                   isDense: true,

@@ -1,9 +1,9 @@
 import 'package:auth/core/errors/failure.dart';
-import 'package:auth/domain/repositories/user_profile_repo.dart';
+import 'package:auth/domain/repositories/interests_repo.dart';
 import 'package:dartz/dartz.dart';
 
 class RemoveFavTeamsUseCase {
-  final UserProfileRepo repo;
+  final InterestsRepo repo;
 
   RemoveFavTeamsUseCase(this.repo);
 

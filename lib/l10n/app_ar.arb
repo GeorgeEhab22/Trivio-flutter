@@ -331,5 +331,14 @@
   "minuteLetter": "د",
   "hourLetter": "س",
   "dayLetter": "ي",
-  "weekLetter": "أ"
+  "weekLetter": "أ",
+  "favTeamsTitle": "فرقك المفضلة",
+  "favTeamsDesc": "اختر فرقك المفضلة للحصول على توصيات أفضل",
+  "favPlayersTitle": "لاعبوك المفضلون",
+  "favPlayersDesc": "اختر لاعبيك المفضلين للحصول على توصيات أفضل",
+  "noTeamsFound": "لم يتم العثور على فرق",
+  "noPlayersFound": "لم يتم العثور على لاعبين",
+  "skip": "تخطي",
+  "finish": "إنهاء",
+  "update": "تحديث"
 }

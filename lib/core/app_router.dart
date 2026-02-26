@@ -173,9 +173,9 @@ GoRouter createRouter(bool isLoggedIn) {
             path: AppRoutes.selectTeams,
             builder: (context, state) {
               final bool isEdit = state.extra as bool? ?? false;
-              if (isEdit) {
-                context.read<SelectInterestsCubit>().getFavTeams();
-              }
+              // if (isEdit) {
+              //   context.read<SelectInterestsCubit>().getSelectedFavTeams();
+              // }
               return FavouriteTeamsView(isEditTeams: isEdit);
             },
             routes: [
@@ -183,9 +183,11 @@ GoRouter createRouter(bool isLoggedIn) {
                 path: 'select-players',
                 builder: (context, state) {
                   final bool isEdit = state.extra as bool? ?? false;
-                  if (isEdit) {
-                    context.read<SelectInterestsCubit>().getFavPlayers();
-                  }
+                  // if (isEdit) {
+                  //   context
+                  //       .read<SelectInterestsCubit>()
+                  //       .getSelectedFavPlayers();
+                  // }
                   return FavouritePlayersView(isEditPlayers: isEdit);
                 },
               ),

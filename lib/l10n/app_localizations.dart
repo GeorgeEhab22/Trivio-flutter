@@ -1849,6 +1849,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Trivio'**
   String get trivio;
+
+  /// No description provided for @favTeamsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your favorite teams'**
+  String get favTeamsTitle;
+
+  /// No description provided for @favTeamsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Select your interested teams to get better recommendations'**
+  String get favTeamsDesc;
+
+  /// No description provided for @favPlayersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your favorite players'**
+  String get favPlayersTitle;
+
+  /// No description provided for @favPlayersDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Select your interested players to get better recommendations'**
+  String get favPlayersDesc;
+
+  /// No description provided for @noTeamsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No teams found'**
+  String get noTeamsFound;
+
+  /// No description provided for @noPlayersFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No players found'**
+  String get noPlayersFound;
+
+  /// No description provided for @skip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get skip;
+
+  /// No description provided for @finish.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish'**
+  String get finish;
+
+  /// No description provided for @update.
+  ///
+  /// In en, this message translates to:
+  /// **'Update'**
+  String get update;
 }
 
 class _AppLocalizationsDelegate

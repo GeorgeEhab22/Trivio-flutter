@@ -331,5 +331,14 @@
   "hourLetter": "h",
   "dayLetter": "d",
   "weekLetter": "w",
-  "trivio": "Trivio"
+  "trivio": "Trivio",
+  "favTeamsTitle": "Your favourite teams",
+  "favTeamsDesc": "Select your interested teams to get better recommendations",
+  "favPlayersTitle": "Your favourite players",
+  "favPlayersDesc": "Select your interested players to get better recommendations",
+  "noTeamsFound": "No teams found",
+  "noPlayersFound": "No players found",
+  "skip": "Skip",
+  "finish": "Finish",
+  "update": "Update"
 }

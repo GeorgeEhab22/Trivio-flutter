@@ -10,7 +10,6 @@ class SignInListener {
     final l10n = AppLocalizations.of(context)!;
 
     if (state is SignInSuccess) {
-      showCustomSnackBar(context, l10n.welcomeBack, true);
       context.go(AppRoutes.selectTeams);
     } else if (state is SignInFailure) {
       String errorMessage = state.message;

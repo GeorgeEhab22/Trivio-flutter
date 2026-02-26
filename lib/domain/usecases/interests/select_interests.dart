@@ -1,12 +1,11 @@
 import 'package:auth/core/errors/failure.dart';
-import 'package:auth/domain/entities/user_profile.dart';
-import 'package:auth/domain/repositories/user_profile_repo.dart';
+import 'package:auth/domain/repositories/interests_repo.dart';
 import 'package:dartz/dartz.dart';
 
 class SelectInterestsUseCase {
-  final UserProfileRepo repo;
+  final InterestsRepo repo;
   SelectInterestsUseCase(this.repo);
-  Future<Either<Failure, UserProfile>> call({
+  Future<Either<Failure, void>> call({
     required List<String> favTeams,
     required List<String> favPlayers,
   }) async {

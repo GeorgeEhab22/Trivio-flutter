@@ -916,4 +916,31 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get trivio => 'Trivio';
+
+  @override
+  String get favTeamsTitle => 'فرقك المفضلة';
+
+  @override
+  String get favTeamsDesc => 'اختر فرقك المفضلة للحصول على توصيات أفضل';
+
+  @override
+  String get favPlayersTitle => 'لاعبوك المفضلون';
+
+  @override
+  String get favPlayersDesc => 'اختر لاعبيك المفضلين للحصول على توصيات أفضل';
+
+  @override
+  String get noTeamsFound => 'لم يتم العثور على فرق';
+
+  @override
+  String get noPlayersFound => 'لم يتم العثور على لاعبين';
+
+  @override
+  String get skip => 'تخطي';
+
+  @override
+  String get finish => 'إنهاء';
+
+  @override
+  String get update => 'تحديث';
 }

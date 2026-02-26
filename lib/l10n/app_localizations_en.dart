@@ -921,4 +921,33 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get trivio => 'Trivio';
+
+  @override
+  String get favTeamsTitle => 'Your favourite teams';
+
+  @override
+  String get favTeamsDesc =>
+      'Select your interested teams to get better recommendations';
+
+  @override
+  String get favPlayersTitle => 'Your favourite players';
+
+  @override
+  String get favPlayersDesc =>
+      'Select your interested players to get better recommendations';
+
+  @override
+  String get noTeamsFound => 'No teams found';
+
+  @override
+  String get noPlayersFound => 'No players found';
+
+  @override
+  String get skip => 'Skip';
+
+  @override
+  String get finish => 'Finish';
+
+  @override
+  String get update => 'Update';
 }

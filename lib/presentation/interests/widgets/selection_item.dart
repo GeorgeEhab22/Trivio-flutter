@@ -51,70 +51,116 @@ class _SelectionItemState extends State<SelectionItem>
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: widget.onTap,
-      child: Stack(
-        clipBehavior: Clip.none,
-        alignment: Alignment.bottomCenter,
-        children: [
-          Container(
-            height: 110,
-            width: double.infinity,
-            margin: const EdgeInsets.all(6),
-            decoration: BoxDecoration(
-              color: Colors.transparent,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                CircleAvatar(
-                  radius: 28,
-                  backgroundImage: NetworkImage(widget.itemLogo),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        double itemWidth = constraints.maxWidth;
+        double avatarSize = itemWidth * 0.55;
+        double fontSize = (itemWidth * 0.14).clamp(12.0, 19.0);
+        double checkSize = itemWidth * 0.22;
+
+        return GestureDetector(
+          onTap: widget.onTap,
+          child: Stack(
+            clipBehavior: Clip.none,
+            alignment: Alignment.bottomCenter,
+            children: [
+              Container(
+                width: double.infinity,
+                margin: const EdgeInsets.all(6),
+                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+                decoration: BoxDecoration(
+                  color: Colors.transparent,
+                  borderRadius: BorderRadius.circular(itemWidth * 0.15),
                 ),
-                const SizedBox(height: 8),
-                Text(
-                  widget.itemName,
-                  style: Styles.textStyle14.copyWith(
-                    fontWeight: widget.isSelected
-                        ? FontWeight.bold
-                        : FontWeight.normal,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: avatarSize,
+                      height: avatarSize,
+                      decoration: const BoxDecoration(shape: BoxShape.circle),
+                      clipBehavior: Clip.antiAlias,
+                      child: Image.network(
+                        widget.itemLogo,
+                        fit: BoxFit.cover,
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return Container(
+                            color: Colors.grey.withValues(alpha: 0.2),
+                            child: const Center(
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
+                          );
+                        },
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            color: Colors.grey.withValues(alpha: 0.2),
+                            child: Icon(
+                              Icons.person,
+                              size: avatarSize * 0.5,
+                              color: Colors.grey,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Expanded(
+                      child: Center(
+                        child: Text(
+                          widget.itemName,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.center,
+                          style: Styles.textStyle14.copyWith(
+                            fontSize: fontSize,
+                            height: 1.2,
+                            fontWeight: widget.isSelected
+                                ? FontWeight.bold
+                                : FontWeight.normal,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Positioned.fill(
+                child: IgnorePointer(
+                  child: AnimatedBuilder(
+                    animation: _animation,
+                    builder: (context, child) {
+                      return CustomPaint(
+                        painter: BorderPainter(
+                          progress: _animation.value,
+                          color: AppColors.primary,
+                        ),
+                      );
+                    },
                   ),
                 ),
-              ],
-            ),
-          ),
-
-          Positioned.fill(
-            child: IgnorePointer(
-              child: AnimatedBuilder(
-                animation: _animation,
-                builder: (context, child) {
-                  return CustomPaint(
-                    painter: BorderPainter(
-                      progress: _animation.value,
+              ),
+              Positioned(
+                bottom: -3,
+                right: itemWidth * 0.15,
+                child: ScaleTransition(
+                  scale: _animation,
+                  child: Container(
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    child: Icon(
+                      Icons.check,
+                      size: checkSize,
                       color: AppColors.primary,
                     ),
-                  );
-                },
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
-
-          Positioned(
-            bottom: -3,
-            right: 25,
-            child: ScaleTransition(
-              scale: _animation,
-              child: Container(
-                color: Theme.of(context).scaffoldBackgroundColor,
-                padding: const EdgeInsets.symmetric(horizontal: 4),
-                child: Icon(Icons.check, size: 20, color: AppColors.primary),
-              ),
-            ),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 }
