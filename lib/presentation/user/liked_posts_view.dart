@@ -13,7 +13,6 @@ class LikedPostsScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text("Liked Posts", style: Styles.textStyle20),
-        iconTheme: const IconThemeData(color: AppColors.primary),
       ),
       body: BlocBuilder<LikedPostsCubit, LikedPostsState>(
         builder: (context, state) {

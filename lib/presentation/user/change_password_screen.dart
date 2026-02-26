@@ -1,121 +1,147 @@
 import 'package:auth/constants/colors.dart';
 import 'package:auth/core/styels.dart';
+import 'package:auth/presentation/authentication/widgets/password_field.dart';
 import 'package:auth/presentation/manager/profile_cubit/change_password_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/change_password_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-//TODO: password restrictions 
-class ChangePasswordScreen extends StatelessWidget {
+class ChangePasswordScreen extends StatefulWidget {
   const ChangePasswordScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    // Local values to track input
-    String currentPass = "";
-    String newPass = "";
-    String confirmPass = "";
+  State<ChangePasswordScreen> createState() => _ChangePasswordScreenState();
+}
 
-    // A simple notifier to trigger button state updates
-    final ValueNotifier<bool> isFormValid = ValueNotifier(false);
+class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
+  final _formKey = GlobalKey<FormState>();
 
-    void validateForm() {
-      isFormValid.value = currentPass.isNotEmpty &&
-          newPass.isNotEmpty &&
-          newPass.length >= 6 &&
-          newPass == confirmPass;
+  // Controllers
+  final _currentPasswordController = TextEditingController();
+  final _newPasswordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
+
+  // Visibility States
+  bool _isCurrentVisible = false;
+  bool _isNewVisible = false;
+  bool _isConfirmVisible = false;
+
+  @override
+  void dispose() {
+    _currentPasswordController.dispose();
+    _newPasswordController.dispose();
+    _confirmPasswordController.dispose();
+    super.dispose();
+  }
+
+  void _handleSubmit() {
+    if (_formKey.currentState!.validate()) {
+      context.read<ChangePasswordCubit>().updatePassword(
+        _currentPasswordController.text,
+        _newPasswordController.text,
+      );
     }
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("Change Password", style: Styles.textStyle20),
-        iconTheme: const IconThemeData(color: AppColors.primary),
       ),
       body: BlocListener<ChangePasswordCubit, ChangePasswordState>(
         listener: (context, state) {
           if (state is ChangePasswordSuccess) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Password Updated!"), backgroundColor: Colors.green),
+              const SnackBar(
+                content: Text("Password Updated!"),
+                backgroundColor: Colors.green,
+              ),
             );
             Navigator.pop(context);
           } else if (state is ChangePasswordError) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.message), backgroundColor: Colors.red),
+              SnackBar(
+                content: Text(state.message),
+                backgroundColor: Colors.red,
+              ),
             );
           }
         },
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.all(24.0),
-          child: Column(
-            children: [
-              TextFormField(
-                obscureText: true,
-                cursorColor: AppColors.primary,
-                decoration: _buildDecoration("Current Password", Icons.lock_outline),
-                onChanged: (val) {
-                  currentPass = val;
-                  validateForm();
-                },
-              ),
-              const SizedBox(height: 20),
-              TextFormField(
-                obscureText: true,
-                cursorColor: AppColors.primary,
-                decoration: _buildDecoration("New Password", Icons.vpn_key_outlined),
-                onChanged: (val) {
-                  newPass = val;
-                  validateForm();
-                },
-              ),
-              const SizedBox(height: 20),
-              TextFormField(
-                obscureText: true,
-                cursorColor: AppColors.primary,
-                decoration: _buildDecoration("Confirm Password", Icons.check_circle_outline),
-                onChanged: (val) {
-                  confirmPass = val;
-                  validateForm();
-                },
-              ),
-              const Spacer(),
-              ValueListenableBuilder<bool>(
-                valueListenable: isFormValid,
-                builder: (context, isValid, child) {
-                  return BlocBuilder<ChangePasswordCubit, ChangePasswordState>(
-                    builder: (context, state) {
-                      return ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primary,
-                          disabledBackgroundColor: AppColors.lightGrey,
-                          minimumSize: const Size(double.infinity, 55),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                // 1. Current Password (Simple, no restrictions needed usually)
+                PasswordField(
+                  controller: _currentPasswordController,
+                  isPasswordVisible: _isCurrentVisible,
+                  onVisibilityToggle: () =>
+                      setState(() => _isCurrentVisible = !_isCurrentVisible),
+                  onSubmit: _handleSubmit,
+                  label: "Current Password",
+                  hint: "Enter current password",
+                  isLogin: true, // login mode hides complex requirements
+                ),
+                const SizedBox(height: 25),
+
+                // 2. New Password (With complex vanishing requirements)
+                PasswordField(
+                  controller: _newPasswordController,
+                  isPasswordVisible: _isNewVisible,
+                  onVisibilityToggle: () =>
+                      setState(() => _isNewVisible = !_isNewVisible),
+                  onSubmit: _handleSubmit,
+                  label: "New Password",
+                  hint: "Enter new password",
+                ),
+                const SizedBox(height: 25),
+
+                // 3. Confirm New Password (Matches original)
+                PasswordField(
+                  controller: _confirmPasswordController,
+                  originalController: _newPasswordController,
+                  isPasswordVisible: _isConfirmVisible,
+                  onVisibilityToggle: () =>
+                      setState(() => _isConfirmVisible = !_isConfirmVisible),
+                  onSubmit: _handleSubmit,
+                  label: "Confirm New Password",
+                  hint: "Re-enter new password",
+                  isConfirm: true,
+                ),
+
+                const SizedBox(height: 50),
+
+                // 4. Action Button
+                BlocBuilder<ChangePasswordCubit, ChangePasswordState>(
+                  builder: (context, state) {
+                    return ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        foregroundColor: Colors.white,
+                        minimumSize: const Size(double.infinity, 55),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                        // Button is disabled if form is invalid or cubit is loading
-                        onPressed: (isValid && state is! ChangePasswordLoading)
-                            ? () => context.read<ChangePasswordCubit>().updatePassword(currentPass, newPass)
-                            : null,
-                        child: state is ChangePasswordLoading
-                            ? const CircularProgressIndicator(color: Colors.white)
-                            : const Text("Save New Password", style: TextStyle(color: Colors.white)),
-                      );
-                    },
-                  );
-                },
-              ),
-            ],
+                      ),
+                      onPressed: state is ChangePasswordLoading
+                          ? null
+                          : _handleSubmit,
+                      child: state is ChangePasswordLoading
+                          ? const CircularProgressIndicator(color: Colors.white)
+                          : const Text(
+                              "Save New Password",
+                              style: TextStyle(fontSize: 16),
+                            ),
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
         ),
-      ),
-    );
-  }
-
-  InputDecoration _buildDecoration(String label, IconData icon) {
-    return InputDecoration(
-      labelText: label,
-      prefixIcon: Icon(icon, color: AppColors.primary),
-      floatingLabelStyle: const TextStyle(color: AppColors.primary),
-      focusedBorder: const UnderlineInputBorder(
-        borderSide: BorderSide(color: AppColors.primary, width: 2),
       ),
     );
   }

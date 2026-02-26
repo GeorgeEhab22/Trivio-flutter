@@ -14,23 +14,21 @@ class ProfileUpdateCubit extends Cubit<ProfileUpdateState> {
     required this.changePasswordUseCase,
     String? initialName,
     String? initialBio,
+    String? initialAvatar,
   }) : super(ProfileUpdateInitialState(
           name: initialName ?? '',
           bio: initialBio ?? '',
+          originalAvatar: initialAvatar??'',
         ));
 
   // --- Mock Update Profile logic ---
   Future<void> submitUpdate() async {
     if (state is! ProfileUpdateInitialState) return;
     final draft = state as ProfileUpdateInitialState;
-
     emit(ProfileUpdateLoading());
-
-    // Mocking the API call for your testing
     await Future.delayed(const Duration(seconds: 2));
-    ProfileCubit.updateMockData(draft.name, draft.bio, draft.avatarPath);
-    
-    // In a real scenario, this result would come from updateProfileUseCase
+    final String imagePath = draft.image?.path ?? draft.originalAvatar;
+    ProfileCubit.updateMockData(draft.name, draft.bio, imagePath);
     emit(const ProfileUpdateSuccess("Profile updated successfully (Mock)!"));
   }
 

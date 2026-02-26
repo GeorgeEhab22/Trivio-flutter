@@ -164,7 +164,10 @@ GoRouter createRouter(bool isLoggedIn) {
                     routes: [
                       GoRoute(
                         path: 'follow_info',
-                        builder: (context, state) => BlocProvider(
+                        builder: (context, state) {
+                          final String? tabString = state.uri.queryParameters['tab'];
+                          final int index = int.tryParse(tabString??'0')??0;
+                          return BlocProvider(
                           create: (context) {
                             final cubit = di.sl<ProfileSocialInfoCubit>();
                             cubit.fetchFollowers(userId: null);
@@ -173,8 +176,9 @@ GoRouter createRouter(bool isLoggedIn) {
 
                             return cubit;
                           },
-                          child: const SocialInfoScreen(),
-                        ),
+                          child: SocialInfoScreen(initialTabIndex: index,),
+                        );
+                        }
                       ),
                       GoRoute(
                         path: 'settings',
@@ -186,26 +190,26 @@ GoRouter createRouter(bool isLoggedIn) {
                           GoRoute(
                             path: 'edit',
                             builder: (context, state) {
-                              // 1. Get the current global profile data
                               final profileState = context
                                   .read<ProfileCubit>()
                                   .state;
 
                               String currentName = "";
                               String currentBio = "";
+                              String currentAvatar ="";
 
                               if (profileState is ProfileLoaded) {
                                 currentName = profileState.user.name;
                                 currentBio = profileState.user.bio!;
+                                currentAvatar = profileState.user.avatar;
                               }
-
-                              // 2. Pass those values to the sl() call (or manually create it)
                               return BlocProvider(
                                 create: (context) => ProfileUpdateCubit(
                                   updateProfileUseCase: di.sl(),
                                   changePasswordUseCase: di.sl(),
                                   initialName: currentName,
                                   initialBio: currentBio,
+                                  initialAvatar: currentAvatar,
                                 ),
                                 child: const EditProfileScreen(),
                               );
