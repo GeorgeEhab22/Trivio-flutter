@@ -20,12 +20,12 @@ class ProfileCubit extends Cubit<ProfileState> {
      postsCount: 93
   );
 
-  static void updateMockData(String name, String bio) {
+  static void updateMockData(String name, String bio, String avatar) {
     _mockUser = UserProfile(
       id: _mockUser.id,
       name: name,
       bio: bio,
-      avatar: _mockUser.avatar,
+      avatar: avatar,
       followersCount: _mockUser.followersCount,
       followingCount: _mockUser.followingCount,
       postsCount: _mockUser.postsCount, email: 'wre',

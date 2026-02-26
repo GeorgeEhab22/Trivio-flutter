@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:auth/constants/colors.dart';
 import 'package:auth/domain/entities/user_profile.dart';
 import 'package:auth/presentation/user/widgets/profile_social_info.dart';
@@ -22,11 +24,11 @@ class ProfileInfoBox extends StatelessWidget {
                   CircleAvatar(
                     radius: 40,
                     backgroundColor: AppColors.lightGrey,
-                    backgroundImage: user.avatar.isNotEmpty 
-                        ? NetworkImage(user.avatar) 
-                        : null,
-                    child: user.avatar.isEmpty 
-                        ? const Icon(Icons.person, size: 40, color: Colors.grey) 
+                    backgroundImage: user.avatar.startsWith('http')
+                        ? NetworkImage(user.avatar) as ImageProvider
+                        : FileImage(File(user.avatar)),
+                    child: user.avatar.isEmpty
+                        ? const Icon(Icons.person, size: 40, color: Colors.grey)
                         : null,
                   ),
                   Positioned(
@@ -39,7 +41,7 @@ class ProfileInfoBox extends StatelessWidget {
               const SizedBox(width: 20),
               Expanded(
                 child: ProfileSocialInfo(
-                  numberOfFollowers: user.followersCount, 
+                  numberOfFollowers: user.followersCount,
                   numberOfFollowing: user.followingCount,
                   numberOfPosts: user.postsCount,
                 ),

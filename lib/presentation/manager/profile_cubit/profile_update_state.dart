@@ -12,11 +12,13 @@ class ProfileUpdateInitialState extends ProfileUpdateState {
   final String name;
   final String bio;
   final File? image;
+  final String originalAvatar;
 
   const ProfileUpdateInitialState({
     this.name = '',
     this.bio = '',
-    this.image,
+    this.image, 
+    this.originalAvatar='',
   });
 
   ProfileUpdateInitialState copyWith({
@@ -30,9 +32,9 @@ class ProfileUpdateInitialState extends ProfileUpdateState {
       image: image ?? this.image,
     );
   }
-
+  String get avatarPath => image != null ? image!.path : originalAvatar;
   @override
-  List<Object?> get props => [name, bio, image];
+  List<Object?> get props => [name, bio, image, originalAvatar];
 }
 
 class ProfileUpdateLoading extends ProfileUpdateState {}

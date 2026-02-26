@@ -1,6 +1,7 @@
 import 'package:auth/constants/colors.dart';
 import 'package:auth/core/styels.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/profile_state.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_update_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_update_state.dart';
 import 'package:flutter/material.dart';
@@ -43,48 +44,66 @@ class EditProfileScreen extends StatelessWidget {
             children: [
               // Avatar Section
               BlocBuilder<ProfileUpdateCubit, ProfileUpdateState>(
-                buildWhen: (prev, curr) => curr is ProfileUpdateInitialState,
-                builder: (context, state) {
-                  final image = state is ProfileUpdateInitialState ? state.image : null;
-                  return GestureDetector(
-                    onTap: () async {
-                      final file = await ImagePicker().pickImage(source: ImageSource.gallery);
-                      if (file != null) {
-                        context.read<ProfileUpdateCubit>().updateImage(File(file.path));
-                      }
-                    },
-                    child: Stack(
-                      children: [
-                        CircleAvatar(
-                          radius: 60,
-                          backgroundColor: AppColors.lightGrey,
-                          backgroundImage: image != null ? FileImage(image) : null,
-                          child: image == null 
-                              ? const Icon(Icons.person, size: 60, color: Colors.grey) 
-                              : null,
-                        ),
-                        Positioned(
-                          bottom: 0,
-                          right: 0,
-                          child: CircleAvatar(
-                            radius: 18,
-                            backgroundColor: AppColors.primary,
-                            child: const Icon(Icons.camera_alt, color: Colors.white, size: 18),
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
+  buildWhen: (prev, curr) => curr is ProfileUpdateInitialState,
+  builder: (context, state) {
+    // 1. Get the local file from the UpdateCubit state (if picked)
+    final File? localImage = state is ProfileUpdateInitialState ? state.image : null;
+
+    // 2. Get the original network image from the global ProfileCubit
+    final profileState = context.read<ProfileCubit>().state;
+    String? originalImageUrl;
+    if (profileState is ProfileLoaded) {
+      originalImageUrl = profileState.user.avatar; // Accessing your UserProfile entity
+    }
+
+    return GestureDetector(
+      onTap: () async {
+        final file = await ImagePicker().pickImage(source: ImageSource.gallery);
+        if (file != null) {
+          context.read<ProfileUpdateCubit>().updateImage(File(file.path));
+        }
+      },
+      child: Stack(
+        children: [
+          CircleAvatar(
+            radius: 60,
+            backgroundColor: AppColors.lightGrey,
+            // 💡 Logic: Local File > Network URL > Default Icon
+            backgroundImage: localImage != null
+                ? FileImage(localImage)
+                : (originalImageUrl != null && originalImageUrl.isNotEmpty)
+                    ? NetworkImage(originalImageUrl) as ImageProvider
+                    : null,
+            child: (localImage == null && (originalImageUrl == null || originalImageUrl.isEmpty))
+                ? const Icon(Icons.person, size: 60, color: Colors.grey)
+                : null,
+          ),
+          Positioned(
+            bottom: 0,
+            right: 0,
+            child: CircleAvatar(
+              radius: 18,
+              backgroundColor: AppColors.primary,
+              child: const Icon(Icons.camera_alt, color: Colors.white, size: 18),
+            ),
+          ),
+        ],
+      ),
+    );
+  },
+),
               const SizedBox(height: 30),
 
               // Username Field
               TextFormField(
                 initialValue: initialName,
                 cursorColor: AppColors.primary,
-                decoration: _buildInputDecoration("Username", Icons.person_outline),
-                onChanged: (val) => context.read<ProfileUpdateCubit>().onInfoChanged(name: val),
+                decoration: _buildInputDecoration(
+                  "Username",
+                  Icons.person_outline,
+                ),
+                onChanged: (val) =>
+                    context.read<ProfileUpdateCubit>().onInfoChanged(name: val),
               ),
               const SizedBox(height: 20),
 
@@ -93,8 +112,12 @@ class EditProfileScreen extends StatelessWidget {
                 initialValue: initialBio,
                 cursorColor: AppColors.primary,
                 maxLines: 3,
-                decoration: _buildInputDecoration("Bio", Icons.description_outlined),
-                onChanged: (val) => context.read<ProfileUpdateCubit>().onInfoChanged(bio: val),
+                decoration: _buildInputDecoration(
+                  "Bio",
+                  Icons.description_outlined,
+                ),
+                onChanged: (val) =>
+                    context.read<ProfileUpdateCubit>().onInfoChanged(bio: val),
               ),
               const SizedBox(height: 40),
 
@@ -106,15 +129,24 @@ class EditProfileScreen extends StatelessWidget {
                       backgroundColor: AppColors.primary,
                       foregroundColor: Colors.white,
                       minimumSize: const Size(double.infinity, 55),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                       elevation: 0,
                     ),
-                    onPressed: state is ProfileUpdateLoading 
-                        ? null 
-                        : () => context.read<ProfileUpdateCubit>().submitUpdate(),
-                    child: state is ProfileUpdateLoading 
-                        ? const CircularProgressIndicator(color: Colors.white) 
-                        : const Text("Save Changes", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                    onPressed: state is ProfileUpdateLoading
+                        ? null
+                        : () =>
+                              context.read<ProfileUpdateCubit>().submitUpdate(),
+                    child: state is ProfileUpdateLoading
+                        ? const CircularProgressIndicator(color: Colors.white)
+                        : const Text(
+                            "Save Changes",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                   );
                 },
               ),

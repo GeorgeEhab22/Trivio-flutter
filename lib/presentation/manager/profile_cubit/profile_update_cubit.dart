@@ -28,7 +28,7 @@ class ProfileUpdateCubit extends Cubit<ProfileUpdateState> {
 
     // Mocking the API call for your testing
     await Future.delayed(const Duration(seconds: 2));
-    ProfileCubit.updateMockData(draft.name, draft.bio);
+    ProfileCubit.updateMockData(draft.name, draft.bio, draft.avatarPath);
     
     // In a real scenario, this result would come from updateProfileUseCase
     emit(const ProfileUpdateSuccess("Profile updated successfully (Mock)!"));
