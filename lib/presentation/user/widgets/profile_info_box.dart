@@ -1,11 +1,13 @@
+import 'package:auth/constants/colors.dart';
+import 'package:auth/domain/entities/user_profile.dart';
 import 'package:auth/presentation/user/widgets/profile_social_info.dart';
 import 'package:flutter/material.dart';
 import 'package:auth/presentation/user/widgets/follow_toggle_button.dart';
 
 class ProfileInfoBox extends StatelessWidget {
-  final String userId = "current_profile_id"; 
+  final UserProfile user;
 
-  const ProfileInfoBox({super.key,});
+  const ProfileInfoBox({super.key, required this.user});
 
   @override
   Widget build(BuildContext context) {
@@ -17,23 +19,29 @@ class ProfileInfoBox extends StatelessWidget {
             children: [
               Stack(
                 children: [
-                  const CircleAvatar(
+                  CircleAvatar(
                     radius: 40,
-                    backgroundImage: NetworkImage('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqIGCJ9InU9rQK7e09YdcGY9E1TTdGAXIQ0g&s'),
+                    backgroundColor: AppColors.lightGrey,
+                    backgroundImage: user.avatar.isNotEmpty 
+                        ? NetworkImage(user.avatar) 
+                        : null,
+                    child: user.avatar.isEmpty 
+                        ? const Icon(Icons.person, size: 40, color: Colors.grey) 
+                        : null,
                   ),
                   Positioned(
                     bottom: 0,
                     right: 0,
-                    child: FollowToggleButton(targetUserId: userId),
+                    child: FollowToggleButton(targetUserId: user.id),
                   ),
                 ],
               ),
               const SizedBox(width: 20),
-              const Expanded(
+              Expanded(
                 child: ProfileSocialInfo(
-                  numberOfFollowers: 120,
-                  numberOfFollowing: 85,
-                  numberOfPosts: 12,
+                  numberOfFollowers: user.followersCount, 
+                  numberOfFollowing: user.followingCount,
+                  numberOfPosts: user.postsCount,
                 ),
               ),
             ],

@@ -42,7 +42,7 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (_) => di.sl<ThemeCubit>()),
-        BlocProvider(create: (context) => ProfileCubit(getMyProfile: di.sl())),
+        BlocProvider(create: (context) => ProfileCubit(getMyProfile: di.sl())..loadProfile()),
       ],
       child: BlocBuilder<ThemeCubit, ThemeMode>(
         builder: (context, themeMode) {

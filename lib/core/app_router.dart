@@ -4,8 +4,10 @@ import 'package:auth/presentation/chats/chat_screen/chat_view.dart';
 import 'package:auth/presentation/chats/messages_screen/messages_view.dart';
 import 'package:auth/presentation/manager/follow_cubit/follow_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/change_password_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/profile_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_liked_posts_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_social_info_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/profile_state.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_update_cubit.dart';
 import 'package:auth/presentation/reels/reels_page.dart';
 import 'package:auth/presentation/user/change_password_screen.dart';
@@ -183,13 +185,31 @@ GoRouter createRouter(bool isLoggedIn) {
                         routes: [
                           GoRoute(
                             path: 'edit',
-                            pageBuilder: (context, state) => NoTransitionPage(
-                              child: BlocProvider(
-                                create: (context) =>
-                                    di.sl<ProfileUpdateCubit>(),
-                                child: EditProfileScreen(),
-                              ),
-                            ),
+                            builder: (context, state) {
+                              // 1. Get the current global profile data
+                              final profileState = context
+                                  .read<ProfileCubit>()
+                                  .state;
+
+                              String currentName = "";
+                              String currentBio = "";
+
+                              if (profileState is ProfileLoaded) {
+                                currentName = profileState.user.name;
+                                currentBio = profileState.user.bio!;
+                              }
+
+                              // 2. Pass those values to the sl() call (or manually create it)
+                              return BlocProvider(
+                                create: (context) => ProfileUpdateCubit(
+                                  updateProfileUseCase: di.sl(),
+                                  changePasswordUseCase: di.sl(),
+                                  initialName: currentName,
+                                  initialBio: currentBio,
+                                ),
+                                child: const EditProfileScreen(),
+                              );
+                            },
                           ),
                           GoRoute(
                             path: 'liked_posts',

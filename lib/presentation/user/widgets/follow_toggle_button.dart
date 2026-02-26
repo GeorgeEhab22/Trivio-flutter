@@ -19,44 +19,35 @@ class FollowToggleButton extends StatelessWidget {
       },
       builder: (context, state) {
         final bool isLoading = state is FollowLoading;
+        
+        // 💡 Better Logic: Check if state explicitly tells us we are following
         bool isFollowing = false;
         if (state is FollowSuccess) {
           isFollowing = state.follow != null;
         }
 
-        return AnimatedContainer(
-          duration: const Duration(milliseconds: 300),
-          width: 32,
-          height: 32,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: isLoading
-                ? Colors.grey
-                : (isFollowing ? Colors.green : AppColors.primary),
-            border: Border.all(color: Colors.white, width: 2),
-          ),
-          child: InkWell(
-            onTap: isLoading
-                ? null
-                : () {
-                    final cubit = context.read<FollowCubit>();
-
-                    if (isFollowing) {
-                      // If already following, we want to unfollow
-                      //cubit.unfollowUser(targetUserId);
-
-                      // FOR TESTING (Option 2):
-                       cubit.debugForceUnfollow();
-                       showCustomSnackBar(context, "Unfollowed", false);
-                    } else {
-                      // If not following, we want to follow
-                      //cubit.followUser(targetUserId);
-
-                      // FOR TESTING (Option 2):
-                       cubit.debugForceSuccess();
-                       showCustomSnackBar(context, "Followed", true);
-                    }
-                  },
+        return GestureDetector( // Using GestureDetector for better hit testing
+          onTap: isLoading
+              ? null
+              : () {
+                  final cubit = context.read<FollowCubit>();
+                  if (isFollowing) {
+                    cubit.debugForceUnfollow();
+                  } else {
+                    cubit.debugForceSuccess();
+                  }
+                },
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            width: 32,
+            height: 32,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: isLoading
+                  ? Colors.grey
+                  : (isFollowing ? Colors.green : AppColors.primary),
+              border: Border.all(color: Colors.white, width: 2),
+            ),
             child: Center(
               child: isLoading
                   ? const SizedBox(

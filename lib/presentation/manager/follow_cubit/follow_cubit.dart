@@ -1,3 +1,4 @@
+import 'package:auth/domain/entities/follow.dart';
 import 'package:auth/domain/usecases/follow/follow_user.dart';
 import 'package:auth/domain/usecases/follow/unfollow_user.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -34,9 +35,29 @@ class FollowCubit extends Cubit<FollowState> {
     );
   }
 
-  void debugForceSuccess() {
-    emit(FollowSuccess());
-  }
+void debugForceSuccess() {
+  // Create mock references using your factory logic
+  final mockTarget = UserReference.fromJson({
+    '_id': 'target_123',
+    'name': 'Target User',
+    'avatar': 'https://via.placeholder.com/150'
+  });
+
+  final mockFollower = UserReference.fromJson({
+    '_id': 'my_id_456',
+    'name': 'Me',
+    'avatar': ''
+  });
+
+  final mockFollow = Follow(
+    id: "mock_follow_id_${DateTime.now().millisecondsSinceEpoch}",
+    user: mockTarget,
+    follower: mockFollower,
+    status: "active",
+  );
+
+  emit(FollowSuccess(follow: mockFollow));
+}
 
   void debugForceUnfollow() {
     emit(FollowLoading());

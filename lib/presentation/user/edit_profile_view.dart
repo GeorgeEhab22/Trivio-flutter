@@ -13,25 +13,26 @@ class EditProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 1. Grab initial values from the Cubit state for the text fields
+    // 1. Extract the initial state once to prevent text from resetting during rebuilds
     final cubit = context.read<ProfileUpdateCubit>();
     String initialName = "";
     String initialBio = "";
 
     if (cubit.state is ProfileUpdateInitialState) {
-      initialName = (cubit.state as ProfileUpdateInitialState).name;
-      initialBio = (cubit.state as ProfileUpdateInitialState).bio;
+      final state = cubit.state as ProfileUpdateInitialState;
+      initialName = state.name;
+      initialBio = state.bio;
     }
 
     return Scaffold(
       appBar: AppBar(
         title: const Text("Edit Profile"),
+        centerTitle: true,
         titleTextStyle: Styles.textStyle20.copyWith(color: AppColors.primary),
       ),
       body: BlocListener<ProfileUpdateCubit, ProfileUpdateState>(
         listener: (context, state) {
           if (state is ProfileUpdateSuccess) {
-            // 2. Trigger Global Refresh so the main profile updates immediately
             context.read<ProfileCubit>().loadProfile();
             Navigator.pop(context);
           }
@@ -48,53 +49,54 @@ class EditProfileScreen extends StatelessWidget {
                   return GestureDetector(
                     onTap: () async {
                       final file = await ImagePicker().pickImage(source: ImageSource.gallery);
-                      if (file != null) context.read<ProfileUpdateCubit>().updateImage(File(file.path));
+                      if (file != null) {
+                        context.read<ProfileUpdateCubit>().updateImage(File(file.path));
+                      }
                     },
-                    child: CircleAvatar(
-                      radius: 50,
-                      backgroundColor: AppColors.lightGrey,
-                      backgroundImage: image != null ? FileImage(image) : null,
-                      child: image == null 
-                          ? const Icon(Icons.camera_alt, color: AppColors.primary) 
-                          : null,
+                    child: Stack(
+                      children: [
+                        CircleAvatar(
+                          radius: 60,
+                          backgroundColor: AppColors.lightGrey,
+                          backgroundImage: image != null ? FileImage(image) : null,
+                          child: image == null 
+                              ? const Icon(Icons.person, size: 60, color: Colors.grey) 
+                              : null,
+                        ),
+                        Positioned(
+                          bottom: 0,
+                          right: 0,
+                          child: CircleAvatar(
+                            radius: 18,
+                            backgroundColor: AppColors.primary,
+                            child: const Icon(Icons.camera_alt, color: Colors.white, size: 18),
+                          ),
+                        ),
+                      ],
                     ),
                   );
                 },
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 30),
 
               // Username Field
               TextFormField(
-                initialValue: initialName, // 3. Pre-fill name
+                initialValue: initialName,
                 cursorColor: AppColors.primary,
-                decoration: InputDecoration(
-                  labelText: "Username",
-                  labelStyle: const TextStyle(color: Colors.grey),
-                  floatingLabelStyle: const TextStyle(color: AppColors.primary),
-                  focusedBorder: const UnderlineInputBorder(
-                    borderSide: BorderSide(color: AppColors.primary, width: 2),
-                  ),
-                ),
+                decoration: _buildInputDecoration("Username", Icons.person_outline),
                 onChanged: (val) => context.read<ProfileUpdateCubit>().onInfoChanged(name: val),
               ),
-              const SizedBox(height: 15),
+              const SizedBox(height: 20),
 
               // Bio Field
               TextFormField(
-                initialValue: initialBio, // 4. Pre-fill bio
+                initialValue: initialBio,
                 cursorColor: AppColors.primary,
                 maxLines: 3,
-                decoration: InputDecoration(
-                  labelText: "Bio",
-                  labelStyle: const TextStyle(color: Colors.grey),
-                  floatingLabelStyle: const TextStyle(color: AppColors.primary),
-                  focusedBorder: const UnderlineInputBorder(
-                    borderSide: BorderSide(color: AppColors.primary, width: 2),
-                  ),
-                ),
+                decoration: _buildInputDecoration("Bio", Icons.description_outlined),
                 onChanged: (val) => context.read<ProfileUpdateCubit>().onInfoChanged(bio: val),
               ),
-              const SizedBox(height: 30),
+              const SizedBox(height: 40),
 
               // Save Button
               BlocBuilder<ProfileUpdateCubit, ProfileUpdateState>(
@@ -103,21 +105,38 @@ class EditProfileScreen extends StatelessWidget {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary,
                       foregroundColor: Colors.white,
-                      minimumSize: const Size(double.infinity, 50),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      minimumSize: const Size(double.infinity, 55),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      elevation: 0,
                     ),
                     onPressed: state is ProfileUpdateLoading 
                         ? null 
                         : () => context.read<ProfileUpdateCubit>().submitUpdate(),
                     child: state is ProfileUpdateLoading 
                         ? const CircularProgressIndicator(color: Colors.white) 
-                        : const Text("Save Changes"),
+                        : const Text("Save Changes", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                   );
                 },
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  // Helper for consistent styling
+  InputDecoration _buildInputDecoration(String label, IconData icon) {
+    return InputDecoration(
+      labelText: label,
+      prefixIcon: Icon(icon, color: AppColors.primary),
+      labelStyle: const TextStyle(color: Colors.grey),
+      floatingLabelStyle: const TextStyle(color: AppColors.primary),
+      focusedBorder: const UnderlineInputBorder(
+        borderSide: BorderSide(color: AppColors.primary, width: 2),
+      ),
+      enabledBorder: const UnderlineInputBorder(
+        borderSide: BorderSide(color: AppColors.lightGrey),
       ),
     );
   }
