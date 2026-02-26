@@ -60,7 +60,7 @@ class InterestsGridView extends StatelessWidget {
                 (isTeams ? state.isTeamsLoading : state.isPlayersLoading));
 
         final List currentTeams = state is SelectInterestsLoaded
-            ? state.teams
+            ? state.filteredTeams 
             : DummyData.dummyTeams;
 
         final List currentPlayers = state is SelectInterestsLoaded

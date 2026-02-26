@@ -23,6 +23,9 @@ final class SelectInterestsLoaded extends SelectInterestsState {
   final bool isTeamsLoading;
   final bool isPlayersLoading;
 
+//search
+  final List<Team> filteredTeams;
+
   const SelectInterestsLoaded({
     this.teams = const [],
     this.players = const [],
@@ -32,6 +35,7 @@ final class SelectInterestsLoaded extends SelectInterestsState {
     this.playersToDelete = const [],
     this.isTeamsLoading = false,
     this.isPlayersLoading = false,
+    this.filteredTeams = const [], 
   });
 
   SelectInterestsLoaded copyWith({
@@ -43,6 +47,7 @@ final class SelectInterestsLoaded extends SelectInterestsState {
     List<String>? playersToDelete,
     bool? isTeamsLoading,
     bool? isPlayersLoading,
+    List<Team>? filteredTeams,
   }) {
     return SelectInterestsLoaded(
       teams: teams ?? this.teams,
@@ -53,13 +58,14 @@ final class SelectInterestsLoaded extends SelectInterestsState {
       playersToDelete: playersToDelete ?? this.playersToDelete,
       isTeamsLoading: isTeamsLoading ?? this.isTeamsLoading,
       isPlayersLoading: isPlayersLoading ?? this.isPlayersLoading,
+      filteredTeams: filteredTeams ?? this.filteredTeams,
     );
   }
   
   @override
   List<Object?> get props => [
     teams, players, selectedTeams, selectedPlayers, 
-    teamsToDelete, playersToDelete, isTeamsLoading, isPlayersLoading
+    teamsToDelete, playersToDelete, isTeamsLoading, isPlayersLoading, filteredTeams
   ];
 }
 

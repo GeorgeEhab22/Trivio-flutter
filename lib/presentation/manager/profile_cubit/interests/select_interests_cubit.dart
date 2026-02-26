@@ -104,9 +104,36 @@ class SelectInterestsCubit extends Cubit<SelectInterestsState> {
     emit(
       _currentState.copyWith(
         teams: allTeams,
+        filteredTeams: allTeams,
         selectedTeams: favTeams,
         isTeamsLoading: false,
       ),
+    );
+  }
+
+  void searchLocalTeams(String query) {
+    if (state is! SelectInterestsLoaded) {
+      print('--> Cubit: State is not loaded, ignoring search.');
+      return;
+    }
+
+    if (query.isEmpty) {
+      print('--> Cubit: Query is empty, returning all teams.');
+      emit(_currentState.copyWith(filteredTeams: _currentState.teams));
+      return;
+    }
+
+    final lowerCaseQuery = query.toLowerCase();
+
+    final searchResults = _currentState.teams.where((team) {
+      return team.name.toLowerCase().contains(lowerCaseQuery);
+    }).toList();
+
+    print('--> Cubit: Found ${searchResults.length} teams matching "$query"');
+
+    emit(_currentState.copyWith(filteredTeams: searchResults));
+    print(
+      '--> Cubit: New state emitted with filteredTeams count: ${_currentState.filteredTeams.length}',
     );
   }
 

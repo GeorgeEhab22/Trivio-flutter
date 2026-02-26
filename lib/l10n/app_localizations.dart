@@ -1853,7 +1853,7 @@ abstract class AppLocalizations {
   /// No description provided for @favTeamsTitle.
   ///
   /// In en, this message translates to:
-  /// **'Your favorite teams'**
+  /// **'Your favourite teams'**
   String get favTeamsTitle;
 
   /// No description provided for @favTeamsDesc.
@@ -1865,7 +1865,7 @@ abstract class AppLocalizations {
   /// No description provided for @favPlayersTitle.
   ///
   /// In en, this message translates to:
-  /// **'Your favorite players'**
+  /// **'Your favourite players'**
   String get favPlayersTitle;
 
   /// No description provided for @favPlayersDesc.

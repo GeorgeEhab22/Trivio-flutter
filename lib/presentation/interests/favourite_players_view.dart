@@ -40,7 +40,7 @@ class _FavouritePlayersViewState extends State<FavouritePlayersView> {
             title: l10n.favPlayersTitle,
             subTitle: l10n.favPlayersDesc,
           ),
-          const SearchBox(),
+          const SearchBox(isTeams: false,),
           InterestsGridView(isTeams: false, isEdit: widget.isEditPlayers),
           InterestsButtonActions(isTeams: false, isEdit: widget.isEditPlayers),
         ],
