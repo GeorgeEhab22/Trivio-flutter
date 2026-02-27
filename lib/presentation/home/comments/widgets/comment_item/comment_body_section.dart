@@ -1,3 +1,4 @@
+import 'package:auth/constants/colors.dart';
 import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/home/widgets/exbandable_text.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +23,7 @@ class CommentBodySection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return Padding(
       padding: const EdgeInsetsDirectional.only(start: 56, end: 16),
       child: isEditing
@@ -29,13 +31,22 @@ class CommentBodySection extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 TextField(
+                  cursorColor: AppColors.primary,
                   controller: editController,
                   autofocus: true,
                   minLines: 1,
                   maxLines: 4,
                   decoration: InputDecoration(
-                    border: OutlineInputBorder(
+                    enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: AppColors.primary),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(
+                        color: AppColors.primary,
+                        width: 2.0,
+                      ),
                     ),
                     contentPadding: const EdgeInsets.symmetric(
                       horizontal: 12,
@@ -48,27 +59,39 @@ class CommentBodySection extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     TextButton(
+                      style: ButtonStyle(
+                        foregroundColor: WidgetStateProperty.all(
+                          AppColors.primary,
+                        ),
+                      ),
                       onPressed: onCancel,
                       child: Text(l10n.cancelBtn),
                     ),
                     const SizedBox(width: 8),
                     ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: isDarkMode
+                            ?Color(0xFF171B20)
+                            : Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
                       onPressed: () {
                         final updatedText = editController.text.trim();
                         if (updatedText.isEmpty) return;
                         onSave(updatedText);
                       },
-                      child: Text(l10n.save),
+                      child: Text(
+                        l10n.save,
+                        style: const TextStyle(color: AppColors.primary),
+                      ),
                     ),
                   ],
                 ),
               ],
             )
-          : ExpandableText(
-              text: text,
-              previewLines: 2,
-              canCollapse: false,
-            ),
+          : ExpandableText(text: text, previewLines: 2, canCollapse: false),
     );
   }
 }
