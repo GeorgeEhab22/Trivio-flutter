@@ -23,18 +23,27 @@ class PostHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool isGroupPost = post.location == "group";
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final Color iconBgColor = isDark
+        ? Colors.white.withValues(alpha: 0.08)
+        : Colors.black.withValues(alpha: 0.04);
+    final Color iconBorderColor = isDark
+        ? Colors.white.withValues(alpha: 0.12)
+        : Colors.black.withValues(alpha: 0.08);
+
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
             child: AuthorInfo(
-              authorName: "messi",
+              authorName: _resolveAuthorName(post.authorId),
               showTimeInline: false,
               isGroupPost: isGroupPost,
               groupImage: post.groupCoverImage,
               groupName: post.groupName,
+              avatarRadius: 20,
             ),
           ),
           Row(
@@ -48,38 +57,63 @@ class PostHeader extends StatelessWidget {
                     initialFollowStatus: isFollowing,
                   ),
               ],
-              IconButton(
-                icon: Icon(
-                  Icons.more_vert,
-                  color: Theme.of(context).iconTheme.color,
+              Container(
+                width: 34,
+                height: 36,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  color: iconBgColor,
+                  border: Border.all(color: iconBorderColor),
                 ),
-                onPressed: () {
-                  final postInteractionCubit = context
-                      .read<PostInteractionCubit>();
-                  final postCubit = context.read<PostCubit>();
-                  final groupPostCubit = context.read<GroupPostsCubit>();
-                  showModalBottomSheet(
-                    context: context,
-                    backgroundColor: Colors.transparent,
-                    useRootNavigator: true,
-                    builder: (ctx) => MultiBlocProvider(
-                      providers: [
-                        BlocProvider.value(value: postInteractionCubit),
-                        BlocProvider.value(value: postCubit),
-                        BlocProvider.value(value: groupPostCubit),
-                      ],
-                      child: OptionsBottomSheet(
-                        post: post,
-                        currentUserId: currentUserId,
+                child: IconButton(
+                  padding: EdgeInsets.zero,
+                  icon: Icon(
+                    Icons.more_horiz_rounded,
+                    color: Theme.of(context).iconTheme.color,
+                  ),
+                  onPressed: () {
+                    final postInteractionCubit = context
+                        .read<PostInteractionCubit>();
+                    final postCubit = context.read<PostCubit>();
+                    GroupPostsCubit? groupPostsCubit;
+                    try {
+                      groupPostsCubit = context.read<GroupPostsCubit>();
+                    } catch (_) {}
+
+                    showModalBottomSheet(
+                      context: context,
+                      backgroundColor: Colors.transparent,
+                      useRootNavigator: true,
+                      builder: (ctx) => MultiBlocProvider(
+                        providers: [
+                          BlocProvider.value(value: postInteractionCubit),
+                          BlocProvider.value(value: postCubit),
+                          if (groupPostsCubit != null)
+                            BlocProvider.value(value: groupPostsCubit),
+                        ],
+                        child: OptionsBottomSheet(
+                          post: post,
+                          currentUserId: currentUserId,
+                        ),
                       ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
             ],
           ),
         ],
       ),
     );
+  }
+
+  String _resolveAuthorName(String? authorId) {
+    if (authorId == null || authorId.isEmpty) {
+      return 'Trivio Fan';
+    }
+    if (authorId.length <= 8) {
+      return authorId;
+    }
+    return 'Fan ${authorId.substring(0, 4)}';
   }
 }

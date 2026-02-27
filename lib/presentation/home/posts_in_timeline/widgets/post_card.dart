@@ -4,6 +4,7 @@ import 'package:auth/presentation/home/posts_in_timeline/widgets/post_header.dar
 import 'package:auth/presentation/manager/group_cubit/get_group_posts/group_posts_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/get_group_posts/group_posts_state.dart';
 import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
+import 'package:auth/constants/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:auth/domain/entities/post.dart';
@@ -31,68 +32,158 @@ class PostCard extends StatelessWidget {
     return BlocConsumer<PostInteractionCubit, PostInteractionState>(
       listener: (context, state) {
         final l10n = AppLocalizations.of(context)!;
-        if (state is ReportPostSuccess) {
+        if (state is ReportPostSuccess && state.postId == post.postID) {
           showCustomSnackBar(context, l10n.reportPostSuccess, true);
         }
-        if (state is ReportPostError) {
-          showCustomSnackBar(context, state.message, false);
-        }
-        if (state is FollowUserError) {
+        if (state is ReportPostError && state.postId == post.postID) {
           showCustomSnackBar(context, state.message, false);
         }
       },
       builder: (context, state) {
-        if (state is ReportPostSuccess) {
-          return const SizedBox.shrink();
-        }
-
+        final l10n = AppLocalizations.of(context)!;
         final postCubitState = context.watch<PostCubit>().state;
-        
-        bool isDeleting = false;
+        GroupPostsState? groupPostsState;
         try {
-           final groupPostsCubitState = context.watch<GroupPostsCubit>().state;
-           isDeleting = (groupPostsCubitState is GroupPostsDeleting &&
-                        groupPostsCubitState.postId == post.postID);
+          groupPostsState = context.watch<GroupPostsCubit>().state;
         } catch (_) {}
-
-        if (postCubitState is DeletePostLoading && postCubitState.postId == post.postID) {
-          isDeleting = true;
+        bool isDeleting = false;
+        if (groupPostsState is GroupPostsDeleting) {
+          isDeleting = groupPostsState.postId == post.postID;
+        }
+        if (postCubitState is DeletePostLoading) {
+          isDeleting = isDeleting || postCubitState.postId == post.postID;
         }
 
-        return Opacity(
-          opacity: (isDeleting || state is ReportPostLoading) ? 0.5 : 1,
-          child: InkWell(
-            onTap: () {
-              // TODO : fetch single post
-            },
-            borderRadius: BorderRadius.circular(16),
-            child: Card(
-              margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-              color: Theme.of(context).appBarTheme.backgroundColor,
-              elevation: 0.2,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 6),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+        final isReportLoading =
+            state is ReportPostLoading && state.postId == post.postID;
+        final hasMetrics =
+            (post.reactions?.isNotEmpty ?? false) || (post.media?.isNotEmpty ?? false);
+        final isGroupPost = post.location == 'group';
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        final borderColor = isDark
+            ? Colors.white.withValues(alpha: 0.12)
+            : Colors.black.withValues(alpha: 0.08);
+        final cardGradient = isDark
+            ? const [Color(0xFF1D2228), Color(0xFF171B20)]
+            : const [Color(0xFFFFFFFF), Color(0xFFF8FBF9)];
+        final shadowColor = isDark
+            ? Colors.black.withValues(alpha: 0.38)
+            : const Color(0xFF0F172A).withValues(alpha: 0.08);
+
+        return AnimatedOpacity(
+          duration: const Duration(milliseconds: 180),
+          opacity: (isDeleting || isReportLoading) ? 0.55 : 1,
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(24),
+              boxShadow: [
+                BoxShadow(
+                  color: shadowColor,
+                  blurRadius: 28,
+                  offset: const Offset(0, 14),
+                ),
+              ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(24),
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: cardGradient,
+                  ),
+                  border: Border.all(color: borderColor),
+                ),
+                child: Stack(
                   children: [
-                    PostHeader(
-                      post: post,
-                      currentUserId: currentUserId,
-                      isFollowing: isFollowing,
+                    PositionedDirectional(
+                      end: -28,
+                      top: -38,
+                      child: Container(
+                        width: 108,
+                        height: 108,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          gradient: LinearGradient(
+                            colors: [
+                              AppColors.primary.withValues(alpha: isDark ? 0.25 : 0.2),
+                              Colors.transparent,
+                            ],
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                          ),
+                        ),
+                      ),
                     ),
-                    PostContent(post: post),
-                    const SizedBox(height: 8),
-                    const Divider(
-                      height: 1,
-                      color: Color(0xFFF3F4F6),
-                      thickness: 0.7,
-                      indent: 12,
-                      endIndent: 12,
-                    ),
-                    PostFooter(
-                      post: post,
-                      currentUserId: currentUserId,
-                      currentReaction: currentReaction,
+                    Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: () {},
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              height: 4,
+                              decoration: const BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [Color(0xFF42C83C), Color(0xFF9DE35A)],
+                                ),
+                              ),
+                            ),
+                            PostHeader(
+                              post: post,
+                              currentUserId: currentUserId,
+                              isFollowing: isFollowing,
+                            ),
+                            PostContent(post: post),
+                            if (hasMetrics || isGroupPost) ...[
+                              const SizedBox(height: 6),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 14),
+                                child: Wrap(
+                                  spacing: 8,
+                                  runSpacing: 8,
+                                  children: [
+                                    if ((post.reactions?.isNotEmpty ?? false))
+                                      _MetaChip(
+                                        icon: Icons.sports_soccer_rounded,
+                                        label: '${post.reactions?.length ?? 0}',
+                                      ),
+                                    if ((post.media?.isNotEmpty ?? false))
+                                      _MetaChip(
+                                        icon: Icons.perm_media_outlined,
+                                        label: '${post.media?.length ?? 0}',
+                                      ),
+                                    if (isGroupPost)
+                                      _MetaChip(
+                                        icon: Icons.groups_2_outlined,
+                                        label: l10n.groups,
+                                        isAccent: true,
+                                      ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                            const SizedBox(height: 10),
+                            Divider(
+                              height: 1,
+                              thickness: 0.7,
+                              indent: 12,
+                              endIndent: 12,
+                              color: isDark
+                                  ? Colors.white.withValues(alpha: 0.09)
+                                  : const Color(0xFFE8ECEF),
+                            ),
+                            PostFooter(
+                              post: post,
+                              currentUserId: currentUserId,
+                              currentReaction: currentReaction,
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -101,6 +192,51 @@ class PostCard extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+class _MetaChip extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final bool isAccent;
+
+  const _MetaChip({
+    required this.icon,
+    required this.label,
+    this.isAccent = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final Color textColor = isAccent
+        ? AppColors.primary
+        : (Theme.of(context).textTheme.bodySmall?.color ?? Colors.black87);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(999),
+        color: isAccent
+            ? AppColors.primary.withValues(alpha: 0.16)
+            : (isDark
+                  ? Colors.white.withValues(alpha: 0.08)
+                  : Colors.black.withValues(alpha: 0.04)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: textColor),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: textColor,
+                  fontWeight: FontWeight.w700,
+                ),
+          ),
+        ],
+      ),
     );
   }
 }

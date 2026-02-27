@@ -18,13 +18,18 @@ class ReactToPostLoading extends PostInteractionState {
 }
 
 class PostReactionUpdated extends PostInteractionState {
+  final String postId;
   @override
   final ReactionType reactionType;
   final int count;
-  const PostReactionUpdated({required this.reactionType, required this.count});
+  const PostReactionUpdated({
+    required this.postId,
+    required this.reactionType,
+    required this.count,
+  });
   
   @override
-  List<Object> get props => [reactionType, count];
+  List<Object> get props => [postId, reactionType, count];
 }
 
 class ReactToPostSuccess extends PostInteractionState {
@@ -148,13 +153,24 @@ class FollowUserError extends PostInteractionState {
 // report post
 
 
-class ReportPostLoading extends PostInteractionState {}
+class ReportPostLoading extends PostInteractionState {
+  final String postId;
+  const ReportPostLoading({required this.postId});
+}
 
 class ReportPostSuccess extends PostInteractionState {
-  const ReportPostSuccess();
+  final String postId;
+  const ReportPostSuccess({required this.postId});
+
+  @override
+  List<Object> get props => [postId];
 }
 
 class ReportPostError extends PostInteractionState {
+  final String postId;
   final String message;
-  const ReportPostError({required this.message});
+  const ReportPostError({required this.postId, required this.message});
+
+  @override
+  List<Object> get props => [postId, message];
 }

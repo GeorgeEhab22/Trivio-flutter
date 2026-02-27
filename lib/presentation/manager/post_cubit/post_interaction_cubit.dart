@@ -54,7 +54,13 @@ class PostInteractionCubit extends Cubit<PostInteractionState> {
       newReaction = ReactionType.goal;
     }
 
-    emit(PostReactionUpdated(reactionType: newReaction, count: newCount));
+    emit(
+      PostReactionUpdated(
+        postId: postId,
+        reactionType: newReaction,
+        count: newCount,
+      ),
+    );
 
     if (newReaction == ReactionType.none) {
       await _performRemoveReaction(
@@ -88,7 +94,13 @@ class PostInteractionCubit extends Cubit<PostInteractionState> {
       newCount = newCount + 1;
     }
 
-    emit(PostReactionUpdated(reactionType: chosenType, count: newCount));
+    emit(
+      PostReactionUpdated(
+        postId: postId,
+        reactionType: chosenType,
+        count: newCount,
+      ),
+    );
 
     await _performReactApiCall(
       postId: postId,
@@ -282,7 +294,7 @@ class PostInteractionCubit extends Cubit<PostInteractionState> {
     required String userId,
     required String reason,
   }) async {
-    emit(ReportPostLoading());
+    emit(ReportPostLoading(postId: postId));
 
     final result = await reportPostUseCase(
       postId: postId,
@@ -291,9 +303,8 @@ class PostInteractionCubit extends Cubit<PostInteractionState> {
     );
 
     result.fold(
-      (failure) => emit(ReportPostError(message: failure.message)),
-      (_) =>
-          emit(const ReportPostSuccess()),
+      (failure) => emit(ReportPostError(postId: postId, message: failure.message)),
+      (_) => emit(ReportPostSuccess(postId: postId)),
     );
   }
 

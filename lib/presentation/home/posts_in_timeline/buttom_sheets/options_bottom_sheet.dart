@@ -31,6 +31,10 @@ class OptionsBottomSheet extends StatelessWidget {
         : Colors.grey[300];
     final cubit = context.read<PostInteractionCubit>();
     final postCubit = context.read<PostCubit>();
+    GroupPostsCubit? groupPostsCubit;
+    try {
+      groupPostsCubit = context.read<GroupPostsCubit>();
+    } catch (_) {}
 
     return Container(
       decoration: BoxDecoration(
@@ -179,7 +183,6 @@ class OptionsBottomSheet extends StatelessWidget {
                 text: l10n.delete,
                 redColor: true,
                 onTap: () {
-                  final groupPostsCubit = context.read<GroupPostsCubit>();
                   context.pop();
                   showCustomDialog(
                     context: context,
@@ -188,7 +191,9 @@ class OptionsBottomSheet extends StatelessWidget {
                     confirmText: l10n.delete,
                     confirmTextColor: Colors.red,
                     onConfirm: () {
-                      if (post.location == 'group' && post.groupID != null) {
+                      if (post.location == 'group' &&
+                          post.groupID != null &&
+                          groupPostsCubit != null) {
                         groupPostsCubit.deletePost(
                           groupId: post.groupID!,
                           post: post,

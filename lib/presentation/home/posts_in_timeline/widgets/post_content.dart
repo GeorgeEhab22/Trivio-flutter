@@ -12,17 +12,55 @@ class PostContent extends StatelessWidget {
   Widget build(BuildContext context) {
     final hasMedia = post.media != null && post.media!.isNotEmpty;
     final hasCaption = post.caption != null && post.caption!.isNotEmpty;
+    final captionBgColor = Theme.of(context).brightness == Brightness.dark
+        ? Colors.white.withValues(alpha: 0.06)
+        : const Color(0xFFF4F8F5);
+    final borderColor = Theme.of(context).brightness == Brightness.dark
+        ? Colors.white.withValues(alpha: 0.1)
+        : Colors.black.withValues(alpha: 0.06);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (hasCaption)
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-            child: ExpandableText(
-              text: post.caption ?? '',
-              previewLines: 2,
-              canCollapse: true,
+            padding: const EdgeInsets.fromLTRB(14, 4, 14, 8),
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
+              decoration: BoxDecoration(
+                color: captionBgColor,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: borderColor),
+              ),
+              child: Stack(
+                children: [
+                  PositionedDirectional(
+                    start: 0,
+                    top: 0,
+                    bottom: 0,
+                    child: Container(
+                      width: 3,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFF42C83C), Color(0xFF9DE35A)],
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsetsDirectional.only(start: 12),
+                    child: ExpandableText(
+                      text: post.caption ?? '',
+                      previewLines: 4,
+                      canCollapse: true,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
 

@@ -22,15 +22,20 @@ class ReactionAction extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<PostInteractionCubit, PostInteractionState>(
       buildWhen: (previous, current) =>
-          current is PostReactionUpdated || current is PostInteractionInitial,
+          (current is PostReactionUpdated && current.postId == postId) ||
+          (current is ReactToPostError && current.postId == postId) ||
+          current is PostInteractionInitial,
       builder: (context, state) {
-        
         ReactionType currentReaction = initialReaction;
         int currentCount = initialCount;
 
-        if (state is PostReactionUpdated) {
+        if (state is PostReactionUpdated && state.postId == postId) {
           currentReaction = state.reactionType;
           currentCount = state.count;
+        }
+        if (state is ReactToPostError && state.postId == postId) {
+          currentReaction = state.oldReactionType ?? initialReaction;
+          currentCount = state.oldCount ?? initialCount;
         }
 
         return ReactionInteraction(
