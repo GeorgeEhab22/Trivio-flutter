@@ -21,28 +21,29 @@ class CommentsList extends StatelessWidget {
     if (comments.isEmpty) {
       final l10n = AppLocalizations.of(context)!;
       return Center(
-        child: Text(
-          l10n.noCommentsYet,
-          style: TextStyle(color: AppColors.iconsColor),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Text(
+            l10n.noCommentsYet,
+            textAlign: TextAlign.center,
+            style: TextStyle(color: AppColors.iconsColor.withValues(alpha: 0.7)),
+          ),
         ),
       );
     }
 
-    return ListView.builder(
+    return ListView.separated(
       itemCount: comments.length,
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      separatorBuilder: (_, _) => const SizedBox(height: 2),
       itemBuilder: (context, index) {
         final comment = comments[index];
-        return Column(
-          children: [
-            CommentItem(
-              key: ValueKey(comment.id),
-              comment: comment,
-              currentUserId: currentUserId,
-              onReplyTap: onReplyTap,
-              replies: comment.repliesList ?? [],
-            ),
-          ],
+        return CommentItem(
+          key: ValueKey(comment.id),
+          comment: comment,
+          currentUserId: currentUserId,
+          onReplyTap: onReplyTap,
+          replies: comment.repliesList ?? [],
         );
       },
     );

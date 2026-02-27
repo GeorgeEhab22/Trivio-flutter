@@ -1,7 +1,7 @@
+import 'package:auth/common/functions/number_extensions.dart';
 import 'package:auth/constants/colors.dart';
 import 'package:auth/core/styels.dart';
 import 'package:flutter/material.dart';
-import 'package:auth/common/functions/format_number.dart';
 
 class PostActionItem extends StatelessWidget {
   final Widget icon;
@@ -27,7 +27,7 @@ class PostActionItem extends StatelessWidget {
         icon,
         const SizedBox(width: 5),
         Text(
-          formatNumber(count),
+          count.toString().localizeDigits(context),
           style: Styles.textStyle14.copyWith(
             fontWeight: FontWeight.w500,
             color: color,

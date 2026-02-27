@@ -1,4 +1,5 @@
 import 'package:auth/common/functions/format_time.dart';
+import 'package:auth/common/functions/number_extensions.dart';
 import 'package:auth/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:auth/constants/colors.dart';
@@ -99,7 +100,9 @@ class AuthorInfo extends StatelessWidget {
   }
 
   Widget _buildStackedText(BuildContext context, TextStyle defaultAuthorStyle, AppLocalizations l10n) {
-    final timeText = formatTime(context, createdAt);
+    // Localized digits applied to the time string
+    final timeText = formatTime(context, createdAt).localizeDigits(context);
+    
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -130,7 +133,6 @@ class AuthorInfo extends StatelessWidget {
                 Text(
                   timeText,
                   style: Styles.textStyle14.copyWith(color: AppColors.lightGrey),
-                  // Direction LTR ensures time stamps like "5m" don't flip to "m5"
                   textDirection: TextDirection.ltr,
                 ),
             ],
@@ -140,7 +142,9 @@ class AuthorInfo extends StatelessWidget {
   }
 
   Widget _buildInlineText(BuildContext context, TextStyle defaultAuthorStyle) {
-    final timeText = formatTime(context, createdAt);
+    // Localized digits applied to the time string
+    final timeText = formatTime(context, createdAt).localizeDigits(context);
+    
     return Row(
       children: [
         Flexible(

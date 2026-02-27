@@ -29,51 +29,87 @@ class CommentActionsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final panelColor = isDark
+        ? Colors.white.withValues(alpha: 0.05)
+        : Colors.black.withValues(alpha: 0.03);
+    final borderColor = isDark
+        ? Colors.white.withValues(alpha: 0.1)
+        : Colors.black.withValues(alpha: 0.07);
+
     return Padding(
-      padding: const EdgeInsetsDirectional.only(start: 56, end: 16),
-      child: Row(
-        children: [
-          BlocProvider(
-            create: (context) => di.sl<PostInteractionCubit>(),
-            child: ReactionAction(
-              postId: comment.id,
-              userId: currentUserId,
-              initialReaction: initialReaction ?? ReactionType.none,
-              initialCount: comment.reactions.length,
-            ),
-          ),
-          if (!isReply)
-            TextButton(
-              onPressed: () {
-                if (onReplyTap != null) {
-                  onReplyTap!(comment);
-                }
-              },
-              style: TextButton.styleFrom(
-                padding: EdgeInsets.zero,
-                minimumSize: const Size(50, 30),
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      padding: const EdgeInsetsDirectional.only(start: 56, end: 16, top: 6),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(14),
+          color: panelColor,
+          border: Border.all(color: borderColor),
+        ),
+        child: Row(
+          children: [
+            BlocProvider(
+              create: (context) => di.sl<PostInteractionCubit>(),
+              child: ReactionAction(
+                postId: comment.id,
+                userId: currentUserId,
+                initialReaction: initialReaction ?? ReactionType.none,
+                initialCount: comment.reactions.length,
               ),
-              child: Text(
-                l10n.reply,
-                style: TextStyle(
-                  color: mutedTextColor,
-                  fontSize: 13,
+            ),
+            if (!isReply) ...[
+              const SizedBox(width: 8),
+              _ActionDivider(color: borderColor),
+              const SizedBox(width: 8),
+              InkWell(
+                borderRadius: BorderRadius.circular(999),
+                onTap: () {
+                  if (onReplyTap != null) {
+                    onReplyTap!(comment);
+                  }
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.reply_rounded,
+                        size: 14,
+                        color: mutedTextColor,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        l10n.reply,
+                        style: TextStyle(
+                          color: mutedTextColor,
+                          fontSize: 13,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          const Spacer(),
-          if (comment.isEdited || comment.editedAt != null)
-            Text(
-              l10n.edited,
-              style: TextStyle(
-                color: mutedTextColor,
-                fontSize: 12,
-                fontStyle: FontStyle.italic,
-              ),
-            ),
-        ],
+            ],
+            const Spacer(),
+           
+          ],
+        ),
       ),
+    );
+  }
+}
+
+class _ActionDivider extends StatelessWidget {
+  final Color color;
+
+  const _ActionDivider({required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 1,
+      height: 20,
+      color: color,
     );
   }
 }

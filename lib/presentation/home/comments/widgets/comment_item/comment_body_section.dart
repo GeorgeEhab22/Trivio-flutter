@@ -24,8 +24,14 @@ class CommentBodySection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final bodyStyle = Theme.of(context).textTheme.bodyMedium?.copyWith(
+          fontSize: 14.5,
+          height: 1.45,
+          fontWeight: FontWeight.w500,
+        );
+
     return Padding(
-      padding: const EdgeInsetsDirectional.only(start: 56, end: 16),
+      padding: const EdgeInsetsDirectional.only(start: 56, end: 16, bottom: 2),
       child: isEditing
           ? Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -37,9 +43,15 @@ class CommentBodySection extends StatelessWidget {
                   minLines: 1,
                   maxLines: 4,
                   decoration: InputDecoration(
+                    filled: true,
+                    fillColor: isDarkMode
+                        ? Colors.white.withValues(alpha: 0.04)
+                        : Colors.black.withValues(alpha: 0.025),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: AppColors.primary),
+                      borderSide: BorderSide(
+                        color: AppColors.primary.withValues(alpha: 0.65),
+                      ),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -70,9 +82,8 @@ class CommentBodySection extends StatelessWidget {
                     const SizedBox(width: 8),
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: isDarkMode
-                            ?Color(0xFF171B20)
-                            : Colors.white,
+                        backgroundColor:
+                            isDarkMode ? const Color(0xFF171B20) : Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -91,7 +102,12 @@ class CommentBodySection extends StatelessWidget {
                 ),
               ],
             )
-          : ExpandableText(text: text, previewLines: 2, canCollapse: false),
+          : ExpandableText(
+              text: text,
+              previewLines: 2,
+              canCollapse: false,
+              textStyle: bodyStyle,
+            ),
     );
   }
 }

@@ -17,14 +17,20 @@ class ReplyTreeWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     if (!showReplyTree) {
       return Container(
-        margin: const EdgeInsetsDirectional.only(start: 40, bottom: 8),
-        padding: const EdgeInsets.all(8),
+        margin: const EdgeInsetsDirectional.only(start: 40, bottom: 10),
+        padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(14),
           color: replyBackgroundColor,
-          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.1)
+                : Colors.black.withValues(alpha: 0.07),
+          ),
         ),
         child: child,
       );
@@ -60,10 +66,15 @@ class ReplyTreeWrapper extends StatelessWidget {
           Padding(
             padding: const EdgeInsetsDirectional.only(start: 20),
             child: Container(
-              padding: const EdgeInsets.all(8),
+              padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
                 color: replyBackgroundColor,
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(
+                  color: isDark
+                      ? Colors.white.withValues(alpha: 0.1)
+                      : Colors.black.withValues(alpha: 0.07),
+                ),
               ),
               child: child,
             ),

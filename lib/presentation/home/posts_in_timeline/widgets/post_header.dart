@@ -57,6 +57,7 @@ class PostHeader extends StatelessWidget {
                     initialFollowStatus: isFollowing,
                   ),
               ],
+              SizedBox(width: 8),
               Container(
                 width: 34,
                 height: 36,

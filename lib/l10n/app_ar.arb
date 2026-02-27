@@ -68,7 +68,7 @@
   "errConfirmPassword": "يرجى تأكيد كلمة المرور",
   "errPasswordRequired": "كلمة المرور مطلوبة",
   "errPasswordComplexity": "يجب أن تشمل أحرف كبيرة، صغيرة، أرقام ورموز",
-  "reqMinLength": "8 أحرف على الأقل",
+  "reqMinLength": "٨ أحرف على الأقل",
   "reqUppercase": "حرف واحد كبير على الأقل",
   "reqLowercase": "حرف واحد صغير على الأقل",
   "reqNumber": "رقم واحد على الأقل",

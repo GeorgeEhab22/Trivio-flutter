@@ -45,14 +45,34 @@ class CommentsBlocConsumer extends StatelessWidget {
           );
         } else if (state is CommentError) {
           return Center(
-            child: Text(
-              _mapErrorToMessage(state.message, l10n),
-              style: const TextStyle(color: Colors.grey),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Text(
+                _mapErrorToMessage(state.message, l10n),
+                style: TextStyle(color: Colors.grey[600]),
+                textAlign: TextAlign.center,
+              ),
             ),
           );
         } else if (state is CommentLoaded) {
           if (state.comments.isEmpty) {
-            return Center(child: Text(l10n.noCommentsYet)); 
+            return Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.chat_bubble_outline_rounded,
+                    size: 34,
+                    color: Colors.grey[500],
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    l10n.noCommentsYet,
+                    style: TextStyle(color: Colors.grey[600]),
+                  ),
+                ],
+              ),
+            );
           }
           return CommentsList(
             comments: state.comments,

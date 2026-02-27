@@ -82,12 +82,10 @@ class _CommentItemState extends State<CommentItem> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     final mutedTextColor = theme.colorScheme.onSurfaceVariant;
     final replyBackgroundColor = theme.brightness == Brightness.dark
-        ? Color.alphaBlend(
-            Colors.white.withValues(alpha: 0.04),
-            theme.colorScheme.surface,
-          )
+        ? Color(0xFF1B2027).withValues(alpha: 0.6)
         : Colors.grey[50]!;
     final commentCubit = context.watch<CommentCubit>();
     final bool isReply = widget.comment.isReply;
@@ -102,11 +100,24 @@ class _CommentItemState extends State<CommentItem> {
     _syncEditor(isEditing);
 
     final liveReplies = _getLiveReplies(commentCubit);
+    final cardGradient = isDark
+        ? const [Color(0xFF1B2027), Color(0xFF151A20)]
+        : const [Color(0xFFFFFFFF), Color(0xFFF7FBF8)];
+    final borderColor = isDark
+        ? Colors.white.withValues(alpha: 0.12)
+        : Colors.black.withValues(alpha: 0.08);
+    final shadowColor = isDark
+        ? Colors.black.withValues(alpha: 0.32)
+        : const Color(0xFF0F172A).withValues(alpha: 0.08);
 
     final Widget content = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CommentHeader(isOwner: isOwner, comment: widget.comment),
+        CommentHeader(
+          isOwner: isOwner,
+          isReply: isReply,
+          comment: widget.comment,
+        ),
         CommentBodySection(
           isEditing: isEditing,
           editController: _editController,
@@ -126,6 +137,7 @@ class _CommentItemState extends State<CommentItem> {
           l10n: l10n,
           onReplyTap: widget.onReplyTap,
         ),
+        
         CommentRepliesSection(
           comment: widget.comment,
           currentUserId: widget.currentUserId,
@@ -142,6 +154,7 @@ class _CommentItemState extends State<CommentItem> {
             );
           },
         ),
+        SizedBox(height: 6),
       ],
     );
 
@@ -150,13 +163,77 @@ class _CommentItemState extends State<CommentItem> {
         showReplyTree: widget.showReplyTree,
         isLastReplyInThread: widget.isLastReplyInThread,
         replyBackgroundColor: replyBackgroundColor,
-        child: content,
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: 2),
+          child: content,
+        ),
       );
     }
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12.0),
-      child: content,
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(22),
+          boxShadow: [
+            BoxShadow(
+              color: shadowColor,
+              blurRadius: 22,
+              offset: const Offset(0, 10),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(22),
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: cardGradient,
+              ),
+              border: Border.all(color: borderColor),
+            ),
+            child: Stack(
+              children: [
+                PositionedDirectional(
+                  end: -20,
+                  top: -30,
+                  child: Container(
+                    width: 94,
+                    height: 94,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: RadialGradient(
+                        colors: [
+                          theme.colorScheme.primary.withValues(
+                            alpha: isDark ? 0.25 : 0.18,
+                          ),
+                          Colors.transparent,
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      height: 3,
+                      decoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [Color(0xFF42C83C), Color(0xFF9DE35A)],
+                        ),
+                      ),
+                    ),
+                    content,
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

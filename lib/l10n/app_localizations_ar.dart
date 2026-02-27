@@ -190,7 +190,7 @@ class AppLocalizationsAr extends AppLocalizations {
       'يجب أن تشمل أحرف كبيرة، صغيرة، أرقام ورموز';
 
   @override
-  String get reqMinLength => '8 أحرف على الأقل';
+  String get reqMinLength => '٨ أحرف على الأقل';
 
   @override
   String get reqUppercase => 'حرف واحد كبير على الأقل';
