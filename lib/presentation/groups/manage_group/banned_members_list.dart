@@ -22,13 +22,14 @@ class BannedMembersList extends StatelessWidget {
         BlocListener<UnbanMemberCubit, UnbanMemberState>(
           listener: (context, state) {
             if (state is UnbanMemberSuccess) {
-              showCustomSnackBar(context, state.message, true);
+              showCustomSnackBar(context, l10n.unbanSuccess, true);
+              
               context.read<GetBannedMembersCubit>().getBannedMembers(
                     groupId: groupId,
                   );
             }
             if (state is UnbanMemberFailure) {
-              showCustomSnackBar(context, state.message, false);
+              showCustomSnackBar(context, l10n.unexpected_error, false);
             }
           },
         ),
@@ -43,27 +44,22 @@ class BannedMembersList extends StatelessWidget {
 
             if (state is GetBannedMembersSuccess) {
               if (state.bannedMembers.isEmpty) {
-                return Center(child: Text(l10n.noBannedMembersFound));
+                return Center(child: Text(l10n.noBannedMembers));
               }
               return ListView.builder(
                 itemCount: state.bannedMembers.length,
                 itemBuilder: (context, index) {
                   final bannedMember = state.bannedMembers[index];
+                  final userName = bannedMember.userName ?? l10n.username;
+
                   return ListTile(
                     leading: CircleAvatar(
                       radius: 26,
                       backgroundImage: NetworkImage(
-                        bannedMember.profileImageUrl ??
-                            'https://picsum.photos/500',
+                        bannedMember.profileImageUrl ?? 'https://picsum.photos/500',
                       ),
                     ),
-                    title: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 2.0),
-                      child: Text(
-                        bannedMember.userName ?? l10n.username,
-                        style: Styles.textStyle16,
-                      ),
-                    ),
+                    title: Text(userName, style: Styles.textStyle16),
                     trailing: Icon(
                       Icons.more_horiz,
                       color: Theme.of(context).iconTheme.color,
@@ -79,16 +75,17 @@ class BannedMembersList extends StatelessWidget {
                                 targetUserId: bannedMember.userId!,
                               );
                         },
-                        title: l10n.unbanUserTitle,
-                        content: l10n.unbanUserContent,
+                        title: l10n.unbanUserTitle(userName),
+                        content: l10n.unbanUserContent(userName),
                       );
                     },
                   );
                 },
               );
             }
+            
             if (state is GetBannedMembersFailure) {
-              return Center(child: Text(state.message));
+              return Center(child: Text(l10n.unexpected_error));
             }
 
             return const SizedBox();

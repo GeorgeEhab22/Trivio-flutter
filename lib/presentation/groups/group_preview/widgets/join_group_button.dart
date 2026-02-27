@@ -1,6 +1,7 @@
 import 'package:auth/common/functions/custom_square_button.dart';
 import 'package:auth/common/functions/show_custom_dialog.dart';
 import 'package:auth/constants/colors.dart';
+import 'package:auth/core/errors/error_parser.dart';
 import 'package:auth/core/styels.dart';
 import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/authentication/widgets/show_custom_snackbar.dart';
@@ -40,8 +41,15 @@ class JoinGroupButton extends StatelessWidget {
         ),
         BlocListener<CancelRequestGroupCubit, CancelRequestGroupState>(
           listener: (context, state) {
+            final l10n = AppLocalizations.of(context)!;
+
+            if (state is CancelRequestGroupSuccess) {
+              showCustomSnackBar(context, l10n.requestCanceledSuccess, true);
+            }
+
             if (state is CancelRequestGroupFailure) {
-              showCustomSnackBar(context, state.message, false);
+              final msg = ErrorParser.localizeError(context, state.message);
+              showCustomSnackBar(context, msg, false);
             }
           },
         ),
@@ -57,7 +65,8 @@ class JoinGroupButton extends StatelessWidget {
             context.read<JoinGroupCubit>().joinGroup(groupId: groupId);
           };
 
-          if (joinState is JoinGroupSuccess || cancelState is CancelRequestGroupFailure) {
+          if (joinState is JoinGroupSuccess ||
+              cancelState is CancelRequestGroupFailure) {
             label = l10n.requested;
             color = Colors.grey;
             onTap = () {
@@ -81,10 +90,12 @@ class JoinGroupButton extends StatelessWidget {
               context.read<JoinGroupCubit>().joinGroup(groupId: groupId);
             };
           }
-          
+
           return CustomSquareButton(
             label: label,
-            onTap: (joinState is JoinGroupLoading || cancelState is CancelRequestGroupLoading)
+            onTap:
+                (joinState is JoinGroupLoading ||
+                    cancelState is CancelRequestGroupLoading)
                 ? () {}
                 : onTap,
             backgroundColor: color,

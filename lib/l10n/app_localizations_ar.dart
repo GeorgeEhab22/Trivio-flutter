@@ -746,11 +746,14 @@ class AppLocalizationsAr extends AppLocalizations {
   String get unban => 'إلغاء الحظر';
 
   @override
-  String get unbanUserTitle => 'إلغاء حظر المستخدم';
+  String unbanUserTitle(Object name) {
+    return 'إلغاء حظر $name';
+  }
 
   @override
-  String get unbanUserContent =>
-      'هل أنت متأكد أنك تريد إلغاء حظر هذا المستخدم؟';
+  String unbanUserContent(Object name) {
+    return 'هل أنت متأكد من إلغاء حظر $name؟ سيتمكن من الانضمام للمجموعة مرة أخرى.';
+  }
 
   @override
   String get noAdminsFound => 'لم يتم العثور على مسؤولين';
@@ -913,4 +916,87 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get weekLetter => 'أ';
+
+  @override
+  String get commentAdded => 'تم إضافة التعليق';
+
+  @override
+  String get commentUpdated => 'تم تحديث التعليق بنجاح';
+
+  @override
+  String get commentDeleted => 'تم حذف التعليق';
+
+  @override
+  String get commentReported => 'تم الإبلاغ عن التعليق';
+
+  @override
+  String get commentHidden => 'تم إخفاء التعليق';
+
+  @override
+  String get commentLoadError => 'تعذر تحميل التعليقات.';
+
+  @override
+  String get commentAddError => 'فشل نشر تعليقك.';
+
+  @override
+  String get commentDeleteError => 'تعذر حذف التعليق.';
+
+  @override
+  String get unexpected_error =>
+      'An unexpected error occurred. Please try again.';
+
+  @override
+  String get noBannedMembers => 'لا يوجد أعضاء محظورون.';
+
+  @override
+  String get unbanSuccess => 'تم إلغاء حظر العضو بنجاح.';
+
+  @override
+  String get editPost => 'Edit post';
+
+  @override
+  String get no_internet => 'لا يوجد اتصال بالإنترنت. يرجى التحقق من الشبكة.';
+
+  @override
+  String get user_not_found => 'المستخدم غير موجود.';
+
+  @override
+  String get serverError => 'الخادم غير متوفر حالياً.';
+
+  @override
+  String get wrong_password => 'البريد الإلكتروني أو كلمة المرور غير صحيحة.';
+
+  @override
+  String get email_taken => 'هذا البريد الإلكتروني مستخدم بالفعل.';
+
+  @override
+  String get username_taken => 'اسم المستخدم هذا محجوز بالفعل.';
+
+  @override
+  String get invalid_code => 'الرمز الذي أدخلته غير صحيح.';
+
+  @override
+  String get code_expired => 'انتهت صلاحية الرمز. يرجى طلب رمز جديد.';
+
+  @override
+  String get too_many_attempts => 'محاولات كثيرة جداً. يرجى المحاولة لاحقاً.';
+
+  @override
+  String get sessionError => 'انتهت الجلسة. يرجى تسجيل الدخول مرة أخرى.';
+
+  @override
+  String get alreadyMemberError => 'هذا المستخدم عضو بالفعل في المجموعة.';
+
+  @override
+  String get requestCanceledSuccess => 'تم إلغاء طلب الانضمام الخاص بك.';
+
+  @override
+  String get cancelRequestError => 'تعذر إلغاء الطلب. يرجى المحاولة مرة أخرى.';
+
+  @override
+  String get cancelRequestTitle => 'إلغاء الطلب؟';
+
+  @override
+  String get cancelRequestConfirm =>
+      'هل أنت متأكد من رغبتك في إلغاء طلب الانضمام إلى هذه المجموعة؟';
 }

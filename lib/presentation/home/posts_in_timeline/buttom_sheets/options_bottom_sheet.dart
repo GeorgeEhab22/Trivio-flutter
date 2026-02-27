@@ -99,6 +99,7 @@ class OptionsBottomSheet extends StatelessWidget {
                       icon: Icons.link_outlined,
                       backgroundColor: Theme.of(context).cardColor,
                       onTap: () {
+                        // Assuming the logic for clipboard remains the same
                         copyToClipboard(context, post.caption ?? l10n.noLink);
                       },
                     ),
@@ -109,35 +110,40 @@ class OptionsBottomSheet extends StatelessWidget {
 
             const SizedBox(height: 12),
             const Divider(height: 1),
-            // if (post.authorId == currentUserId)
-            CustomListTile(
-              icon: Icons.edit,
-              text: 'Edit post',
-              onTap: () {
-                context.pop();
-                context.push(
-                  AppRoutes.editCaption,
-                  extra: {
-                    'initialText': post.caption,
-                    'title': 'Edit post',
-                    'onSave': (String newText) {
-                      postCubit.editPost(
-                        postId: post.postID ?? '',
-                        newCaption: newText,
-                      );
+
+            // Edit Post (Only show if current user is the author)
+            if (post.authorId == currentUserId)
+              CustomListTile(
+                icon: Icons.edit,
+                text: l10n.editPost,
+                onTap: () {
+                  context.pop();
+                  context.push(
+                    AppRoutes.editCaption,
+                    extra: {
+                      'initialText': post.caption,
+                      'title': l10n.editPost,
+                      'onSave': (String newText) {
+                        postCubit.editPost(
+                          postId: post.postID ?? '',
+                          newCaption: newText,
+                        );
+                      },
                     },
-                  },
-                );
-              },
-            ),
+                  );
+                },
+              ),
+
             CustomListTile(
               icon: Icons.visibility_off_outlined,
-              text: 'Not Interested',
+              text: l10n.notInterested,
               onTap: () {
-                // TODO use the cubit to mark the post as not interested
+                // TODO: use the cubit to mark the post as not interested
+                context.pop();
               },
             ),
 
+            // Report
             CustomListTile(
               icon: Icons.report_gmailerrorred_outlined,
               text: l10n.report,
@@ -166,34 +172,34 @@ class OptionsBottomSheet extends StatelessWidget {
               },
             ),
 
-            // if (post.authorId == currentUserId)
-            CustomListTile(
-              icon: Icons.delete_rounded,
-              text: l10n.delete,
-              redColor: true,
-              onTap: () {
-                final postCubit = context.read<PostCubit>();
-                final groupPostsCubit = context.read<GroupPostsCubit>();
-                context.pop();
-                showCustomDialog(
-                  context: context,
-                  title:l10n.deletePostTitle,
-                  content: l10n.deletePostConfirm,
-                  confirmText: l10n.delete,
-                  confirmTextColor: Colors.red,
-                  onConfirm: () {
-                    if (post.location == 'group' && post.groupID != null) {
-                      groupPostsCubit.deletePost(
-                        groupId: post.groupID!,
-                        post: post,
-                      );
-                    } else {
-                      postCubit.deletePost(post: post);
-                    }
-                  },
-                );
-              },
-            ),
+            // Delete Post (Only show if current user is the author)
+            if (post.authorId == currentUserId)
+              CustomListTile(
+                icon: Icons.delete_rounded,
+                text: l10n.delete,
+                redColor: true,
+                onTap: () {
+                  final groupPostsCubit = context.read<GroupPostsCubit>();
+                  context.pop();
+                  showCustomDialog(
+                    context: context,
+                    title: l10n.deletePostTitle,
+                    content: l10n.deletePostConfirm,
+                    confirmText: l10n.delete,
+                    confirmTextColor: Colors.red,
+                    onConfirm: () {
+                      if (post.location == 'group' && post.groupID != null) {
+                        groupPostsCubit.deletePost(
+                          groupId: post.groupID!,
+                          post: post,
+                        );
+                      } else {
+                        postCubit.deletePost(post: post);
+                      }
+                    },
+                  );
+                },
+              ),
           ],
         ),
       ),

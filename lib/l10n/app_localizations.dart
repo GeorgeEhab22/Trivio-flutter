@@ -1535,14 +1535,14 @@ abstract class AppLocalizations {
   /// No description provided for @unbanUserTitle.
   ///
   /// In en, this message translates to:
-  /// **'Unban user'**
-  String get unbanUserTitle;
+  /// **'Unban {name}'**
+  String unbanUserTitle(Object name);
 
   /// No description provided for @unbanUserContent.
   ///
   /// In en, this message translates to:
-  /// **'Are you sure you want to unban this user?'**
-  String get unbanUserContent;
+  /// **'Are you sure you want to unban {name}? They will be able to join the group again.'**
+  String unbanUserContent(Object name);
 
   /// No description provided for @noAdminsFound.
   ///
@@ -1843,6 +1843,168 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'w'**
   String get weekLetter;
+
+  /// No description provided for @commentAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Comment added'**
+  String get commentAdded;
+
+  /// No description provided for @commentUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Comment updated successfully'**
+  String get commentUpdated;
+
+  /// No description provided for @commentDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Comment deleted'**
+  String get commentDeleted;
+
+  /// No description provided for @commentReported.
+  ///
+  /// In en, this message translates to:
+  /// **'Comment reported'**
+  String get commentReported;
+
+  /// No description provided for @commentHidden.
+  ///
+  /// In en, this message translates to:
+  /// **'Comment hidden'**
+  String get commentHidden;
+
+  /// No description provided for @commentLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load comments.'**
+  String get commentLoadError;
+
+  /// No description provided for @commentAddError.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to post your comment.'**
+  String get commentAddError;
+
+  /// No description provided for @commentDeleteError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t delete the comment.'**
+  String get commentDeleteError;
+
+  /// No description provided for @unexpected_error.
+  ///
+  /// In en, this message translates to:
+  /// **'An unexpected error occurred. Please try again.'**
+  String get unexpected_error;
+
+  /// No description provided for @noBannedMembers.
+  ///
+  /// In en, this message translates to:
+  /// **'No banned members found.'**
+  String get noBannedMembers;
+
+  /// No description provided for @unbanSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Member has been unbanned successfully.'**
+  String get unbanSuccess;
+
+  /// No description provided for @editPost.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit post'**
+  String get editPost;
+
+  /// No description provided for @no_internet.
+  ///
+  /// In en, this message translates to:
+  /// **'No internet connection. Please check your network.'**
+  String get no_internet;
+
+  /// No description provided for @user_not_found.
+  ///
+  /// In en, this message translates to:
+  /// **'User not found.'**
+  String get user_not_found;
+
+  /// No description provided for @serverError.
+  ///
+  /// In en, this message translates to:
+  /// **'The server is currently unavailable.'**
+  String get serverError;
+
+  /// No description provided for @wrong_password.
+  ///
+  /// In en, this message translates to:
+  /// **'The password or email you entered is incorrect.'**
+  String get wrong_password;
+
+  /// No description provided for @email_taken.
+  ///
+  /// In en, this message translates to:
+  /// **'This email is already in use.'**
+  String get email_taken;
+
+  /// No description provided for @username_taken.
+  ///
+  /// In en, this message translates to:
+  /// **'This username is already taken.'**
+  String get username_taken;
+
+  /// No description provided for @invalid_code.
+  ///
+  /// In en, this message translates to:
+  /// **'The code you entered is incorrect.'**
+  String get invalid_code;
+
+  /// No description provided for @code_expired.
+  ///
+  /// In en, this message translates to:
+  /// **'This code has expired. Please request a new one.'**
+  String get code_expired;
+
+  /// No description provided for @too_many_attempts.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many attempts. Please try again later.'**
+  String get too_many_attempts;
+
+  /// No description provided for @sessionError.
+  ///
+  /// In en, this message translates to:
+  /// **'Session expired. Please sign in again.'**
+  String get sessionError;
+
+  /// No description provided for @alreadyMemberError.
+  ///
+  /// In en, this message translates to:
+  /// **'This user is already a member of the group.'**
+  String get alreadyMemberError;
+
+  /// No description provided for @requestCanceledSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Your join request has been canceled.'**
+  String get requestCanceledSuccess;
+
+  /// No description provided for @cancelRequestError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not cancel the request. Please try again.'**
+  String get cancelRequestError;
+
+  /// No description provided for @cancelRequestTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel Request?'**
+  String get cancelRequestTitle;
+
+  /// No description provided for @cancelRequestConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to cancel your request to join this group?'**
+  String get cancelRequestConfirm;
 }
 
 class _AppLocalizationsDelegate

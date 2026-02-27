@@ -1,3 +1,4 @@
+import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/authentication/widgets/show_custom_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -13,16 +14,26 @@ class CommentsBlocConsumer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return BlocConsumer<CommentCubit, CommentState>(
       listener: (context, state) {
         if (state is CommentActionError) {
-          showCustomSnackBar(context, state.message, false);
+          // Map the key from Cubit to localized string
+          String errorMessage = _mapErrorToMessage(state.message, l10n);
+          showCustomSnackBar(context, errorMessage, false);
+        }
+        
+        if (state is CommentActionSuccess) {
+          // Map success keys (added, deleted, etc.)
+          String successMessage = _mapSuccessToMessage(state.message, l10n);
+          showCustomSnackBar(context, successMessage, true);
         }
       },
       buildWhen: (previous, current) {
         return current is CommentLoaded ||
-            current is CommentLoading ||
-            current is CommentError;
+               current is CommentLoading ||
+               current is CommentError;
       },
       builder: (context, state) {
         if (state is CommentLoading) {
@@ -34,8 +45,16 @@ class CommentsBlocConsumer extends StatelessWidget {
             ),
           );
         } else if (state is CommentError) {
-          return Center(child: Text(state.message));
+          return Center(
+            child: Text(
+              _mapErrorToMessage(state.message, l10n),
+              style: const TextStyle(color: Colors.grey),
+            ),
+          );
         } else if (state is CommentLoaded) {
+          if (state.comments.isEmpty) {
+            return Center(child: Text(l10n.noCommentsYet)); 
+          }
           return CommentsList(
             comments: state.comments,
             currentUserId: currentUserId,
@@ -47,5 +66,27 @@ class CommentsBlocConsumer extends StatelessWidget {
         return const SizedBox.shrink();
       },
     );
+  }
+
+  // --- Helper Mapping Functions ---
+
+  String _mapErrorToMessage(String key, AppLocalizations l10n) {
+    switch (key) {
+      case "load_failed": return l10n.commentLoadError;
+      case "add_failed": return l10n.commentAddError;
+      case "delete_failed": return l10n.commentDeleteError;
+      default: return l10n.unexpected_error;
+    }
+  }
+
+  String _mapSuccessToMessage(String key, AppLocalizations l10n) {
+    switch (key) {
+      case "added": return l10n.commentAdded;
+      case "updated": return l10n.commentUpdated;
+      case "deleted": return l10n.commentDeleted;
+      case "reported": return l10n.commentReported;
+      case "hidden": return l10n.commentHidden;
+      default: return "";
+    }
   }
 }

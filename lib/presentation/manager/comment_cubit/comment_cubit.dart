@@ -48,7 +48,8 @@ class CommentCubit extends Cubit<CommentState> {
       }
       emit(CommentLoaded(_getStructuredComments()));
     } catch (e) {
-      emit(const CommentError("Failed to load comments"));
+      // Localized Key
+      emit(const CommentError("load_failed"));
     }
   }
 
@@ -69,7 +70,7 @@ class CommentCubit extends Cubit<CommentState> {
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         postId: postId,
         authorId: "curr_user",
-        authorName: "My Profile",
+        authorName: "My Profile", // Ideally fetched from AuthCubit
         authorImage: "",
         text: text,
         createdAt: DateTime.now(),
@@ -80,15 +81,12 @@ class CommentCubit extends Cubit<CommentState> {
       _allComments.add(newComment);
       cancelReplyOrEdit();
       emit(CommentLoaded(_getStructuredComments(), replyingToComment: null));
+      // Localized Key
+      emit(const CommentActionSuccess("added"));
     } catch (e) {
-      emit(const CommentActionError("Failed to add comment"));
+      emit(const CommentActionError("add_failed"));
       emit(CommentLoaded(previousComments));
     }
-  }
-
-  void prepareForEditSubmission(Comment comment) {
-    _editingComment = comment;
-    _replyingTo = null;
   }
 
   Future<void> _submitEditComment(String postId, String newText) async {
@@ -98,7 +96,6 @@ class CommentCubit extends Cubit<CommentState> {
 
       if (index != -1) {
         final oldComment = _allComments[index];
-
         final revision = CommentRevision(
           text: oldComment.text,
           editTime: oldComment.editedAt ?? oldComment.createdAt,
@@ -122,24 +119,25 @@ class CommentCubit extends Cubit<CommentState> {
 
       _editingComment = null;
       emit(CommentLoaded(List.from(_allComments)));
-      emit(const CommentActionSuccess("Comment updated successfully"));
+      // Localized Key
+      emit(const CommentActionSuccess("updated"));
     } catch (e) {
-      emit(const CommentActionError("Failed to edit comment"));
+      emit(const CommentActionError("update_failed"));
       emit(CommentLoaded(previousComments));
     }
   }
 
   Future<void> deleteComment(String commentId) async {
     final previousComments = List<Comment>.from(_allComments);
-
     try {
       _allComments.removeWhere((c) => c.id == commentId);
       _allComments.removeWhere((c) => c.parentCommentId == commentId);
 
       emit(CommentLoaded(List.from(_allComments)));
-      emit(const CommentActionSuccess("Comment deleted"));
+      // Localized Key
+      emit(const CommentActionSuccess("deleted"));
     } catch (e) {
-      emit(const CommentActionError("Failed to delete"));
+      emit(const CommentActionError("delete_failed"));
       emit(CommentLoaded(previousComments));
     }
   }
@@ -149,7 +147,7 @@ class CommentCubit extends Cubit<CommentState> {
     try {
       _allComments.removeWhere((c) => c.id == commentId);
       emit(CommentLoaded(List.from(_allComments)));
-      emit(const CommentActionSuccess("Comment hidden"));
+      emit(const CommentActionSuccess("hidden"));
     } catch (e) {
       emit(CommentLoaded(previousComments));
     }
@@ -157,19 +155,19 @@ class CommentCubit extends Cubit<CommentState> {
 
   Future<void> reportComment(String commentId) async {
     try {
-      emit(const CommentActionSuccess("Comment reported"));
+      emit(const CommentActionSuccess("reported"));
       emit(CommentLoaded(List.from(_allComments)));
     } catch (e) {
-      emit(const CommentActionError("Failed to report"));
+      emit(const CommentActionError("report_failed"));
     }
   }
+
+  // --- UI Triggers ---
 
   void triggerReply(Comment comment) {
     _replyingTo = comment;
     _editingComment = null;
-    emit(
-      CommentLoaded(_getStructuredComments(), replyingToComment: _replyingTo),
-    );
+    emit(CommentLoaded(_getStructuredComments(), replyingToComment: _replyingTo));
   }
 
   void triggerEdit(Comment comment) {
@@ -184,16 +182,17 @@ class CommentCubit extends Cubit<CommentState> {
     emit(CommentLoaded(_getStructuredComments(), replyingToComment: null));
   }
 
+  // --- Helpers ---
+
   List<Comment> _generateDummyData(String postId) {
     return List.generate(10, (index) {
       return Comment(
         id: "$index",
         postId: postId,
         authorId: "user$index",
-        authorName: " User Name${index + 1}",
+        authorName: "User Name ${index + 1}",
         authorImage: "",
-        text:
-            "This is a dummy comment text to simulate the loading skeleton effect on the screen lines.",
+        text: ".................................................................",
         createdAt: DateTime.now().subtract(Duration(minutes: index * 5)),
         reactions: const [],
       );
@@ -201,14 +200,9 @@ class CommentCubit extends Cubit<CommentState> {
   }
 
   List<Comment> _getStructuredComments() {
-    var rootComments = _allComments
-        .where((c) => c.parentCommentId == null)
-        .toList();
-
-    List<Comment> structuredList = rootComments.map((root) {
-      var replies = _allComments
-          .where((c) => c.parentCommentId == root.id)
-          .toList();
+    var rootComments = _allComments.where((c) => c.parentCommentId == null).toList();
+    return rootComments.map((root) {
+      var replies = _allComments.where((c) => c.parentCommentId == root.id).toList();
       return Comment(
         id: root.id,
         postId: root.postId,
@@ -224,7 +218,5 @@ class CommentCubit extends Cubit<CommentState> {
         editedAt: root.editedAt,
       );
     }).toList();
-
-    return structuredList;
   }
 }

@@ -1,4 +1,5 @@
 import 'package:auth/common/functions/show_custom_dialog.dart';
+import 'package:auth/core/errors/error_parser.dart';
 import 'package:auth/core/styels.dart';
 import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/authentication/widgets/show_custom_snackbar.dart';
@@ -37,7 +38,11 @@ class MembersRequestsListView extends StatelessWidget {
               showCustomSnackBar(context, l10n.requestDeclinedSuccess, true);
             }
             if (state is DeclineRequestFailure) {
-              showCustomSnackBar(context, state.message, false);
+              final errorMessage = ErrorParser.localizeError(
+                context,
+                state.message,
+              );
+              showCustomSnackBar(context, errorMessage, false);
             }
           },
         ),

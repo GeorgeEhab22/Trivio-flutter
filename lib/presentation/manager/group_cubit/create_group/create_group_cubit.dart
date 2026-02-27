@@ -26,7 +26,6 @@ class CreateGroupCubit extends Cubit<CreateGroupState> {
     bool hasError = false;
     
     if (name?.trim().isEmpty ?? true) {
-      // We pass a key or empty string instead of a hardcoded English sentence
       emit(const CreateGroupInitial(nameError: "empty_name"));
       hasError = true;
     }
