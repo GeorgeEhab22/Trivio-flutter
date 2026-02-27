@@ -1001,5 +1001,19 @@ class AppLocalizationsAr extends AppLocalizations {
       'هل أنت متأكد من رغبتك في إلغاء طلب الانضمام إلى هذه المجموعة؟';
 
   @override
+  String get loadingReplies => 'جارٍ تحميل الردود...';
+
+  @override
+  String get hideReplies => 'إخفاء الردود';
+
+  @override
+  String showRepliesCount(int count) {
+    return 'إظهار الردود ($count)';
+  }
+
+  @override
+  String get noRepliesOnCommentYet => 'لا توجد ردود على هذا التعليق حتى الآن';
+
+  @override
   String get edited => 'تم تعديله';
 }

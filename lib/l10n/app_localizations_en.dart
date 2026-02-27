@@ -1011,5 +1011,19 @@ class AppLocalizationsEn extends AppLocalizations {
       'Are you sure you want to cancel your request to join this group?';
 
   @override
+  String get loadingReplies => 'Loading replies...';
+
+  @override
+  String get hideReplies => 'Hide replies';
+
+  @override
+  String showRepliesCount(int count) {
+    return 'Show replies ($count)';
+  }
+
+  @override
+  String get noRepliesOnCommentYet => 'No replies on this comment yet';
+
+  @override
   String get edited => 'Edited';
 }

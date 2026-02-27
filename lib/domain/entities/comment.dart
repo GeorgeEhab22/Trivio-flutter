@@ -32,8 +32,8 @@ class Comment extends Equatable {
     this.parentCommentId,
     this.repliesList = const [],
     this.history,
-    this.isEdited = false,
-  });
+    bool? isEdited,
+  }) : isEdited = isEdited ?? editedAt != null;
 
   Comment copyWith({
     String? id,
@@ -49,8 +49,9 @@ class Comment extends Equatable {
     String? parentCommentId,
     List<Comment>? repliesList,
     List<CommentRevision>? history,
-      bool? isEdited,
+    bool? isEdited,
   }) {
+    final resolvedEditedAt = editedAt ?? this.editedAt;
     return Comment(
       id: id ?? this.id,
       postId: postId ?? this.postId,
@@ -59,13 +60,13 @@ class Comment extends Equatable {
       authorImage: authorImage ?? this.authorImage,
       text: text ?? this.text,
       createdAt: createdAt ?? this.createdAt,
-      editedAt: editedAt ?? this.editedAt,
+      editedAt: resolvedEditedAt,
       reactions: reactions ?? this.reactions,
       repliesCount: repliesCount ?? this.repliesCount,
       parentCommentId: parentCommentId ?? this.parentCommentId,
       repliesList: repliesList ?? this.repliesList,
       history: history ?? this.history,
-      isEdited: isEdited ?? this.isEdited,
+      isEdited: isEdited ?? this.isEdited || resolvedEditedAt != null,
     );
   }
 
@@ -87,5 +88,6 @@ class Comment extends Equatable {
         parentCommentId,
         repliesList,
         history,
+        isEdited,
       ];
 }

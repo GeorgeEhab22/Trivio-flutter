@@ -367,5 +367,14 @@
   "cancelRequestError": "تعذر إلغاء الطلب. يرجى المحاولة مرة أخرى.",
   "cancelRequestTitle": "إلغاء الطلب؟",
   "cancelRequestConfirm": "هل أنت متأكد من رغبتك في إلغاء طلب الانضمام إلى هذه المجموعة؟",
+  "loadingReplies": "جارٍ تحميل الردود...",
+  "hideReplies": "إخفاء الردود",
+  "showRepliesCount": "إظهار الردود ({count})",
+  "@showRepliesCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "noRepliesOnCommentYet": "لا توجد ردود على هذا التعليق حتى الآن",
   "edited": "تم تعديله"
 }

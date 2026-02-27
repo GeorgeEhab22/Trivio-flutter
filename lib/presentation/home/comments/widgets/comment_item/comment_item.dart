@@ -1,16 +1,14 @@
-import 'package:auth/constants/colors.dart';
 import 'package:auth/domain/entities/reaction_type.dart';
-import 'package:auth/injection_container.dart' as di;
-import 'package:auth/presentation/home/reactions/reaction_action.dart';
-import 'package:auth/presentation/home/widgets/exbandable_text.dart';
 import 'package:auth/presentation/manager/comment_cubit/comment_cubit.dart';
 import 'package:auth/presentation/manager/comment_cubit/comment_state.dart';
-import 'package:auth/presentation/manager/post_cubit/post_interaction_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:auth/domain/entities/comment.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'comment_header.dart';
-import '../lists/comment_replies_list.dart';
+import 'comment_actions_row.dart';
+import 'comment_body_section.dart';
+import 'comment_replies_section.dart';
+import 'reply_tree_wrapper.dart';
 import 'package:auth/l10n/app_localizations.dart';
 
 class CommentItem extends StatefulWidget {
@@ -19,6 +17,8 @@ class CommentItem extends StatefulWidget {
   final Function(Comment comment)? onReplyTap;
   final List<Comment> replies;
   final ReactionType? initialReaction;
+  final bool showReplyTree;
+  final bool isLastReplyInThread;
 
   const CommentItem({
     super.key,
@@ -27,6 +27,8 @@ class CommentItem extends StatefulWidget {
     this.onReplyTap,
     this.replies = const [],
     this.initialReaction,
+    this.showReplyTree = false,
+    this.isLastReplyInThread = false,
   });
 
   @override
@@ -79,6 +81,14 @@ class _CommentItemState extends State<CommentItem> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final mutedTextColor = theme.colorScheme.onSurfaceVariant;
+    final replyBackgroundColor = theme.brightness == Brightness.dark
+        ? Color.alphaBlend(
+            Colors.white.withValues(alpha: 0.04),
+            theme.colorScheme.surface,
+          )
+        : Colors.grey[50]!;
     final commentCubit = context.watch<CommentCubit>();
     final bool isReply = widget.comment.isReply;
     final bool isEditing = commentCubit.editingComment?.id == widget.comment.id;
@@ -97,171 +107,49 @@ class _CommentItemState extends State<CommentItem> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         CommentHeader(isOwner: isOwner, comment: widget.comment),
-        Padding(
-          padding: const EdgeInsetsDirectional.only(start: 56, end: 16),
-          child: isEditing
-              ? Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    TextField(
-                      controller: _editController,
-                      autofocus: true,
-                      minLines: 1,
-                      maxLines: 4,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 10,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        TextButton(
-                          onPressed: commentCubit.cancelReplyOrEdit,
-                          child: Text(l10n.cancelBtn),
-                        ),
-                        const SizedBox(width: 8),
-                        ElevatedButton(
-                          onPressed: () {
-                            final updatedText = _editController.text.trim();
-                            if (updatedText.isEmpty) return;
-                            commentCubit.addOrUpdateComment(
-                              widget.comment.postId,
-                              updatedText,
-                            );
-                          },
-                          child: Text(l10n.save),
-                        ),
-                      ],
-                    ),
-                  ],
-                )
-              : ExpandableText(
-                  text: widget.comment.text,
-                  previewLines: 2,
-                  canCollapse: false,
-                ),
+        CommentBodySection(
+          isEditing: isEditing,
+          editController: _editController,
+          text: widget.comment.text,
+          l10n: l10n,
+          onCancel: commentCubit.cancelReplyOrEdit,
+          onSave: (updatedText) {
+            commentCubit.addOrUpdateComment(widget.comment.postId, updatedText);
+          },
         ),
-
-        Padding(
-          padding: const EdgeInsetsDirectional.only(start: 56, end: 16),
-          child: Expanded(
-            child: Row(
-              children: [
-                BlocProvider(
-                  create: (context) => di.sl<PostInteractionCubit>(),
-                  child: ReactionAction(
-                    postId: widget.comment.id,
-                    userId: widget.currentUserId,
-                    initialReaction: widget.initialReaction ?? ReactionType.none,
-                    initialCount: widget.comment.reactions.length,
-                  ),
-                ),
-                if (!isReply)
-                  TextButton(
-                    onPressed: () {
-                      if (widget.onReplyTap != null) {
-                        widget.onReplyTap!(widget.comment);
-                      }
-                    },
-                    style: TextButton.styleFrom(
-                      padding: EdgeInsets.zero,
-                      minimumSize: const Size(50, 30),
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    ),
-                    child: Text(
-                      l10n.reply,
-                      style: const TextStyle(
-                        color: AppColors.lightGrey,
-                        fontSize: 13,
-                      ),
-                    ),
-                  ),
-                const Spacer(),
-                if(widget.comment.isEdited)
-                  Text(
-                    l10n.edited,
-                    style: const TextStyle(
-                      color: AppColors.lightGrey,
-                      fontSize: 12,
-                      fontStyle: FontStyle.italic,
-                    ),
-                  ),
-              ],
-            ),
-          ),
+        CommentActionsRow(
+          comment: widget.comment,
+          currentUserId: widget.currentUserId,
+          isReply: isReply,
+          mutedTextColor: mutedTextColor,
+          initialReaction: widget.initialReaction,
+          l10n: l10n,
+          onReplyTap: widget.onReplyTap,
         ),
-
-        if (!isReply)
-          Padding(
-            padding: const EdgeInsetsDirectional.only(start: 56, end: 16),
-            child: Align(
-              alignment: AlignmentDirectional.centerStart,
-              child: TextButton(
-                onPressed: isFetchingReplies
-                    ? null
-                    : () {
-                       
-                        context.read<CommentCubit>().toggleRepliesVisibility(
-                          parentCommentId: widget.comment.id,
-                          postId: widget.comment.postId,
-                        );
-                      },
-                style: TextButton.styleFrom(
-                  padding: EdgeInsets.zero,
-                  minimumSize: const Size(50, 24),
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                ),
-                child: Text(
-                  isFetchingReplies
-                      ? 'Loading replies...'
-                      : (isRepliesExpanded ? 'Hide replies' : 'Show replies (${widget.comment.repliesCount})'),
-                  style: const TextStyle(
-                    color: AppColors.lightGrey,
-                    fontSize: 12,
-                  ),
-                ),
-              ),
-            ),
-          ),
-
-        if (isRepliesExpanded)
-          Padding(
-            padding: EdgeInsetsDirectional.only(start: isReply ? 40.0 : 50.0),
-            child: isFetchingReplies
-                ? const SizedBox(
-                    height: 20,
-                    width: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : liveReplies.isNotEmpty
-                    ? CommentRepliesList(
-                        replies: liveReplies,
-                        currentUserId: widget.currentUserId,
-                        onReplyTap: widget.onReplyTap,
-                      )
-                    : const Padding(
-                        padding: EdgeInsets.only(top: 4),
-                        child: Text('No replies on this comment yet'),
-                      ),
-          ),
+        CommentRepliesSection(
+          comment: widget.comment,
+          currentUserId: widget.currentUserId,
+          isReply: isReply,
+          isRepliesExpanded: isRepliesExpanded,
+          isFetchingReplies: isFetchingReplies,
+          mutedTextColor: mutedTextColor,
+          liveReplies: liveReplies,
+          onReplyTap: widget.onReplyTap,
+          onToggleReplies: () {
+            context.read<CommentCubit>().toggleRepliesVisibility(
+              parentCommentId: widget.comment.id,
+              postId: widget.comment.postId,
+            );
+          },
+        ),
       ],
     );
 
     if (isReply) {
-      return Container(
-        margin: const EdgeInsetsDirectional.only(start: 40, bottom: 8),
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: Colors.grey[50],
-          borderRadius: BorderRadius.circular(12),
-        ),
+      return ReplyTreeWrapper(
+        showReplyTree: widget.showReplyTree,
+        isLastReplyInThread: widget.isLastReplyInThread,
+        replyBackgroundColor: replyBackgroundColor,
         child: content,
       );
     }

@@ -12,6 +12,7 @@ class CommentModel extends Comment {
     required super.text,
     required super.createdAt,
     super.editedAt,
+    super.isEdited = false,
     super.reactions = const [],
     super.repliesCount = 0,
     super.parentCommentId,
@@ -56,6 +57,20 @@ class CommentModel extends Comment {
       return DateTime.tryParse(value.toString()) ?? fallback;
     }
 
+    bool parseBool(dynamic value) {
+      if (value is bool) {
+        return value;
+      }
+      if (value is num) {
+        return value != 0;
+      }
+      if (value is String) {
+        final normalized = value.trim().toLowerCase();
+        return normalized == 'true' || normalized == '1';
+      }
+      return false;
+    }
+
     final dynamic userData = json['userId'] ?? json['author'] ?? json['user'];
     final dynamic postData = json['postId'] ?? json['post'];
 
@@ -86,12 +101,14 @@ class CommentModel extends Comment {
             ?.toString();
 
     final DateTime createdAt = parseDate(json['createdAt'], DateTime.now());
+    final bool serverIsEdited = parseBool(json['isEdited']);
     DateTime? editedAt;
     if (json['editedAt'] != null) {
       editedAt = DateTime.tryParse(json['editedAt'].toString());
-    } else if (json['isEdited'] == true && json['updatedAt'] != null) {
+    } else if (serverIsEdited && json['updatedAt'] != null) {
       editedAt = DateTime.tryParse(json['updatedAt'].toString());
     }
+    final bool isEdited = serverIsEdited || editedAt != null;
 
     final dynamic reactionsJson = json['reactions'];
     final List<Reaction> reactions = reactionsJson is List
@@ -117,6 +134,7 @@ class CommentModel extends Comment {
       text: (json['text'] ?? '').toString(),
       createdAt: createdAt,
       editedAt: editedAt,
+      isEdited: isEdited,
       reactions: reactions,
       repliesCount: parseInt(json['repliesCount']),
       parentCommentId: parsedParentId,
@@ -133,6 +151,7 @@ class CommentModel extends Comment {
       'text': text,
       'createdAt': createdAt.toIso8601String(),
       'editedAt': editedAt?.toIso8601String(),
+      'isEdited': isEdited,
       'reactions': reactions
           .map((r) => ReactionModel.fromEntity(r).toJson())
           .toList(),
@@ -149,6 +168,7 @@ class CommentModel extends Comment {
     authorImage: authorImage,
     text: text,
     editedAt: editedAt,
+    isEdited: isEdited,
     createdAt: createdAt,
     reactions: reactions,
     repliesCount: repliesCount,
@@ -165,6 +185,7 @@ class CommentModel extends Comment {
       text: comment.text,
       createdAt: comment.createdAt,
       editedAt: comment.editedAt,
+      isEdited: comment.isEdited,
       reactions: comment.reactions,
       repliesCount: comment.repliesCount,
       parentCommentId: comment.parentCommentId,
@@ -181,6 +202,7 @@ class CommentModel extends Comment {
       text: '',
       createdAt: DateTime.now(),
       editedAt: null,
+      isEdited: false,
       reactions: const [],
       repliesCount: 0,
       parentCommentId: null,

@@ -2006,6 +2006,30 @@ abstract class AppLocalizations {
   /// **'Are you sure you want to cancel your request to join this group?'**
   String get cancelRequestConfirm;
 
+  /// No description provided for @loadingReplies.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading replies...'**
+  String get loadingReplies;
+
+  /// No description provided for @hideReplies.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide replies'**
+  String get hideReplies;
+
+  /// No description provided for @showRepliesCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Show replies ({count})'**
+  String showRepliesCount(int count);
+
+  /// No description provided for @noRepliesOnCommentYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No replies on this comment yet'**
+  String get noRepliesOnCommentYet;
+
   /// No description provided for @edited.
   ///
   /// In en, this message translates to:

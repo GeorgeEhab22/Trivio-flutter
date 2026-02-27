@@ -366,5 +366,14 @@
   "cancelRequestError": "Could not cancel the request. Please try again.",
   "cancelRequestTitle": "Cancel Request?",
   "cancelRequestConfirm": "Are you sure you want to cancel your request to join this group?",
+  "loadingReplies": "Loading replies...",
+  "hideReplies": "Hide replies",
+  "showRepliesCount": "Show replies ({count})",
+  "@showRepliesCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "noRepliesOnCommentYet": "No replies on this comment yet",
   "edited": "Edited"
 }
