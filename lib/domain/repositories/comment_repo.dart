@@ -6,17 +6,23 @@ abstract class CommentRepository {
 
   // 8 usecase
 
-  Future<Either<Failure, List<Comment>>> getComments(String postId);
+  Future<Either<Failure, List<Comment>>> getComments(
+    String postId, {
+    int? page,
+    int? limit,
+    String? sort,
+    String? fields,
+    String? keyword,
+  });
+  Future<Either<Failure, Comment>> getComment(String commentId);
   Future<Either<Failure, Comment>> addComment({
     required String postId,
-    required String userId,
     required String text,
     String? parentCommentId, // for replies
   });
   Future<Either<Failure, void>> deleteComment(String commentId);
   Future<Either<Failure, Comment>> editComment({
     required String commentId,
-    required String userId,
     required String newContent,
   });
   Future<Either<Failure, Comment>> reactToComment({
@@ -24,7 +30,14 @@ abstract class CommentRepository {
     required String userId,
     required String reactionType,
   });
-  Future<Either<Failure, List<Comment>>>getReplies(String parentCommentId);
+  Future<Either<Failure, List<Comment>>> getReplies(
+    String parentCommentId, {
+    int? page,
+    int? limit,
+    String? sort,
+    String? fields,
+    String? keyword,
+  });
   Future<Either<Failure, Comment>> removeReactionFromComment({
     required String commentId,
     required String userId,

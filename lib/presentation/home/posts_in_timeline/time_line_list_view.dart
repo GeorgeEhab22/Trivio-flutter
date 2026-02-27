@@ -65,7 +65,7 @@ class TimelineListView extends StatelessWidget {
 
                 return PostCard(
                   post: displayPosts[index],
-                  currentUserId: '69336fced7a76ac6c1738d5a', 
+                  currentUserId: '69a1a4cbab9f71890ad97692',
                   isFollowing: false,
                 );
               },

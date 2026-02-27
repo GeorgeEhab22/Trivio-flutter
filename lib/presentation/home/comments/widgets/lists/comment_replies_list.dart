@@ -13,7 +13,7 @@ class CommentRepliesList extends StatelessWidget {
     required this.currentUserId,
     this.onReplyTap,
   });
- 
+
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
@@ -26,7 +26,7 @@ class CommentRepliesList extends StatelessWidget {
         return CommentItem(
           comment: reply,
           currentUserId: currentUserId,
-          replies: const [],
+          replies: reply.repliesList ?? [],
           onReplyTap: onReplyTap,
         );
       },

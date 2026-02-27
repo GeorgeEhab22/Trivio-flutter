@@ -1009,4 +1009,7 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get cancelRequestConfirm =>
       'Are you sure you want to cancel your request to join this group?';
+
+  @override
+  String get edited => 'Edited';
 }

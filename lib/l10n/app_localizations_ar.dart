@@ -999,4 +999,7 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get cancelRequestConfirm =>
       'هل أنت متأكد من رغبتك في إلغاء طلب الانضمام إلى هذه المجموعة؟';
+
+  @override
+  String get edited => 'تم تعديله';
 }

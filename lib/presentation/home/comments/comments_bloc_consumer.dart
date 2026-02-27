@@ -25,7 +25,6 @@ class CommentsBlocConsumer extends StatelessWidget {
         }
         
         if (state is CommentActionSuccess) {
-          // Map success keys (added, deleted, etc.)
           String successMessage = _mapSuccessToMessage(state.message, l10n);
           showCustomSnackBar(context, successMessage, true);
         }
@@ -75,7 +74,9 @@ class CommentsBlocConsumer extends StatelessWidget {
       case "load_failed": return l10n.commentLoadError;
       case "add_failed": return l10n.commentAddError;
       case "delete_failed": return l10n.commentDeleteError;
-      default: return l10n.unexpected_error;
+      case "update_failed": return l10n.unexpected_error;
+      case "report_failed": return l10n.unexpected_error;
+      default: return key.isEmpty ? l10n.unexpected_error : key;
     }
   }
 

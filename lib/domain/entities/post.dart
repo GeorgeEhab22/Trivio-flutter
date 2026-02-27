@@ -16,6 +16,7 @@ class Post extends Equatable {
   final String? groupID;
   final String? groupName;
   final String? groupCoverImage;
+  final int commentsCount;
 
   const Post({
     this.authorId,
@@ -30,6 +31,7 @@ class Post extends Equatable {
     this.groupID,
     this.groupName,
     this.groupCoverImage,
+    this.commentsCount = 0,
   });
   //TODO : delete copy with when take group id as object in backend
  Post copyWith({
@@ -45,6 +47,7 @@ class Post extends Equatable {
     String? groupID,
     String? groupName,
     String? groupCoverImage,
+    int? commentsCount,
   }) {
     return Post(
       authorId: authorId ?? this.authorId,
@@ -59,6 +62,7 @@ class Post extends Equatable {
       groupID: groupID ?? this.groupID,
       groupName: groupName ?? this.groupName,
       groupCoverImage: groupCoverImage ?? this.groupCoverImage,
+      commentsCount: commentsCount ?? this.commentsCount,
     );
   }
 
@@ -73,5 +77,6 @@ class Post extends Equatable {
     mentions,
     location,
     groupID,
+    commentsCount,
   ];
 }

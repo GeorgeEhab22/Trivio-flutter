@@ -27,6 +27,7 @@ import 'package:auth/domain/repositories/user_profile_repo.dart';
 import 'package:auth/domain/usecases/comment/add_comment_usecase.dart';
 import 'package:auth/domain/usecases/comment/delete_comment_usecase.dart';
 import 'package:auth/domain/usecases/comment/edit_comment_usecase.dart';
+import 'package:auth/domain/usecases/comment/get_comment_usecase.dart';
 import 'package:auth/domain/usecases/comment/get_comments_usecase.dart';
 import 'package:auth/domain/usecases/comment/get_replies_usecase.dart';
 import 'package:auth/domain/usecases/comment/mention_users_in_comment_usecase.dart';
@@ -250,6 +251,7 @@ sl.registerLazySingleton(() => CommentOnPostUseCase(sl()));
   sl.registerLazySingleton(() => AddCommentUseCase(sl()));
   sl.registerLazySingleton(() => DeleteCommentUseCase(sl()));
   sl.registerLazySingleton(() => EditCommentUseCase(sl()));
+  sl.registerLazySingleton(() => GetCommentUseCase(sl()));
   sl.registerLazySingleton(() => GetCommentsUseCase(sl()));
   sl.registerLazySingleton(() => GetRepliesUseCase(sl()));
   sl.registerLazySingleton(() => MentionUsersInCommentUseCase(sl()));
@@ -261,6 +263,7 @@ sl.registerLazySingleton(() => CommentOnPostUseCase(sl()));
       addCommentUseCase: sl(),
       deleteCommentUseCase: sl(),
       editCommentUseCase: sl(),
+      getCommentUseCase: sl(),
       getCommentsUseCase: sl(),
       getRepliesUseCase: sl(),
       mentionUsersInCommentUseCase: sl(),

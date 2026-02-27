@@ -18,7 +18,6 @@ class CommentsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Empty state localized
     if (comments.isEmpty) {
       final l10n = AppLocalizations.of(context)!;
       return Center(

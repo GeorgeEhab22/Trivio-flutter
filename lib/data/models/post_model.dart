@@ -5,8 +5,6 @@ import 'package:auth/domain/entities/reaction_type.dart';
 
 class PostModel extends Post {
   final int updateCount; // maps "__v"
-  @override
-  final List<String> media; // server media URLs / filenames
   final int views;
   final DummyReactionCounter reactionCounts;
 
@@ -14,7 +12,7 @@ class PostModel extends Post {
     required super.postID,
     required this.updateCount,
     required this.reactionCounts,
-    required this.media,
+    required super.media,
     required super.authorId, // from Post entity
     required super.type, // from Post entity
     super.caption,
@@ -25,10 +23,17 @@ class PostModel extends Post {
     super.groupID,
     super.groupName,
     super.groupCoverImage,
+    super.commentsCount = 0,
   });
 
   /// Accepts either the whole response or just the `post` map.
   factory PostModel.fromJson(Map<String, dynamic> json) {
+    int parseInt(dynamic value) {
+      if (value is int) return value;
+      if (value is String) return int.tryParse(value) ?? 0;
+      return 0;
+    }
+
     final Map<String, dynamic> raw =
         (json['data'] != null && json['data']['post'] != null)
         ? json['data']['post'] as Map<String, dynamic>
@@ -76,6 +81,26 @@ class PostModel extends Post {
     final mediaList = (raw['media'] as List<dynamic>? ?? [])
         .map((m) => m as String)
         .toList();
+    final commentsList = (raw['comments'] as List<dynamic>? ?? [])
+        .whereType<Map<String, dynamic>>()
+        .toList();
+
+    int topLevelCommentsCount = parseInt(raw['commentsCount'] ?? raw['comments_count']);
+    if (topLevelCommentsCount == 0 && commentsList.isNotEmpty) {
+      topLevelCommentsCount = commentsList.length;
+    }
+
+    int repliesCount = parseInt(
+      raw['totalRepliesCount'] ?? raw['repliesCount'] ?? raw['replies_count'],
+    );
+    if (repliesCount == 0 && commentsList.isNotEmpty) {
+      repliesCount = commentsList.fold<int>(
+        0,
+        (sum, comment) => sum + parseInt(comment['repliesCount']),
+      );
+    }
+
+    final int totalCommentsWithReplies = topLevelCommentsCount + repliesCount;
 
     return PostModel(
       postID: raw['_id'] as String? ?? '',
@@ -92,6 +117,7 @@ class PostModel extends Post {
       groupID: gID,
       groupName: gName,
       groupCoverImage: gCover,
+      commentsCount: totalCommentsWithReplies,
     );
   }
 
@@ -122,6 +148,7 @@ class PostModel extends Post {
       'groupID': groupID,
       'groupName': groupName,
       'groupCoverImage': groupCoverImage,
+      'commentsCount': commentsCount,
     };
   }
 
@@ -139,6 +166,7 @@ class PostModel extends Post {
       groupID: groupID,
       groupName: groupName,
       groupCoverImage: groupCoverImage,
+      commentsCount: commentsCount,
     );
   }
 
@@ -159,6 +187,7 @@ class PostModel extends Post {
         angryCount: 0,
         wowCount: 0,
       ),
+      commentsCount: post.commentsCount,
     );
   }
 }

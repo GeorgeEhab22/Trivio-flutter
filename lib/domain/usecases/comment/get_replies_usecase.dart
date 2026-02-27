@@ -9,7 +9,14 @@ class GetRepliesUseCase {
 
   GetRepliesUseCase(this.repository);
 
-  Future<Either<Failure, List<Comment>>> call(String parentCommentId) async {
+  Future<Either<Failure, List<Comment>>> call(
+    String parentCommentId, {
+    int? page,
+    int? limit,
+    String? sort,
+    String? fields,
+    String? keyword,
+  }) async {
     if (parentCommentId.trim().isEmpty) {
       return const Left(ValidationFailure('Parent comment ID is required'));
     }
@@ -17,6 +24,20 @@ class GetRepliesUseCase {
       return const Left(ValidationFailure('Invalid Comment ID'));
     }
 
-    return await repository.getReplies(parentCommentId);
+    if (page != null && page < 1) {
+      return const Left(ValidationFailure('Page must be greater than 0'));
+    }
+    if (limit != null && limit < 1) {
+      return const Left(ValidationFailure('Limit must be greater than 0'));
+    }
+
+    return await repository.getReplies(
+      parentCommentId,
+      page: page,
+      limit: limit,
+      sort: sort,
+      fields: fields,
+      keyword: keyword,
+    );
   }
 }

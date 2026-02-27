@@ -57,7 +57,7 @@ class PostFooter extends StatelessWidget {
                       child: CommentAction(
                         postId: post.postID ?? '',
                         currentUserId: currentUserId,
-                        commentsCount: 0,
+                        commentsCount: post.commentsCount,
                       ),
                     ),
                   ),

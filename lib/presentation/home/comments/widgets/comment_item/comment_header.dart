@@ -29,19 +29,18 @@ class CommentHeader extends StatelessWidget {
               authorImage: comment.authorImage ?? '',
             ),
           ),
-          if (isOwner)
-            IconButton(
-              icon: Icon(Icons.more_vert, color: Colors.grey[700]),
-              onPressed: () {
-                final cubit = context.read<CommentCubit>();
-                BottomSheetManager.showActions(
-                  context,
-                  comment: comment,
-                  isOwner: isOwner,
-                  cubit: cubit,
-                );
-              },
-            ),
+          IconButton(
+            icon: Icon(Icons.more_vert, color: Colors.grey[700]),
+            onPressed: () {
+              final cubit = context.read<CommentCubit>();
+              BottomSheetManager.showActions(
+                context,
+                comment: comment,
+                isOwner: isOwner,
+                cubit: cubit,
+              );
+            },
+          ),
         ],
       ),
     );

@@ -365,5 +365,6 @@
   "requestCanceledSuccess": "Your join request has been canceled.",
   "cancelRequestError": "Could not cancel the request. Please try again.",
   "cancelRequestTitle": "Cancel Request?",
-  "cancelRequestConfirm": "Are you sure you want to cancel your request to join this group?"
+  "cancelRequestConfirm": "Are you sure you want to cancel your request to join this group?",
+  "edited": "Edited"
 }

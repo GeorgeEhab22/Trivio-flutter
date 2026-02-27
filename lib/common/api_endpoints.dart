@@ -34,10 +34,12 @@ class ApiEndpoints {
 
   // COMMENTS
   static const getComments = 'comments/all-comments'; // GET {postId}
+  static const getComment = 'comments'; // GET {commentId}
   static const addComment = 'comments/add'; // POST
-  static const deleteComment = 'comments/delete'; // DELETE {commentId}
-  static const editComment = 'comments/edit'; // PATCH {commentId}
-  static const getReplies = 'comments/all-replies'; // GET {commentId}
+  static const addReplyToComment = 'comments'; // POST {commentId}/replies
+  static const deleteComment = 'comments'; // DELETE {commentId}
+  static const editComment = 'comments'; // PUT {commentId}
+  static const getReplies = 'comments'; // GET {commentId}/replies
 
   // COMMENT REACTIONS
   static const reactToComment = 'comments/react'; // POST {commentId}

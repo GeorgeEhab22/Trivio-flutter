@@ -366,5 +366,6 @@
  "requestCanceledSuccess": "تم إلغاء طلب الانضمام الخاص بك.",
   "cancelRequestError": "تعذر إلغاء الطلب. يرجى المحاولة مرة أخرى.",
   "cancelRequestTitle": "إلغاء الطلب؟",
-  "cancelRequestConfirm": "هل أنت متأكد من رغبتك في إلغاء طلب الانضمام إلى هذه المجموعة؟"
+  "cancelRequestConfirm": "هل أنت متأكد من رغبتك في إلغاء طلب الانضمام إلى هذه المجموعة؟",
+  "edited": "تم تعديله"
 }

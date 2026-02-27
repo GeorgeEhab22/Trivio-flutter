@@ -11,7 +11,6 @@ class AddCommentUseCase {
 
   Future<Either<Failure, Comment>> call({
     required String postId,
-    required String userId,
     required String text,
     String? parentCommentId,
   }) async {
@@ -20,13 +19,6 @@ class AddCommentUseCase {
     }
     if (!Validator.isValidId(postId)) {
       return const Left(ValidationFailure('Invalid Post ID'));
-    }
-
-    if (userId.trim().isEmpty) {
-      return const Left(ValidationFailure('User ID is required'));
-    }
-    if (!Validator.isValidId(userId)) {
-      return const Left(ValidationFailure('Invalid User ID'));
     }
 
     if (text.trim().isEmpty) {
@@ -39,11 +31,18 @@ class AddCommentUseCase {
       );
     }
 
+    String? normalizedParentCommentId;
+    if (parentCommentId != null && parentCommentId.trim().isNotEmpty) {
+      if (!Validator.isValidId(parentCommentId.trim())) {
+        return const Left(ValidationFailure('Invalid Parent Comment ID'));
+      }
+      normalizedParentCommentId = parentCommentId.trim();
+    }
+
     return await repository.addComment(
       postId: postId.trim(),
-      userId: userId.trim(),
       text: text.trim(),
-      parentCommentId: parentCommentId,
+      parentCommentId: normalizedParentCommentId,
     );
   }
 }
