@@ -38,8 +38,13 @@ class CommentAction extends StatelessWidget {
             create: (context) => di.sl<CommentCubit>(),
             child: BlocListener<CommentCubit, CommentState>(
               listener: (_, state) {
-                if (state is CommentActionSuccess && state.message == "added") {
-                  postCubit.incrementCommentsCount(postId);
+                if (state is CommentActionSuccess) {
+                  if (state.commentsDelta != 0) {
+                    postCubit.incrementCommentsCount(
+                      postId,
+                      by: state.commentsDelta,
+                    );
+                  }
                 }
               },
               child: CommentsView(postId: postId, currentUserId: currentUserId),

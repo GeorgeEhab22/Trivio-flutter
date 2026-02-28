@@ -73,10 +73,11 @@ final class CommentActionLoading extends CommentState {}
 
 final class CommentActionSuccess extends CommentState {
   final String message;
-  const CommentActionSuccess(this.message);
+  final int commentsDelta;
+  const CommentActionSuccess(this.message, {this.commentsDelta = 0});
 
   @override
-  List<Object> get props => [message];
+  List<Object> get props => [message, commentsDelta];
 }
 
 final class CommentActionError extends CommentState {

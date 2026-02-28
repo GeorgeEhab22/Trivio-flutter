@@ -160,7 +160,6 @@ class CommentCubit extends Cubit<CommentState> {
 
         final replyIds = normalizedReplies.map((r) => r.id).toSet();
 
-        // Remove old local copies to prevent duplicates
         _allComments.removeWhere(
           (c) =>
               replyIds.contains(c.id) || (c.parentCommentId == parentCommentId),
@@ -172,7 +171,7 @@ class CommentCubit extends Cubit<CommentState> {
     );
 
     if (emitState) {
-      _emitLoaded(); // This triggers the build of the nested tree
+      _emitLoaded(); 
     }
     return isSuccess;
   }
@@ -296,7 +295,7 @@ class CommentCubit extends Cubit<CommentState> {
         _replyingTo = null;
         _editingComment = null;
         _emitLoaded();
-        emit(const CommentActionSuccess("added"));
+        emit(const CommentActionSuccess("added", commentsDelta: 1));
       },
     );
   }
@@ -362,6 +361,17 @@ class CommentCubit extends Cubit<CommentState> {
 
   Future<void> deleteComment(String commentId) async {
     final previousComments = List<Comment>.from(_allComments);
+    final deletedComment = _allComments.cast<Comment?>().firstWhere(
+      (c) => c?.id == commentId,
+      orElse: () => null,
+    );
+    final parentCommentId = deletedComment?.parentCommentId;
+    final removedReplyIds = _allComments
+        .where((c) => c.parentCommentId == commentId)
+        .map((c) => c.id)
+        .toSet();
+    final removedCommentIds = <String>{commentId, ...removedReplyIds};
+    final removedCommentsCount = removedCommentIds.length;
     final result = await deleteCommentUseCase(commentId);
 
     result.fold(
@@ -377,10 +387,33 @@ class CommentCubit extends Cubit<CommentState> {
       (_) {
         _allComments.removeWhere((c) => c.id == commentId);
         _allComments.removeWhere((c) => c.parentCommentId == commentId);
+
+        if (parentCommentId != null && parentCommentId.trim().isNotEmpty) {
+          final parentIndex = _allComments.indexWhere((c) => c.id == parentCommentId);
+          if (parentIndex != -1) {
+            final parent = _allComments[parentIndex];
+            _allComments[parentIndex] = parent.copyWith(
+              repliesCount: (parent.repliesCount - 1).clamp(0, 1 << 31).toInt(),
+            );
+          }
+        }
+
+        if (_replyingTo != null && removedCommentIds.contains(_replyingTo!.id)) {
+          _replyingTo = null;
+        }
+        if (_editingComment != null && removedCommentIds.contains(_editingComment!.id)) {
+          _editingComment = null;
+        }
+
         _expandedReplyParentIds.remove(commentId);
         _loadingReplyParentIds.remove(commentId);
         _emitLoaded();
-        emit(const CommentActionSuccess("deleted"));
+        emit(
+          CommentActionSuccess(
+            "deleted",
+            commentsDelta: -removedCommentsCount,
+          ),
+        );
       },
     );
   }
@@ -408,7 +441,6 @@ class CommentCubit extends Cubit<CommentState> {
     }
   }
 
-  // --- UI Triggers ---
 
   void triggerReply(Comment comment) {
     _replyingTo = comment;
@@ -428,7 +460,6 @@ class CommentCubit extends Cubit<CommentState> {
     _emitLoaded();
   }
 
-  // --- Helpers ---
 
   String _resolveErrorMessage(String message, {required String fallbackKey}) {
     if (message.trim().isEmpty || message == "unexpected_error") {

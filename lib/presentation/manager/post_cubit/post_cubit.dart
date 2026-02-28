@@ -18,9 +18,13 @@ class PostCubit extends Cubit<PostState> {
   final SharedPreferences prefs;
 
   static const String _commentsCountFloorsPrefsKey =
-      'post_comments_count_floors_v1';
+      'post_comments_count_floors_v2';
+  static const String _commentsCountCeilingsPrefsKey =
+      'post_comments_count_ceilings_v2';
   bool _isCommentsCountFloorsLoaded = false;
+  bool _isCommentsCountCeilingsLoaded = false;
   final Map<String, int> _commentsCountFloors = {};
+  final Map<String, int> _commentsCountCeilings = {};
 
   PostCubit({
     required this.getPostsUseCase,
@@ -70,46 +74,123 @@ class PostCubit extends Cubit<PostState> {
     );
   }
 
+  void _ensureCommentsCountCeilingsLoaded() {
+    if (_isCommentsCountCeilingsLoaded) return;
+    _isCommentsCountCeilingsLoaded = true;
+
+    final raw = prefs.getString(_commentsCountCeilingsPrefsKey);
+    if (raw == null || raw.trim().isEmpty) return;
+
+    try {
+      final decoded = jsonDecode(raw);
+      if (decoded is! Map<String, dynamic>) return;
+
+      decoded.forEach((key, value) {
+        if (value is int && value >= 0) {
+          _commentsCountCeilings[key] = value;
+          return;
+        }
+        if (value is String) {
+          final parsed = int.tryParse(value);
+          if (parsed != null && parsed >= 0) {
+            _commentsCountCeilings[key] = parsed;
+          }
+        }
+      });
+    } catch (_) {
+      _commentsCountCeilings.clear();
+    }
+  }
+
+  void _persistCommentsCountCeilings() {
+    // ignore: discarded_futures
+    prefs.setString(
+      _commentsCountCeilingsPrefsKey,
+      jsonEncode(_commentsCountCeilings),
+    );
+  }
+
+  int _normalizeCommentsCount(int count) => count < 0 ? 0 : count;
+
   List<Post> _applyCommentsCountFloors(List<Post> source) {
     _ensureCommentsCountFloorsLoaded();
+    _ensureCommentsCountCeilingsLoaded();
 
     var didMutateFloors = false;
+    var didMutateCeilings = false;
     final updated = source.map((post) {
       final postId = post.postID;
       if (postId == null || postId.trim().isEmpty) {
         return post;
       }
 
+      var resolvedPost = post.copyWith(
+        commentsCount: _normalizeCommentsCount(post.commentsCount),
+      );
+
       final floor = _commentsCountFloors[postId];
-      if (floor == null) {
-        return post;
+      if (floor != null) {
+        if (resolvedPost.commentsCount >= floor) {
+          _commentsCountFloors.remove(postId);
+          didMutateFloors = true;
+        } else {
+          resolvedPost = resolvedPost.copyWith(commentsCount: floor);
+        }
       }
 
-      if (post.commentsCount >= floor) {
-        _commentsCountFloors.remove(postId);
-        didMutateFloors = true;
-        return post;
+      final ceiling = _commentsCountCeilings[postId];
+      if (ceiling != null) {
+        if (resolvedPost.commentsCount <= ceiling) {
+          _commentsCountCeilings.remove(postId);
+          didMutateCeilings = true;
+        } else {
+          resolvedPost = resolvedPost.copyWith(commentsCount: ceiling);
+        }
       }
 
-      return post.copyWith(commentsCount: floor);
+      return resolvedPost.copyWith(
+        commentsCount: _normalizeCommentsCount(resolvedPost.commentsCount),
+      );
     }).toList();
 
     if (didMutateFloors) {
       _persistCommentsCountFloors();
     }
+    if (didMutateCeilings) {
+      _persistCommentsCountCeilings();
+    }
     return updated;
   }
 
-  void _setCommentsCountFloor(String postId, int floorValue) {
+  void _setCommentsCountFloor(
+    String postId,
+    int floorValue, {
+    bool allowLower = false,
+  }) {
     _ensureCommentsCountFloorsLoaded();
 
     final previousFloor = _commentsCountFloors[postId] ?? 0;
-    if (floorValue <= previousFloor) {
+    if (!allowLower && floorValue <= previousFloor) {
+      return;
+    }
+    if (allowLower && floorValue == previousFloor) {
       return;
     }
 
     _commentsCountFloors[postId] = floorValue;
     _persistCommentsCountFloors();
+  }
+
+  void _setCommentsCountCeiling(String postId, int ceilingValue) {
+    _ensureCommentsCountCeilingsLoaded();
+
+    final previousCeiling = _commentsCountCeilings[postId];
+    if (previousCeiling != null && ceilingValue >= previousCeiling) {
+      return;
+    }
+
+    _commentsCountCeilings[postId] = ceilingValue;
+    _persistCommentsCountCeilings();
   }
 
   Future<void> fetchPosts({bool refresh = false}) async {
@@ -197,11 +278,22 @@ class PostCubit extends Cubit<PostState> {
     }
 
     final currentPost = posts[index];
-    final nextCount = (currentPost.commentsCount + by)
+    final currentCount = _normalizeCommentsCount(currentPost.commentsCount);
+    final nextCount = (currentCount + by)
         .clamp(0, 1 << 31)
         .toInt();
     posts[index] = currentPost.copyWith(commentsCount: nextCount);
-    _setCommentsCountFloor(postId, nextCount);
+    if (by > 0) {
+      _ensureCommentsCountCeilingsLoaded();
+      final didRemoveCeiling = _commentsCountCeilings.remove(postId) != null;
+      if (didRemoveCeiling) {
+        _persistCommentsCountCeilings();
+      }
+      _setCommentsCountFloor(postId, nextCount);
+    } else {
+      _setCommentsCountFloor(postId, nextCount, allowLower: true);
+      _setCommentsCountCeiling(postId, nextCount);
+    }
     emit(PostLoaded(List.from(posts), hasReachedMax: hasReachedMax));
   }
 
@@ -215,6 +307,16 @@ class PostCubit extends Cubit<PostState> {
       _,
     ) {
       posts.removeWhere((item) => item.postID == postId);
+      _ensureCommentsCountFloorsLoaded();
+      _ensureCommentsCountCeilingsLoaded();
+      final didRemoveFloor = _commentsCountFloors.remove(postId) != null;
+      final didRemoveCeiling = _commentsCountCeilings.remove(postId) != null;
+      if (didRemoveFloor) {
+        _persistCommentsCountFloors();
+      }
+      if (didRemoveCeiling) {
+        _persistCommentsCountCeilings();
+      }
       emit(PostLoaded(List.from(posts), hasReachedMax: hasReachedMax));
       emit(DeletePostSuccess(post: post));
     });
