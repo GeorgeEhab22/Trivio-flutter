@@ -1292,6 +1292,24 @@ abstract class AppLocalizations {
   /// **'Most relevant'**
   String get mostRelevant;
 
+  /// No description provided for @commentsSortNewest.
+  ///
+  /// In en, this message translates to:
+  /// **'Newest'**
+  String get commentsSortNewest;
+
+  /// No description provided for @commentsSortMostRelated.
+  ///
+  /// In en, this message translates to:
+  /// **'Most related'**
+  String get commentsSortMostRelated;
+
+  /// No description provided for @commentsSortMostReplied.
+  ///
+  /// In en, this message translates to:
+  /// **'Most replied'**
+  String get commentsSortMostReplied;
+
   /// No description provided for @about.
   ///
   /// In en, this message translates to:

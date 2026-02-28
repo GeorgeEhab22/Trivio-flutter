@@ -627,6 +627,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mostRelevant => 'Most relevant';
 
   @override
+  String get commentsSortNewest => 'Newest';
+
+  @override
+  String get commentsSortMostRelated => 'Most related';
+
+  @override
+  String get commentsSortMostReplied => 'Most replied';
+
+  @override
   String get about => 'About';
 
   @override

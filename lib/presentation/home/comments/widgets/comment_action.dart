@@ -1,6 +1,8 @@
 import 'package:auth/injection_container.dart' as di;
 import 'package:auth/presentation/home/comments/comments_view.dart';
 import 'package:auth/presentation/manager/comment_cubit/comment_cubit.dart';
+import 'package:auth/presentation/manager/comment_cubit/comment_state.dart';
+import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -25,6 +27,7 @@ class CommentAction extends StatelessWidget {
       count: commentsCount,
       color: Theme.of(context).iconTheme.color,
       onTap: () {
+        final postCubit = context.read<PostCubit>();
         showModalBottomSheet(
           context: context,
           isScrollControlled: true,
@@ -33,7 +36,14 @@ class CommentAction extends StatelessWidget {
           barrierColor: Colors.black38,
           builder: (ctx) => BlocProvider(
             create: (context) => di.sl<CommentCubit>(),
-            child: CommentsView(postId: postId, currentUserId: currentUserId),
+            child: BlocListener<CommentCubit, CommentState>(
+              listener: (_, state) {
+                if (state is CommentActionSuccess && state.message == "added") {
+                  postCubit.incrementCommentsCount(postId);
+                }
+              },
+              child: CommentsView(postId: postId, currentUserId: currentUserId),
+            ),
           ),
         );
       },

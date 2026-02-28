@@ -216,9 +216,14 @@ Future<void> init() async {
   sl.registerLazySingleton(() => SharePostUseCase(sl()));
   sl.registerLazySingleton(() => FollowUserUseCase(sl()));
   sl.registerLazySingleton(() => SavePostUseCase(sl()));
-sl.registerLazySingleton(() => CommentOnPostUseCase(sl()));
+  sl.registerLazySingleton(() => CommentOnPostUseCase(sl()));
   sl.registerFactory(
-    () => PostCubit(getPostsUseCase: sl(), deletePostUseCase: sl(),editPostUseCase: sl()),
+    () => PostCubit(
+      getPostsUseCase: sl(),
+      deletePostUseCase: sl(),
+      editPostUseCase: sl(),
+      prefs: sl(),
+    ),
   );
 
   sl.registerFactory(
@@ -276,7 +281,6 @@ sl.registerLazySingleton(() => CommentOnPostUseCase(sl()));
         CreatePostCubit(createPostUseCase: sl(), createGroupPostUseCase: sl()),
   );
   sl.registerFactory(() => GetPostCubit(getPostUseCase: sl()));
-
 
   // groups
   sl.registerLazySingleton<GroupRemoteDataSource>(
@@ -366,12 +370,19 @@ sl.registerLazySingleton(() => CommentOnPostUseCase(sl()));
   sl.registerLazySingleton(() => CreateGroupPostUseCase(sl()));
 
   // get group posts
-  sl.registerFactory(() => GroupPostsCubit(getGroupPostsUseCase: sl(),deleteGroupPostUseCase: sl(),));
+  sl.registerFactory(
+    () => GroupPostsCubit(
+      getGroupPostsUseCase: sl(),
+      deleteGroupPostUseCase: sl(),
+    ),
+  );
   sl.registerLazySingleton(() => GetGroupPostsUseCase(sl()));
   sl.registerLazySingleton(() => DeleteGroupPostUseCase(sl()));
 
   // get groups posts feed
-    sl.registerFactory(() => GetGroupsPostsFeedCubit(getGroupsPostsFeedUseCase: sl()));
+  sl.registerFactory(
+    () => GetGroupsPostsFeedCubit(getGroupsPostsFeedUseCase: sl()),
+  );
   sl.registerLazySingleton(() => GetGroupsPostsFeedUseCase(sl()));
   // ==========================================================================
   // CORE / GLOBAL
@@ -392,9 +403,7 @@ sl.registerLazySingleton(() => CommentOnPostUseCase(sl()));
   sl.registerLazySingleton<FollowRemoteDataSource>(
     () => FollowRemoteDataSourceImpl(api: sl(), errorHandler: sl()),
   );
-  sl.registerLazySingleton<FollowRepo>(
-    () => FollowRepoImpl(remote: sl()),
-  );
+  sl.registerLazySingleton<FollowRepo>(() => FollowRepoImpl(remote: sl()));
 
   sl.registerLazySingleton(() => FollowUser(sl()));
   sl.registerLazySingleton(() => UnfollowUser(sl()));

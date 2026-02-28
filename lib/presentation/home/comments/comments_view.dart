@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:auth/l10n/app_localizations.dart';
 
+enum _CommentsSortOption { newest, mostRelated, mostReplied }
+
 class CommentsView extends StatefulWidget {
   final String postId;
   final String currentUserId;
@@ -24,13 +26,41 @@ class CommentsView extends StatefulWidget {
 class _CommentsViewState extends State<CommentsView> {
   final TextEditingController _controller = TextEditingController();
   final FocusNode _focusNode = FocusNode();
+  _CommentsSortOption _selectedSort = _CommentsSortOption.newest;
+
+  String _mapSortToQuery(_CommentsSortOption sort) {
+    switch (sort) {
+      case _CommentsSortOption.newest:
+        return '-createdAt';
+      case _CommentsSortOption.mostRelated:
+        return '-reactionsCount';
+      case _CommentsSortOption.mostReplied:
+        return '-repliesCount';
+    }
+  }
+
+  Future<void> _loadComments() async {
+    await context.read<CommentCubit>().getComments(
+      widget.postId,
+      sort: _mapSortToQuery(_selectedSort),
+    );
+  }
+
+  Future<void> _onSortChanged(_CommentsSortOption? value) async {
+    if (value == null || value == _selectedSort) {
+      return;
+    }
+    setState(() {
+      _selectedSort = value;
+    });
+    await _loadComments();
+  }
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final cubit = context.read<CommentCubit>();
-      cubit.getComments(widget.postId);
+      _loadComments();
     });
   }
 
@@ -90,7 +120,9 @@ class _CommentsViewState extends State<CommentsView> {
                     shape: BoxShape.circle,
                     gradient: RadialGradient(
                       colors: [
-                        AppColors.primary.withValues(alpha: isDark ? 0.24 : 0.18),
+                        AppColors.primary.withValues(
+                          alpha: isDark ? 0.24 : 0.18,
+                        ),
                         Colors.transparent,
                       ],
                     ),
@@ -143,8 +175,50 @@ class _CommentsViewState extends State<CommentsView> {
                         ? Colors.white.withValues(alpha: 0.1)
                         : const Color(0xFFE5EBE8),
                   ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.swap_vert_rounded,
+                          size: 18,
+                          color: AppColors.primary.withValues(
+                            alpha: isDark ? 0.95 : 0.85,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        DropdownButtonHideUnderline(
+                          child: DropdownButton<_CommentsSortOption>(
+                            value: _selectedSort,
+                            isDense: true,
+                            borderRadius: BorderRadius.circular(12),
+                            onChanged: _onSortChanged,
+                            items: [
+                              DropdownMenuItem(
+                                value: _CommentsSortOption.newest,
+                                child: Text(l10n.commentsSortNewest),
+                              ),
+                              DropdownMenuItem(
+                                value: _CommentsSortOption.mostRelated,
+                                child: Text(l10n.commentsSortMostRelated),
+                              ),
+                              DropdownMenuItem(
+                                value: _CommentsSortOption.mostReplied,
+                                child: Text(l10n.commentsSortMostReplied),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                   Expanded(
-                    child: CommentsBlocConsumer(currentUserId: widget.currentUserId),
+                    child: CommentsBlocConsumer(
+                      currentUserId: widget.currentUserId,
+                    ),
                   ),
                   InputFieldBlocBuilder(
                     controller: _controller,

@@ -624,6 +624,15 @@ class AppLocalizationsAr extends AppLocalizations {
   String get mostRelevant => 'الأكثر صلة';
 
   @override
+  String get commentsSortNewest => 'الأحدث';
+
+  @override
+  String get commentsSortMostRelated => 'الأكثر صلة';
+
+  @override
+  String get commentsSortMostReplied => 'الأكثر ردودًا';
+
+  @override
   String get about => 'حول المجموعة';
 
   @override
