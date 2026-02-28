@@ -22,16 +22,16 @@ class TimelineListView extends StatelessWidget {
       },
       builder: (context, state) {
         final cubit = context.read<PostCubit>();
-        final bool isInitialLoading = state is PostLoading && cubit.posts.isEmpty;
-        
-        final displayPosts = cubit.posts.isNotEmpty
-            ? cubit.posts
-            : DummyData.dummyPosts;
+        final bool isInitialLoading =
+            state is PostLoading && cubit.posts.isEmpty;
+        final bool isLoadingMore = state is PostsLoadingMore;
+
+        final displayPosts = isInitialLoading
+            ? DummyData.dummyPosts
+            : cubit.posts;
 
         if (state is PostError && cubit.posts.isEmpty) {
-          return SliverFillRemaining(
-            child: Center(child: Text(state.message)),
-          );
+          return SliverFillRemaining(child: Center(child: Text(state.message)));
         }
 
         if (state is PostLoaded && cubit.posts.isEmpty) {
@@ -52,25 +52,22 @@ class TimelineListView extends StatelessWidget {
         return Skeletonizer.sliver(
           enabled: isInitialLoading,
           child: SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (context, index) {
-                if (index >= cubit.posts.length) {
-                  return const Padding(
-                    padding: EdgeInsets.all(16.0),
-                    child: Center(
-                      child: CircularProgressIndicator(color: Colors.green),
-                    ),
-                  );
-                }
-
-                return PostCard(
-                  post: displayPosts[index],
-                  currentUserId: '69a1a4cbab9f71890ad97692',
-                  isFollowing: false,
+            delegate: SliverChildBuilderDelegate((context, index) {
+              if (index >= displayPosts.length) {
+                return const Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Center(
+                    child: CircularProgressIndicator(color: Colors.green),
+                  ),
                 );
-              },
-              childCount: cubit.posts.length + (state is PostsLoadingMore ? 1 : 0),
-            ),
+              }
+
+              return PostCard(
+                post: displayPosts[index],
+                currentUserId: '69a1a4cbab9f71890ad97692',
+                isFollowing: false,
+              );
+            }, childCount: displayPosts.length + (isLoadingMore ? 1 : 0)),
           ),
         );
       },

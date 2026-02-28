@@ -1,4 +1,5 @@
 import 'package:auth/l10n/app_localizations.dart';
+import 'package:auth/domain/entities/comment.dart';
 import 'package:auth/presentation/authentication/widgets/show_custom_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -23,7 +24,7 @@ class CommentsBlocConsumer extends StatelessWidget {
           String errorMessage = _mapErrorToMessage(state.message, l10n);
           showCustomSnackBar(context, errorMessage, false);
         }
-        
+
         if (state is CommentActionSuccess) {
           String successMessage = _mapSuccessToMessage(state.message, l10n);
           showCustomSnackBar(context, successMessage, true);
@@ -31,14 +32,17 @@ class CommentsBlocConsumer extends StatelessWidget {
       },
       buildWhen: (previous, current) {
         return current is CommentLoaded ||
-               current is CommentLoading ||
-               current is CommentError;
+            current is CommentLoading ||
+            current is CommentError;
       },
       builder: (context, state) {
         if (state is CommentLoading) {
+          final commentsForSkeleton = state.comments.isNotEmpty
+              ? state.comments
+              : _dummyComments;
           return Skeletonizer(
             child: CommentsList(
-              comments: state.comments,
+              comments: commentsForSkeleton,
               currentUserId: currentUserId,
               onReplyTap: (_) {},
             ),
@@ -88,26 +92,49 @@ class CommentsBlocConsumer extends StatelessWidget {
   }
 
   // --- Helper Mapping Functions ---
+  static final List<Comment> _dummyComments = List.generate(
+    5,
+    (index) => Comment(
+      id: 'skeleton-comment-$index',
+      postId: 'skeleton-post',
+      authorId: 'skeleton-author',
+      authorName: 'Loading User',
+      text: 'Loading comment content placeholder for skeleton state rendering.',
+      createdAt: DateTime(2024, 1, 1),
+    ),
+  );
 
   String _mapErrorToMessage(String key, AppLocalizations l10n) {
     switch (key) {
-      case "load_failed": return l10n.commentLoadError;
-      case "add_failed": return l10n.commentAddError;
-      case "delete_failed": return l10n.commentDeleteError;
-      case "update_failed": return l10n.unexpected_error;
-      case "report_failed": return l10n.unexpected_error;
-      default: return key.isEmpty ? l10n.unexpected_error : key;
+      case "load_failed":
+        return l10n.commentLoadError;
+      case "add_failed":
+        return l10n.commentAddError;
+      case "delete_failed":
+        return l10n.commentDeleteError;
+      case "update_failed":
+        return l10n.unexpected_error;
+      case "report_failed":
+        return l10n.unexpected_error;
+      default:
+        return key.isEmpty ? l10n.unexpected_error : key;
     }
   }
 
   String _mapSuccessToMessage(String key, AppLocalizations l10n) {
     switch (key) {
-      case "added": return l10n.commentAdded;
-      case "updated": return l10n.commentUpdated;
-      case "deleted": return l10n.commentDeleted;
-      case "reported": return l10n.commentReported;
-      case "hidden": return l10n.commentHidden;
-      default: return "";
+      case "added":
+        return l10n.commentAdded;
+      case "updated":
+        return l10n.commentUpdated;
+      case "deleted":
+        return l10n.commentDeleted;
+      case "reported":
+        return l10n.commentReported;
+      case "hidden":
+        return l10n.commentHidden;
+      default:
+        return "";
     }
   }
 }
