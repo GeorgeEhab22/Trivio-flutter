@@ -1,3 +1,4 @@
+import 'package:auth/constants/colors.dart';
 import 'package:auth/domain/entities/reaction_type.dart';
 import 'package:auth/presentation/manager/comment_cubit/comment_cubit.dart';
 import 'package:auth/presentation/manager/comment_cubit/comment_state.dart';
@@ -65,12 +66,11 @@ class _CommentItemState extends State<CommentItem> {
   List<Comment> _getLiveReplies(CommentCubit cubit) {
     final state = cubit.state;
     if (state is CommentLoaded) {
-
       final structured = state.comments.cast<Comment>();
       final match = structured.cast<Comment?>().firstWhere(
-            (c) => c?.id == widget.comment.id,
-            orElse: () => null,
-          );
+        (c) => c?.id == widget.comment.id,
+        orElse: () => null,
+      );
       if (match != null && match.repliesList != null) {
         return match.repliesList!;
       }
@@ -137,7 +137,7 @@ class _CommentItemState extends State<CommentItem> {
           l10n: l10n,
           onReplyTap: widget.onReplyTap,
         ),
-        
+
         CommentRepliesSection(
           comment: widget.comment,
           currentUserId: widget.currentUserId,
@@ -220,10 +220,14 @@ class _CommentItemState extends State<CommentItem> {
                   children: [
                     Container(
                       height: 3,
-                      decoration: const BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [Color(0xFF42C83C), Color(0xFF9DE35A)],
-                        ),
+                      decoration:  BoxDecoration(
+                        gradient: isDark
+                            ? LinearGradient(
+                                colors: [Color(0xFF42C83C).withAlpha(950), AppColors.darkGreen],
+                              )
+                            : LinearGradient(
+                                colors: [Color(0xFF42C83C), AppColors.darkGreen],
+                              ),
                       ),
                     ),
                     content,

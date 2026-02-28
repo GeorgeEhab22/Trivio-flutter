@@ -1,3 +1,4 @@
+import 'package:auth/constants/colors.dart';
 import 'package:auth/domain/entities/post.dart';
 import 'package:auth/domain/entities/reaction_type.dart';
 import 'package:auth/presentation/home/comments/widgets/comment_action.dart';
@@ -62,11 +63,7 @@ class PostFooter extends StatelessWidget {
                     ),
                   ),
                   _ActionDivider(color: dividerColor),
-                  const Expanded(
-                    child: Center(
-                      child: ShareButton(count: 0),
-                    ),
-                  ),
+                  const Expanded(child: Center(child: ShareButton(count: 0))),
                 ],
               ),
             ),
@@ -76,11 +73,19 @@ class PostFooter extends StatelessWidget {
               height: 38,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF42C83C), Color(0xFF7BDC5B)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
+                gradient: isDark
+                    ? LinearGradient(
+                        colors: [
+                          Color(0xFF42C83C).withAlpha(950),
+                         AppColors.darkGreen,
+                        ],
+                      )
+                    : LinearGradient(
+                        colors: [Color(0xFF42C83C), AppColors.darkGreen],
+
+                        end: Alignment.bottomRight,
+                      ),
+
                 boxShadow: [
                   BoxShadow(
                     color: const Color(0xFF42C83C).withValues(alpha: 0.3),

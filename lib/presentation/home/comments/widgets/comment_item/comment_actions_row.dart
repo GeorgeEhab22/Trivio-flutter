@@ -1,3 +1,4 @@
+import 'package:auth/constants/colors.dart';
 import 'package:auth/domain/entities/comment.dart';
 import 'package:auth/domain/entities/reaction_type.dart';
 import 'package:auth/injection_container.dart' as di;
@@ -30,9 +31,8 @@ class CommentActionsRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final panelColor = isDark
-        ? Colors.white.withValues(alpha: 0.05)
-        : Colors.black.withValues(alpha: 0.03);
+    final panelColor = Colors.transparent;
+
     final borderColor = isDark
         ? Colors.white.withValues(alpha: 0.1)
         : Colors.black.withValues(alpha: 0.07);
@@ -109,7 +109,7 @@ class _ActionDivider extends StatelessWidget {
     return Container(
       width: 1,
       height: 20,
-      color: color,
+      color: AppColors.primary,
     );
   }
 }

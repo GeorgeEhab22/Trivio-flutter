@@ -1,3 +1,4 @@
+import 'package:auth/constants/colors.dart';
 import 'package:auth/presentation/home/posts_in_timeline/widgets/post_image_slider.dart';
 import 'package:auth/presentation/home/posts_in_timeline/widgets/post_video.dart';
 import 'package:auth/presentation/home/widgets/exbandable_text.dart';
@@ -43,8 +44,8 @@ class PostContent extends StatelessWidget {
                       width: 3,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
-                        gradient: const LinearGradient(
-                          colors: [Color(0xFF42C83C), Color(0xFF9DE35A)],
+                        gradient: LinearGradient(
+                          colors: [Color(0xFF42C83C), AppColors.darkGreen],
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
                         ),

@@ -57,7 +57,8 @@ class PostCard extends StatelessWidget {
         final isReportLoading =
             state is ReportPostLoading && state.postId == post.postID;
         final hasMetrics =
-            (post.reactions?.isNotEmpty ?? false) || (post.media?.isNotEmpty ?? false);
+            (post.reactions?.isNotEmpty ?? false) ||
+            (post.media?.isNotEmpty ?? false);
         final isGroupPost = post.location == 'group';
         final isDark = Theme.of(context).brightness == Brightness.dark;
         final borderColor = isDark
@@ -108,7 +109,9 @@ class PostCard extends StatelessWidget {
                           shape: BoxShape.circle,
                           gradient: LinearGradient(
                             colors: [
-                              AppColors.primary.withValues(alpha: isDark ? 0.25 : 0.2),
+                              AppColors.primary.withValues(
+                                alpha: isDark ? 0.25 : 0.2,
+                              ),
                               Colors.transparent,
                             ],
                             begin: Alignment.topCenter,
@@ -126,10 +129,20 @@ class PostCard extends StatelessWidget {
                           children: [
                             Container(
                               height: 4,
-                              decoration: const BoxDecoration(
-                                gradient: LinearGradient(
-                                  colors: [Color(0xFF42C83C), Color(0xFF9DE35A)],
-                                ),
+                              decoration: BoxDecoration(
+                                gradient: isDark
+                                    ? LinearGradient(
+                                        colors: [
+                                          Color(0xFF42C83C).withAlpha(900),
+                                          AppColors.darkGreen,
+                                        ],
+                                      )
+                                    : LinearGradient(
+                                        colors: [
+                                          Color(0xFF42C83C),
+                                          AppColors.darkGreen,
+                                        ],
+                                      ),
                               ),
                             ),
                             PostHeader(
@@ -141,7 +154,9 @@ class PostCard extends StatelessWidget {
                             if (hasMetrics || isGroupPost) ...[
                               const SizedBox(height: 6),
                               Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 14),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 14,
+                                ),
                                 child: Wrap(
                                   spacing: 8,
                                   runSpacing: 8,
@@ -231,9 +246,9 @@ class _MetaChip extends StatelessWidget {
           Text(
             label,
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: textColor,
-                  fontWeight: FontWeight.w700,
-                ),
+              color: textColor,
+              fontWeight: FontWeight.w700,
+            ),
           ),
         ],
       ),

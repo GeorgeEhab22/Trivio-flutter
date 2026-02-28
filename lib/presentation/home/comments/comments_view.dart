@@ -39,6 +39,17 @@ class _CommentsViewState extends State<CommentsView> {
     }
   }
 
+  String _sortLabel(AppLocalizations l10n, _CommentsSortOption sort) {
+    switch (sort) {
+      case _CommentsSortOption.newest:
+        return l10n.commentsSortNewest;
+      case _CommentsSortOption.mostRelated:
+        return l10n.commentsSortMostRelated;
+      case _CommentsSortOption.mostReplied:
+        return l10n.commentsSortMostReplied;
+    }
+  }
+
   Future<void> _loadComments() async {
     await context.read<CommentCubit>().getComments(
       widget.postId,
@@ -190,24 +201,39 @@ class _CommentsViewState extends State<CommentsView> {
                           ),
                         ),
                         const SizedBox(width: 8),
-                        DropdownButtonHideUnderline(
-                          child: DropdownButton<_CommentsSortOption>(
-                            value: _selectedSort,
-                            isDense: true,
+                        PopupMenuButton<_CommentsSortOption>(
+                          onSelected: (value) {
+                            _onSortChanged(value);
+                          },
+                          shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
-                            onChanged: _onSortChanged,
-                            items: [
-                              DropdownMenuItem(
-                                value: _CommentsSortOption.newest,
-                                child: Text(l10n.commentsSortNewest),
+                          ),
+                          itemBuilder: (context) => [
+                            PopupMenuItem(
+                              value: _CommentsSortOption.newest,
+                              child: Text(l10n.commentsSortNewest),
+                            ),
+                            PopupMenuItem(
+                              value: _CommentsSortOption.mostRelated,
+                              child: Text(l10n.commentsSortMostRelated),
+                            ),
+                            PopupMenuItem(
+                              value: _CommentsSortOption.mostReplied,
+                              child: Text(l10n.commentsSortMostReplied),
+                            ),
+                          ],
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                _sortLabel(l10n, _selectedSort),
+                                style: Theme.of(context).textTheme.bodyMedium
+                                    ?.copyWith(fontWeight: FontWeight.w600),
                               ),
-                              DropdownMenuItem(
-                                value: _CommentsSortOption.mostRelated,
-                                child: Text(l10n.commentsSortMostRelated),
-                              ),
-                              DropdownMenuItem(
-                                value: _CommentsSortOption.mostReplied,
-                                child: Text(l10n.commentsSortMostReplied),
+                              const SizedBox(width: 3),
+                              const Icon(
+                                Icons.keyboard_arrow_down_rounded,
+                                size: 18,
                               ),
                             ],
                           ),

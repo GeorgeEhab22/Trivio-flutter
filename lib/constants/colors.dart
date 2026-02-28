@@ -8,5 +8,6 @@ class AppColors {
   static const darkGrey = Color(0xff343434);
   static const lightGrey = Color(0xFF888888);
   static const iconsColor = Color(0xFF262626);
+  static final darkGreen=Color(0xFF9DE35A).withAlpha(950);
   
 }
