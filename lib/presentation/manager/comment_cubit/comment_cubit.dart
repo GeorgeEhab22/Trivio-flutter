@@ -1,5 +1,7 @@
 import 'package:auth/domain/entities/comment.dart';
 import 'package:auth/domain/entities/comment_history.dart';
+import 'package:auth/domain/entities/reaction.dart';
+import 'package:auth/domain/entities/reaction_type.dart';
 import 'package:auth/core/validator.dart';
 import 'package:auth/domain/usecases/comment/add_comment_usecase.dart';
 import 'package:auth/domain/usecases/comment/delete_comment_usecase.dart';
@@ -9,6 +11,7 @@ import 'package:auth/domain/usecases/comment/get_comments_usecase.dart';
 import 'package:auth/domain/usecases/comment/get_replies_usecase.dart';
 import 'package:auth/domain/usecases/comment/mention_users_in_comment_usecase.dart';
 import 'package:auth/domain/usecases/comment/react_to_comment_usecase.dart';
+import 'package:auth/domain/usecases/comment/remove_reaction_from_comment_usecase.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'comment_state.dart';
 
@@ -21,6 +24,7 @@ class CommentCubit extends Cubit<CommentState> {
   final GetRepliesUseCase getRepliesUseCase;
   final MentionUsersInCommentUseCase mentionUsersInCommentUseCase;
   final ReactToCommentUseCase reactToCommentUseCase;
+  final RemoveReactionFromCommentUseCase removeReactionFromCommentUseCase;
 
   CommentCubit({
     required this.getCommentsUseCase,
@@ -31,6 +35,7 @@ class CommentCubit extends Cubit<CommentState> {
     required this.getRepliesUseCase,
     required this.mentionUsersInCommentUseCase,
     required this.reactToCommentUseCase,
+    required this.removeReactionFromCommentUseCase,
   }) : super(CommentInitial());
 
   List<Comment> _allComments = [];
@@ -38,6 +43,7 @@ class CommentCubit extends Cubit<CommentState> {
   Comment? _editingComment;
   final Set<String> _expandedReplyParentIds = {};
   final Set<String> _loadingReplyParentIds = {};
+  final Map<String, String> _reactionIdsByComment = {};
 
   Comment? get replyingTo => _replyingTo;
   Comment? get editingComment => _editingComment;
@@ -54,6 +60,7 @@ class CommentCubit extends Cubit<CommentState> {
     String? fields,
     String? keyword,
   }) async {
+    _reactionIdsByComment.clear();
     _expandedReplyParentIds.clear();
     _loadingReplyParentIds.clear();
     _replyingTo = null;
@@ -153,7 +160,6 @@ class CommentCubit extends Cubit<CommentState> {
         isSuccess = false;
       },
       (replies) {
-      
         final normalizedReplies = replies
             .map((reply) => _forceParentId(reply, parentCommentId))
             .toList();
@@ -171,7 +177,7 @@ class CommentCubit extends Cubit<CommentState> {
     );
 
     if (emitState) {
-      _emitLoaded(); 
+      _emitLoaded();
     }
     return isSuccess;
   }
@@ -284,6 +290,8 @@ class CommentCubit extends Cubit<CommentState> {
               editedAt: parent.editedAt,
               isEdited: parent.isEdited,
               reactions: parent.reactions,
+              reactionsCount: parent.reactionsCount,
+              userReaction: parent.userReaction,
               repliesCount: parent.repliesCount + 1,
               parentCommentId: parent.parentCommentId,
               repliesList: parent.repliesList,
@@ -344,8 +352,11 @@ class CommentCubit extends Cubit<CommentState> {
             text: updatedComment.text,
             createdAt: updatedComment.createdAt,
             editedAt: updatedComment.editedAt ?? DateTime.now(),
-            isEdited: updatedComment.isEdited || updatedComment.editedAt != null,
+            isEdited:
+                updatedComment.isEdited || updatedComment.editedAt != null,
             reactions: updatedComment.reactions,
+            reactionsCount: updatedComment.reactionsCount,
+            userReaction: updatedComment.userReaction,
             repliesCount: updatedComment.repliesCount,
             parentCommentId: updatedComment.parentCommentId,
             history: updatedHistory,
@@ -387,9 +398,15 @@ class CommentCubit extends Cubit<CommentState> {
       (_) {
         _allComments.removeWhere((c) => c.id == commentId);
         _allComments.removeWhere((c) => c.parentCommentId == commentId);
+        _reactionIdsByComment.remove(commentId);
+        for (final removedReplyId in removedReplyIds) {
+          _reactionIdsByComment.remove(removedReplyId);
+        }
 
         if (parentCommentId != null && parentCommentId.trim().isNotEmpty) {
-          final parentIndex = _allComments.indexWhere((c) => c.id == parentCommentId);
+          final parentIndex = _allComments.indexWhere(
+            (c) => c.id == parentCommentId,
+          );
           if (parentIndex != -1) {
             final parent = _allComments[parentIndex];
             _allComments[parentIndex] = parent.copyWith(
@@ -398,10 +415,12 @@ class CommentCubit extends Cubit<CommentState> {
           }
         }
 
-        if (_replyingTo != null && removedCommentIds.contains(_replyingTo!.id)) {
+        if (_replyingTo != null &&
+            removedCommentIds.contains(_replyingTo!.id)) {
           _replyingTo = null;
         }
-        if (_editingComment != null && removedCommentIds.contains(_editingComment!.id)) {
+        if (_editingComment != null &&
+            removedCommentIds.contains(_editingComment!.id)) {
           _editingComment = null;
         }
 
@@ -409,10 +428,7 @@ class CommentCubit extends Cubit<CommentState> {
         _loadingReplyParentIds.remove(commentId);
         _emitLoaded();
         emit(
-          CommentActionSuccess(
-            "deleted",
-            commentsDelta: -removedCommentsCount,
-          ),
+          CommentActionSuccess("deleted", commentsDelta: -removedCommentsCount),
         );
       },
     );
@@ -441,7 +457,6 @@ class CommentCubit extends Cubit<CommentState> {
     }
   }
 
-
   void triggerReply(Comment comment) {
     _replyingTo = comment;
     _editingComment = null;
@@ -459,7 +474,6 @@ class CommentCubit extends Cubit<CommentState> {
     _editingComment = null;
     _emitLoaded();
   }
-
 
   String _resolveErrorMessage(String message, {required String fallbackKey}) {
     if (message.trim().isEmpty || message == "unexpected_error") {
@@ -490,6 +504,8 @@ class CommentCubit extends Cubit<CommentState> {
       editedAt: comment.editedAt,
       isEdited: comment.isEdited,
       reactions: comment.reactions,
+      reactionsCount: comment.reactionsCount,
+      userReaction: comment.userReaction,
       repliesCount: comment.repliesCount,
       parentCommentId: parentCommentId,
       repliesList: comment.repliesList,
@@ -513,6 +529,8 @@ class CommentCubit extends Cubit<CommentState> {
       editedAt: comment.editedAt,
       isEdited: comment.isEdited,
       reactions: comment.reactions,
+      reactionsCount: comment.reactionsCount,
+      userReaction: comment.userReaction,
       repliesCount: comment.repliesCount,
       parentCommentId: parentCommentId,
       repliesList: comment.repliesList,
@@ -538,5 +556,221 @@ class CommentCubit extends Cubit<CommentState> {
         loadingReplyParentIds: Set<String>.from(_loadingReplyParentIds),
       ),
     );
+  }
+
+  Future<void> toggleReactionOnComment({
+    required String commentId,
+    required String currentUserId,
+    required ReactionType currentReaction,
+  }) async {
+    final currentReactionId = _resolveReactionIdForComment(
+      commentId: commentId,
+      currentUserId: currentUserId,
+    );
+    final nextReaction = currentReaction == ReactionType.none
+        ? ReactionType.like
+        : ReactionType.none;
+
+    final previousComment = _applyCommentReactionOptimistically(
+      commentId: commentId,
+      currentUserId: currentUserId,
+      reactionType: nextReaction,
+      currentReactionId: currentReactionId,
+    );
+    if (previousComment == null) {
+      return;
+    }
+
+    if (nextReaction == ReactionType.none) {
+      final result = await removeReactionFromCommentUseCase(
+        commentId: commentId,
+        reactionId: currentReactionId,
+      );
+      result.fold((failure) {
+        _restoreComment(previousComment);
+        emit(
+          CommentActionError(
+            _resolveErrorMessage(failure.message, fallbackKey: "update_failed"),
+          ),
+        );
+        _emitLoaded();
+      }, (_) {
+        _reactionIdsByComment.remove(commentId);
+      });
+      return;
+    }
+
+    final result = await reactToCommentUseCase(
+      commentId: commentId,
+      reactionType: nextReaction.name,
+      isUpdate: currentReaction != ReactionType.none,
+      reactionId: currentReactionId,
+    );
+    result.fold((failure) {
+      _restoreComment(previousComment);
+      emit(
+        CommentActionError(
+          _resolveErrorMessage(failure.message, fallbackKey: "update_failed"),
+        ),
+      );
+      _emitLoaded();
+    }, (updatedReactionId) {
+      final resolvedReactionId =
+          _normalizeReactionIdForApi(updatedReactionId) ??
+          _normalizeReactionIdForApi(currentReactionId);
+      if (resolvedReactionId != null) {
+        _reactionIdsByComment[commentId] = resolvedReactionId;
+      }
+    });
+  }
+
+  Future<void> chooseReactionOnComment({
+    required String commentId,
+    required String currentUserId,
+    required ReactionType chosenReaction,
+    required ReactionType currentReaction,
+  }) async {
+    if (chosenReaction == ReactionType.none ||
+        chosenReaction == currentReaction) {
+      return;
+    }
+
+    final currentReactionId = _resolveReactionIdForComment(
+      commentId: commentId,
+      currentUserId: currentUserId,
+    );
+    final previousComment = _applyCommentReactionOptimistically(
+      commentId: commentId,
+      currentUserId: currentUserId,
+      reactionType: chosenReaction,
+      currentReactionId: currentReactionId,
+    );
+    if (previousComment == null) {
+      return;
+    }
+
+    final result = await reactToCommentUseCase(
+      commentId: commentId,
+      reactionType: chosenReaction.name,
+      isUpdate: currentReaction != ReactionType.none,
+      reactionId: currentReactionId,
+    );
+    result.fold((failure) {
+      _restoreComment(previousComment);
+      emit(
+        CommentActionError(
+          _resolveErrorMessage(failure.message, fallbackKey: "update_failed"),
+        ),
+      );
+      _emitLoaded();
+    }, (updatedReactionId) {
+      final resolvedReactionId =
+          _normalizeReactionIdForApi(updatedReactionId) ??
+          _normalizeReactionIdForApi(currentReactionId);
+      if (resolvedReactionId != null) {
+        _reactionIdsByComment[commentId] = resolvedReactionId;
+      }
+    });
+  }
+
+  Comment? _applyCommentReactionOptimistically({
+    required String commentId,
+    required String currentUserId,
+    required ReactionType reactionType,
+    String? currentReactionId,
+  }) {
+    final index = _allComments.indexWhere((c) => c.id == commentId);
+    if (index == -1) {
+      return null;
+    }
+
+    final previous = _allComments[index];
+    final filtered = previous.reactions
+        .where((reaction) => reaction.userId != currentUserId)
+        .toList();
+
+    if (reactionType != ReactionType.none) {
+      final optimisticReactionId =
+          _normalizeReactionIdForApi(currentReactionId) ??
+          'local-$commentId-$currentUserId';
+      filtered.add(
+        Reaction(
+          id: optimisticReactionId,
+          userId: currentUserId,
+          postId: previous.postId,
+          type: reactionType,
+        ),
+      );
+    }
+
+    final nextCount = reactionType == ReactionType.none
+        ? (previous.reactionsCount - 1).clamp(0, 1 << 30).toInt()
+        : (previous.userReaction == ReactionType.none
+              ? previous.reactionsCount + 1
+              : previous.reactionsCount);
+
+    _allComments[index] = previous.copyWith(
+      reactions: filtered,
+      reactionsCount: nextCount,
+      userReaction: reactionType,
+    );
+
+    _emitLoaded();
+    return previous;
+  }
+
+  void _restoreComment(Comment previousComment) {
+    final index = _allComments.indexWhere((c) => c.id == previousComment.id);
+    if (index == -1) {
+      return;
+    }
+    _allComments[index] = previousComment;
+  }
+
+  String? _normalizeReactionIdForApi(String? reactionId) {
+    final trimmed = reactionId?.trim();
+    if (trimmed == null || trimmed.isEmpty) {
+      return null;
+    }
+    if (trimmed.startsWith('local-')) {
+      return null;
+    }
+    if (!Validator.isValidId(trimmed)) {
+      return null;
+    }
+    return trimmed;
+  }
+
+  String? _resolveReactionIdForComment({
+    required String commentId,
+    required String currentUserId,
+  }) {
+    final cached = _normalizeReactionIdForApi(_reactionIdsByComment[commentId]);
+    if (cached != null) {
+      return cached;
+    }
+
+    final comment = _allComments.cast<Comment?>().firstWhere(
+      (c) => c?.id == commentId,
+      orElse: () => null,
+    );
+    if (comment == null) {
+      return null;
+    }
+
+    final reaction = comment.reactions.reversed.cast<Reaction?>().firstWhere(
+      (item) => item?.userId == currentUserId,
+      orElse: () => null,
+    );
+    if (reaction == null) {
+      return null;
+    }
+
+    final normalized = _normalizeReactionIdForApi(reaction.id);
+    if (normalized == null) {
+      return null;
+    }
+    _reactionIdsByComment[commentId] = normalized;
+    return normalized;
   }
 }

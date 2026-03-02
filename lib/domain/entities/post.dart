@@ -1,8 +1,8 @@
 import 'package:auth/domain/entities/mentions.dart';
 import 'package:auth/domain/entities/reaction.dart';
+import 'package:auth/domain/entities/reaction_type.dart';
 import 'package:equatable/equatable.dart';
 
-// TODO : write the acual class after finish the backend in all entities.. filse..
 class Post extends Equatable {
   final String? authorId;
   final String? postID;
@@ -17,6 +17,8 @@ class Post extends Equatable {
   final String? groupName;
   final String? groupCoverImage;
   final int commentsCount;
+  final int reactionsCount;
+  final ReactionType userReaction;
 
   const Post({
     this.authorId,
@@ -32,9 +34,10 @@ class Post extends Equatable {
     this.groupName,
     this.groupCoverImage,
     this.commentsCount = 0,
+    this.reactionsCount = 0,
+    this.userReaction = ReactionType.none,
   });
-  //TODO : delete copy with when take group id as object in backend
- Post copyWith({
+  Post copyWith({
     String? authorId,
     String? postID,
     String? caption,
@@ -48,6 +51,8 @@ class Post extends Equatable {
     String? groupName,
     String? groupCoverImage,
     int? commentsCount,
+    int? reactionsCount,
+    ReactionType? userReaction,
   }) {
     return Post(
       authorId: authorId ?? this.authorId,
@@ -63,10 +68,12 @@ class Post extends Equatable {
       groupName: groupName ?? this.groupName,
       groupCoverImage: groupCoverImage ?? this.groupCoverImage,
       commentsCount: commentsCount ?? this.commentsCount,
+      reactionsCount: reactionsCount ?? this.reactionsCount,
+      userReaction: userReaction ?? this.userReaction,
     );
   }
 
-  int get likesCount => reactions?.length ?? 0;
+  int get likesCount => reactionsCount;
   //int get commentsCount => comments.length;
 
   @override
@@ -78,5 +85,7 @@ class Post extends Equatable {
     location,
     groupID,
     commentsCount,
+    reactionsCount,
+    userReaction,
   ];
 }

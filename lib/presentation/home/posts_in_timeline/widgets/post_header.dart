@@ -38,7 +38,7 @@ class PostHeader extends StatelessWidget {
         children: [
           Expanded(
             child: AuthorInfo(
-              authorName: _resolveAuthorName(post.authorId),
+              authorName:   'Unknown',
               showTimeInline: false,
               isGroupPost: isGroupPost,
               groupImage: post.groupCoverImage,
@@ -108,13 +108,4 @@ class PostHeader extends StatelessWidget {
     );
   }
 
-  String _resolveAuthorName(String? authorId) {
-    if (authorId == null || authorId.isEmpty) {
-      return 'Trivio Fan';
-    }
-    if (authorId.length <= 8) {
-      return authorId;
-    }
-    return 'Fan ${authorId.substring(0, 4)}';
-  }
 }

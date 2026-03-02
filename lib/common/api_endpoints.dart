@@ -29,8 +29,8 @@ class ApiEndpoints {
   static const toggleFollow = 'users/follow'; // POST {userId}
 
   // REACTIONS (On Posts)
-  static const addReactionToPost = 'posts/react'; // POST {postId}
-  static const removeReactionFromPost = 'posts/remove-react'; // DELETE {postId}
+  static String reactionsOnPost(String postId) => 'posts/$postId/reacts';
+  static String reactionById(String reactionId) => 'reacts/$reactionId';
 
   // COMMENTS
   static const getComments = 'comments/all-comments'; // GET {postId}
@@ -42,19 +42,18 @@ class ApiEndpoints {
   static const getReplies = 'comments'; // GET {commentId}/replies
 
   // COMMENT REACTIONS
-  static const reactToComment = 'comments/react'; // POST {commentId}
-  static const removeReactionFromComment =
-      'comments/remove-react'; // DELETE {commentId}
+  static String reactionsOnComment(String commentId) =>
+      'comments/$commentId/reacts';
 
   // COMMENT MENTIONS
   static const mentionUsersInComment = 'comments/mentions'; // POST {commentId}
 
   // GROUPS
-  static const groups = 'groups';            // POST (create), GET (all)
+  static const groups = 'groups'; // POST (create), GET (all)
 
   // USERS / ME
-  static const myGroups = 'users/me/my-groups';           // GET
-  static const joinedGroups = 'users/me/joined-groups';   // GET
+  static const myGroups = 'users/me/my-groups'; // GET
+  static const joinedGroups = 'users/me/joined-groups'; // GET
 
   //profile follow
   static String followUser(String userId) => '/api/v1/users/$userId/follow';

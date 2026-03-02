@@ -1,5 +1,6 @@
 import 'package:auth/domain/entities/comment_history.dart';
 import 'package:auth/domain/entities/reaction.dart';
+import 'package:auth/domain/entities/reaction_type.dart';
 import 'package:equatable/equatable.dart';
 
 class Comment extends Equatable {
@@ -12,6 +13,8 @@ class Comment extends Equatable {
   final DateTime createdAt;
   final DateTime? editedAt;
   final List<Reaction> reactions;
+  final int reactionsCount;
+  final ReactionType userReaction;
   final int repliesCount;
   final String? parentCommentId;
   final List<Comment>? repliesList;
@@ -28,6 +31,8 @@ class Comment extends Equatable {
     required this.createdAt,
     this.editedAt,
     this.reactions = const [],
+    this.reactionsCount = 0,
+    this.userReaction = ReactionType.none,
     this.repliesCount = 0,
     this.parentCommentId,
     this.repliesList = const [],
@@ -45,6 +50,8 @@ class Comment extends Equatable {
     DateTime? createdAt,
     DateTime? editedAt,
     List<Reaction>? reactions,
+    int? reactionsCount,
+    ReactionType? userReaction,
     int? repliesCount,
     String? parentCommentId,
     List<Comment>? repliesList,
@@ -62,6 +69,8 @@ class Comment extends Equatable {
       createdAt: createdAt ?? this.createdAt,
       editedAt: resolvedEditedAt,
       reactions: reactions ?? this.reactions,
+      reactionsCount: reactionsCount ?? this.reactionsCount,
+      userReaction: userReaction ?? this.userReaction,
       repliesCount: repliesCount ?? this.repliesCount,
       parentCommentId: parentCommentId ?? this.parentCommentId,
       repliesList: repliesList ?? this.repliesList,
@@ -71,23 +80,25 @@ class Comment extends Equatable {
   }
 
   bool get isReply => parentCommentId != null;
-  int get likesCount => reactions.length;
+  int get likesCount => reactionsCount;
 
   @override
   List<Object?> get props => [
-        id,
-        postId,
-        authorId,
-        authorName,
-        authorImage,
-        text,
-        createdAt,
-        editedAt,
-        reactions,
-        repliesCount,
-        parentCommentId,
-        repliesList,
-        history,
-        isEdited,
-      ];
+    id,
+    postId,
+    authorId,
+    authorName,
+    authorImage,
+    text,
+    createdAt,
+    editedAt,
+    reactions,
+    reactionsCount,
+    userReaction,
+    repliesCount,
+    parentCommentId,
+    repliesList,
+    history,
+    isEdited,
+  ];
 }

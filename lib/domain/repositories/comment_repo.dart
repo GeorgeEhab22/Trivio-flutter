@@ -3,7 +3,6 @@ import 'package:auth/domain/entities/comment.dart';
 import 'package:dartz/dartz.dart';
 
 abstract class CommentRepository {
-
   // 8 usecase
 
   Future<Either<Failure, List<Comment>>> getComments(
@@ -25,10 +24,11 @@ abstract class CommentRepository {
     required String commentId,
     required String newContent,
   });
-  Future<Either<Failure, Comment>> reactToComment({
+  Future<Either<Failure, String?>> reactToComment({
     required String commentId,
-    required String userId,
     required String reactionType,
+    bool isUpdate = false,
+    String? reactionId,
   });
   Future<Either<Failure, List<Comment>>> getReplies(
     String parentCommentId, {
@@ -38,11 +38,11 @@ abstract class CommentRepository {
     String? fields,
     String? keyword,
   });
-  Future<Either<Failure, Comment>> removeReactionFromComment({
+  Future<Either<Failure, void>> removeReactionFromComment({
     required String commentId,
-    required String userId,
+    String? reactionId,
   });
-  
+
   Future<Either<Failure, Comment>> mentionUsersInComment({
     required String commentId,
     required List<String> mentionedUserIds,

@@ -1,5 +1,5 @@
-import 'package:auth/constants/colors.dart';
 import 'package:auth/domain/entities/post.dart';
+import 'package:auth/domain/entities/reaction.dart';
 import 'package:auth/domain/entities/reaction_type.dart';
 import 'package:auth/presentation/home/comments/widgets/comment_action.dart';
 import 'package:auth/presentation/home/reactions/reaction_action.dart';
@@ -21,6 +21,13 @@ class PostFooter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final resolvedReaction = _resolveCurrentUserReaction();
+    var resolvedCount = post.reactionsCount > 0
+        ? post.reactionsCount
+        : (post.reactions?.length ?? 0);
+    if (resolvedReaction != ReactionType.none && resolvedCount == 0) {
+      resolvedCount = 1;
+    }
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final panelColor = isDark
         ? Colors.white.withValues(alpha: 0.05)
@@ -42,70 +49,72 @@ class PostFooter extends StatelessWidget {
             Expanded(
               child: Row(
                 children: [
-                  Expanded(
-                    child: Center(
-                      child: ReactionAction(
-                        postId: post.postID ?? '',
-                        userId: currentUserId,
-                        initialReaction: currentReaction ?? ReactionType.none,
-                        initialCount: post.reactions?.length ?? 0,
-                      ),
-                    ),
+                  ReactionAction(
+                    postId: post.postID ?? '',
+                    initialReaction: resolvedReaction,
+                    initialCount: resolvedCount,
+                    initialReactionId: _resolveCurrentUserReactionId(),
                   ),
                   _ActionDivider(color: dividerColor),
-                  Expanded(
-                    child: Center(
-                      child: CommentAction(
-                        postId: post.postID ?? '',
-                        currentUserId: currentUserId,
-                        commentsCount: post.commentsCount,
-                      ),
-                    ),
+                  CommentAction(
+                    postId: post.postID ?? '',
+                    currentUserId: currentUserId,
+                    commentsCount: post.commentsCount,
                   ),
                   _ActionDivider(color: dividerColor),
-                  const Expanded(child: Center(child: ShareButton(count: 0))),
-                ],
-              ),
-            ),
-            const SizedBox(width: 8),
-            Container(
-              width: 38,
-              height: 38,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: isDark
-                    ? LinearGradient(
-                        colors: [
-                          Color(0xFF42C83C).withAlpha(950),
-                         AppColors.darkGreen,
-                        ],
-                      )
-                    : LinearGradient(
-                        colors: [Color(0xFF42C83C), AppColors.darkGreen],
-
-                        end: Alignment.bottomRight,
-                      ),
-
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xFF42C83C).withValues(alpha: 0.3),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
+                  ShareButton(count: 0),
+                  _ActionDivider(color: dividerColor),
+                  SizedBox(width: 10,),
+                  SendPostButton(
+                    postId: post.postID ?? '',
+                    compact: true,
+                    iconColor: Colors.white,
                   ),
                 ],
-              ),
-              child: Center(
-                child: SendPostButton(
-                  postId: post.postID ?? '',
-                  compact: true,
-                  iconColor: Colors.white,
-                ),
               ),
             ),
           ],
         ),
       ),
     );
+  }
+
+  ReactionType _resolveCurrentUserReaction() {
+    if (currentReaction != null && currentReaction != ReactionType.none) {
+      return currentReaction!;
+    }
+    if (post.userReaction != ReactionType.none) {
+      return post.userReaction;
+    }
+
+    final List<Reaction>? reactions = post.reactions;
+    if (reactions == null || reactions.isEmpty) {
+      return ReactionType.none;
+    }
+
+    for (final reaction in reactions.reversed) {
+      if (reaction.userId == currentUserId) {
+        return reaction.type;
+      }
+    }
+    return ReactionType.none;
+  }
+
+  String? _resolveCurrentUserReactionId() {
+    final List<Reaction>? reactions = post.reactions;
+    if (reactions == null || reactions.isEmpty) {
+      return null;
+    }
+
+    for (final reaction in reactions.reversed) {
+      if (reaction.userId == currentUserId) {
+        final id = reaction.id.trim();
+        if (id.isNotEmpty) {
+          return id;
+        }
+      }
+    }
+    return null;
   }
 }
 

@@ -1,5 +1,6 @@
 import 'package:auth/domain/entities/comment.dart';
 import 'package:auth/domain/entities/reaction.dart';
+import 'package:auth/domain/entities/reaction_type.dart';
 import 'reaction_model.dart';
 
 class CommentModel extends Comment {
@@ -14,6 +15,8 @@ class CommentModel extends Comment {
     super.editedAt,
     super.isEdited = false,
     super.reactions = const [],
+    super.reactionsCount = 0,
+    super.userReaction = ReactionType.none,
     super.repliesCount = 0,
     super.parentCommentId,
   });
@@ -117,6 +120,26 @@ class CommentModel extends Comment {
               .map((r) => ReactionModel.fromJson(r).toEntity())
               .toList()
         : <Reaction>[];
+    final int reactionsCountFromJson = parseInt(
+      json['reactionsCount'] ?? json['reactions_count'],
+    );
+    final int reactionsCount = reactionsCountFromJson > 0
+        ? reactionsCountFromJson
+        : reactions.length;
+
+    ReactionType parseReactionType(dynamic value) {
+      final raw = (value ?? '').toString().trim().toLowerCase();
+      if (raw.isEmpty) return ReactionType.none;
+      try {
+        return ReactionType.values.firstWhere((item) => item.name == raw);
+      } catch (_) {
+        return ReactionType.none;
+      }
+    }
+
+    final ReactionType userReaction = parseReactionType(
+      json['userReaction'] ?? json['myReaction'] ?? json['currentUserReaction'],
+    );
 
     final dynamic parentRaw =
         json['parentCommentId'] ??
@@ -136,6 +159,10 @@ class CommentModel extends Comment {
       editedAt: editedAt,
       isEdited: isEdited,
       reactions: reactions,
+      reactionsCount: userReaction != ReactionType.none && reactionsCount == 0
+          ? 1
+          : reactionsCount,
+      userReaction: userReaction,
       repliesCount: parseInt(json['repliesCount']),
       parentCommentId: parsedParentId,
     );
@@ -155,6 +182,8 @@ class CommentModel extends Comment {
       'reactions': reactions
           .map((r) => ReactionModel.fromEntity(r).toJson())
           .toList(),
+      'reactionsCount': reactionsCount,
+      'userReaction': userReaction.name,
       'repliesCount': repliesCount,
       'parentCommentId': parentCommentId,
     };
@@ -171,6 +200,8 @@ class CommentModel extends Comment {
     isEdited: isEdited,
     createdAt: createdAt,
     reactions: reactions,
+    reactionsCount: reactionsCount,
+    userReaction: userReaction,
     repliesCount: repliesCount,
     parentCommentId: parentCommentId,
   );
@@ -187,6 +218,8 @@ class CommentModel extends Comment {
       editedAt: comment.editedAt,
       isEdited: comment.isEdited,
       reactions: comment.reactions,
+      reactionsCount: comment.reactionsCount,
+      userReaction: comment.userReaction,
       repliesCount: comment.repliesCount,
       parentCommentId: comment.parentCommentId,
     );
@@ -204,6 +237,8 @@ class CommentModel extends Comment {
       editedAt: null,
       isEdited: false,
       reactions: const [],
+      reactionsCount: 0,
+      userReaction: ReactionType.none,
       repliesCount: 0,
       parentCommentId: null,
     );

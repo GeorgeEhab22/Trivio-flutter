@@ -40,7 +40,6 @@ class PostCard extends StatelessWidget {
         }
       },
       builder: (context, state) {
-        final l10n = AppLocalizations.of(context)!;
         final postCubitState = context.watch<PostCubit>().state;
         GroupPostsState? groupPostsState;
         try {
@@ -57,8 +56,7 @@ class PostCard extends StatelessWidget {
         final isReportLoading =
             state is ReportPostLoading && state.postId == post.postID;
         final hasMetrics =
-            (post.reactions?.isNotEmpty ?? false) ||
-            (post.media?.isNotEmpty ?? false);
+            post.reactionsCount > 0 || (post.media?.isNotEmpty ?? false);
         final isGroupPost = post.location == 'group';
         final isDark = Theme.of(context).brightness == Brightness.dark;
         final borderColor = isDark
@@ -157,28 +155,7 @@ class PostCard extends StatelessWidget {
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 14,
                                 ),
-                                child: Wrap(
-                                  spacing: 8,
-                                  runSpacing: 8,
-                                  children: [
-                                    if ((post.reactions?.isNotEmpty ?? false))
-                                      _MetaChip(
-                                        icon: Icons.sports_soccer_rounded,
-                                        label: '${post.reactions?.length ?? 0}',
-                                      ),
-                                    if ((post.media?.isNotEmpty ?? false))
-                                      _MetaChip(
-                                        icon: Icons.perm_media_outlined,
-                                        label: '${post.media?.length ?? 0}',
-                                      ),
-                                    if (isGroupPost)
-                                      _MetaChip(
-                                        icon: Icons.groups_2_outlined,
-                                        label: l10n.groups,
-                                        isAccent: true,
-                                      ),
-                                  ],
-                                ),
+                                
                               ),
                             ],
                             const SizedBox(height: 10),
@@ -194,7 +171,8 @@ class PostCard extends StatelessWidget {
                             PostFooter(
                               post: post,
                               currentUserId: currentUserId,
-                              currentReaction: currentReaction,
+                              currentReaction:
+                                  currentReaction ?? post.userReaction,
                             ),
                           ],
                         ),
@@ -211,47 +189,3 @@ class PostCard extends StatelessWidget {
   }
 }
 
-class _MetaChip extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final bool isAccent;
-
-  const _MetaChip({
-    required this.icon,
-    required this.label,
-    this.isAccent = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final Color textColor = isAccent
-        ? AppColors.primary
-        : (Theme.of(context).textTheme.bodySmall?.color ?? Colors.black87);
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(999),
-        color: isAccent
-            ? AppColors.primary.withValues(alpha: 0.16)
-            : (isDark
-                  ? Colors.white.withValues(alpha: 0.08)
-                  : Colors.black.withValues(alpha: 0.04)),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 14, color: textColor),
-          const SizedBox(width: 4),
-          Text(
-            label,
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: textColor,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}

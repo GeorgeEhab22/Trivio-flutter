@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:auth/core/errors/failure.dart';
 import 'package:auth/domain/entities/post.dart';
+import 'package:auth/domain/entities/reaction_type.dart';
 import 'package:auth/domain/usecases/post/delete_post_usecase.dart';
 import 'package:auth/domain/usecases/post/get_posts_usecase.dart';
 import 'package:auth/domain/usecases/post/edit_post_usecase.dart';
@@ -21,10 +22,14 @@ class PostCubit extends Cubit<PostState> {
       'post_comments_count_floors_v2';
   static const String _commentsCountCeilingsPrefsKey =
       'post_comments_count_ceilings_v2';
+  static const String _reactionsSnapshotPrefsKey = 'post_reactions_snapshot_v1';
   bool _isCommentsCountFloorsLoaded = false;
   bool _isCommentsCountCeilingsLoaded = false;
+  bool _isReactionsSnapshotLoaded = false;
   final Map<String, int> _commentsCountFloors = {};
   final Map<String, int> _commentsCountCeilings = {};
+  final Map<String, int> _cachedReactionsCount = {};
+  final Map<String, ReactionType> _cachedUserReactions = {};
 
   PostCubit({
     required this.getPostsUseCase,
@@ -111,6 +116,78 @@ class PostCubit extends Cubit<PostState> {
   }
 
   int _normalizeCommentsCount(int count) => count < 0 ? 0 : count;
+  int _normalizeReactionsCount(int count) => count < 0 ? 0 : count;
+
+  void _ensureReactionsSnapshotLoaded() {
+    if (_isReactionsSnapshotLoaded) return;
+    _isReactionsSnapshotLoaded = true;
+
+    final raw = prefs.getString(_reactionsSnapshotPrefsKey);
+    if (raw == null || raw.trim().isEmpty) return;
+
+    try {
+      final decoded = jsonDecode(raw);
+      if (decoded is! Map<String, dynamic>) return;
+
+      decoded.forEach((postId, value) {
+        if (postId.trim().isEmpty || value is! Map<String, dynamic>) {
+          return;
+        }
+
+        final rawCount = value['count'];
+        if (rawCount is int && rawCount >= 0) {
+          _cachedReactionsCount[postId] = rawCount;
+        } else if (rawCount is String) {
+          final parsed = int.tryParse(rawCount);
+          if (parsed != null && parsed >= 0) {
+            _cachedReactionsCount[postId] = parsed;
+          }
+        }
+
+        final rawReaction = value['reaction']?.toString();
+        if (rawReaction == null || rawReaction.trim().isEmpty) {
+          return;
+        }
+        final parsedReaction = _parseReactionType(rawReaction);
+        _cachedUserReactions[postId] = parsedReaction;
+        if (parsedReaction != ReactionType.none &&
+            (_cachedReactionsCount[postId] ?? 0) == 0) {
+          _cachedReactionsCount[postId] = 1;
+        }
+      });
+    } catch (_) {
+      _cachedReactionsCount.clear();
+      _cachedUserReactions.clear();
+    }
+  }
+
+  ReactionType _parseReactionType(String value) {
+    try {
+      return ReactionType.values.firstWhere(
+        (type) => type.name == value.trim().toLowerCase(),
+      );
+    } catch (_) {
+      return ReactionType.none;
+    }
+  }
+
+  void _persistReactionsSnapshot() {
+    final payload = <String, dynamic>{};
+    final allPostIds = <String>{
+      ..._cachedReactionsCount.keys,
+      ..._cachedUserReactions.keys,
+    };
+
+    for (final postId in allPostIds) {
+      payload[postId] = {
+        'count': _cachedReactionsCount[postId] ?? 0,
+        'reaction': (_cachedUserReactions[postId] ?? ReactionType.none).name,
+      };
+    }
+
+    // ignore: discarded_futures
+    prefs.setString(_reactionsSnapshotPrefsKey, jsonEncode(payload));
+  }
 
   List<Post> _applyCommentsCountFloors(List<Post> source) {
     _ensureCommentsCountFloorsLoaded();
@@ -158,6 +235,58 @@ class PostCubit extends Cubit<PostState> {
     }
     if (didMutateCeilings) {
       _persistCommentsCountCeilings();
+    }
+    return updated;
+  }
+
+  List<Post> _applyReactionSnapshot(List<Post> source) {
+    _ensureReactionsSnapshotLoaded();
+
+    var didMutateCache = false;
+    final updated = source.map((post) {
+      final postId = post.postID;
+      if (postId == null || postId.trim().isEmpty) {
+        return post;
+      }
+
+      var resolvedCount = _normalizeReactionsCount(post.reactionsCount);
+      var resolvedReaction = post.userReaction;
+
+      final cachedCount = _cachedReactionsCount[postId];
+      if (cachedCount != null) {
+        if (resolvedCount == cachedCount) {
+          _cachedReactionsCount.remove(postId);
+          didMutateCache = true;
+        } else {
+          resolvedCount = cachedCount;
+        }
+      }
+
+      final cachedReaction = _cachedUserReactions[postId];
+      if (cachedReaction != null) {
+        if (resolvedReaction == cachedReaction) {
+          _cachedUserReactions.remove(postId);
+          didMutateCache = true;
+        } else if (resolvedReaction == ReactionType.none) {
+          resolvedReaction = cachedReaction;
+        } else {
+          _cachedUserReactions.remove(postId);
+          didMutateCache = true;
+        }
+      }
+
+      if (resolvedReaction != ReactionType.none && resolvedCount == 0) {
+        resolvedCount = 1;
+      }
+
+      return post.copyWith(
+        reactionsCount: _normalizeReactionsCount(resolvedCount),
+        userReaction: resolvedReaction,
+      );
+    }).toList();
+
+    if (didMutateCache) {
+      _persistReactionsSnapshot();
     }
     return updated;
   }
@@ -210,7 +339,7 @@ class PostCubit extends Cubit<PostState> {
       },
       (newPosts) {
         if (isClosed) return;
-        posts = _applyCommentsCountFloors(newPosts);
+        posts = _applyReactionSnapshot(_applyCommentsCountFloors(newPosts));
 
         if (newPosts.isEmpty) {
           hasReachedMax = true;
@@ -238,7 +367,9 @@ class PostCubit extends Cubit<PostState> {
         emit(PostsLoadingMoreError(failure.message, List.from(posts)));
       },
       (newPosts) {
-        final normalizedNewPosts = _applyCommentsCountFloors(newPosts);
+        final normalizedNewPosts = _applyReactionSnapshot(
+          _applyCommentsCountFloors(newPosts),
+        );
         if (newPosts.isEmpty) {
           hasReachedMax = true;
           emit(PostLoaded(List.from(posts), hasReachedMax: true));
@@ -263,7 +394,10 @@ class PostCubit extends Cubit<PostState> {
   }
 
   void addNewPostToFeed(Post newPost) {
-    posts.insert(0, _applyCommentsCountFloors([newPost]).first);
+    posts.insert(
+      0,
+      _applyReactionSnapshot(_applyCommentsCountFloors([newPost])).first,
+    );
     emit(PostLoaded(List.from(posts), hasReachedMax: hasReachedMax));
   }
 
@@ -279,9 +413,7 @@ class PostCubit extends Cubit<PostState> {
 
     final currentPost = posts[index];
     final currentCount = _normalizeCommentsCount(currentPost.commentsCount);
-    final nextCount = (currentCount + by)
-        .clamp(0, 1 << 31)
-        .toInt();
+    final nextCount = (currentCount + by).clamp(0, 1 << 31).toInt();
     posts[index] = currentPost.copyWith(commentsCount: nextCount);
     if (by > 0) {
       _ensureCommentsCountCeilingsLoaded();
@@ -297,6 +429,36 @@ class PostCubit extends Cubit<PostState> {
     emit(PostLoaded(List.from(posts), hasReachedMax: hasReachedMax));
   }
 
+  void updatePostReaction({
+    required String postId,
+    required ReactionType reactionType,
+    required int reactionsCount,
+  }) {
+    if (postId.trim().isEmpty) {
+      return;
+    }
+
+    final index = posts.indexWhere((p) => p.postID == postId);
+    if (index == -1) {
+      return;
+    }
+
+    var safeCount = reactionsCount < 0 ? 0 : reactionsCount;
+    if (reactionType != ReactionType.none && safeCount == 0) {
+      safeCount = 1;
+    }
+    posts[index] = posts[index].copyWith(
+      reactionsCount: safeCount,
+      userReaction: reactionType,
+    );
+    _ensureReactionsSnapshotLoaded();
+    _cachedReactionsCount[postId] = safeCount;
+    _cachedUserReactions[postId] = reactionType;
+    _persistReactionsSnapshot();
+
+    emit(PostLoaded(List.from(posts), hasReachedMax: hasReachedMax));
+  }
+
   Future<void> deletePost({required Post post}) async {
     final String postId = post.postID ?? '';
     emit(DeletePostLoading(postId: postId));
@@ -309,13 +471,20 @@ class PostCubit extends Cubit<PostState> {
       posts.removeWhere((item) => item.postID == postId);
       _ensureCommentsCountFloorsLoaded();
       _ensureCommentsCountCeilingsLoaded();
+      _ensureReactionsSnapshotLoaded();
       final didRemoveFloor = _commentsCountFloors.remove(postId) != null;
       final didRemoveCeiling = _commentsCountCeilings.remove(postId) != null;
+      final didRemoveReactionCount =
+          _cachedReactionsCount.remove(postId) != null;
+      final didRemoveReactionType = _cachedUserReactions.remove(postId) != null;
       if (didRemoveFloor) {
         _persistCommentsCountFloors();
       }
       if (didRemoveCeiling) {
         _persistCommentsCountCeilings();
+      }
+      if (didRemoveReactionCount || didRemoveReactionType) {
+        _persistReactionsSnapshot();
       }
       emit(PostLoaded(List.from(posts), hasReachedMax: hasReachedMax));
       emit(DeletePostSuccess(post: post));
@@ -349,7 +518,9 @@ class PostCubit extends Cubit<PostState> {
       (updatedPost) {
         final index = posts.indexWhere((p) => p.postID == postId);
         if (index != -1) {
-          posts[index] = updatedPost;
+          posts[index] = _applyReactionSnapshot(
+            _applyCommentsCountFloors([updatedPost]),
+          ).first;
         }
 
         emit(PostLoaded(List.from(posts), hasReachedMax: hasReachedMax));

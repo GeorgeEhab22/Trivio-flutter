@@ -119,18 +119,20 @@ class CommentRepositoryImpl implements CommentRepository {
   }
 
   @override
-  Future<Either<Failure, Comment>> reactToComment({
+  Future<Either<Failure, String?>> reactToComment({
     required String commentId,
-    required String userId,
     required String reactionType,
+    bool isUpdate = false,
+    String? reactionId,
   }) async {
     try {
-      final model = await remoteDataSource.reactToComment(
+      final updatedReactionId = await remoteDataSource.reactToComment(
         commentId: commentId,
-        userId: userId,
         reactionType: reactionType,
+        isUpdate: isUpdate,
+        reactionId: reactionId,
       );
-      return Right(model.toEntity());
+      return Right(updatedReactionId);
     } on AuthException catch (e) {
       return Left(AuthFailure(e.message));
     } on ServerException catch (e) {
@@ -173,16 +175,16 @@ class CommentRepositoryImpl implements CommentRepository {
   }
 
   @override
-  Future<Either<Failure, Comment>> removeReactionFromComment({
+  Future<Either<Failure, void>> removeReactionFromComment({
     required String commentId,
-    required String userId,
+    String? reactionId,
   }) async {
     try {
-      final model = await remoteDataSource.removeReactionFromComment(
+      await remoteDataSource.removeReactionFromComment(
         commentId: commentId,
-        userId: userId,
+        reactionId: reactionId,
       );
-      return Right(model.toEntity());
+      return const Right(null);
     } on AuthException catch (e) {
       return Left(AuthFailure(e.message));
     } on ServerException catch (e) {

@@ -21,6 +21,7 @@ class PostInteractionCubit extends Cubit<PostInteractionState> {
   final SharePostUseCase sharePostUseCase;
   final SavePostUseCase toggleSavePostUseCase;
   final FollowUserUseCase followUserUseCase;
+  final Map<String, String> _reactionIdsByPost = {};
 
   PostInteractionCubit({
     required this.reactToPostUseCase,
@@ -32,26 +33,41 @@ class PostInteractionCubit extends Cubit<PostInteractionState> {
     required this.followUserUseCase,
   }) : super(PostInteractionInitial());
 
+  String? reactionIdForPost(String postId) {
+    final value = _reactionIdsByPost[postId]?.trim();
+    if (value == null || value.isEmpty) {
+      return null;
+    }
+    return value;
+  }
+
+  void primeReactionId({required String postId, String? reactionId}) {
+    if (postId.trim().isEmpty) {
+      return;
+    }
+    final normalized = reactionId?.trim();
+    if (normalized == null || normalized.isEmpty) {
+      return;
+    }
+    _reactionIdsByPost[postId] = normalized;
+  }
+
   // react to post
   Future<void> toggleReaction({
     required String postId,
-    required String userId,
     required ReactionType currentReaction,
     required int currentCount,
+    String? currentReactionId,
   }) async {
-    final wasGoal = currentReaction == ReactionType.goal;
     int newCount = currentCount;
     ReactionType newReaction = currentReaction;
 
-    // TODO:later add offside logic
-    if (wasGoal) {
+    if (currentReaction == ReactionType.none) {
+      newReaction = ReactionType.like;
+      newCount = newCount + 1;
+    } else {
       newReaction = ReactionType.none;
       newCount = (newCount - 1).clamp(0, 1 << 30);
-    } else {
-      if (currentReaction == ReactionType.none) {
-        newCount = newCount + 1;
-      }
-      newReaction = ReactionType.goal;
     }
 
     emit(
@@ -59,34 +75,39 @@ class PostInteractionCubit extends Cubit<PostInteractionState> {
         postId: postId,
         reactionType: newReaction,
         count: newCount,
+        reactionId: currentReactionId,
       ),
     );
 
     if (newReaction == ReactionType.none) {
       await _performRemoveReaction(
         postId: postId,
-        userId: userId,
         oldReaction: currentReaction,
         oldCount: currentCount,
+        oldReactionId: currentReactionId,
       );
     } else {
       await _performReactApiCall(
         postId: postId,
-        userId: userId,
         reactionType: newReaction,
         oldReaction: currentReaction,
         oldCount: currentCount,
+        oldReactionId: currentReactionId,
       );
     }
   }
 
   Future<void> chooseReaction({
     required String postId,
-    required String userId,
     required ReactionType chosenType,
     required ReactionType currentReaction,
     required int currentCount,
+    String? currentReactionId,
   }) async {
+    if (chosenType == ReactionType.none) {
+      return;
+    }
+
     final wasNone = currentReaction == ReactionType.none;
     int newCount = currentCount;
 
@@ -99,29 +120,31 @@ class PostInteractionCubit extends Cubit<PostInteractionState> {
         postId: postId,
         reactionType: chosenType,
         count: newCount,
+        reactionId: currentReactionId,
       ),
     );
 
     await _performReactApiCall(
       postId: postId,
-      userId: userId,
       reactionType: chosenType,
       oldReaction: currentReaction,
       oldCount: currentCount,
+      oldReactionId: currentReactionId,
     );
   }
 
   Future<void> _performReactApiCall({
     required String postId,
-    required String userId,
     required ReactionType reactionType,
     required ReactionType oldReaction,
     required int oldCount,
+    String? oldReactionId,
   }) async {
     final result = await reactToPostUseCase(
       postId: postId,
-      userId: userId,
       reactionType: reactionType,
+      isUpdate: oldReaction != ReactionType.none,
+      reactionId: oldReactionId,
     );
 
     result.fold(
@@ -133,14 +156,31 @@ class PostInteractionCubit extends Cubit<PostInteractionState> {
             errorType: 'server',
             oldReactionType: oldReaction,
             oldCount: oldCount,
+            oldReactionId: oldReactionId,
           ),
         );
       },
-      (post) {
+      (updatedReactionId) {
+        final normalizedUpdatedId = updatedReactionId?.trim();
+        final normalizedOldId = oldReactionId?.trim();
+        final resolvedReactionId =
+            (normalizedUpdatedId != null && normalizedUpdatedId.isNotEmpty)
+            ? normalizedUpdatedId
+            : ((normalizedOldId != null && normalizedOldId.isNotEmpty)
+                  ? normalizedOldId
+                  : null);
+
+        if (reactionType == ReactionType.none) {
+          _reactionIdsByPost.remove(postId);
+        } else if (resolvedReactionId != null) {
+          _reactionIdsByPost[postId] = resolvedReactionId;
+        }
+
         emit(
           ReactToPostSuccess(
-            postId: post.postID ?? '',
+            postId: postId,
             reactionType: reactionType,
+            reactionId: resolvedReactionId,
           ),
         );
       },
@@ -149,14 +189,11 @@ class PostInteractionCubit extends Cubit<PostInteractionState> {
 
   Future<void> _performRemoveReaction({
     required String postId,
-    required String userId,
     required ReactionType oldReaction,
     required int oldCount,
+    String? oldReactionId,
   }) async {
-    final result = await removeReactionFromPostUseCase(
-      postId: postId,
-      userId: userId,
-    );
+    final result = await removeReactionFromPostUseCase(postId: postId);
 
     result.fold(
       (failure) {
@@ -167,12 +204,18 @@ class PostInteractionCubit extends Cubit<PostInteractionState> {
             errorType: 'server',
             oldReactionType: oldReaction,
             oldCount: oldCount,
+            oldReactionId: oldReactionId,
           ),
         );
       },
-      (post) {
+      (_) {
+        _reactionIdsByPost.remove(postId);
         emit(
-          ReactToPostSuccess(postId: postId, reactionType: ReactionType.none),
+          ReactToPostSuccess(
+            postId: postId,
+            reactionType: ReactionType.none,
+            reactionId: null,
+          ),
         );
       },
     );
@@ -303,7 +346,8 @@ class PostInteractionCubit extends Cubit<PostInteractionState> {
     );
 
     result.fold(
-      (failure) => emit(ReportPostError(postId: postId, message: failure.message)),
+      (failure) =>
+          emit(ReportPostError(postId: postId, message: failure.message)),
       (_) => emit(ReportPostSuccess(postId: postId)),
     );
   }

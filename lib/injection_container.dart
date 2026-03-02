@@ -32,6 +32,7 @@ import 'package:auth/domain/usecases/comment/get_comments_usecase.dart';
 import 'package:auth/domain/usecases/comment/get_replies_usecase.dart';
 import 'package:auth/domain/usecases/comment/mention_users_in_comment_usecase.dart';
 import 'package:auth/domain/usecases/comment/react_to_comment_usecase.dart';
+import 'package:auth/domain/usecases/comment/remove_reaction_from_comment_usecase.dart';
 import 'package:auth/domain/usecases/group/accept_join_request_use_case.dart';
 import 'package:auth/domain/usecases/group/cancel_request_use_case.dart';
 import 'package:auth/domain/usecases/group/decline_join_request_use_case.dart';
@@ -261,6 +262,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => GetRepliesUseCase(sl()));
   sl.registerLazySingleton(() => MentionUsersInCommentUseCase(sl()));
   sl.registerLazySingleton(() => ReactToCommentUseCase(sl()));
+  sl.registerLazySingleton(() => RemoveReactionFromCommentUseCase(sl()));
 
   // Cubit
   sl.registerFactory(
@@ -273,6 +275,7 @@ Future<void> init() async {
       getRepliesUseCase: sl(),
       mentionUsersInCommentUseCase: sl(),
       reactToCommentUseCase: sl(),
+      removeReactionFromCommentUseCase: sl(),
     ),
   );
 

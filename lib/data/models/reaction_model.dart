@@ -10,11 +10,26 @@ class ReactionModel extends Reaction {
   });
 
   factory ReactionModel.fromJson(Map<String, dynamic> json) {
+    String parseIdSafely(dynamic value) {
+      if (value == null) return '';
+      if (value is Map<String, dynamic>) {
+        final nested = value['_id'] ?? value['id'] ?? '';
+        return nested.toString();
+      }
+      return value.toString();
+    }
+
+    final rawUser = json['userId'] ?? json['user'] ?? json['author'];
+
     return ReactionModel(
-      id: json['_id'] ?? '',
-      userId: json['userId'] ?? '',
-      postId: json['postId'] ?? '',
-      type: _mapStringToReactionType(json['type']),
+      id: parseIdSafely(json['_id'] ?? json['id']),
+      userId: parseIdSafely(rawUser),
+      postId: parseIdSafely(
+        json['postId'] ?? json['modelId'],
+      ), 
+      type: _mapStringToReactionType(
+        json['type'] ?? json['reaction'],
+      ), 
     );
   }
 

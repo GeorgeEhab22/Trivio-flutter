@@ -22,21 +22,31 @@ class PostReactionUpdated extends PostInteractionState {
   @override
   final ReactionType reactionType;
   final int count;
+  final String? reactionId;
   const PostReactionUpdated({
     required this.postId,
     required this.reactionType,
     required this.count,
+    this.reactionId,
   });
   
   @override
-  List<Object> get props => [postId, reactionType, count];
+  List<Object?> get props => [postId, reactionType, count, reactionId];
 }
 
 class ReactToPostSuccess extends PostInteractionState {
   final String postId;
   @override
   final ReactionType reactionType;
-  const ReactToPostSuccess({required this.postId, required this.reactionType});
+  final String? reactionId;
+  const ReactToPostSuccess({
+    required this.postId,
+    required this.reactionType,
+    this.reactionId,
+  });
+
+  @override
+  List<Object?> get props => [postId, reactionType, reactionId];
 }
 
 class ReactToPostError extends PostInteractionState {
@@ -45,6 +55,7 @@ class ReactToPostError extends PostInteractionState {
   final String errorType;
   final ReactionType? oldReactionType; 
   final int? oldCount;
+  final String? oldReactionId;
 
   const ReactToPostError({
     required this.postId, 
@@ -52,13 +63,20 @@ class ReactToPostError extends PostInteractionState {
     required this.errorType,
     this.oldReactionType,
     this.oldCount,
+    this.oldReactionId,
   });
 
   @override
-  List<Object?> get props => [postId, message, errorType, oldReactionType, oldCount];
+  List<Object?> get props => [
+    postId,
+    message,
+    errorType,
+    oldReactionType,
+    oldCount,
+    oldReactionId,
+  ];
 }
 
-// TODO:remove reaction from post later .. does it important?
 
 
 

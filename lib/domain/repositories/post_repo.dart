@@ -54,15 +54,16 @@ abstract class PostRepo {
 
   Future<Either<Failure, void>> deletePost(String postId);
 
-  Future<Either<Failure, Post>> reactToPost({
+  Future<Either<Failure, String?>> reactToPost({
     required String postId,
-    required String userId,
     required ReactionType reactionType,
+    bool isUpdate = false,
+    String? reactionId,
   });
 
-  Future<Either<Failure, Post>> removeReactionFromPost({
+  Future<Either<Failure, void>> removeReactionFromPost({
     required String postId,
-    required String userId,
+    String? reactionId,
   });
 
   Future<Either<Failure, List<Post>>> searchPosts(String query);

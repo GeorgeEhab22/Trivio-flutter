@@ -29,6 +29,5 @@ class RegularTime {
 		);
 	}
 
-	@override
-	int get hashCode => home.hashCode ^ away.hashCode;
+	
 }

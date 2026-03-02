@@ -1,3 +1,4 @@
+
 import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/authentication/widgets/show_custom_snackbar.dart';
 import 'package:auth/presentation/groups/widgets/dummy_for_skeletonizer.dart';
@@ -8,6 +9,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class TimelineListView extends StatelessWidget {
+  // TODO: Remove this presentation fallback once auth/session user id is always available.
+  static const String _presentationReactionUserId = '69a1a4cbab9f71890ad97692';
+
   const TimelineListView({super.key});
 
   @override
@@ -64,7 +68,7 @@ class TimelineListView extends StatelessWidget {
 
               return PostCard(
                 post: displayPosts[index],
-                currentUserId: '69a1a4cbab9f71890ad97692',
+                currentUserId: _presentationReactionUserId,
                 isFollowing: false,
               );
             }, childCount: displayPosts.length + (isLoadingMore ? 1 : 0)),
@@ -73,4 +77,6 @@ class TimelineListView extends StatelessWidget {
       },
     );
   }
+
+
 }

@@ -41,7 +41,6 @@ class PostRepositoryImpl implements PostRepo {
     }
   }
 
-  
   @override
   Future<Either<Failure, Post>> getPost(String postId) async {
     try {
@@ -57,7 +56,6 @@ class PostRepositoryImpl implements PostRepo {
   }
 
   @override
-
   Future<Either<Failure, List<Post>>> fetchPosts({
     int page = 1,
     int limit = 20,
@@ -85,11 +83,8 @@ class PostRepositoryImpl implements PostRepo {
     required String comment,
   }) async {
     try {
-      final model = await remoteDataSource.reactToPost(
-        postId: postId,
-        userId: userId,
-        reactionType: comment,
-      );
+      await remoteDataSource.reactToPost(postId: postId, reactionType: comment);
+      final model = await remoteDataSource.fetchSinglePost(postId);
       return Right(model.toEntity());
     } on AuthException catch (e) {
       return Left(AuthFailure(e.message));
@@ -112,8 +107,7 @@ class PostRepositoryImpl implements PostRepo {
       final model = await remoteDataSource.editPost(
         postId: postId,
         newCaption: newCaption,
-        newType: newType
-
+        newType: newType,
       );
       return Right(model.toEntity());
     } on AuthException catch (e) {
@@ -230,19 +224,21 @@ class PostRepositoryImpl implements PostRepo {
   }
 
   @override
-  Future<Either<Failure, Post>> reactToPost({
+  Future<Either<Failure, String?>> reactToPost({
     required String postId,
-    required String userId,
     required ReactionType reactionType,
+    bool isUpdate = false,
+    String? reactionId,
   }) async {
     try {
       final String reactionStr = reactionType.toString().split('.').last;
-      final model = await remoteDataSource.reactToPost(
+      final updatedReactionId = await remoteDataSource.reactToPost(
         postId: postId,
-        userId: userId,
         reactionType: reactionStr,
+        isUpdate: isUpdate,
+        reactionId: reactionId,
       );
-      return Right(model.toEntity());
+      return Right(updatedReactionId);
     } on AuthException catch (e) {
       return Left(AuthFailure(e.message));
     } on ServerException catch (e) {
@@ -255,16 +251,16 @@ class PostRepositoryImpl implements PostRepo {
   }
 
   @override
-  Future<Either<Failure, Post>> removeReactionFromPost({
+  Future<Either<Failure, void>> removeReactionFromPost({
     required String postId,
-    required String userId,
+    String? reactionId,
   }) async {
     try {
-      final model = await remoteDataSource.removeReactionFromPost(
+      await remoteDataSource.removeReactionFromPost(
         postId: postId,
-        userId: userId,
+        reactionId: reactionId,
       );
-      return Right(model.toEntity());
+      return const Right(null);
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));
     } on NetworkException catch (e) {

@@ -1,7 +1,5 @@
-import 'dart:async';
 import 'package:auth/domain/entities/reaction_type.dart';
 import 'package:auth/l10n/app_localizations.dart'; // Import localization
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'widgets/reaction_button.dart';
 import 'widgets/reaction_overlay.dart';
@@ -26,13 +24,25 @@ class ReactionInteraction extends StatefulWidget {
 
 class _ReactionInteractionState extends State<ReactionInteraction> {
   OverlayEntry? _overlayEntry;
-  Timer? _hoverTimer;
-  Timer? _closeTimer;
   bool _isOverlayOpen = false;
 
-  // Static lists for logic
-  static const List<String> _emojiList = ['🥅', '🚩'];
+  static const List<String> _emojiList = [
+    '👍',
+    '❤️',
+    '😂',
+    '😮',
+    '😢',
+    '😡',
+    '🥅',
+    '🚩',
+  ];
   static const List<ReactionType> _reactionList = [
+    ReactionType.like,
+    ReactionType.love,
+    ReactionType.haha,
+    ReactionType.wow,
+    ReactionType.sad,
+    ReactionType.angry,
     ReactionType.goal,
     ReactionType.offside,
   ];
@@ -43,35 +53,26 @@ class _ReactionInteractionState extends State<ReactionInteraction> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // Initialize or update localized names when the locale changes
     final l10n = AppLocalizations.of(context)!;
-    _localizedReactionNames = [
-      l10n.reactionGoal,
-      l10n.reactionOffside,
-    ];
+    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
+    _localizedReactionNames = isArabic
+        ? const ['إعجاب', 'حب', 'مضحك', 'انبهار', 'حزين', 'غاضب', 'هدف', 'تسلل']
+        : [
+            'Like',
+            'Love',
+            'Haha',
+            'Wow',
+            'Sad',
+            'Angry',
+            l10n.reactionGoal,
+            l10n.reactionOffside,
+          ];
   }
 
   @override
   void dispose() {
-    _hoverTimer?.cancel();
-    _closeTimer?.cancel();
     _removeOverlay();
     super.dispose();
-  }
-
-  void _onHoverEnter(bool isHovered) {
-    if (!kIsWeb) return;
-    if (isHovered) {
-      _closeTimer?.cancel();
-      if (!_isOverlayOpen) {
-        _hoverTimer = Timer(const Duration(milliseconds: 500), () {
-          if (mounted) _showOverlayAtAnchor(_buttonGlobalRect());
-        });
-      }
-    } else {
-      _hoverTimer?.cancel();
-      _closeTimer = Timer(const Duration(milliseconds: 300), _removeOverlay);
-    }
   }
 
   Rect _buttonGlobalRect() {
@@ -112,8 +113,7 @@ class _ReactionInteractionState extends State<ReactionInteraction> {
     return buildReactionsOverlay(
       anchor: anchor,
       emojiList: _emojiList,
-      // Use the localized list here
-      reactionNames: _localizedReactionNames, 
+      reactionNames: _localizedReactionNames,
       reactionList: _reactionList,
       onReactionSelected: (type) {
         _removeOverlay();
@@ -122,16 +122,7 @@ class _ReactionInteractionState extends State<ReactionInteraction> {
       onExit: () {
         _removeOverlay();
       },
-      onHoverChange: (isHoveringInOverlay) {
-        if (isHoveringInOverlay) {
-          _closeTimer?.cancel();
-        } else {
-          _closeTimer = Timer(
-            const Duration(milliseconds: 300),
-            _removeOverlay,
-          );
-        }
-      },
+      onHoverChange: (_) {},
     );
   }
 
@@ -153,17 +144,9 @@ class _ReactionInteractionState extends State<ReactionInteraction> {
             : rect;
         _showOverlayAtAnchor(anchor);
       },
-      onLongPressEnd: (_) {
-        // Use a short delay or microtask to ensure the tap doesn't immediately close it
-        Future.microtask(() => _removeOverlay());
-      },
-      child: MouseRegion(
-        onEnter: (_) => _onHoverEnter(true),
-        onExit: (_) => _onHoverEnter(false),
-        child: ReactionButton(
-          count: widget.count,
-          reactionType: widget.reactionType,
-        ),
+      child: ReactionButton(
+        count: widget.count,
+        reactionType: widget.reactionType,
       ),
     );
   }

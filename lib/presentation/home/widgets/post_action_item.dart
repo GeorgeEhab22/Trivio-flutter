@@ -8,7 +8,7 @@ class PostActionItem extends StatelessWidget {
   final int count;
   final Color? color;
   final VoidCallback? onTap;
-  final String? tooltip; // optional for accessibility
+  final String? tooltip; 
 
   const PostActionItem({
     super.key,

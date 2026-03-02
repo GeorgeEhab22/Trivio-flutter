@@ -1,10 +1,9 @@
 import 'package:auth/constants/colors.dart';
 import 'package:auth/domain/entities/comment.dart';
 import 'package:auth/domain/entities/reaction_type.dart';
-import 'package:auth/injection_container.dart' as di;
 import 'package:auth/l10n/app_localizations.dart';
-import 'package:auth/presentation/home/reactions/reaction_action.dart';
-import 'package:auth/presentation/manager/post_cubit/post_interaction_cubit.dart';
+import 'package:auth/presentation/home/reactions/reaction_interaction.dart';
+import 'package:auth/presentation/manager/comment_cubit/comment_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -48,14 +47,30 @@ class CommentActionsRow extends StatelessWidget {
         ),
         child: Row(
           children: [
-            BlocProvider(
-              create: (context) => di.sl<PostInteractionCubit>(),
-              child: ReactionAction(
-                postId: comment.id,
-                userId: currentUserId,
-                initialReaction: initialReaction ?? ReactionType.none,
-                initialCount: comment.reactions.length,
-              ),
+            Builder(
+              builder: (context) {
+                final currentReaction = _resolveCurrentUserReaction();
+                final count = _resolveReactionsCount(currentReaction);
+                return ReactionInteraction(
+                  reactionType: currentReaction,
+                  count: count,
+                  onTap: () {
+                    context.read<CommentCubit>().toggleReactionOnComment(
+                      commentId: comment.id,
+                      currentUserId: currentUserId,
+                      currentReaction: currentReaction,
+                    );
+                  },
+                  onReactionSelected: (chosenReaction) {
+                    context.read<CommentCubit>().chooseReactionOnComment(
+                      commentId: comment.id,
+                      currentUserId: currentUserId,
+                      chosenReaction: chosenReaction,
+                      currentReaction: currentReaction,
+                    );
+                  },
+                );
+              },
             ),
             if (!isReply) ...[
               const SizedBox(width: 8),
@@ -69,7 +84,10 @@ class CommentActionsRow extends StatelessWidget {
                   }
                 },
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   child: Row(
                     children: [
                       Icon(
@@ -80,10 +98,7 @@ class CommentActionsRow extends StatelessWidget {
                       const SizedBox(width: 4),
                       Text(
                         l10n.reply,
-                        style: TextStyle(
-                          color: mutedTextColor,
-                          fontSize: 13,
-                        ),
+                        style: TextStyle(color: mutedTextColor, fontSize: 13),
                       ),
                     ],
                   ),
@@ -91,11 +106,35 @@ class CommentActionsRow extends StatelessWidget {
               ),
             ],
             const Spacer(),
-           
           ],
         ),
       ),
     );
+  }
+
+  ReactionType _resolveCurrentUserReaction() {
+    if (initialReaction != null && initialReaction != ReactionType.none) {
+      return initialReaction!;
+    }
+    if (comment.userReaction != ReactionType.none) {
+      return comment.userReaction;
+    }
+    for (final reaction in comment.reactions.reversed) {
+      if (reaction.userId == currentUserId) {
+        return reaction.type;
+      }
+    }
+    return ReactionType.none;
+  }
+
+  int _resolveReactionsCount(ReactionType currentReaction) {
+    final count = comment.reactionsCount > 0
+        ? comment.reactionsCount
+        : comment.reactions.length;
+    if (count == 0 && currentReaction != ReactionType.none) {
+      return 1;
+    }
+    return count;
   }
 }
 
@@ -106,10 +145,6 @@ class _ActionDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 1,
-      height: 20,
-      color: AppColors.primary,
-    );
+    return Container(width: 1, height: 20, color: AppColors.primary);
   }
 }

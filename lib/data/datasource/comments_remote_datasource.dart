@@ -39,15 +39,16 @@ abstract class CommentsRemoteDataSource {
     String? keyword,
   });
 
-  Future<CommentModel> reactToComment({
+  Future<String?> reactToComment({
     required String commentId,
-    required String userId,
     required String reactionType,
+    bool isUpdate = false,
+    String? reactionId,
   });
 
-  Future<CommentModel> removeReactionFromComment({
+  Future<void> removeReactionFromComment({
     required String commentId,
-    required String userId,
+    String? reactionId,
   });
 
   Future<CommentModel> mentionUsersInComment({
@@ -73,6 +74,45 @@ class CommentsRemoteDataSourceImpl implements CommentsRemoteDataSource {
       throw AuthException('User not authenticated');
     }
     return Options(headers: {'Authorization': 'Bearer $token'});
+  }
+
+  String? _normalizeReactionIdForApi(String? reactionId) {
+    final value = reactionId?.trim();
+    if (value == null || value.isEmpty) {
+      return null;
+    }
+    if (value.startsWith('local-')) {
+      return null;
+    }
+    return value;
+  }
+
+  String? _extractReactionIdFromResponse(Map<String, dynamic> response) {
+    final data = response["data"];
+    if (data is! Map<String, dynamic>) {
+      return null;
+    }
+
+    final reaction = data["reaction"];
+    if (reaction is Map<String, dynamic>) {
+      final id = (reaction["_id"] ?? reaction["id"])?.toString().trim();
+      if (id != null && id.isNotEmpty) {
+        return id;
+      }
+    }
+
+    final nestedData = data["data"];
+    if (nestedData is List && nestedData.isNotEmpty) {
+      final first = nestedData.first;
+      if (first is Map<String, dynamic>) {
+        final id = (first["_id"] ?? first["id"])?.toString().trim();
+        if (id != null && id.isNotEmpty) {
+          return id;
+        }
+      }
+    }
+
+    return null;
   }
 
   @override
@@ -366,20 +406,72 @@ class CommentsRemoteDataSourceImpl implements CommentsRemoteDataSource {
   }
 
   @override
-  Future<CommentModel> reactToComment({
+  Future<String?> reactToComment({
     required String commentId,
-    required String userId,
     required String reactionType,
+    bool isUpdate = false,
+    String? reactionId,
   }) async {
+    final endpoint = ApiEndpoints.reactionsOnComment(commentId);
+    final normalizedReactionId = _normalizeReactionIdForApi(reactionId);
     try {
+      if (isUpdate) {
+        if (normalizedReactionId != null) {
+          final response = await api.patch(
+            ApiEndpoints.reactionById(normalizedReactionId),
+            data: {'reaction': reactionType},
+            options: _getAuthOptions(),
+          );
+          return _extractReactionIdFromResponse(response) ??
+              normalizedReactionId;
+        }
+
+        final response = await api.patch(
+          endpoint,
+          data: {'reaction': reactionType},
+          options: _getAuthOptions(),
+        );
+        return _extractReactionIdFromResponse(response) ?? normalizedReactionId;
+      }
+
       final response = await api.post(
-        "${ApiEndpoints.reactToComment}$commentId",
-        data: {"userId": userId, "reactionType": reactionType},
+        endpoint,
+        data: {'reaction': reactionType},
         options: _getAuthOptions(),
       );
-
-      return CommentModel.fromJson(response["data"][0]);
+      return _extractReactionIdFromResponse(response);
     } on AuthException {
+      rethrow;
+    } on DioException catch (e) {
+      final errorMessage = e.response?.data is Map<String, dynamic>
+          ? (e.response!.data['message'] ?? '').toString().toLowerCase()
+          : '';
+      final shouldRetryAsPatch =
+          !isUpdate && errorMessage.contains('already reacted');
+      final shouldRetryAsPatchById =
+          isUpdate &&
+          (errorMessage.contains('already reacted') ||
+              errorMessage.contains('use patch to update'));
+
+      if (shouldRetryAsPatch || shouldRetryAsPatchById) {
+        if (normalizedReactionId != null) {
+          final response = await api.patch(
+            ApiEndpoints.reactionById(normalizedReactionId),
+            data: {'reaction': reactionType},
+            options: _getAuthOptions(),
+          );
+          return _extractReactionIdFromResponse(response) ??
+              normalizedReactionId;
+        }
+
+        final response = await api.patch(
+          endpoint,
+          data: {'reaction': reactionType},
+          options: _getAuthOptions(),
+        );
+        return _extractReactionIdFromResponse(response) ?? normalizedReactionId;
+      }
+      errorHandler.handleDioError(e);
       rethrow;
     } catch (e) {
       errorHandler.handleDioError(e);
@@ -388,18 +480,24 @@ class CommentsRemoteDataSourceImpl implements CommentsRemoteDataSource {
   }
 
   @override
-  Future<CommentModel> removeReactionFromComment({
+  Future<void> removeReactionFromComment({
     required String commentId,
-    required String userId,
+    String? reactionId,
   }) async {
+    final normalizedReactionId = _normalizeReactionIdForApi(reactionId);
     try {
-      final response = await api.delete(
-        "${ApiEndpoints.removeReactionFromComment}$commentId",
-        data: {"userId": userId},
+      if (normalizedReactionId != null) {
+        await api.delete(
+          ApiEndpoints.reactionById(normalizedReactionId),
+          options: _getAuthOptions(),
+        );
+        return;
+      }
+
+      await api.delete(
+        ApiEndpoints.reactionsOnComment(commentId),
         options: _getAuthOptions(),
       );
-
-      return CommentModel.fromJson(response["data"][0]);
     } on AuthException {
       rethrow;
     } catch (e) {

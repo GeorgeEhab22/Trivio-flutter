@@ -30,7 +30,7 @@ class GroupsPostsFeed extends StatelessWidget {
               return PostCard(
                 // TODO: replace with real group data it is null now because of back end
                 post: state.posts[index],
-                currentUserId: "USER_ID_HERE",
+                currentUserId: "69a1a4cbab9f71890ad97692",
                 isFollowing: true,
               );
             },

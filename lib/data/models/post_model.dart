@@ -1,6 +1,9 @@
 import 'dart:core';
-import 'package:auth/domain/entities/post.dart';
+
+import 'package:auth/data/models/reaction_model.dart';
 import 'package:auth/domain/entities/mentions.dart';
+import 'package:auth/domain/entities/post.dart';
+import 'package:auth/domain/entities/reaction.dart';
 import 'package:auth/domain/entities/reaction_type.dart';
 
 class PostModel extends Post {
@@ -13,8 +16,8 @@ class PostModel extends Post {
     required this.updateCount,
     required this.reactionCounts,
     required super.media,
-    required super.authorId, // from Post entity
-    required super.type, // from Post entity
+    required super.authorId,
+    required super.type,
     super.caption,
     super.location,
     super.mentions,
@@ -24,21 +27,36 @@ class PostModel extends Post {
     super.groupName,
     super.groupCoverImage,
     super.commentsCount = 0,
+    super.reactions = const [],
+    super.reactionsCount = 0,
+    super.userReaction = ReactionType.none,
   });
 
-  /// Accepts either the whole response or just the `post` map.
   factory PostModel.fromJson(Map<String, dynamic> json) {
     int parseInt(dynamic value) {
       if (value is int) return value;
+      if (value is num) return value.toInt();
       if (value is String) return int.tryParse(value) ?? 0;
       return 0;
+    }
+
+    ReactionType parseReactionType(dynamic rawType) {
+      final value = (rawType ?? '').toString().trim().toLowerCase();
+      if (value.isEmpty) {
+        return ReactionType.none;
+      }
+      try {
+        return ReactionType.values.firstWhere((type) => type.name == value);
+      } catch (_) {
+        return ReactionType.none;
+      }
     }
 
     final Map<String, dynamic> raw =
         (json['data'] != null && json['data']['post'] != null)
         ? json['data']['post'] as Map<String, dynamic>
         : json;
-//  get group id as object that contain name and id and cover
+
     final dynamic groupData = raw['groupID'];
     String? gID;
     String? gName;
@@ -47,50 +65,77 @@ class PostModel extends Post {
     if (groupData is String) {
       gID = groupData;
     } else if (groupData is Map<String, dynamic>) {
-      gID = groupData['_id'];
-      gName = groupData['name'];
-      gCover = groupData['coverImage'] ?? groupData['logo'];
+      gID = (groupData['_id'] ?? '').toString();
+      gName = groupData['name']?.toString();
+      gCover = (groupData['coverImage'] ?? groupData['logo'])?.toString();
     }
-    // --- reactionCounts ---
+
     final Map<String, dynamic> reactionMap =
-        raw['reactionCounts'] as Map<String, dynamic>? ?? {};
+        (raw['reactionCounts'] as Map<String, dynamic>? ?? <String, dynamic>{});
 
     final dummyReactions = DummyReactionCounter(
-      likesCount: (reactionMap['like'] ?? 0) as int,
-      lovesCount: (reactionMap['love'] ?? 0) as int,
-      hahaCount: (reactionMap['haha'] ?? 0) as int,
-      sadCount: (reactionMap['sad'] ?? 0) as int,
-      angryCount: (reactionMap['angry'] ?? 0) as int,
-      wowCount: (reactionMap['wow'] ?? 0) as int,
+      likesCount: parseInt(reactionMap['like']),
+      lovesCount: parseInt(reactionMap['love']),
+      hahaCount: parseInt(reactionMap['haha']),
+      sadCount: parseInt(reactionMap['sad']),
+      angryCount: parseInt(reactionMap['angry']),
+      wowCount: parseInt(reactionMap['wow']),
+      goalCount: parseInt(reactionMap['goal']),
+      offsideCount: parseInt(reactionMap['offside']),
     );
 
-    // --- mentions ---
+    final reactionsJson = raw['reactions'];
+    final List<Reaction> reactions = reactionsJson is List
+        ? reactionsJson
+              .whereType<Map<String, dynamic>>()
+              .map((item) => ReactionModel.fromJson(item).toEntity())
+              .toList()
+        : const <Reaction>[];
+
+    var totalReactionsCount = parseInt(
+      raw['reactionsCount'] ?? raw['reactions_count'],
+    );
+    if (totalReactionsCount == 0) {
+      totalReactionsCount = dummyReactions.total;
+    }
+    if (totalReactionsCount == 0 && reactions.isNotEmpty) {
+      totalReactionsCount = reactions.length;
+    }
+
+    final userReaction = parseReactionType(
+      raw['userReaction'] ?? raw['myReaction'] ?? raw['currentUserReaction'],
+    );
+    if (userReaction != ReactionType.none && totalReactionsCount == 0) {
+      totalReactionsCount = 1;
+    }
+
     final mentionsJson = raw['mentions'] as List<dynamic>? ?? [];
     final userIds = <String>[];
     final usernames = <String>[];
 
     for (final m in mentionsJson) {
       final map = m as Map<String, dynamic>;
-      userIds.add(map['_id'] as String? ?? '');
-      usernames.add(map['username'] as String? ?? '');
+      userIds.add((map['_id'] ?? '').toString());
+      usernames.add((map['username'] ?? '').toString());
     }
 
     final mentions = Mentions(userIds: userIds, usernames: usernames);
 
-    // --- media (list of URLs / filenames coming from backend) ---
     final mediaList = (raw['media'] as List<dynamic>? ?? [])
-        .map((m) => m as String)
+        .map((m) => m.toString())
         .toList();
     final commentsList = (raw['comments'] as List<dynamic>? ?? [])
         .whereType<Map<String, dynamic>>()
         .toList();
 
-    int topLevelCommentsCount = parseInt(raw['commentsCount'] ?? raw['comments_count']);
+    var topLevelCommentsCount = parseInt(
+      raw['commentsCount'] ?? raw['comments_count'],
+    );
     if (topLevelCommentsCount == 0 && commentsList.isNotEmpty) {
       topLevelCommentsCount = commentsList.length;
     }
 
-    int repliesCount = parseInt(
+    var repliesCount = parseInt(
       raw['totalRepliesCount'] ?? raw['repliesCount'] ?? raw['replies_count'],
     );
     if (repliesCount == 0 && commentsList.isNotEmpty) {
@@ -100,20 +145,23 @@ class PostModel extends Post {
       );
     }
 
-    final int totalCommentsWithReplies = topLevelCommentsCount + repliesCount;
+    final totalCommentsWithReplies = topLevelCommentsCount + repliesCount;
 
     return PostModel(
-      postID: raw['_id'] as String? ?? '',
-      updateCount: (raw['__v'] ?? 0) as int,
-      authorId: raw['authorID'] as String? ?? '',
-      type: raw['type'] as String? ?? 'public',
-      caption: raw['caption'] as String?,
-      location: raw['location'] as String?,
+      postID: (raw['_id'] ?? '').toString(),
+      updateCount: parseInt(raw['__v']),
+      authorId: (raw['authorID'] ?? raw['authorId'] ?? '').toString(),
+      type: (raw['type'] ?? 'public').toString(),
+      caption: raw['caption']?.toString(),
+      location: raw['location']?.toString(),
       mentions: mentions,
       media: mediaList,
-      views: (raw['views'] ?? 0) as int,
+      views: parseInt(raw['views']),
       flagged: (raw['flagged'] ?? false) as bool,
       reactionCounts: dummyReactions,
+      reactions: reactions,
+      reactionsCount: totalReactionsCount,
+      userReaction: userReaction,
       groupID: gID,
       groupName: gName,
       groupCoverImage: gCover,
@@ -144,7 +192,11 @@ class PostModel extends Post {
         'sad': reactionCounts.sadCount,
         'angry': reactionCounts.angryCount,
         'wow': reactionCounts.wowCount,
+        'goal': reactionCounts.goalCount,
+        'offside': reactionCounts.offsideCount,
       },
+      'reactionsCount': reactionsCount,
+      'userReaction': userReaction.name,
       'groupID': groupID,
       'groupName': groupName,
       'groupCoverImage': groupCoverImage,
@@ -162,6 +214,8 @@ class PostModel extends Post {
       media: media,
       flagged: flagged,
       reactions: reactions,
+      reactionsCount: reactionsCount,
+      userReaction: userReaction,
       postID: postID,
       groupID: groupID,
       groupName: groupName,
@@ -172,22 +226,32 @@ class PostModel extends Post {
 
   factory PostModel.fromEntity(Post post) {
     return PostModel(
-      postID: '',
+      postID: post.postID,
       updateCount: 0,
       authorId: post.authorId,
       type: post.type,
       caption: post.caption,
       mentions: post.mentions,
-      media: const [],
+      media: post.media ?? const [],
+      reactions: post.reactions ?? const [],
+      reactionsCount: post.reactionsCount,
+      userReaction: post.userReaction,
       reactionCounts: DummyReactionCounter(
-        likesCount: 0,
+        likesCount: post.reactionsCount,
         lovesCount: 0,
         hahaCount: 0,
         sadCount: 0,
         angryCount: 0,
         wowCount: 0,
+        goalCount: 0,
+        offsideCount: 0,
       ),
       commentsCount: post.commentsCount,
+      location: post.location,
+      flagged: post.flagged,
+      groupID: post.groupID,
+      groupName: post.groupName,
+      groupCoverImage: post.groupCoverImage,
     );
   }
 }
