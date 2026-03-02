@@ -16,6 +16,7 @@ abstract class InterestsRemoteDataSource {
   Future<List<String>> getFavPlayers();
   Future<void> removeFavTeams(List<String> teams);
   Future<void> removeFavPlayers(List<String> players);
+  Future<List<PlayerModel>> searchPlayersByName(String query);
 }
 
 class InterestsRemoteDataSourceImpl implements InterestsRemoteDataSource {
@@ -23,11 +24,14 @@ class InterestsRemoteDataSourceImpl implements InterestsRemoteDataSource {
   final SharedPreferences prefs;
   final ErrorHandler errorHandler;
   final Dio dio;
-
+  static const String _proxyUrl = 'https://corsproxy.io/?';
   static const String _baseUrl =
       'https://www.thesportsdb.com/api/v1/json/3/search_all_teams.php?l=';
   static const String _playerUrl =
       'https://www.thesportsdb.com/api/v1/json/3/lookup_all_players.php?id=';
+
+  static const String _searchPlayerUrl =
+      '${_proxyUrl}https://www.thesportsdb.com/api/v1/json/3/searchplayers.php?p=';
 
   final List<String> leagues = [
     'English Premier League',
@@ -81,7 +85,6 @@ class InterestsRemoteDataSourceImpl implements InterestsRemoteDataSource {
 
   @override
   Future<List<TeamModel>> fetchTeams() async {
-    print('--> Fetching Teams from Data Source in parallel...');
     try {
       final requests = leagues.map((l) {
         return dio.get('$_baseUrl${Uri.encodeComponent(l)}');
@@ -97,20 +100,16 @@ class InterestsRemoteDataSourceImpl implements InterestsRemoteDataSource {
         }
       }
 
-      print('--> Total teams fetched: ${allTeams.length}');
       return allTeams;
     } on DioException catch (e) {
-      print('--> Error fetching teams: ${e.message}');
       throw Exception(e.message ?? 'Network Error');
     }
   }
 
   @override
   Future<List<PlayerModel>> fetchAllPlayers() async {
-    print('--> Fetching Players from Data Source in parallel...');
     try {
       final requests = teamsIds.map((teamId) {
-        print('--> Preparing request for Team ID: $teamId');
         return dio.get('$_playerUrl$teamId');
       });
 
@@ -128,17 +127,14 @@ class InterestsRemoteDataSourceImpl implements InterestsRemoteDataSource {
         }
       }
 
-      print('--> Total players fetched: ${allPlayers.length}');
       return allPlayers;
     } catch (e) {
-      print('--> Error fetching players: $e');
       throw Exception('Failed to fetch players');
     }
   }
 
   @override
   Future<UserProfileModel> updateInterests(Map<String, dynamic> data) async {
-    print('--> Updating Interests with data: $data');
     try {
       final response = await api.patch(
         ApiEndpoints.updateProfile,
@@ -146,14 +142,11 @@ class InterestsRemoteDataSourceImpl implements InterestsRemoteDataSource {
         options: _getAuthOptions(),
       );
       if (response["status"] == "success") {
-        print('--> Interests updated successfully.');
         return UserProfileModel.fromJson(response['data']['user']);
       } else {
-        print('--> Failed to update interests. Response: $response');
         throw ServerException('Failed to update interests');
       }
     } catch (e) {
-      print('--> Error updating interests: $e');
       errorHandler.handleDioError(e);
       rethrow;
     }
@@ -161,31 +154,26 @@ class InterestsRemoteDataSourceImpl implements InterestsRemoteDataSource {
 
   @override
   Future<List<String>> getFavTeams() async {
-    print('--> Fetching Favorite Teams...');
     final response = await api.get(
       ApiEndpoints.favTeams,
       options: _getAuthOptions(),
     );
     final teams = List<String>.from(response['data']['teams']);
-    print('--> Fetched Favorite Teams: $teams');
     return teams;
   }
 
   @override
   Future<List<String>> getFavPlayers() async {
-    print('--> Fetching Favorite Players...');
     final response = await api.get(
       ApiEndpoints.favPlayers,
       options: _getAuthOptions(),
     );
     final players = List<String>.from(response['data']['players']);
-    print('--> Fetched Favorite Players: $players');
     return players;
   }
 
   @override
   Future<void> removeFavTeams(List<String> teams) async {
-    print('--> Removing Favorite Teams: $teams');
     await api.patch(
       ApiEndpoints.removeFavTeams,
       data: {'teams': teams},
@@ -195,11 +183,31 @@ class InterestsRemoteDataSourceImpl implements InterestsRemoteDataSource {
 
   @override
   Future<void> removeFavPlayers(List<String> players) async {
-    print('--> Removing Favorite Players: $players');
     await api.patch(
       ApiEndpoints.removeFavPlayers,
       data: {'players': players},
       options: _getAuthOptions(),
     );
+  }
+
+  @override
+  Future<List<PlayerModel>> searchPlayersByName(String query) async {
+    try {
+      final response = await dio.get(
+        '$_searchPlayerUrl${Uri.encodeComponent(query)}',
+      );
+
+      if (response.statusCode == 200 && response.data['player'] != null) {
+        final List<dynamic> playersList = response.data['player'];
+        final parsedPlayers = playersList
+            .map((json) => PlayerModel.fromJson(json))
+            .toList();
+        return parsedPlayers;
+      } else {
+        return [];
+      }
+    } catch (e) {
+      throw Exception('Failed to search players');
+    }
   }
 }

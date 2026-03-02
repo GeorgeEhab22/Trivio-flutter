@@ -943,4 +943,16 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get update => 'تحديث';
+
+  @override
+  String get settingsFavTeamsTitle => 'الفرق المفضلة';
+
+  @override
+  String get settingsFavTeamsSub => 'تغيير فرقك المفضلة';
+
+  @override
+  String get settingsFavPlayersTitle => 'اللاعبين المفضلين';
+
+  @override
+  String get settingsFavPlayersSub => 'تغيير لاعبيك المفضلين';
 }

@@ -5,6 +5,7 @@ import 'package:auth/common/functions/handle_dio_error.dart';
 import 'package:auth/data/datasource/auth_remote_datasource.dart';
 import 'package:auth/data/datasource/comments_remote_datasource.dart';
 import 'package:auth/data/datasource/groups_remote_datasource.dart';
+import 'package:auth/data/datasource/interests_local_datasource.dart';
 import 'package:auth/data/datasource/interests_remote_datasource.dart';
 import 'package:auth/data/datasource/posts_remote_datasource.dart';
 import 'package:auth/data/datasource/stats_local_datasource.dart';
@@ -70,6 +71,7 @@ import 'package:auth/domain/usecases/follow/get_user_following.dart';
 import 'package:auth/domain/usecases/follow/unfollow_user.dart';
 import 'package:auth/domain/usecases/interests/get_all_players_use_case.dart';
 import 'package:auth/domain/usecases/interests/get_all_teams_use_case.dart';
+import 'package:auth/domain/usecases/interests/search_players_use_case.dart';
 import 'package:auth/domain/usecases/post/comment_on_post_usecase.dart';
 import 'package:auth/domain/usecases/post/create_post_usecase.dart';
 import 'package:auth/domain/usecases/post/delete_post_usecase.dart';
@@ -151,6 +153,8 @@ Future<void> init() async {
   await Hive.initFlutter();
   final statslocal = StatsLocalDatasource();
   await statslocal.init();
+  final interestsLocal = InterestsLocalDataSource();
+  await interestsLocal.init();
 
   String baseUrl = kIsWeb
       ? dotenv.env['LOCAL_URL']!
@@ -442,12 +446,13 @@ Future<void> init() async {
   );
 
   // select interest
- 
+   sl.registerLazySingleton<InterestsLocalDataSource>(() => InterestsLocalDataSource());
+
   sl.registerLazySingleton<InterestsRemoteDataSource>(
     () => InterestsRemoteDataSourceImpl(api: sl(), prefs: sl(), errorHandler: sl(), dio: sl()),
   );
   sl.registerLazySingleton<InterestsRepo>(
-    () => InterestsRepoImpl(remoteDatasource: sl(),),
+    () => InterestsRepoImpl(remoteDatasource: sl(), localDatasource: sl()),
   );
 
   sl.registerFactory(
@@ -455,10 +460,9 @@ Future<void> init() async {
       selectInterestsUseCase: sl(),
       getFavPlayersUseCase: sl(),
       getFavTeamsUseCase: sl(),
-      removeFavPlayersUseCase: sl(),
-      removeFavTeamsUseCase: sl(),
       getTeamsUseCase: sl(),
       getPlayersUseCase: sl(),
+      searchPlayersUseCase: sl(),
     ),
   );
   sl.registerLazySingleton(() => SelectInterestsUseCase(sl()));
@@ -469,4 +473,5 @@ Future<void> init() async {
   sl.registerLazySingleton(() => RemoveFavTeamsUseCase(sl()));
   sl.registerLazySingleton(() => GetAllTeamsUseCase(sl()));
   sl.registerLazySingleton(() => GetAllPlayersUseCase(sl()));
+  sl.registerLazySingleton(() => SearchPlayersUseCase(sl()));
 }

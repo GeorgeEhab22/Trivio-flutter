@@ -950,4 +950,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get update => 'Update';
+
+  @override
+  String get settingsFavTeamsTitle => 'Favourite teams';
+
+  @override
+  String get settingsFavTeamsSub => 'Change your favourite teams';
+
+  @override
+  String get settingsFavPlayersTitle => 'Favourite players';
+
+  @override
+  String get settingsFavPlayersSub => 'Change your favourite players';
 }

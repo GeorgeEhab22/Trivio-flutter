@@ -19,7 +19,6 @@ class _FavouritePlayersViewState extends State<FavouritePlayersView> {
   @override
   void initState() {
     super.initState();
-    print('--> View: initState started');
     context.read<SelectInterestsCubit>().loadPlayers(
       isEdit: widget.isEditPlayers,
     );
@@ -40,7 +39,7 @@ class _FavouritePlayersViewState extends State<FavouritePlayersView> {
             title: l10n.favPlayersTitle,
             subTitle: l10n.favPlayersDesc,
           ),
-          const SearchBox(isTeams: false,),
+          const SearchBox(isTeams: false),
           InterestsGridView(isTeams: false, isEdit: widget.isEditPlayers),
           InterestsButtonActions(isTeams: false, isEdit: widget.isEditPlayers),
         ],

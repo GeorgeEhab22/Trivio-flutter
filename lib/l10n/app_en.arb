@@ -340,5 +340,9 @@
   "noPlayersFound": "No players found",
   "skip": "Skip",
   "finish": "Finish",
-  "update": "Update"
+  "update": "Update",
+  "settingsFavTeamsTitle": "Favourite teams",
+  "settingsFavTeamsSub": "Change your favourite teams",
+  "settingsFavPlayersTitle": "Favourite players",
+  "settingsFavPlayersSub": "Change your favourite players"
 }

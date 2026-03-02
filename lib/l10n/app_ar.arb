@@ -340,5 +340,9 @@
   "noPlayersFound": "لم يتم العثور على لاعبين",
   "skip": "تخطي",
   "finish": "إنهاء",
-  "update": "تحديث"
+  "update": "تحديث",
+  "settingsFavTeamsTitle": "الفرق المفضلة",
+  "settingsFavTeamsSub": "تغيير فرقك المفضلة",
+  "settingsFavPlayersTitle": "اللاعبين المفضلين",
+  "settingsFavPlayersSub": "تغيير لاعبيك المفضلين"
 }

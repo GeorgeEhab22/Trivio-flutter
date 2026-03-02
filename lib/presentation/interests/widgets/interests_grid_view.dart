@@ -1,4 +1,3 @@
-import 'package:auth/core/app_routes.dart';
 import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/authentication/widgets/show_custom_snackbar.dart';
 import 'package:auth/presentation/groups/widgets/dummy_for_skeletonizer.dart';
@@ -7,7 +6,6 @@ import 'package:auth/presentation/manager/profile_cubit/interests/select_interes
 import 'package:auth/presentation/manager/profile_cubit/interests/select_interests_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class InterestsGridView extends StatelessWidget {
@@ -26,17 +24,6 @@ class InterestsGridView extends StatelessWidget {
 
     return BlocConsumer<SelectInterestsCubit, SelectInterestsState>(
       listener: (context, state) {
-        if (state is SelectInterestsSuccess) {
-          if (isEdit) {
-            context.pop();
-          } else {
-            if (!isTeams) {
-              showCustomSnackBar(context, l10n.welcomeBack, true);
-              context.go(AppRoutes.home);
-            }
-          }
-        }
-
         if (state is SelectInterestsError) {
           final displayMessage = state.message == "failed_to_load"
               ? l10n.failedToLoadData
@@ -46,30 +33,37 @@ class InterestsGridView extends StatelessWidget {
       },
       buildWhen: (previous, current) {
         if (current is SelectInterestsSuccess) return false;
-        if (previous is SelectInterestsLoaded &&
-            current is SelectInterestsLoading) {
-          return false;
+
+        if (previous.runtimeType != current.runtimeType) return true;
+
+        if (previous is InterestsContentState &&
+            current is InterestsContentState) {
+          return previous.filteredTeams != current.filteredTeams ||
+              previous.filteredPlayers != current.filteredPlayers ||
+              previous.selectedTeams != current.selectedTeams ||
+              previous.selectedPlayers != current.selectedPlayers;
         }
         return true;
       },
       builder: (context, state) {
         final bool isLoading =
             state is SelectInterestsInitial ||
-            state is SelectInterestsLoading ||
-            (state is SelectInterestsLoaded &&
-                (isTeams ? state.isTeamsLoading : state.isPlayersLoading));
+            (state is InterestsLoadingState &&
+                (isTeams ? state.loadingTeams : state.loadingPlayers));
 
-        final List currentTeams = state is SelectInterestsLoaded
-            ? state.filteredTeams 
-            : DummyData.dummyTeams;
+        final contentState = state is InterestsContentState ? state : null;
 
-        final List currentPlayers = state is SelectInterestsLoaded
-            ? state.players
-            : DummyData.dummyPlayers;
+        final List currentTeams = isLoading
+            ? DummyData.dummyTeams
+            : (contentState?.filteredTeams ?? []);
 
-        final List selectedItems = state is SelectInterestsLoaded
-            ? (isTeams ? state.selectedTeams : state.selectedPlayers)
-            : [];
+        final List currentPlayers = isLoading
+            ? DummyData.dummyPlayers
+            : (contentState?.filteredPlayers ?? []);
+
+        final List selectedItems = isTeams
+            ? (contentState?.selectedTeams ?? [])
+            : (contentState?.selectedPlayers ?? []);
 
         final itemsCount = isTeams
             ? currentTeams.length
@@ -111,13 +105,9 @@ class InterestsGridView extends StatelessWidget {
                     if (isLoading) return;
 
                     if (isTeams) {
-                      context.read<SelectInterestsCubit>().toggleTeam(
-                        currentTeams[index].name,
-                      );
+                      context.read<SelectInterestsCubit>().toggleTeam(name);
                     } else {
-                      context.read<SelectInterestsCubit>().togglePlayer(
-                        currentPlayers[index].name,
-                      );
+                      context.read<SelectInterestsCubit>().togglePlayer(name);
                     }
                   },
                 );

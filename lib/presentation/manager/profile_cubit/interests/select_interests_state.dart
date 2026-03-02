@@ -10,72 +10,118 @@ abstract class SelectInterestsState extends Equatable {
 
 final class SelectInterestsInitial extends SelectInterestsState {}
 
-final class SelectInterestsLoading extends SelectInterestsState {}
-
-final class SelectInterestsLoaded extends SelectInterestsState {
-  final List<Team> teams;
-  final List<Player> players;
-  final List<String> selectedTeams;
-  final List<String> selectedPlayers;
-  final List<String> teamsToDelete;
-  final List<String> playersToDelete;
-  
-  final bool isTeamsLoading;
-  final bool isPlayersLoading;
-
-//search
-  final List<Team> filteredTeams;
-
-  const SelectInterestsLoaded({
-    this.teams = const [],
-    this.players = const [],
-    this.selectedTeams = const [],
-    this.selectedPlayers = const [],
-    this.teamsToDelete = const [],
-    this.playersToDelete = const [],
-    this.isTeamsLoading = false,
-    this.isPlayersLoading = false,
-    this.filteredTeams = const [], 
-  });
-
-  SelectInterestsLoaded copyWith({
-    List<Team>? teams,
-    List<Player>? players,
-    List<String>? selectedTeams,
-    List<String>? selectedPlayers,
-    List<String>? teamsToDelete,
-    List<String>? playersToDelete,
-    bool? isTeamsLoading,
-    bool? isPlayersLoading,
-    List<Team>? filteredTeams,
-  }) {
-    return SelectInterestsLoaded(
-      teams: teams ?? this.teams,
-      players: players ?? this.players,
-      selectedTeams: selectedTeams ?? this.selectedTeams,
-      selectedPlayers: selectedPlayers ?? this.selectedPlayers,
-      teamsToDelete: teamsToDelete ?? this.teamsToDelete,
-      playersToDelete: playersToDelete ?? this.playersToDelete,
-      isTeamsLoading: isTeamsLoading ?? this.isTeamsLoading,
-      isPlayersLoading: isPlayersLoading ?? this.isPlayersLoading,
-      filteredTeams: filteredTeams ?? this.filteredTeams,
-    );
-  }
-  
-  @override
-  List<Object?> get props => [
-    teams, players, selectedTeams, selectedPlayers, 
-    teamsToDelete, playersToDelete, isTeamsLoading, isPlayersLoading, filteredTeams
-  ];
-}
-
-class SelectInterestsSuccess extends SelectInterestsState {
+final class SelectInterestsSuccess extends SelectInterestsState {
   const SelectInterestsSuccess();
 }
 
- class SelectInterestsError extends SelectInterestsState {
+final class SelectInterestsError extends SelectInterestsState {
   final String message;
   const SelectInterestsError({required this.message});
   @override
   List<Object?> get props => [message];
+}
+
+abstract class InterestsContentState extends SelectInterestsState {
+  final List<Team> teams;
+  final List<Player> players;
+  final List<String> selectedTeams;
+  final List<String> selectedPlayers;
+  final List<String> initialSelectedTeams;
+  final List<String> initialSelectedPlayers;
+  final List<String> teamsToDelete;
+  final List<String> playersToDelete;
+  final List<Team> filteredTeams;
+  final List<Player> filteredPlayers;
+
+  const InterestsContentState({
+    this.teams = const [],
+    this.players = const [],
+    this.selectedTeams = const [],
+    this.selectedPlayers = const [],
+    this.initialSelectedTeams = const [],
+    this.initialSelectedPlayers = const [],
+    this.teamsToDelete = const [],
+    this.playersToDelete = const [],
+    this.filteredTeams = const [],
+    this.filteredPlayers = const [],
+  });
+
+  bool get hasChanges {
+    bool teamsUnchanged =
+        selectedTeams.length == initialSelectedTeams.length &&
+        selectedTeams.toSet().containsAll(initialSelectedTeams);
+
+    bool playersUnchanged =
+        selectedPlayers.length == initialSelectedPlayers.length &&
+        selectedPlayers.toSet().containsAll(initialSelectedPlayers);
+
+    return !(teamsUnchanged && playersUnchanged);
+  }
+
+  @override
+  List<Object?> get props => [
+    teams,
+    players,
+    selectedTeams,
+    selectedPlayers,
+    initialSelectedTeams,
+    initialSelectedPlayers,
+    teamsToDelete,
+    playersToDelete,
+    filteredTeams,
+    filteredPlayers,
+  ];
+}
+
+final class InterestsLoadingState extends InterestsContentState {
+  final bool loadingTeams;
+  final bool loadingPlayers;
+
+  const InterestsLoadingState({
+    super.teams,
+    super.players,
+    super.selectedTeams,
+    super.selectedPlayers,
+    super.initialSelectedTeams,
+    super.initialSelectedPlayers,
+    super.teamsToDelete,
+    super.playersToDelete,
+    super.filteredTeams,
+    super.filteredPlayers,
+    this.loadingTeams = false,
+    this.loadingPlayers = false,
+  });
+
+  @override
+  List<Object?> get props => [...super.props, loadingTeams, loadingPlayers];
+}
+
+final class InterestsDisplayState extends InterestsContentState {
+  const InterestsDisplayState({
+    super.teams,
+    super.players,
+    super.selectedTeams,
+    super.selectedPlayers,
+    super.initialSelectedTeams,
+    super.initialSelectedPlayers,
+    super.teamsToDelete,
+    super.playersToDelete,
+    super.filteredTeams,
+    super.filteredPlayers,
+  });
+}
+
+final class InterestsSubmittingState extends InterestsContentState {
+  const InterestsSubmittingState({
+    super.teams,
+    super.players,
+    super.selectedTeams,
+    super.selectedPlayers,
+    super.initialSelectedTeams,
+    super.initialSelectedPlayers,
+    super.teamsToDelete,
+    super.playersToDelete,
+    super.filteredTeams,
+    super.filteredPlayers,
+  });
 }

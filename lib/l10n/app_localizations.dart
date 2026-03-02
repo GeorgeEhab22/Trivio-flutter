@@ -1903,6 +1903,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Update'**
   String get update;
+
+  /// No description provided for @settingsFavTeamsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Favourite teams'**
+  String get settingsFavTeamsTitle;
+
+  /// No description provided for @settingsFavTeamsSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Change your favourite teams'**
+  String get settingsFavTeamsSub;
+
+  /// No description provided for @settingsFavPlayersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Favourite players'**
+  String get settingsFavPlayersTitle;
+
+  /// No description provided for @settingsFavPlayersSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Change your favourite players'**
+  String get settingsFavPlayersSub;
 }
 
 class _AppLocalizationsDelegate

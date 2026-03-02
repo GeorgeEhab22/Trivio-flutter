@@ -5,8 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SearchBox extends StatelessWidget {
-  final bool isTeams; 
-
+  final bool isTeams;
   const SearchBox({super.key, required this.isTeams});
 
   @override
@@ -28,11 +27,10 @@ class SearchBox extends StatelessWidget {
             Expanded(
               child: TextField(
                 onChanged: (value) {
-                  if (isTeams) {
-                    context.read<SelectInterestsCubit>().searchLocalTeams(value);
-                  } else {
-                    // TODO: remote search for players will go here later
-                  }
+                  context.read<SelectInterestsCubit>().onSearchChanged(
+                    value,
+                    isTeams: isTeams,
+                  );
                 },
                 decoration: InputDecoration(
                   hintText: l10n.search,

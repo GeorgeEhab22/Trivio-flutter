@@ -69,6 +69,7 @@ import 'package:auth/core/auth_shell.dart';
 import 'package:auth/injection_container.dart' as di;
 
 int previousTabIndex = 0;
+final GlobalKey<NavigatorState> _interestsShellKey = GlobalKey<NavigatorState>(debugLabel: 'interests_shell');
 
 CustomTransitionPage buildAnimatedPage({
   required Widget child,
@@ -162,6 +163,7 @@ GoRouter createRouter(bool isLoggedIn) {
         },
       ),
       ShellRoute(
+        navigatorKey: _interestsShellKey,
         builder: (context, state, child) {
           return BlocProvider(
             create: (context) => di.sl<SelectInterestsCubit>(),
@@ -173,9 +175,6 @@ GoRouter createRouter(bool isLoggedIn) {
             path: AppRoutes.selectTeams,
             builder: (context, state) {
               final bool isEdit = state.extra as bool? ?? false;
-              // if (isEdit) {
-              //   context.read<SelectInterestsCubit>().getSelectedFavTeams();
-              // }
               return FavouriteTeamsView(isEditTeams: isEdit);
             },
             routes: [
@@ -183,11 +182,6 @@ GoRouter createRouter(bool isLoggedIn) {
                 path: 'select-players',
                 builder: (context, state) {
                   final bool isEdit = state.extra as bool? ?? false;
-                  // if (isEdit) {
-                  //   context
-                  //       .read<SelectInterestsCubit>()
-                  //       .getSelectedFavPlayers();
-                  // }
                   return FavouritePlayersView(isEditPlayers: isEdit);
                 },
               ),
