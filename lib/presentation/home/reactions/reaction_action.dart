@@ -7,6 +7,7 @@ import 'reaction_interaction.dart';
 
 class ReactionAction extends StatelessWidget {
   final String postId;
+  final String currentUserId;
   final ReactionType initialReaction;
   final int initialCount;
   final String? initialReactionId;
@@ -14,6 +15,7 @@ class ReactionAction extends StatelessWidget {
   const ReactionAction({
     super.key,
     required this.postId,
+    required this.currentUserId,
     required this.initialReaction,
     required this.initialCount,
     this.initialReactionId,
@@ -46,16 +48,20 @@ class ReactionAction extends StatelessWidget {
         if (state is PostReactionUpdated && state.postId == postId) {
           postCubit.updatePostReaction(
             postId: postId,
+            currentUserId: currentUserId,
             reactionType: state.reactionType,
             reactionsCount: state.count,
+            reactionId: state.reactionId,
           );
         }
 
         if (state is ReactToPostError && state.postId == postId) {
           postCubit.updatePostReaction(
             postId: postId,
+            currentUserId: currentUserId,
             reactionType: state.oldReactionType ?? initialReaction,
             reactionsCount: state.oldCount ?? initialCount,
+            reactionId: state.oldReactionId,
           );
         }
       },

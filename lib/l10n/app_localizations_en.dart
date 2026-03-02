@@ -264,6 +264,45 @@ class AppLocalizationsEn extends AppLocalizations {
   String get defaultUserName => 'User Name';
 
   @override
+  String get reactionsTitle => 'Reactions';
+
+  @override
+  String get reactionsTabAll => 'All';
+
+  @override
+  String get reactionsYou => 'You';
+
+  @override
+  String get reactionsLoadError => 'Couldn\'t load reactions.';
+
+  @override
+  String get reactionsEmptyAll => 'No reactions yet.';
+
+  @override
+  String get reactionsEmptyType => 'No users reacted with this reaction yet.';
+
+  @override
+  String get reactionsEncouragement => 'Be the first to react to this post.';
+
+  @override
+  String get reactionLike => 'Like';
+
+  @override
+  String get reactionLove => 'Love';
+
+  @override
+  String get reactionHaha => 'Haha';
+
+  @override
+  String get reactionWow => 'Wow';
+
+  @override
+  String get reactionSad => 'Sad';
+
+  @override
+  String get reactionAngry => 'Angry';
+
+  @override
   String get reactionGoal => 'Goal';
 
   @override
@@ -336,6 +375,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get commentsTitle => 'Comments';
+
+  @override
+  String get peopleReactedLabel => 'People reacted';
+
+  @override
+  String get shareLabel => 'share';
 
   @override
   String get noCommentsYet => 'No comments yet';

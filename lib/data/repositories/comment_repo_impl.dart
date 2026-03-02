@@ -2,6 +2,7 @@ import 'package:auth/core/errors/failure.dart';
 import 'package:auth/data/core/error/exceptions.dart';
 import 'package:auth/data/datasource/comments_remote_datasource.dart';
 import 'package:auth/domain/entities/comment.dart';
+import 'package:auth/domain/entities/reaction.dart';
 import 'package:auth/domain/repositories/comment_repo.dart';
 import 'package:dartz/dartz.dart';
 
@@ -215,6 +216,30 @@ class CommentRepositoryImpl implements CommentRepository {
       return Left(NetworkFailure(e.message));
     } catch (_) {
       return Left(ServerFailure('Failed to mention users in comment'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<Reaction>>> getCommentReactions({
+    required String commentId,
+    int limit = 10,
+    int maxPages = 20,
+  }) async {
+    try {
+      final reactions = await remoteDataSource.fetchAllCommentReactions(
+        commentId: commentId,
+        limit: limit,
+        maxPages: maxPages,
+      );
+      return Right(reactions);
+    } on AuthException catch (e) {
+      return Left(AuthFailure(e.message));
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } catch (_) {
+      return Left(ServerFailure('Failed to fetch reactions'));
     }
   }
 }

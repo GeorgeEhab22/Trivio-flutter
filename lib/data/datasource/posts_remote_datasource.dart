@@ -1,12 +1,10 @@
-import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:auth/common/api_endpoints.dart';
 import 'package:auth/common/functions/handle_dio_error.dart';
 import 'package:auth/data/core/error/exceptions.dart'; // Ensure this is imported for AuthException
 import 'package:auth/data/models/post_model.dart';
+import 'package:auth/data/models/reaction_model.dart';
 import 'package:auth/domain/entities/reaction.dart';
-import 'package:auth/domain/entities/reaction_type.dart';
 import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -65,14 +63,13 @@ abstract class PostsRemoteDataSource {
     String? reactionId,
   });
 
+  Future<List<Reaction>> fetchAllPostReactions({
+    required String postId,
+    int limit = 10,
+    int maxPages = 20,
+  });
+
   Future<List<PostModel>> searchPosts(String query);
-}
-
-class _CurrentUserReactionInfo {
-  final String id;
-  final ReactionType type;
-
-  const _CurrentUserReactionInfo({required this.id, required this.type});
 }
 
 class PostsRemoteDataSourceImpl implements PostsRemoteDataSource {
@@ -143,61 +140,6 @@ class PostsRemoteDataSourceImpl implements PostsRemoteDataSource {
     return _cleanId(value);
   }
 
-  String? _extractCurrentUserIdFromToken() {
-    final forcedReactionUserId = _cleanId(
-      prefs.getString('debug_forced_reaction_user_id'),
-    );
-    if (forcedReactionUserId != null) {
-      return forcedReactionUserId;
-    }
-
-    final fallbackId = _firstNonEmpty([
-      prefs.getString('current_user_id'),
-      prefs.getString('user_id'),
-      prefs.getString('userId'),
-      prefs.getString('_id'),
-      prefs.getString('id'),
-    ]);
-
-    final token = prefs.getString('auth_token');
-    if (token == null || token.trim().isEmpty) {
-      return fallbackId;
-    }
-
-    try {
-      final parts = token.split('.');
-      if (parts.length < 2) {
-        return fallbackId;
-      }
-      final normalized = base64Url.normalize(parts[1]);
-      final payloadJson = utf8.decode(base64Url.decode(normalized));
-      final payload = jsonDecode(payloadJson) as Map<String, dynamic>;
-      return _firstNonEmpty([
-        payload['id'],
-        payload['_id'],
-        payload['userId'],
-        payload['sub'],
-        _readId(payload['user']),
-        _readId(payload['data']),
-        fallbackId,
-      ]);
-    } catch (_) {
-      return fallbackId;
-    }
-  }
-
-  ReactionType _parseReactionType(dynamic rawType) {
-    final value = (rawType ?? '').toString().trim().toLowerCase();
-    if (value.isEmpty) {
-      return ReactionType.none;
-    }
-    try {
-      return ReactionType.values.firstWhere((type) => type.name == value);
-    } catch (_) {
-      return ReactionType.none;
-    }
-  }
-
   List<Map<String, dynamic>> _extractReactionItemsFromResponse(
     Map<String, dynamic> response,
   ) {
@@ -210,7 +152,8 @@ class PostsRemoteDataSourceImpl implements PostsRemoteDataSource {
         data['data'],
         data['items'],
         data['reactions'],
-        if (data['data'] is Map<String, dynamic>) (data['data'] as Map<String, dynamic>)['data'],
+        if (data['data'] is Map<String, dynamic>)
+          (data['data'] as Map<String, dynamic>)['data'],
       ];
       for (final candidate in candidates) {
         final items = asItems(candidate);
@@ -249,137 +192,6 @@ class PostsRemoteDataSourceImpl implements PostsRemoteDataSource {
       return null;
     }
     return _readId(items.first);
-  }
-
-  Future<_CurrentUserReactionInfo?> _fetchCurrentUserReactionInfoOnPost({
-    required String postId,
-    required String currentUserId,
-    int limit = 50,
-    int maxPages = 5,
-  }) async {
-    for (int page = 1; page <= maxPages; page++) {
-      final response = await api.get(
-        "${ApiEndpoints.reactionsOnPost(postId)}?limit=$limit&page=$page",
-        options: _getAuthOptions(),
-      );
-
-      final reactionItems = _extractReactionItemsFromResponse(response);
-      if (reactionItems.isEmpty) {
-        return null;
-      }
-
-      for (final item in reactionItems) {
-        final reactionUserId = _readId(
-          item['userId'] ?? item['user'] ?? item['author'] ?? item['authorID'],
-        );
-        if (reactionUserId == currentUserId) {
-          final parsedType = _parseReactionType(
-            item['reaction'] ?? item['type'] ?? item['reactionType'],
-          );
-          if (parsedType == ReactionType.none) {
-            return null;
-          }
-          return _CurrentUserReactionInfo(
-            id: _readId(item) ?? '',
-            type: parsedType,
-          );
-        }
-      }
-
-      if (reactionItems.length < limit) {
-        return null;
-      }
-    }
-
-    return null;
-  }
-
-  Future<String?> _resolveReactionIdForUpdate({
-    required String postId,
-    String? reactionId,
-  }) async {
-    final direct = _cleanId(reactionId);
-    if (direct != null) {
-      return direct;
-    }
-
-    final currentUserId = _extractCurrentUserIdFromToken();
-    if (currentUserId == null || currentUserId.isEmpty) {
-      return null;
-    }
-
-    final reactionInfo = await _fetchCurrentUserReactionInfoOnPost(
-      postId: postId,
-      currentUserId: currentUserId,
-    );
-    return _cleanId(reactionInfo?.id);
-  }
-
-  Future<PostModel> _enrichPostUserReaction(PostModel post) async {
-    final currentUserId = _extractCurrentUserIdFromToken();
-    if (currentUserId == null || currentUserId.isEmpty) {
-      return post;
-    }
-    if (post.userReaction != ReactionType.none) {
-      return post;
-    }
-
-    final postId = post.postID;
-    if (postId == null || postId.trim().isEmpty) {
-      return post;
-    }
-
-    try {
-      final reactionInfo = await _fetchCurrentUserReactionInfoOnPost(
-        postId: postId,
-        currentUserId: currentUserId,
-      );
-      if (reactionInfo == null || reactionInfo.type == ReactionType.none) {
-        return post;
-      }
-
-      final correctedCount = post.reactionsCount == 0 ? 1 : post.reactionsCount;
-      final hydratedReactions = List<Reaction>.from(
-        post.reactions ?? const <Reaction>[],
-      );
-      final existingReactionIndex = hydratedReactions.indexWhere(
-        (reaction) => reaction.userId == currentUserId,
-      );
-      final hydratedCurrentReaction = Reaction(
-        id: reactionInfo.id,
-        userId: currentUserId,
-        postId: postId,
-        type: reactionInfo.type,
-      );
-      if (existingReactionIndex >= 0) {
-        hydratedReactions[existingReactionIndex] = hydratedCurrentReaction;
-      } else {
-        hydratedReactions.add(hydratedCurrentReaction);
-      }
-
-      return PostModel(
-        postID: post.postID,
-        updateCount: post.updateCount,
-        reactionCounts: post.reactionCounts,
-        media: post.media,
-        authorId: post.authorId,
-        type: post.type,
-        caption: post.caption,
-        location: post.location,
-        mentions: post.mentions,
-        views: post.views,
-        flagged: post.flagged,
-        groupID: post.groupID,
-        groupName: post.groupName,
-        groupCoverImage: post.groupCoverImage,
-        commentsCount: post.commentsCount,
-        reactions: hydratedReactions,
-        reactionsCount: correctedCount,
-        userReaction: reactionInfo.type,
-      );
-    } catch (_) {
-      return post;
-    }
   }
 
   @override
@@ -439,10 +251,7 @@ class PostsRemoteDataSourceImpl implements PostsRemoteDataSource {
       );
       if (response['data'] != null && response['data']['posts'] != null) {
         final List data = response['data']['posts'];
-        final models = data.map((e) => PostModel.fromJson(e)).toList();
-        return await Future.wait(
-          models.map((model) => _enrichPostUserReaction(model)),
-        );
+        return data.map((e) => PostModel.fromJson(e)).toList();
       } else {
         return [];
       }
@@ -459,8 +268,7 @@ class PostsRemoteDataSourceImpl implements PostsRemoteDataSource {
         "${ApiEndpoints.fetchSinglePost}/$postId",
         options: _getAuthOptions(),
       );
-      final model = PostModel.fromJson(response['data']['post']);
-      return await _enrichPostUserReaction(model);
+      return PostModel.fromJson(response['data']['post']);
     } catch (e) {
       errorHandler.handleDioError(e);
       rethrow;
@@ -581,12 +389,17 @@ class PostsRemoteDataSourceImpl implements PostsRemoteDataSource {
     String? reactionId,
   }) async {
     final endpoint = ApiEndpoints.reactionsOnPost(postId);
+    Future<String?> resolveReactionIdForUpdate() async {
+      final direct = _cleanId(reactionId);
+      if (direct != null && !direct.startsWith('local-')) {
+        return direct;
+      }
+      return null;
+    }
+
     try {
       if (isUpdate) {
-        final resolvedReactionId = await _resolveReactionIdForUpdate(
-          postId: postId,
-          reactionId: reactionId,
-        );
+        final resolvedReactionId = await resolveReactionIdForUpdate();
 
         if (resolvedReactionId != null && resolvedReactionId.isNotEmpty) {
           final response = await api.patch(
@@ -623,10 +436,7 @@ class PostsRemoteDataSourceImpl implements PostsRemoteDataSource {
               errorMessage.contains('use patch to update'));
 
       if (shouldRetryAsPatch || shouldRetryAsPatchById) {
-        final resolvedReactionId = await _resolveReactionIdForUpdate(
-          postId: postId,
-          reactionId: reactionId,
-        );
+        final resolvedReactionId = await resolveReactionIdForUpdate();
 
         if (resolvedReactionId != null && resolvedReactionId.isNotEmpty) {
           final response = await api.patch(
@@ -657,11 +467,16 @@ class PostsRemoteDataSourceImpl implements PostsRemoteDataSource {
     required String postId,
     String? reactionId,
   }) async {
+    Future<String?> resolveReactionIdForUpdate() async {
+      final direct = _cleanId(reactionId);
+      if (direct != null && !direct.startsWith('local-')) {
+        return direct;
+      }
+      return null;
+    }
+
     try {
-      final resolvedReactionId = await _resolveReactionIdForUpdate(
-        postId: postId,
-        reactionId: reactionId,
-      );
+      final resolvedReactionId = await resolveReactionIdForUpdate();
       if (resolvedReactionId != null && resolvedReactionId.isNotEmpty) {
         await api.delete(
           ApiEndpoints.reactionById(resolvedReactionId),
@@ -674,6 +489,30 @@ class PostsRemoteDataSourceImpl implements PostsRemoteDataSource {
         ApiEndpoints.reactionsOnPost(postId),
         options: _getAuthOptions(),
       );
+    } catch (e) {
+      errorHandler.handleDioError(e);
+      rethrow;
+    }
+  }
+
+  @override
+  Future<List<Reaction>> fetchAllPostReactions({
+    required String postId,
+    int limit = 10,
+    int maxPages = 20,
+  }) async {
+    try {
+      final all = <Reaction>[];
+
+      final response = await api.get(
+        ApiEndpoints.reactionsOnPost(postId),
+        options: _getAuthOptions(),
+      );
+      final items = _extractReactionItemsFromResponse(response);
+
+      all.addAll(items.map((item) => ReactionModel.fromJson(item).toEntity()));
+
+      return all;
     } catch (e) {
       errorHandler.handleDioError(e);
       rethrow;

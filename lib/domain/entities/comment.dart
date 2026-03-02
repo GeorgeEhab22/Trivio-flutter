@@ -15,6 +15,7 @@ class Comment extends Equatable {
   final List<Reaction> reactions;
   final int reactionsCount;
   final ReactionType userReaction;
+  final Map<ReactionType, int> reactionCountsByType;
   final int repliesCount;
   final String? parentCommentId;
   final List<Comment>? repliesList;
@@ -33,6 +34,7 @@ class Comment extends Equatable {
     this.reactions = const [],
     this.reactionsCount = 0,
     this.userReaction = ReactionType.none,
+    this.reactionCountsByType = const <ReactionType, int>{},
     this.repliesCount = 0,
     this.parentCommentId,
     this.repliesList = const [],
@@ -52,6 +54,7 @@ class Comment extends Equatable {
     List<Reaction>? reactions,
     int? reactionsCount,
     ReactionType? userReaction,
+    Map<ReactionType, int>? reactionCountsByType,
     int? repliesCount,
     String? parentCommentId,
     List<Comment>? repliesList,
@@ -71,6 +74,7 @@ class Comment extends Equatable {
       reactions: reactions ?? this.reactions,
       reactionsCount: reactionsCount ?? this.reactionsCount,
       userReaction: userReaction ?? this.userReaction,
+      reactionCountsByType: reactionCountsByType ?? this.reactionCountsByType,
       repliesCount: repliesCount ?? this.repliesCount,
       parentCommentId: parentCommentId ?? this.parentCommentId,
       repliesList: repliesList ?? this.repliesList,
@@ -95,6 +99,7 @@ class Comment extends Equatable {
     reactions,
     reactionsCount,
     userReaction,
+    reactionCountsByType,
     repliesCount,
     parentCommentId,
     repliesList,

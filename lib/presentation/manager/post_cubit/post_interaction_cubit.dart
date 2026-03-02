@@ -193,7 +193,10 @@ class PostInteractionCubit extends Cubit<PostInteractionState> {
     required int oldCount,
     String? oldReactionId,
   }) async {
-    final result = await removeReactionFromPostUseCase(postId: postId);
+    final result = await removeReactionFromPostUseCase(
+      postId: postId,
+      reactionId: oldReactionId,
+    );
 
     result.fold(
       (failure) {

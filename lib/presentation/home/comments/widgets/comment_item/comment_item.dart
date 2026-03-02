@@ -13,6 +13,9 @@ import 'reply_tree_wrapper.dart';
 import 'package:auth/l10n/app_localizations.dart';
 
 class CommentItem extends StatefulWidget {
+  // TODO: Remove this presentation fallback once auth/session user id is always available.
+  static const String _presentationReactionUserId = '69a1a4cbab9f71890ad97692';
+
   final Comment comment;
   final String currentUserId;
   final Function(Comment comment)? onReplyTap;
@@ -151,6 +154,7 @@ class _CommentItemState extends State<CommentItem> {
             context.read<CommentCubit>().toggleRepliesVisibility(
               parentCommentId: widget.comment.id,
               postId: widget.comment.postId,
+              currentUserId: CommentItem._presentationReactionUserId,
             );
           },
         ),

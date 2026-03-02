@@ -262,6 +262,45 @@ class AppLocalizationsAr extends AppLocalizations {
   String get defaultUserName => 'اسم المستخدم';
 
   @override
+  String get reactionsTitle => 'التفاعلات';
+
+  @override
+  String get reactionsTabAll => 'الكل';
+
+  @override
+  String get reactionsYou => 'أنت';
+
+  @override
+  String get reactionsLoadError => 'تعذر تحميل التفاعلات.';
+
+  @override
+  String get reactionsEmptyAll => 'لا توجد تفاعلات بعد.';
+
+  @override
+  String get reactionsEmptyType => 'لا يوجد مستخدمون بهذا التفاعل حتى الآن.';
+
+  @override
+  String get reactionsEncouragement => 'كن أول من يتفاعل مع هذا المنشور.';
+
+  @override
+  String get reactionLike => 'إعجاب';
+
+  @override
+  String get reactionLove => 'حب';
+
+  @override
+  String get reactionHaha => 'مضحك';
+
+  @override
+  String get reactionWow => 'انبهار';
+
+  @override
+  String get reactionSad => 'حزين';
+
+  @override
+  String get reactionAngry => 'غاضب';
+
+  @override
   String get reactionGoal => 'هدف';
 
   @override
@@ -334,6 +373,12 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get commentsTitle => 'التعليقات';
+
+  @override
+  String get peopleReactedLabel => 'الأشخاص الذين تفاعلوا';
+
+  @override
+  String get shareLabel => 'مشاركة';
 
   @override
   String get noCommentsYet => 'لا توجد تعليقات بعد';

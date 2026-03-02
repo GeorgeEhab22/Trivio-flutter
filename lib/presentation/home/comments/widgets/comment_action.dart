@@ -1,4 +1,5 @@
 import 'package:auth/injection_container.dart' as di;
+import 'package:auth/domain/entities/reaction_type.dart';
 import 'package:auth/presentation/home/comments/comments_view.dart';
 import 'package:auth/presentation/manager/comment_cubit/comment_cubit.dart';
 import 'package:auth/presentation/manager/comment_cubit/comment_state.dart';
@@ -10,6 +11,9 @@ import '../../widgets/post_action_item.dart';
 
 class CommentAction extends StatelessWidget {
   final int commentsCount;
+  final int sharesCount;
+  final int reactionsCount;
+  final List<ReactionType> topReactions;
   final String postId;
   final String currentUserId;
 
@@ -18,6 +22,9 @@ class CommentAction extends StatelessWidget {
     required this.commentsCount,
     required this.postId,
     required this.currentUserId,
+    this.sharesCount = 0,
+    this.reactionsCount = 0,
+    this.topReactions = const <ReactionType>[],
   });
 
   @override
@@ -47,7 +54,13 @@ class CommentAction extends StatelessWidget {
                   }
                 }
               },
-              child: CommentsView(postId: postId, currentUserId: currentUserId),
+              child: CommentsView(
+                postId: postId,
+                currentUserId: currentUserId,
+                sharesCount: sharesCount,
+                reactionsCount: reactionsCount,
+                topReactions: topReactions,
+              ),
             ),
           ),
         );

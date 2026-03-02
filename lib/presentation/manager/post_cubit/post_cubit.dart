@@ -2,8 +2,10 @@ import 'dart:convert';
 
 import 'package:auth/core/errors/failure.dart';
 import 'package:auth/domain/entities/post.dart';
+import 'package:auth/domain/entities/reaction.dart';
 import 'package:auth/domain/entities/reaction_type.dart';
 import 'package:auth/domain/usecases/post/delete_post_usecase.dart';
+import 'package:auth/domain/usecases/post/get_post_reactions_usecase.dart';
 import 'package:auth/domain/usecases/post/get_posts_usecase.dart';
 import 'package:auth/domain/usecases/post/edit_post_usecase.dart';
 import 'package:equatable/equatable.dart';
@@ -14,6 +16,7 @@ part 'post_state.dart';
 
 class PostCubit extends Cubit<PostState> {
   final GetPostsUseCase getPostsUseCase;
+  final GetPostReactionsUseCase getPostReactionsUseCase;
   final DeletePostUseCase deletePostUseCase;
   final EditPostUseCase editPostUseCase;
   final SharedPreferences prefs;
@@ -30,9 +33,12 @@ class PostCubit extends Cubit<PostState> {
   final Map<String, int> _commentsCountCeilings = {};
   final Map<String, int> _cachedReactionsCount = {};
   final Map<String, ReactionType> _cachedUserReactions = {};
+  final Set<String> _hydratedCurrentUserReactionPostIds = {};
+  bool _isHydratingCurrentUserReactions = false;
 
   PostCubit({
     required this.getPostsUseCase,
+    required this.getPostReactionsUseCase,
     required this.deletePostUseCase,
     required this.editPostUseCase,
     required this.prefs,
@@ -327,6 +333,7 @@ class PostCubit extends Cubit<PostState> {
       posts = [];
       page = 1;
       hasReachedMax = false;
+      _hydratedCurrentUserReactionPostIds.clear();
       emit(PostLoading());
     }
 
@@ -398,7 +405,130 @@ class PostCubit extends Cubit<PostState> {
       0,
       _applyReactionSnapshot(_applyCommentsCountFloors([newPost])).first,
     );
+    final postId = newPost.postID?.trim();
+    if (postId != null && postId.isNotEmpty) {
+      _hydratedCurrentUserReactionPostIds.remove(postId);
+    }
     emit(PostLoaded(List.from(posts), hasReachedMax: hasReachedMax));
+  }
+
+  Future<void> hydrateCurrentUserReactions({
+    required String currentUserId,
+  }) async {
+    final normalizedUserId = currentUserId.trim();
+    if (normalizedUserId.isEmpty || _isHydratingCurrentUserReactions) {
+      return;
+    }
+
+    final candidates = posts.where((post) {
+      final postId = post.postID?.trim();
+      if (postId == null || postId.isEmpty) {
+        return false;
+      }
+      if (_hydratedCurrentUserReactionPostIds.contains(postId)) {
+        return false;
+      }
+      if (post.reactionsCount <= 0) {
+        return false;
+      }
+      if (post.userReaction == ReactionType.none) {
+        return true;
+      }
+      return !_hasCurrentUserReactionId(post, normalizedUserId);
+    }).toList();
+
+    if (candidates.isEmpty) {
+      return;
+    }
+
+    _isHydratingCurrentUserReactions = true;
+    var didMutate = false;
+
+    for (final post in candidates) {
+      final postId = post.postID?.trim();
+      if (postId == null || postId.isEmpty) {
+        continue;
+      }
+
+      _hydratedCurrentUserReactionPostIds.add(postId);
+      final result = await getPostReactionsUseCase(postId: postId);
+      if (isClosed) {
+        _isHydratingCurrentUserReactions = false;
+        return;
+      }
+
+      result.fold((_) {}, (reactions) {
+        Reaction? mine;
+        for (final reaction in reactions.reversed) {
+          if (reaction.userId == normalizedUserId &&
+              reaction.type != ReactionType.none) {
+            mine = reaction;
+            break;
+          }
+        }
+        if (mine == null) {
+          return;
+        }
+
+        final postIndex = posts.indexWhere((item) => item.postID == postId);
+        if (postIndex == -1) {
+          return;
+        }
+
+        final currentPost = posts[postIndex];
+        final updatedReactions = List<Reaction>.from(
+          currentPost.reactions ?? const <Reaction>[],
+        );
+        final existingIndex = updatedReactions.indexWhere(
+          (reaction) => reaction.userId == normalizedUserId,
+        );
+        if (existingIndex >= 0) {
+          updatedReactions[existingIndex] = mine;
+        } else {
+          updatedReactions.add(mine);
+        }
+
+        final resolvedCount = currentPost.reactionsCount > 0
+            ? currentPost.reactionsCount
+            : reactions.length;
+
+        posts[postIndex] = currentPost.copyWith(
+          userReaction: mine.type,
+          reactionsCount: resolvedCount,
+          reactions: updatedReactions,
+        );
+
+        _ensureReactionsSnapshotLoaded();
+        _cachedUserReactions[postId] = mine.type;
+        _cachedReactionsCount[postId] = resolvedCount;
+        didMutate = true;
+      });
+    }
+
+    _isHydratingCurrentUserReactions = false;
+    if (!didMutate) {
+      return;
+    }
+
+    _persistReactionsSnapshot();
+    emit(PostLoaded(List.from(posts), hasReachedMax: hasReachedMax));
+  }
+
+  bool _hasCurrentUserReactionId(Post post, String currentUserId) {
+    final reactions = post.reactions;
+    if (reactions == null || reactions.isEmpty) {
+      return false;
+    }
+    for (final reaction in reactions.reversed) {
+      if (reaction.userId != currentUserId) {
+        continue;
+      }
+      final id = reaction.id.trim();
+      if (id.isNotEmpty) {
+        return true;
+      }
+    }
+    return false;
   }
 
   void incrementCommentsCount(String postId, {int by = 1}) {
@@ -431,8 +561,10 @@ class PostCubit extends Cubit<PostState> {
 
   void updatePostReaction({
     required String postId,
+    String? currentUserId,
     required ReactionType reactionType,
     required int reactionsCount,
+    String? reactionId,
   }) {
     if (postId.trim().isEmpty) {
       return;
@@ -447,9 +579,48 @@ class PostCubit extends Cubit<PostState> {
     if (reactionType != ReactionType.none && safeCount == 0) {
       safeCount = 1;
     }
+
+    final normalizedUserId = currentUserId?.trim() ?? '';
+    final updatedReactions = List<Reaction>.from(
+      posts[index].reactions ?? const <Reaction>[],
+    );
+    if (normalizedUserId.isNotEmpty) {
+      final existingIndex = updatedReactions.indexWhere(
+        (reaction) => reaction.userId == normalizedUserId,
+      );
+      if (reactionType == ReactionType.none) {
+        if (existingIndex >= 0) {
+          updatedReactions.removeAt(existingIndex);
+        }
+      } else {
+        final previous = existingIndex >= 0 ? updatedReactions[existingIndex] : null;
+        final normalizedReactionId = reactionId?.trim() ?? '';
+        final resolvedReactionId = normalizedReactionId.isNotEmpty
+            ? normalizedReactionId
+            : (previous?.id ?? '');
+        final resolvedPostId = previous?.postId.isNotEmpty == true
+            ? previous!.postId
+            : postId;
+        final updated = Reaction(
+          id: resolvedReactionId,
+          userId: normalizedUserId,
+          postId: resolvedPostId,
+          type: reactionType,
+          username: previous?.username,
+          profilePicture: previous?.profilePicture,
+        );
+        if (existingIndex >= 0) {
+          updatedReactions[existingIndex] = updated;
+        } else {
+          updatedReactions.add(updated);
+        }
+      }
+    }
+
     posts[index] = posts[index].copyWith(
       reactionsCount: safeCount,
       userReaction: reactionType,
+      reactions: updatedReactions,
     );
     _ensureReactionsSnapshotLoaded();
     _cachedReactionsCount[postId] = safeCount;

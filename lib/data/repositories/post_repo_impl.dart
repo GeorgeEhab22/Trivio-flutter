@@ -2,6 +2,7 @@ import 'package:auth/core/errors/failure.dart';
 import 'package:auth/data/core/error/exceptions.dart';
 import 'package:auth/data/datasource/posts_remote_datasource.dart';
 import 'package:auth/domain/entities/post.dart';
+import 'package:auth/domain/entities/reaction.dart';
 import 'package:auth/domain/entities/reaction_type.dart';
 import 'package:auth/domain/repositories/post_repo.dart';
 import 'package:dartz/dartz.dart';
@@ -267,6 +268,30 @@ class PostRepositoryImpl implements PostRepo {
       return Left(NetworkFailure(e.message));
     } catch (_) {
       return Left(ServerFailure('Failed to remove reaction from post'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<Reaction>>> getPostReactions({
+    required String postId,
+    int limit = 10,
+    int maxPages = 20,
+  }) async {
+    try {
+      final reactions = await remoteDataSource.fetchAllPostReactions(
+        postId: postId,
+        limit: limit,
+        maxPages: maxPages,
+      );
+      return Right(reactions);
+    } on AuthException catch (e) {
+      return Left(AuthFailure(e.message));
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } catch (_) {
+      return Left(ServerFailure('Failed to fetch reactions'));
     }
   }
 

@@ -1,7 +1,10 @@
-import 'package:auth/core/styels.dart';
 import 'package:auth/constants/colors.dart';
+import 'package:auth/common/functions/number_extensions.dart';
+import 'package:auth/domain/entities/reaction_type.dart';
 import 'package:auth/presentation/home/comments/comments_bloc_consumer.dart';
 import 'package:auth/presentation/home/comments/widgets/input_field/input_field_bloc_builder.dart';
+import 'package:auth/presentation/home/reactions/reactions_screen.dart';
+import 'package:auth/presentation/home/widgets/people_reacted.dart';
 import 'package:auth/presentation/manager/comment_cubit/comment_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,13 +13,22 @@ import 'package:auth/l10n/app_localizations.dart';
 enum _CommentsSortOption { newest, mostRelated, mostReplied }
 
 class CommentsView extends StatefulWidget {
+  // TODO: Remove this presentation fallback once auth/session user id is always available.
+  static const String _presentationReactionUserId = '69a1a4cbab9f71890ad97692';
+
   final String postId;
   final String currentUserId;
+  final int sharesCount;
+  final int reactionsCount;
+  final List<ReactionType> topReactions;
 
   const CommentsView({
     super.key,
     required this.postId,
     required this.currentUserId,
+    this.sharesCount = 0,
+    this.reactionsCount = 0,
+    this.topReactions = const <ReactionType>[],
   });
 
   @override
@@ -51,9 +63,13 @@ class _CommentsViewState extends State<CommentsView> {
   }
 
   Future<void> _loadComments() async {
-    await context.read<CommentCubit>().getComments(
+    final commentCubit = context.read<CommentCubit>();
+    await commentCubit.getComments(
       widget.postId,
       sort: _mapSortToQuery(_selectedSort),
+    );
+    await commentCubit.hydrateCurrentUserReactions(
+      currentUserId: CommentsView._presentationReactionUserId,
     );
   }
 
@@ -84,6 +100,7 @@ class _CommentsViewState extends State<CommentsView> {
 
   @override
   Widget build(BuildContext context) {
+    const currentUserId = CommentsView._presentationReactionUserId;
     final l10n = AppLocalizations.of(context)!;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final borderColor = isDark
@@ -92,6 +109,10 @@ class _CommentsViewState extends State<CommentsView> {
     final shellGradient = isDark
         ? const [Color(0xFF1C2128), Color(0xFF151A20)]
         : const [Color(0xFFFFFFFF), Color(0xFFF7FBF8)];
+    final metricsTextColor = isDark
+        ? Colors.white.withValues(alpha: 0.88)
+        : const Color(0xFF1F2937);
+    final hasReactions = widget.reactionsCount > 0;
 
     return Container(
       height: MediaQuery.of(context).size.height * 0.95,
@@ -121,25 +142,6 @@ class _CommentsViewState extends State<CommentsView> {
           ),
           child: Stack(
             children: [
-              PositionedDirectional(
-                top: -34,
-                end: -26,
-                child: Container(
-                  width: 112,
-                  height: 112,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: RadialGradient(
-                      colors: [
-                        AppColors.primary.withValues(
-                          alpha: isDark ? 0.24 : 0.18,
-                        ),
-                        Colors.transparent,
-                      ],
-                    ),
-                  ),
-                ),
-              ),
               Column(
                 children: [
                   const SizedBox(height: 10),
@@ -154,32 +156,72 @@ class _CommentsViewState extends State<CommentsView> {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        width: 30,
-                        height: 30,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: AppColors.primary.withValues(alpha: 0.16),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 4,
+                    ),
+                    child: Row(
+                      children: [
+                        if (hasReactions)
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              PeopleReacted(
+                                color: AppColors.primary.withValues(
+                                  alpha: isDark ? 0.98 : 0.9,
+                                ),
+                                topReactions: widget.topReactions,
+                                onTap: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (_) => ReactionsScreen.forPost(
+                                        postId: widget.postId,
+                                        currentUserId: currentUserId,
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                widget.reactionsCount
+                                    .toString()
+                                    .localizeDigits(context),
+                                style: Theme.of(context).textTheme.bodyMedium
+                                    ?.copyWith(
+                                      fontWeight: FontWeight.w700,
+                                      color: isDark
+                                          ? Colors.white.withValues(alpha: 0.86)
+                                          : const Color(0xFF374151),
+                                    ),
+                              ),
+                            ],
+                          )
+                        else
+                          Flexible(
+                            child: Text(
+                              l10n.reactionsEncouragement,
+                              style: Theme.of(context).textTheme.bodyMedium
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                    color: isDark
+                                        ? Colors.white.withValues(alpha: 0.78)
+                                        : const Color(0xFF4B5563),
+                                  ),
+                            ),
+                          ),
+                        if (hasReactions) const Spacer(),
+                        if (!hasReactions) const SizedBox(width: 12),
+                        _SharesMetric(
+                          label:
+                              '${widget.sharesCount.toString().localizeDigits(context)} ${l10n.shareLabel}',
+                          color: metricsTextColor,
                         ),
-                        child: const Icon(
-                          Icons.chat_bubble_outline_rounded,
-                          size: 16,
-                          color: AppColors.primary,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        l10n.commentsTitle,
-                        style: Styles.textStyle20.copyWith(
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 10),
                   Divider(
                     height: 1,
                     color: isDark
@@ -243,7 +285,7 @@ class _CommentsViewState extends State<CommentsView> {
                   ),
                   Expanded(
                     child: CommentsBlocConsumer(
-                      currentUserId: widget.currentUserId,
+                      currentUserId: currentUserId,
                     ),
                   ),
                   InputFieldBlocBuilder(
@@ -256,6 +298,48 @@ class _CommentsViewState extends State<CommentsView> {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _SharesMetric extends StatelessWidget {
+  final String label;
+  final Color color;
+
+  const _SharesMetric({required this.label, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            color.withValues(alpha: 0.16),
+            color.withValues(alpha: 0.08),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: color.withValues(alpha: 0.22)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.share_outlined, size: 14, color: color),
+          const SizedBox(width: 6),
+          Text(
+            label,
+            style: TextStyle(
+              color: color,
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.1,
+            ),
+          ),
+        ],
       ),
     );
   }

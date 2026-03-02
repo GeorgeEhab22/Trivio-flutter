@@ -1,5 +1,6 @@
 import 'package:auth/core/errors/failure.dart';
 import 'package:auth/domain/entities/comment.dart';
+import 'package:auth/domain/entities/reaction.dart';
 import 'package:dartz/dartz.dart';
 
 abstract class CommentRepository {
@@ -46,5 +47,11 @@ abstract class CommentRepository {
   Future<Either<Failure, Comment>> mentionUsersInComment({
     required String commentId,
     required List<String> mentionedUserIds,
+  });
+
+  Future<Either<Failure, List<Reaction>>> getCommentReactions({
+    required String commentId,
+    int limit = 10,
+    int maxPages = 20,
   });
 }

@@ -19,6 +19,7 @@ class Post extends Equatable {
   final int commentsCount;
   final int reactionsCount;
   final ReactionType userReaction;
+  final Map<ReactionType, int> reactionCountsByType;
 
   const Post({
     this.authorId,
@@ -36,6 +37,7 @@ class Post extends Equatable {
     this.commentsCount = 0,
     this.reactionsCount = 0,
     this.userReaction = ReactionType.none,
+    this.reactionCountsByType = const <ReactionType, int>{},
   });
   Post copyWith({
     String? authorId,
@@ -53,6 +55,7 @@ class Post extends Equatable {
     int? commentsCount,
     int? reactionsCount,
     ReactionType? userReaction,
+    Map<ReactionType, int>? reactionCountsByType,
   }) {
     return Post(
       authorId: authorId ?? this.authorId,
@@ -70,6 +73,7 @@ class Post extends Equatable {
       commentsCount: commentsCount ?? this.commentsCount,
       reactionsCount: reactionsCount ?? this.reactionsCount,
       userReaction: userReaction ?? this.userReaction,
+      reactionCountsByType: reactionCountsByType ?? this.reactionCountsByType,
     );
   }
 
@@ -87,5 +91,6 @@ class Post extends Equatable {
     commentsCount,
     reactionsCount,
     userReaction,
+    reactionCountsByType,
   ];
 }

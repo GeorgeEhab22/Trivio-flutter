@@ -1,4 +1,3 @@
-
 import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/authentication/widgets/show_custom_snackbar.dart';
 import 'package:auth/presentation/groups/widgets/dummy_for_skeletonizer.dart';
@@ -53,6 +52,17 @@ class TimelineListView extends StatelessWidget {
           );
         }
 
+        if (!isInitialLoading && cubit.posts.isNotEmpty) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (!context.mounted) {
+              return;
+            }
+            context.read<PostCubit>().hydrateCurrentUserReactions(
+              currentUserId: _presentationReactionUserId,
+            );
+          });
+        }
+
         return Skeletonizer.sliver(
           enabled: isInitialLoading,
           child: SliverList(
@@ -77,6 +87,4 @@ class TimelineListView extends StatelessWidget {
       },
     );
   }
-
-
 }

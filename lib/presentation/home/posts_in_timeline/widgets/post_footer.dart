@@ -1,10 +1,13 @@
+import 'package:auth/constants/colors.dart';
 import 'package:auth/domain/entities/post.dart';
 import 'package:auth/domain/entities/reaction.dart';
 import 'package:auth/domain/entities/reaction_type.dart';
 import 'package:auth/presentation/home/comments/widgets/comment_action.dart';
 import 'package:auth/presentation/home/reactions/reaction_action.dart';
+import 'package:auth/presentation/home/reactions/reactions_screen.dart';
 import 'package:auth/presentation/home/share_post/send_post_button.dart';
 import 'package:auth/presentation/home/share_post/share_button.dart';
+import 'package:auth/presentation/home/widgets/people_reacted.dart';
 import 'package:flutter/material.dart';
 
 class PostFooter extends StatelessWidget {
@@ -35,6 +38,9 @@ class PostFooter extends StatelessWidget {
     final dividerColor = isDark
         ? Colors.white.withValues(alpha: 0.12)
         : Colors.black.withValues(alpha: 0.08);
+    final hasReactions = resolvedCount > 0;
+
+    const presentationShareCount = 0;
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(14, 8, 14, 10),
@@ -51,6 +57,7 @@ class PostFooter extends StatelessWidget {
                 children: [
                   ReactionAction(
                     postId: post.postID ?? '',
+                    currentUserId: currentUserId,
                     initialReaction: resolvedReaction,
                     initialCount: resolvedCount,
                     initialReactionId: _resolveCurrentUserReactionId(),
@@ -60,11 +67,14 @@ class PostFooter extends StatelessWidget {
                     postId: post.postID ?? '',
                     currentUserId: currentUserId,
                     commentsCount: post.commentsCount,
+                    sharesCount: presentationShareCount,
+                    reactionsCount: resolvedCount,
+                    topReactions: _topReactionTypes(),
                   ),
                   _ActionDivider(color: dividerColor),
-                  ShareButton(count: 0),
+                  ShareButton(count: presentationShareCount),
                   _ActionDivider(color: dividerColor),
-                  SizedBox(width: 10,),
+                  const SizedBox(width: 10),
                   SendPostButton(
                     postId: post.postID ?? '',
                     compact: true,
@@ -73,6 +83,23 @@ class PostFooter extends StatelessWidget {
                 ],
               ),
             ),
+            if (hasReactions) ...[
+              const SizedBox(width: 8),
+              PeopleReacted(
+                color: isDark ? AppColors.darkGreen : AppColors.primary,
+                topReactions: _topReactionTypes(),
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => ReactionsScreen.forPost(
+                        postId: post.postID ?? '',
+                        currentUserId: currentUserId,
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ],
           ],
         ),
       ),
@@ -115,6 +142,30 @@ class PostFooter extends StatelessWidget {
       }
     }
     return null;
+  }
+
+  List<ReactionType> _topReactionTypes() {
+    if (post.reactionCountsByType.isNotEmpty) {
+      final sortedByCount = post.reactionCountsByType.entries.toList()
+        ..sort((a, b) => b.value.compareTo(a.value));
+      return sortedByCount.map((entry) => entry.key).take(3).toList();
+    }
+
+    final reactions = post.reactions;
+    if (reactions == null || reactions.isEmpty) {
+      return const <ReactionType>[];
+    }
+
+    final counts = <ReactionType, int>{};
+    for (final reaction in reactions) {
+      if (reaction.type == ReactionType.none) {
+        continue;
+      }
+      counts.update(reaction.type, (value) => value + 1, ifAbsent: () => 1);
+    }
+    final sorted = counts.entries.toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
+    return sorted.map((entry) => entry.key).take(3).toList();
   }
 }
 

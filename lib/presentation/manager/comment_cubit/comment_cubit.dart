@@ -7,6 +7,7 @@ import 'package:auth/domain/usecases/comment/add_comment_usecase.dart';
 import 'package:auth/domain/usecases/comment/delete_comment_usecase.dart';
 import 'package:auth/domain/usecases/comment/edit_comment_usecase.dart';
 import 'package:auth/domain/usecases/comment/get_comment_usecase.dart';
+import 'package:auth/domain/usecases/comment/get_comment_reactions_usecase.dart';
 import 'package:auth/domain/usecases/comment/get_comments_usecase.dart';
 import 'package:auth/domain/usecases/comment/get_replies_usecase.dart';
 import 'package:auth/domain/usecases/comment/mention_users_in_comment_usecase.dart';
@@ -18,6 +19,7 @@ import 'comment_state.dart';
 class CommentCubit extends Cubit<CommentState> {
   final GetCommentsUseCase getCommentsUseCase;
   final GetCommentUseCase getCommentUseCase;
+  final GetCommentReactionsUseCase getCommentReactionsUseCase;
   final AddCommentUseCase addCommentUseCase;
   final DeleteCommentUseCase deleteCommentUseCase;
   final EditCommentUseCase editCommentUseCase;
@@ -29,6 +31,7 @@ class CommentCubit extends Cubit<CommentState> {
   CommentCubit({
     required this.getCommentsUseCase,
     required this.getCommentUseCase,
+    required this.getCommentReactionsUseCase,
     required this.addCommentUseCase,
     required this.deleteCommentUseCase,
     required this.editCommentUseCase,
@@ -44,6 +47,9 @@ class CommentCubit extends Cubit<CommentState> {
   final Set<String> _expandedReplyParentIds = {};
   final Set<String> _loadingReplyParentIds = {};
   final Map<String, String> _reactionIdsByComment = {};
+  final Set<String> _hydratedCurrentUserReactionCommentIds = {};
+  bool _isHydratingCurrentUserReactions = false;
+  bool _pendingHydrationPass = false;
 
   Comment? get replyingTo => _replyingTo;
   Comment? get editingComment => _editingComment;
@@ -61,6 +67,7 @@ class CommentCubit extends Cubit<CommentState> {
     String? keyword,
   }) async {
     _reactionIdsByComment.clear();
+    _hydratedCurrentUserReactionCommentIds.clear();
     _expandedReplyParentIds.clear();
     _loadingReplyParentIds.clear();
     _replyingTo = null;
@@ -109,6 +116,110 @@ class CommentCubit extends Cubit<CommentState> {
           _upsertComment(normalizedReply);
         }
       });
+    }
+  }
+
+  Future<void> hydrateCurrentUserReactions({
+    required String currentUserId,
+  }) async {
+    final normalizedUserId = currentUserId.trim();
+    if (normalizedUserId.isEmpty) {
+      return;
+    }
+    if (_isHydratingCurrentUserReactions) {
+      _pendingHydrationPass = true;
+      return;
+    }
+
+    final candidates = _allComments.where((comment) {
+      final commentId = comment.id.trim();
+      if (commentId.isEmpty) {
+        return false;
+      }
+      if (_hydratedCurrentUserReactionCommentIds.contains(commentId)) {
+        return false;
+      }
+      if (comment.userReaction == ReactionType.none) {
+        return true;
+      }
+      return !_hasCurrentUserReactionId(comment, normalizedUserId);
+    }).toList();
+
+    if (candidates.isEmpty) {
+      return;
+    }
+
+    _isHydratingCurrentUserReactions = true;
+    var didMutate = false;
+
+    for (final comment in candidates) {
+      final commentId = comment.id.trim();
+      if (commentId.isEmpty) {
+        continue;
+      }
+
+      final result = await getCommentReactionsUseCase(commentId: commentId);
+      if (isClosed) {
+        _isHydratingCurrentUserReactions = false;
+        return;
+      }
+
+      result.fold((_) {}, (reactions) {
+        _hydratedCurrentUserReactionCommentIds.add(commentId);
+
+        Reaction? mine;
+        for (final reaction in reactions.reversed) {
+          if (reaction.userId == normalizedUserId &&
+              reaction.type != ReactionType.none) {
+            mine = reaction;
+            break;
+          }
+        }
+        if (mine == null) {
+          return;
+        }
+
+        final index = _allComments.indexWhere((item) => item.id == commentId);
+        if (index == -1) {
+          return;
+        }
+
+        final currentComment = _allComments[index];
+        final updatedReactions = List<Reaction>.from(currentComment.reactions);
+        final existingIndex = updatedReactions.indexWhere(
+          (reaction) => reaction.userId == normalizedUserId,
+        );
+        if (existingIndex >= 0) {
+          updatedReactions[existingIndex] = mine;
+        } else {
+          updatedReactions.add(mine);
+        }
+
+        final resolvedCount = currentComment.reactionsCount > 0
+            ? currentComment.reactionsCount
+            : reactions.length;
+
+        _allComments[index] = currentComment.copyWith(
+          reactions: updatedReactions,
+          reactionsCount: resolvedCount,
+          userReaction: mine.type,
+        );
+
+        final normalizedReactionId = _normalizeReactionIdForApi(mine.id);
+        if (normalizedReactionId != null) {
+          _reactionIdsByComment[commentId] = normalizedReactionId;
+        }
+        didMutate = true;
+      });
+    }
+
+    _isHydratingCurrentUserReactions = false;
+    if (didMutate) {
+      _emitLoaded();
+    }
+    if (_pendingHydrationPass) {
+      _pendingHydrationPass = false;
+      await hydrateCurrentUserReactions(currentUserId: normalizedUserId);
     }
   }
 
@@ -164,6 +275,10 @@ class CommentCubit extends Cubit<CommentState> {
             .map((reply) => _forceParentId(reply, parentCommentId))
             .toList();
 
+        final existingReplyIdsForParent = _allComments
+            .where((c) => c.parentCommentId == parentCommentId)
+            .map((c) => c.id)
+            .toSet();
         final replyIds = normalizedReplies.map((r) => r.id).toSet();
 
         _allComments.removeWhere(
@@ -172,6 +287,14 @@ class CommentCubit extends Cubit<CommentState> {
         );
 
         _allComments.addAll(normalizedReplies);
+        final idsToRefreshHydration = <String>{
+          ...existingReplyIdsForParent,
+          ...replyIds,
+        };
+        for (final id in idsToRefreshHydration) {
+          _hydratedCurrentUserReactionCommentIds.remove(id);
+          _reactionIdsByComment.remove(id);
+        }
         isSuccess = true;
       },
     );
@@ -202,6 +325,7 @@ class CommentCubit extends Cubit<CommentState> {
   Future<void> toggleRepliesVisibility({
     required String parentCommentId,
     required String postId,
+    required String currentUserId,
   }) async {
     if (_loadingReplyParentIds.contains(parentCommentId)) {
       return;
@@ -234,6 +358,7 @@ class CommentCubit extends Cubit<CommentState> {
     if (isSuccess || hadExistingReplies || hasRepliesNow) {
       _expandedReplyParentIds.add(parentCommentId);
     }
+    await hydrateCurrentUserReactions(currentUserId: currentUserId);
     _emitLoaded();
   }
 
@@ -708,11 +833,26 @@ class CommentCubit extends Cubit<CommentState> {
         : (previous.userReaction == ReactionType.none
               ? previous.reactionsCount + 1
               : previous.reactionsCount);
+    final updatedCounts = Map<ReactionType, int>.from(
+      previous.reactionCountsByType,
+    );
+    if (previous.userReaction != ReactionType.none) {
+      final oldCount = (updatedCounts[previous.userReaction] ?? 0) - 1;
+      if (oldCount <= 0) {
+        updatedCounts.remove(previous.userReaction);
+      } else {
+        updatedCounts[previous.userReaction] = oldCount;
+      }
+    }
+    if (reactionType != ReactionType.none) {
+      updatedCounts[reactionType] = (updatedCounts[reactionType] ?? 0) + 1;
+    }
 
     _allComments[index] = previous.copyWith(
       reactions: filtered,
       reactionsCount: nextCount,
       userReaction: reactionType,
+      reactionCountsByType: updatedCounts,
     );
 
     _emitLoaded();
@@ -772,5 +912,18 @@ class CommentCubit extends Cubit<CommentState> {
     }
     _reactionIdsByComment[commentId] = normalized;
     return normalized;
+  }
+
+  bool _hasCurrentUserReactionId(Comment comment, String currentUserId) {
+    for (final reaction in comment.reactions.reversed) {
+      if (reaction.userId != currentUserId) {
+        continue;
+      }
+      final normalized = _normalizeReactionIdForApi(reaction.id);
+      if (normalized != null) {
+        return true;
+      }
+    }
+    return false;
   }
 }

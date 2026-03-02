@@ -590,6 +590,84 @@ abstract class AppLocalizations {
   /// **'User Name'**
   String get defaultUserName;
 
+  /// No description provided for @reactionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reactions'**
+  String get reactionsTitle;
+
+  /// No description provided for @reactionsTabAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get reactionsTabAll;
+
+  /// No description provided for @reactionsYou.
+  ///
+  /// In en, this message translates to:
+  /// **'You'**
+  String get reactionsYou;
+
+  /// No description provided for @reactionsLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load reactions.'**
+  String get reactionsLoadError;
+
+  /// No description provided for @reactionsEmptyAll.
+  ///
+  /// In en, this message translates to:
+  /// **'No reactions yet.'**
+  String get reactionsEmptyAll;
+
+  /// No description provided for @reactionsEmptyType.
+  ///
+  /// In en, this message translates to:
+  /// **'No users reacted with this reaction yet.'**
+  String get reactionsEmptyType;
+
+  /// No description provided for @reactionsEncouragement.
+  ///
+  /// In en, this message translates to:
+  /// **'Be the first to react to this post.'**
+  String get reactionsEncouragement;
+
+  /// No description provided for @reactionLike.
+  ///
+  /// In en, this message translates to:
+  /// **'Like'**
+  String get reactionLike;
+
+  /// No description provided for @reactionLove.
+  ///
+  /// In en, this message translates to:
+  /// **'Love'**
+  String get reactionLove;
+
+  /// No description provided for @reactionHaha.
+  ///
+  /// In en, this message translates to:
+  /// **'Haha'**
+  String get reactionHaha;
+
+  /// No description provided for @reactionWow.
+  ///
+  /// In en, this message translates to:
+  /// **'Wow'**
+  String get reactionWow;
+
+  /// No description provided for @reactionSad.
+  ///
+  /// In en, this message translates to:
+  /// **'Sad'**
+  String get reactionSad;
+
+  /// No description provided for @reactionAngry.
+  ///
+  /// In en, this message translates to:
+  /// **'Angry'**
+  String get reactionAngry;
+
   /// No description provided for @reactionGoal.
   ///
   /// In en, this message translates to:
@@ -733,6 +811,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Comments'**
   String get commentsTitle;
+
+  /// No description provided for @peopleReactedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'People reacted'**
+  String get peopleReactedLabel;
+
+  /// No description provided for @shareLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'share'**
+  String get shareLabel;
 
   /// No description provided for @noCommentsYet.
   ///

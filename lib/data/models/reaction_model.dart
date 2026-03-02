@@ -7,6 +7,8 @@ class ReactionModel extends Reaction {
     required super.userId,
     required super.postId,
     required super.type,
+    super.username,
+    super.profilePicture,
   });
 
   factory ReactionModel.fromJson(Map<String, dynamic> json) {
@@ -20,25 +22,42 @@ class ReactionModel extends Reaction {
     }
 
     final rawUser = json['userId'] ?? json['user'] ?? json['author'];
+    final userMap = rawUser is Map<String, dynamic> ? rawUser : null;
 
     return ReactionModel(
       id: parseIdSafely(json['_id'] ?? json['id']),
       userId: parseIdSafely(rawUser),
       postId: parseIdSafely(
         json['postId'] ?? json['modelId'],
-      ), 
+      ),
       type: _mapStringToReactionType(
         json['type'] ?? json['reaction'],
-      ), 
+      ),
+      username: userMap?['username']?.toString(),
+      profilePicture: userMap?['profilePicture']?.toString(),
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {'_id': id, 'userId': userId, 'postId': postId, 'type': type.name};
+    return {
+      '_id': id,
+      'userId': userId,
+      'postId': postId,
+      'type': type.name,
+      'username': username,
+      'profilePicture': profilePicture,
+    };
   }
 
   Reaction toEntity() =>
-      Reaction(id: id, userId: userId, postId: postId, type: type);
+      Reaction(
+        id: id,
+        userId: userId,
+        postId: postId,
+        type: type,
+        username: username,
+        profilePicture: profilePicture,
+      );
 
   factory ReactionModel.fromEntity(Reaction reaction) {
     return ReactionModel(
@@ -46,6 +65,8 @@ class ReactionModel extends Reaction {
       userId: reaction.userId,
       postId: reaction.postId,
       type: reaction.type,
+      username: reaction.username,
+      profilePicture: reaction.profilePicture,
     );
   }
 

@@ -30,6 +30,7 @@ class PostModel extends Post {
     super.reactions = const [],
     super.reactionsCount = 0,
     super.userReaction = ReactionType.none,
+    super.reactionCountsByType = const <ReactionType, int>{},
   });
 
   factory PostModel.fromJson(Map<String, dynamic> json) {
@@ -83,6 +84,16 @@ class PostModel extends Post {
       goalCount: parseInt(reactionMap['goal']),
       offsideCount: parseInt(reactionMap['offside']),
     );
+    final reactionCountsByType = <ReactionType, int>{
+      ReactionType.like: dummyReactions.likesCount,
+      ReactionType.love: dummyReactions.lovesCount,
+      ReactionType.haha: dummyReactions.hahaCount,
+      ReactionType.wow: dummyReactions.wowCount,
+      ReactionType.sad: dummyReactions.sadCount,
+      ReactionType.angry: dummyReactions.angryCount,
+      ReactionType.goal: dummyReactions.goalCount,
+      ReactionType.offside: dummyReactions.offsideCount,
+    }..removeWhere((_, count) => count <= 0);
 
     final reactionsJson = raw['reactions'];
     final List<Reaction> reactions = reactionsJson is List
@@ -166,6 +177,7 @@ class PostModel extends Post {
       groupName: gName,
       groupCoverImage: gCover,
       commentsCount: totalCommentsWithReplies,
+      reactionCountsByType: reactionCountsByType,
     );
   }
 
@@ -221,6 +233,7 @@ class PostModel extends Post {
       groupName: groupName,
       groupCoverImage: groupCoverImage,
       commentsCount: commentsCount,
+      reactionCountsByType: reactionCountsByType,
     );
   }
 
@@ -237,14 +250,15 @@ class PostModel extends Post {
       reactionsCount: post.reactionsCount,
       userReaction: post.userReaction,
       reactionCounts: DummyReactionCounter(
-        likesCount: post.reactionsCount,
-        lovesCount: 0,
-        hahaCount: 0,
-        sadCount: 0,
-        angryCount: 0,
-        wowCount: 0,
-        goalCount: 0,
-        offsideCount: 0,
+        likesCount:
+            post.reactionCountsByType[ReactionType.like] ?? post.reactionsCount,
+        lovesCount: post.reactionCountsByType[ReactionType.love] ?? 0,
+        hahaCount: post.reactionCountsByType[ReactionType.haha] ?? 0,
+        sadCount: post.reactionCountsByType[ReactionType.sad] ?? 0,
+        angryCount: post.reactionCountsByType[ReactionType.angry] ?? 0,
+        wowCount: post.reactionCountsByType[ReactionType.wow] ?? 0,
+        goalCount: post.reactionCountsByType[ReactionType.goal] ?? 0,
+        offsideCount: post.reactionCountsByType[ReactionType.offside] ?? 0,
       ),
       commentsCount: post.commentsCount,
       location: post.location,
@@ -252,6 +266,7 @@ class PostModel extends Post {
       groupID: post.groupID,
       groupName: post.groupName,
       groupCoverImage: post.groupCoverImage,
+      reactionCountsByType: post.reactionCountsByType,
     );
   }
 }

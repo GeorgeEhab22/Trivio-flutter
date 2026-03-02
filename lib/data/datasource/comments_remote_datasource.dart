@@ -2,6 +2,8 @@ import 'package:auth/common/api_endpoints.dart';
 import 'package:auth/common/functions/handle_dio_error.dart';
 import 'package:auth/data/core/error/exceptions.dart';
 import 'package:auth/data/models/comment_model.dart';
+import 'package:auth/data/models/reaction_model.dart';
+import 'package:auth/domain/entities/reaction.dart';
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../common/api_service.dart';
@@ -54,6 +56,12 @@ abstract class CommentsRemoteDataSource {
   Future<CommentModel> mentionUsersInComment({
     required String commentId,
     required List<String> mentionedUserIds,
+  });
+
+  Future<List<Reaction>> fetchAllCommentReactions({
+    required String commentId,
+    int limit = 10,
+    int maxPages = 20,
   });
 }
 
@@ -519,6 +527,38 @@ class CommentsRemoteDataSourceImpl implements CommentsRemoteDataSource {
       );
 
       return CommentModel.fromJson(response["data"][0]);
+    } on AuthException {
+      rethrow;
+    } catch (e) {
+      errorHandler.handleDioError(e);
+      rethrow;
+    }
+  }
+
+  @override
+  Future<List<Reaction>> fetchAllCommentReactions({
+    required String commentId,
+    int limit = 10,
+    int maxPages = 20,
+  }) async {
+    try {
+      final all = <Reaction>[];
+      final response = await api.get(
+        ApiEndpoints.reactionsOnComment(commentId),
+        options: _getAuthOptions(),
+      );
+      final items =
+          _extractListPayload(
+            response['data'],
+          )?.whereType<Map<String, dynamic>>().toList() ??
+          _extractListPayload(
+            response,
+          )?.whereType<Map<String, dynamic>>().toList() ??
+          const <Map<String, dynamic>>[];
+
+      all.addAll(items.map((item) => ReactionModel.fromJson(item).toEntity()));
+
+      return all;
     } on AuthException {
       rethrow;
     } catch (e) {

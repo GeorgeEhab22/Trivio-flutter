@@ -17,6 +17,7 @@ class CommentModel extends Comment {
     super.reactions = const [],
     super.reactionsCount = 0,
     super.userReaction = ReactionType.none,
+    super.reactionCountsByType = const <ReactionType, int>{},
     super.repliesCount = 0,
     super.parentCommentId,
   });
@@ -120,6 +121,18 @@ class CommentModel extends Comment {
               .map((r) => ReactionModel.fromJson(r).toEntity())
               .toList()
         : <Reaction>[];
+    final Map<String, dynamic> reactionMap =
+        (json['reactionCounts'] as Map<String, dynamic>? ?? <String, dynamic>{});
+    final reactionCountsByType = <ReactionType, int>{
+      ReactionType.like: parseInt(reactionMap['like']),
+      ReactionType.love: parseInt(reactionMap['love']),
+      ReactionType.haha: parseInt(reactionMap['haha']),
+      ReactionType.wow: parseInt(reactionMap['wow']),
+      ReactionType.sad: parseInt(reactionMap['sad']),
+      ReactionType.angry: parseInt(reactionMap['angry']),
+      ReactionType.goal: parseInt(reactionMap['goal']),
+      ReactionType.offside: parseInt(reactionMap['offside']),
+    }..removeWhere((_, count) => count <= 0);
     final int reactionsCountFromJson = parseInt(
       json['reactionsCount'] ?? json['reactions_count'],
     );
@@ -163,6 +176,7 @@ class CommentModel extends Comment {
           ? 1
           : reactionsCount,
       userReaction: userReaction,
+      reactionCountsByType: reactionCountsByType,
       repliesCount: parseInt(json['repliesCount']),
       parentCommentId: parsedParentId,
     );
@@ -184,6 +198,16 @@ class CommentModel extends Comment {
           .toList(),
       'reactionsCount': reactionsCount,
       'userReaction': userReaction.name,
+      'reactionCounts': {
+        'like': reactionCountsByType[ReactionType.like] ?? 0,
+        'love': reactionCountsByType[ReactionType.love] ?? 0,
+        'haha': reactionCountsByType[ReactionType.haha] ?? 0,
+        'wow': reactionCountsByType[ReactionType.wow] ?? 0,
+        'sad': reactionCountsByType[ReactionType.sad] ?? 0,
+        'angry': reactionCountsByType[ReactionType.angry] ?? 0,
+        'goal': reactionCountsByType[ReactionType.goal] ?? 0,
+        'offside': reactionCountsByType[ReactionType.offside] ?? 0,
+      },
       'repliesCount': repliesCount,
       'parentCommentId': parentCommentId,
     };
@@ -202,6 +226,7 @@ class CommentModel extends Comment {
     reactions: reactions,
     reactionsCount: reactionsCount,
     userReaction: userReaction,
+    reactionCountsByType: reactionCountsByType,
     repliesCount: repliesCount,
     parentCommentId: parentCommentId,
   );
@@ -220,6 +245,7 @@ class CommentModel extends Comment {
       reactions: comment.reactions,
       reactionsCount: comment.reactionsCount,
       userReaction: comment.userReaction,
+      reactionCountsByType: comment.reactionCountsByType,
       repliesCount: comment.repliesCount,
       parentCommentId: comment.parentCommentId,
     );
