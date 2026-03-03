@@ -1,33 +1,36 @@
 import 'package:auth/domain/usecases/group/groups/get_my_groups_use_case.dart';
-import 'package:auth/presentation/manager/group_cubit/get_my_groups/get_my_groups_state.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:auth/presentation/manager/groups_pagination/base_pagination_cubit.dart';
 
-class GetMyGroupsCubit extends Cubit<GetMyGroupsState> {
+import 'package:auth/domain/entities/group.dart';
+import 'package:auth/presentation/manager/groups_pagination/pagination_state.dart';
+import 'package:dartz/dartz.dart';
+
+class GetMyGroupsCubit extends BasePaginationCubit<Group> {
   final GetMyGroupsUseCase getMyGroupsUseCase;
+  String? currentSearch;
 
-  GetMyGroupsCubit({required this.getMyGroupsUseCase})
-      : super(GetMyGroupsInitial());
+  GetMyGroupsCubit({required this.getMyGroupsUseCase});
 
-  Future<void> getMyGroups({int page = 1, String? search}) async {
-    if (state is GetMyGroupsLoading) return;
-    emit(GetMyGroupsLoading());
-
-    final result = await getMyGroupsUseCase(page: page, search: search);
-
-    result.fold(
-      (failure) => emit(GetMyGroupsFailure(message: failure.message)),
-      (groups) => emit(GetMyGroupsSuccess(groups: groups)),
-    );
+  @override
+  Future<Either<dynamic, List<Group>>> fetchUseCase({int page = 1}) {
+    return getMyGroupsUseCase(page: page, search: currentSearch);
   }
-   void removeGroupLocally(String groupId) {
-    if (state is GetMyGroupsSuccess) {
-      final currentState = state as GetMyGroupsSuccess;
-      
-      final updatedList = currentState.groups
-          .where((group) => group.groupId != groupId)
-          .toList();
-      
-      emit(GetMyGroupsSuccess(groups: updatedList));
-    }
+
+  @override
+  String getItemId(Group item) => item.groupId;
+
+  Future<void> searchGroups(String query) {
+    currentSearch = query;
+    return loadData(refresh: true);
+  }
+
+  void removeGroupLocally(String groupId) {
+    items.removeWhere((group) => group.groupId == groupId);
+    emit(
+      PaginationLoaded<Group>(
+        items: List.from(items),
+        hasReachedMax: hasReachedMax,
+      ),
+    );
   }
 }

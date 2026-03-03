@@ -1,6 +1,7 @@
 import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/authentication/widgets/show_custom_snackbar.dart';
 import 'package:auth/presentation/groups/manage_group/widgets/member_row.dart';
+import 'package:auth/presentation/groups/widgets/dummy_for_skeletonizer.dart';
 import 'package:auth/presentation/manager/group_cubit/ban_member/ban_member_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/ban_member/ban_member_state.dart';
 import 'package:auth/presentation/manager/group_cubit/change_member_role/change_member_role_cubit.dart';
@@ -11,15 +12,16 @@ import 'package:auth/presentation/manager/group_cubit/get_members_by_roles/membe
 import 'package:auth/presentation/manager/group_cubit/get_members_by_roles/members_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class ModeratorsListView extends StatelessWidget {
   final String groupId;
-
   const ModeratorsListView({super.key, required this.groupId});
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+
     return MultiBlocListener(
       listeners: [
         BlocListener<ChangeMemberRoleCubit, ChangeMemberRoleState>(
@@ -31,9 +33,6 @@ class ModeratorsListView extends StatelessWidget {
                 state.newRole,
               );
             }
-            if (state is ChangeMemberRoleFailure) {
-              showCustomSnackBar(context, state.message, false);
-            }
           },
         ),
         BlocListener<BanMemberCubit, BanMemberState>(
@@ -43,9 +42,6 @@ class ModeratorsListView extends StatelessWidget {
               context.read<GroupMembersCubit>().removeMemberLocally(
                 state.userId,
               );
-            }
-            if (state is BanMemberFailure) {
-              showCustomSnackBar(context, state.message, false);
             }
           },
         ),
@@ -57,50 +53,78 @@ class ModeratorsListView extends StatelessWidget {
                 state.userId,
               );
             }
-            if (state is KickMemberFailure) {
-              showCustomSnackBar(context, state.message, false);
-            }
           },
         ),
       ],
       child: Scaffold(
         body: BlocBuilder<GroupMembersCubit, GroupMembersState>(
           builder: (context, state) {
-            if (state.isLoading) {
-              return const Center(child: CircularProgressIndicator());
-            }
+            final cubit = context.read<GroupMembersCubit>();
+            final bool isInitialLoading =
+                state.isLoading && state.moderators.isEmpty;
+            final bool isLoadingMore = state.isLoadingMoreModerators;
 
-            final moderators = state.moderators;
+            final displayModerators = isInitialLoading
+                ? DummyData.dummyMembers
+                : [
+                    ...state.moderators,
+                    if (isLoadingMore) DummyData.dummyMember,
+                  ];
 
-            if (moderators.isEmpty) {
+            if (!isInitialLoading && state.moderators.isEmpty) {
               return Center(child: Text(l10n.noModeratorsFound));
             }
 
-            return ListView.builder(
-              itemCount: moderators.length,
-              itemBuilder: (context, index) {
-                final moderator = moderators[index];
-                return MemberRow(
-                  name: moderator.userName,
-                  image: moderator.profileImageUrl,
-                  role: moderator.role ?? l10n.moderator,
-                  onRoleChanged: (newRole) {
-                    context.read<ChangeMemberRoleCubit>().changeMemberRole(
-                      groupId: groupId,
-                      userId: moderator.userId!,
-                      newRole: newRole,
+            return Skeletonizer(
+              enabled: isInitialLoading,
+              child: NotificationListener<ScrollNotification>(
+                onNotification: (scrollInfo) {
+                  if (scrollInfo is ScrollUpdateNotification &&
+                      scrollInfo.metrics.pixels >=
+                          scrollInfo.metrics.maxScrollExtent * 0.8) {
+                    cubit.loadMoreModerators(groupId);
+                  }
+                  return false;
+                },
+                child: ListView.builder(
+                  itemCount:
+                      displayModerators.length +
+                      (state.hasReachedMaxModerators ? 1 : 0),
+                  itemBuilder: (context, index) {
+                    if (index == displayModerators.length) {
+                      return const SizedBox(height: 50);
+                    }
+
+                    final moderator = displayModerators[index];
+                    return Skeletonizer(
+                      enabled: isInitialLoading || moderator.userId!.isEmpty,
+                      child: MemberRow(
+                        name: moderator.userName,
+                        image: moderator.profileImageUrl,
+                        role: moderator.role ?? l10n.moderator,
+                        onRoleChanged: (newRole) {
+                          context
+                              .read<ChangeMemberRoleCubit>()
+                              .changeMemberRole(
+                                groupId: groupId,
+                                userId: moderator.userId!,
+                                newRole: newRole,
+                              );
+                        },
+                        onBan: () => context.read<BanMemberCubit>().banMember(
+                          groupId: groupId,
+                          targetUserId: moderator.userId!,
+                        ),
+                        onKick: () =>
+                            context.read<KickMemberCubit>().kickMember(
+                              groupId: groupId,
+                              targetUserId: moderator.userId!,
+                            ),
+                      ),
                     );
                   },
-                  onBan: () => context.read<BanMemberCubit>().banMember(
-                    groupId: groupId,
-                    targetUserId: moderator.userId!,
-                  ),
-                  onKick: () => context.read<KickMemberCubit>().kickMember(
-                    groupId: groupId,
-                    targetUserId: moderator.userId!,
-                  ),
-                );
-              },
+                ),
+              ),
             );
           },
         ),

@@ -21,7 +21,9 @@ class GroupsAppBar extends StatelessWidget implements PreferredSizeWidget {
       leading: IconButton(
         onPressed: () => context.pop(),
         icon: Icon(
-          isArabic ? Icons.arrow_back_ios_rounded : Icons.arrow_back_ios_new_rounded,
+          isArabic
+              ? Icons.arrow_back_ios_rounded
+              : Icons.arrow_back_ios_new_rounded,
           color: Theme.of(context).iconTheme.color,
           size: 25,
         ),
@@ -42,7 +44,9 @@ class GroupsAppBar extends StatelessWidget implements PreferredSizeWidget {
             color: Theme.of(context).iconTheme.color,
             size: 28,
           ),
-          onPressed: () { /* TODO */ },
+          onPressed: () {
+            context.push(AppRoutes.searchGroups);
+          },
         ),
       ],
       bottom: const GroupsTabBar(),

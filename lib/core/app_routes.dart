@@ -22,8 +22,11 @@ class AppRoutes {
   static const String saved = '/settings/saved';
   static const String search = '/search';
   
-  // edit post cartion
+  // edit comment caption
   static const String editCaption = '/app/home/edit';
+
+  //edit post caption
+  static const String editPostCaption = '/app/home/edit_post_caption';
 
 // groups
   static const String groups = '/settings/groups';
@@ -32,15 +35,16 @@ class AppRoutes {
   static const String createGroup = '/settings/groups/create_group';
   static const String addCoverPhoto = '/settings/groups/create_group/add_cover_photo';
   static const String myGroup = '/settings/groups/my_group';
-  static const String manageGroup = '/settings/groups/my_group/manage_group';
+  static const String manageGroup = 'manage_group';
 
-  static const String groupMembersRequests = '/settings/groups/my_group/manage_group/members_requests';
-  static const String groupPendingPosts = '/settings/groups/my_group/manage_group/pending_posts';
-  static const String groupReportedPosts = '/settings/groups/my_group/manage_group/reported_posts';
+  static const String groupMembersRequests = 'members_requests';
+  static const String groupPendingPosts = 'pending_posts';
+  static const String groupReportedPosts = 'reported_posts';
 
-  static const String groupMembers = '/settings/groups/my_group/manage_group/members';
-  static const String bannedMembers = '/settings/groups/my_group/manage_group/banned_members';
+  static const String groupMembers = 'members';
+  static const String bannedMembers = 'banned_members';
 
+  static const String searchGroups = '/settings/groups/search-groups';
 
 
 // chats

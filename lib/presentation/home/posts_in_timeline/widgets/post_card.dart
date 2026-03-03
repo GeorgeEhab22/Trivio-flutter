@@ -1,8 +1,6 @@
 import 'package:auth/presentation/home/posts_in_timeline/widgets/post_content.dart';
 import 'package:auth/presentation/home/posts_in_timeline/widgets/post_footer.dart';
 import 'package:auth/presentation/home/posts_in_timeline/widgets/post_header.dart';
-import 'package:auth/presentation/manager/group_cubit/get_group_posts/group_posts_cubit.dart';
-import 'package:auth/presentation/manager/group_cubit/get_group_posts/group_posts_state.dart';
 import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -28,79 +26,96 @@ class PostCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<PostInteractionCubit, PostInteractionState>(
-      listener: (context, state) {
-        final l10n = AppLocalizations.of(context)!;
-        if (state is ReportPostSuccess) {
-          showCustomSnackBar(context, l10n.reportPostSuccess, true);
-        }
-        if (state is ReportPostError) {
-          showCustomSnackBar(context, state.message, false);
-        }
-        if (state is FollowUserError) {
-          showCustomSnackBar(context, state.message, false);
-        }
-      },
-      builder: (context, state) {
-        if (state is ReportPostSuccess) {
-          return const SizedBox.shrink();
-        }
+    final l10n = AppLocalizations.of(context)!;
 
-        final postCubitState = context.watch<PostCubit>().state;
-        
-        bool isDeleting = false;
-        try {
-           final groupPostsCubitState = context.watch<GroupPostsCubit>().state;
-           isDeleting = (groupPostsCubitState is GroupPostsDeleting &&
-                        groupPostsCubitState.postId == post.postID);
-        } catch (_) {}
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<PostInteractionCubit, PostInteractionState>(
+          listener: (context, state) {
+            if (state is ReportPostSuccess) {
+              showCustomSnackBar(context, l10n.reportPostSuccess, true);
+            } else if (state is ReportPostError) {
+              showCustomSnackBar(context, state.message, false);
+            } else if (state is FollowUserError) {
+              showCustomSnackBar(context, state.message, false);
+            }
+          },
+        ),
+        BlocListener<PostCubit, PostState>(
+          listener: (context, state) {
+            if (state is EditPostSuccess &&
+                state.updatedPost.postID == post.postID) {
+              showCustomSnackBar(context, "Post updated successfully", true);
+            } else if (state is DeletePostSuccess &&
+                state.post.postID == post.postID) {
+              showCustomSnackBar(context, "Post deleted successfully", true);
+            } else if (state is PostError) {
+              showCustomSnackBar(context, state.message, false);
+            }
+          },
+        ),
+      ],
+      child: BlocBuilder<PostInteractionCubit, PostInteractionState>(
+        builder: (context, interactionState) {
+          if (interactionState is ReportPostSuccess) {
+            return const SizedBox.shrink();
+          }
+          final isProcessing = context.select<PostCubit, bool>((cubit) {
+            final s = cubit.state;
+            return (s is DeletePostLoading && s.postId == post.postID) ||
+                (s is EditPostLoading && s.postId == post.postID);
+          });
 
-        if (postCubitState is DeletePostLoading && postCubitState.postId == post.postID) {
-          isDeleting = true;
-        }
+          final bool totalProcessing =
+              isProcessing || (interactionState is ReportPostLoading);
 
-        return Opacity(
-          opacity: (isDeleting || state is ReportPostLoading) ? 0.5 : 1,
-          child: InkWell(
-            onTap: () {
-              // TODO : fetch single post
-            },
-            borderRadius: BorderRadius.circular(16),
-            child: Card(
-              margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-              color: Theme.of(context).appBarTheme.backgroundColor,
-              elevation: 0.2,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 6),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    PostHeader(
-                      post: post,
-                      currentUserId: currentUserId,
-                      isFollowing: isFollowing,
+          return Opacity(
+            opacity: totalProcessing ? 0.5 : 1.0,
+            child: AbsorbPointer(
+              absorbing: totalProcessing,
+              child: InkWell(
+                onTap: () {},
+                borderRadius: BorderRadius.circular(16),
+                child: Card(
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 8,
+                  ),
+                  color: Theme.of(context).appBarTheme.backgroundColor,
+                  elevation: 0.2,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 6),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        PostHeader(
+                          post: post,
+                          currentUserId: currentUserId,
+                          isFollowing: isFollowing,
+                        ),
+                        PostContent(post: post),
+                        const SizedBox(height: 8),
+                        const Divider(
+                          height: 1,
+                          color: Color(0xFFF3F4F6),
+                          thickness: 0.7,
+                          indent: 12,
+                          endIndent: 12,
+                        ),
+                        PostFooter(
+                          post: post,
+                          currentUserId: currentUserId,
+                          currentReaction: currentReaction,
+                        ),
+                      ],
                     ),
-                    PostContent(post: post),
-                    const SizedBox(height: 8),
-                    const Divider(
-                      height: 1,
-                      color: Color(0xFFF3F4F6),
-                      thickness: 0.7,
-                      indent: 12,
-                      endIndent: 12,
-                    ),
-                    PostFooter(
-                      post: post,
-                      currentUserId: currentUserId,
-                      currentReaction: currentReaction,
-                    ),
-                  ],
+                  ),
                 ),
               ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }

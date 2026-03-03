@@ -918,4 +918,25 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get weekLetter => 'w';
+
+  @override
+  String get trivio => 'Trivio';
+
+  @override
+  String get noMorePosts => 'No more posts to show';
+
+  @override
+  String get noMoreGroups => 'No more groups';
+
+  @override
+  String get noGroupsFound => 'No groups found.';
+
+  @override
+  String get searchGroupsHint => 'Search groups...';
+
+  @override
+  String get whatsOnYourMind => 'What\'s on your mind?';
+
+  @override
+  String get noMoreMembers => 'No more members';
 }

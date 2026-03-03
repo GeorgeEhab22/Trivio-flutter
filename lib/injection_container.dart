@@ -37,6 +37,7 @@ import 'package:auth/domain/usecases/group/decline_join_request_use_case.dart';
 import 'package:auth/domain/usecases/group/get_join_requests_use_case.dart';
 import 'package:auth/domain/usecases/group/group_posts/create_group_post_use_case.dart';
 import 'package:auth/domain/usecases/group/group_posts/delete_group_post_use_case.dart';
+import 'package:auth/domain/usecases/group/group_posts/edit_group_post_use_case.dart';
 import 'package:auth/domain/usecases/group/group_posts/get_group_posts_use_case.dart';
 import 'package:auth/domain/usecases/group/group_posts/get_groups_posts_feed_use_case.dart';
 import 'package:auth/domain/usecases/group/groups/create_group_use_case.dart';
@@ -97,7 +98,6 @@ import 'package:auth/presentation/manager/group_cubit/cancel_request/cancel_requ
 import 'package:auth/presentation/manager/group_cubit/change_member_role/change_member_role_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/decline_request/decline_request_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/get_group/get_group_cubit.dart';
-import 'package:auth/presentation/manager/group_cubit/get_group_feed/get_groups_posts_feed_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/get_group_posts/group_posts_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/get_groups/get_groups_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/get_join_requests/get_join_requests_cubit.dart';
@@ -363,12 +363,19 @@ sl.registerLazySingleton(() => CommentOnPostUseCase(sl()));
   sl.registerLazySingleton(() => CreateGroupPostUseCase(sl()));
 
   // get group posts
-  sl.registerFactory(() => GroupPostsCubit(getGroupPostsUseCase: sl(),deleteGroupPostUseCase: sl(),));
+sl.registerFactory<GroupPostsCubit>(
+  () => GroupPostsCubit(
+    getGroupPostsUseCase: sl(),
+    getGroupsPostsFeedUseCase: sl(),
+    deleteGroupPostUseCase: sl(),
+    editGroupPostUseCase: sl(),
+  ),
+);
   sl.registerLazySingleton(() => GetGroupPostsUseCase(sl()));
   sl.registerLazySingleton(() => DeleteGroupPostUseCase(sl()));
+  sl.registerLazySingleton(() => EditGroupPostUseCase(sl()));
 
   // get groups posts feed
-    sl.registerFactory(() => GetGroupsPostsFeedCubit(getGroupsPostsFeedUseCase: sl()));
   sl.registerLazySingleton(() => GetGroupsPostsFeedUseCase(sl()));
   // ==========================================================================
   // CORE / GLOBAL

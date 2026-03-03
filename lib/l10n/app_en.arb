@@ -331,5 +331,11 @@
   "hourLetter": "h",
   "dayLetter": "d",
   "weekLetter": "w",
-  "trivio": "Trivio"
+  "trivio": "Trivio",
+  "noMorePosts": "No more posts to show",
+  "noMoreGroups": "No more groups",
+  "noGroupsFound": "No groups found.",
+  "searchGroupsHint": "Search groups...",
+  "whatsOnYourMind": "What's on your mind?",
+  "noMoreMembers": "No more members"
 }

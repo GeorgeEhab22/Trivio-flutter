@@ -57,7 +57,10 @@ class PostHeader extends StatelessWidget {
                   final postInteractionCubit = context
                       .read<PostInteractionCubit>();
                   final postCubit = context.read<PostCubit>();
-                  final groupPostCubit = context.read<GroupPostsCubit>();
+                  GroupPostsCubit? groupPostCubit;
+                  if (isGroupPost) {
+                    groupPostCubit = context.read<GroupPostsCubit>();
+                  }
                   showModalBottomSheet(
                     context: context,
                     backgroundColor: Colors.transparent,
@@ -66,7 +69,8 @@ class PostHeader extends StatelessWidget {
                       providers: [
                         BlocProvider.value(value: postInteractionCubit),
                         BlocProvider.value(value: postCubit),
-                        BlocProvider.value(value: groupPostCubit),
+                        if (groupPostCubit != null)
+                          BlocProvider.value(value: groupPostCubit),
                       ],
                       child: OptionsBottomSheet(
                         post: post,

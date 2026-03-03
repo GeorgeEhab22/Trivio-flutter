@@ -1,33 +1,35 @@
+import 'package:auth/domain/entities/group.dart';
 import 'package:auth/domain/usecases/group/groups/get_groups_use_case.dart';
-import 'package:auth/presentation/manager/group_cubit/get_groups/get_groups_state.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:auth/presentation/manager/groups_pagination/base_pagination_cubit.dart';
+import 'package:auth/presentation/manager/groups_pagination/pagination_state.dart';
+import 'package:dartz/dartz.dart';
 
-class GetAllGroupsCubit extends Cubit<GetGroupsState> {
+class GetAllGroupsCubit extends BasePaginationCubit<Group> {
   final GetAllGroupsUseCase getAllGroupsUseCase;
+  String? currentSearch;
 
-  GetAllGroupsCubit({required this.getAllGroupsUseCase})
-    : super(GetGroupsInitial());
+  GetAllGroupsCubit({required this.getAllGroupsUseCase});
 
-  Future<void> getAllGroups({int page = 1, String? search}) async {
-    if (state is GetGroupsLoading) return;
-    emit(GetGroupsLoading());
-    final result = await getAllGroupsUseCase(page: page, search: search);
+  @override
+  Future<Either<dynamic, List<Group>>> fetchUseCase({int page = 1}) {
+    return getAllGroupsUseCase(page: page, search: currentSearch);
+  }
 
-    result.fold(
-      (failure) => emit(GetGroupsFailure(message: failure.message)),
-      (groups) => emit(GetGroupsSuccess(groups: groups)),
-    );
+  @override
+  String getItemId(Group item) => item.groupId;
+
+  Future<void> searchGroups(String query) {
+    currentSearch = query;
+    return loadData(refresh: true);
   }
 
   void removeGroupLocally(String groupId) {
-    if (state is GetGroupsSuccess) {
-      final currentState = state as GetGroupsSuccess;
-      
-      final updatedList = currentState.groups
-          .where((group) => group.groupId != groupId)
-          .toList();
-      
-      emit(GetGroupsSuccess(groups: updatedList));
-    }
+    items.removeWhere((group) => group.groupId == groupId);
+    emit(
+      PaginationLoaded<Group>(
+        items: List.from(items),
+        hasReachedMax: hasReachedMax,
+      ),
+    );
   }
 }

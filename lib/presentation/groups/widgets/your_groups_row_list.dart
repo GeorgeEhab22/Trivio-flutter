@@ -2,7 +2,7 @@ import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/groups/widgets/dummy_for_skeletonizer.dart';
 import 'package:auth/presentation/groups/widgets/group_item.dart';
 import 'package:auth/presentation/manager/group_cubit/get_joined_groups/get_joined_groups_cubit.dart';
-import 'package:auth/presentation/manager/group_cubit/get_joined_groups/get_joined_groups_state.dart';
+import 'package:auth/presentation/manager/groups_pagination/pagination_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -13,44 +13,48 @@ class YourGroupsRowList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return BlocBuilder<GetJoinedGroupsCubit, GetJoinedGroupsState>(
+
+    return BlocBuilder<GetJoinedGroupsCubit, PaginationState>(
       builder: (context, state) {
-        final bool isLoading = state is GetJoinedGroupsLoading;
-        if (state is GetJoinedGroupsEmpty) {
+        final cubit = context.read<GetJoinedGroupsCubit>();
+        final bool isInitialLoading =
+            state is PaginationLoading && cubit.items.isEmpty;
+
+        if (state is PaginationLoaded && cubit.items.isEmpty) {
           return SizedBox(
             height: 110,
             child: Center(
               child: Text(
                 l10n.noJoinedGroupsYet,
-                style: TextStyle(color: Colors.grey, fontSize: 14),
+                style: const TextStyle(color: Colors.grey, fontSize: 14),
               ),
             ),
           );
         }
-        final groups = (state is GetJoinedGroupsSuccess)
-            ? state.groups
-            : DummyData.dummyGroups;
+
+        final groups = isInitialLoading ? DummyData.dummyGroups : cubit.items;
+
         return SizedBox(
           height: 110,
-          child: Skeletonizer(
-            enabled: isLoading,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              itemCount: groups.length,
-              separatorBuilder: (context, index) => const SizedBox(width: 0),
-              itemBuilder: (context, index) {
-                final group = groups[index];
-                return GroupItem(
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            itemCount: groups.length,
+            separatorBuilder: (context, index) => const SizedBox(width: 0),
+            itemBuilder: (context, index) {
+              final group = groups[index];
+              return Skeletonizer(
+                enabled: isInitialLoading || group.groupId.isEmpty,
+                child: GroupItem(
                   groupId: group.groupId,
                   numOfMembers:
-                      group.membersCount! +
-                      group.moderatorsCount! +
-                      group.adminsCount!,
+                      (group.membersCount ?? 0) +
+                      (group.moderatorsCount ?? 0) +
+                      (group.adminsCount ?? 0),
                   title: group.groupName,
                   imageUrl: group.groupCoverImage,
-                );
-              },
-            ),
+                ),
+              );
+            },
           ),
         );
       },

@@ -262,20 +262,11 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
   // 5- get groups
   @override
   Future<List<GroupModel>> getGroups({int page = 1, String? search}) async {
-    try {
-      final query = search != null
-          ? "?page=$page&keyword=$search"
-          : "?page=$page";
-      final response = await api.get(
-        "${ApiEndpoints.groups}$query",
-        options: _getAuthOptions(),
-      );
-      final list = response['data']['data'] as List;
-      return list.map((e) => GroupModel.fromJson(e)).toList();
-    } catch (e) {
-      errorHandler.handleDioError(e);
-      rethrow;
-    }
+    final query = search != null
+        ? "?page=$page&keyword=$search"
+        : "?page=$page";
+    final list = await _fetchPaginatedData("${ApiEndpoints.groups}$query");
+    return list.map((e) => GroupModel.fromJson(e)).toList();
   }
 
   // 6- join group
@@ -296,13 +287,15 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
 
   // 7- leave group
   @override
-  Future<void> leaveGroup(String groupId) async =>
-      await _simpleDelete("${ApiEndpoints.groups}/$groupId/leave");
+  Future<void> leaveGroup(String groupId) async {
+    await _simpleDelete("${ApiEndpoints.groups}/$groupId/leave");
+  }
 
   // 8- cancel join request
   @override
-  Future<void> cancelJoinRequest(String groupId) async =>
-      await _simpleDelete("${ApiEndpoints.groups}/$groupId/requests/cancel");
+  Future<void> cancelJoinRequest(String groupId) async {
+    await _simpleDelete("${ApiEndpoints.groups}/$groupId/requests/cancel");
+  }
 
   // 9- get join requests
   @override
@@ -310,11 +303,10 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
     required String groupId,
     int page = 1,
   }) async {
-    final response = await api.get(
+  
+    final list = await _fetchPaginatedData(
       "${ApiEndpoints.groups}/$groupId/requests?page=$page",
-      options: _getAuthOptions(),
     );
-    final list = response['data']['data'] as List;
     return list.map((item) => JoinRequestModel.fromJson(item)).toList();
   }
 
@@ -323,20 +315,26 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
   Future<void> acceptJoinRequest({
     required String groupId,
     required String requestId,
-  }) async => await api.post(
-    "${ApiEndpoints.groups}/$groupId/requests/$requestId/accept",
-    options: _getAuthOptions(),
-  );
+  }) async {
+    
+    await api.post(
+      "${ApiEndpoints.groups}/$groupId/requests/$requestId/accept",
+      options: _getAuthOptions(),
+    );
+  }
 
   // 11- decline join request
   @override
   Future<void> declineJoinRequest({
     required String groupId,
     required String requestId,
-  }) async => await api.post(
-    "${ApiEndpoints.groups}/$groupId/requests/$requestId/decline",
-    options: _getAuthOptions(),
-  );
+  }) async {
+    
+    await api.post(
+      "${ApiEndpoints.groups}/$groupId/requests/$requestId/decline",
+      options: _getAuthOptions(),
+    );
+  }
 
   // 12- change member role
   @override
@@ -344,35 +342,50 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
     required String groupId,
     required String userId,
     required String role,
-  }) async => await _memberRoleAction(groupId, userId, role, "promote");
+  }) async {
+    
+    await _memberRoleAction(groupId, userId, role, "promote");
+  }
 
   @override
   Future<void> demoteMember({
     required String groupId,
     required String userId,
     required String role,
-  }) async => await _memberRoleAction(groupId, userId, role, "demote");
+  }) async {
+   
+    await _memberRoleAction(groupId, userId, role, "demote");
+  }
 
   // 13- kick member
   @override
   Future<void> kickMember({
     required String groupId,
     required String userId,
-  }) async => await _memberAction(groupId, userId, "kick");
+  }) async {
+   
+    await _memberAction(groupId, userId, "kick");
+  }
 
   // 14- ban member
   @override
   Future<void> banMember({
     required String groupId,
     required String userId,
-  }) async => await _memberAction(groupId, userId, "ban");
+  }) async {
+   
+    await _memberAction(groupId, userId, "ban");
+  }
 
   // 15- unban member
   @override
   Future<void> unbanMember({
     required String groupId,
     required String userId,
-  }) async => await _memberAction(groupId, userId, "unban");
+  }) async {
+   
+    await _memberAction(groupId, userId, "unban");
+  }
 
   // 16- get members
   @override
@@ -380,11 +393,10 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
     required String groupId,
     int page = 1,
   }) async {
-    final response = await api.get(
+  
+    final list = await _fetchPaginatedData(
       "${ApiEndpoints.groups}/$groupId/members?page=$page",
-      options: _getAuthOptions(),
     );
-    final list = response['data']['data'] as List;
     return list.map((e) => GroupMemberModel.fromJson(e)).toList();
   }
 
@@ -394,11 +406,10 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
     required String groupId,
     int page = 1,
   }) async {
-    final response = await api.get(
+   
+    final list = await _fetchPaginatedData(
       "${ApiEndpoints.groups}/$groupId/moderators?page=$page",
-      options: _getAuthOptions(),
     );
-    final list = response['data']['data'] as List;
     return list.map((e) => GroupMemberModel.fromJson(e)).toList();
   }
 
@@ -408,11 +419,10 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
     required String groupId,
     int page = 1,
   }) async {
-    final response = await api.get(
+    
+    final list = await _fetchPaginatedData(
       "${ApiEndpoints.groups}/$groupId/admins?page=$page",
-      options: _getAuthOptions(),
     );
-    final list = response['data']['data'] as List;
     return list.map((e) => GroupMemberModel.fromJson(e)).toList();
   }
 
@@ -422,11 +432,10 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
     required String groupId,
     int page = 1,
   }) async {
-    final response = await api.get(
+    
+    final list = await _fetchPaginatedData(
       "${ApiEndpoints.groups}/$groupId/banned?page=$page",
-      options: _getAuthOptions(),
     );
-    final list = response['data']['data'] as List;
     return list.map((e) => GroupMemberModel.fromJson(e)).toList();
   }
 
@@ -439,6 +448,7 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
     required String type,
   }) async {
     try {
+    
       final formData = FormData.fromMap({
         'caption': caption ?? '',
         'type': type,
@@ -484,6 +494,7 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
     required String postId,
   }) async {
     try {
+     
       await api.delete(
         "${ApiEndpoints.groups}/$groupId/posts/$postId",
         options: _getAuthOptions(),
@@ -538,52 +549,33 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
     required String groupId,
     int page = 1,
   }) async {
-    try {
-      final response = await api.get(
-        "${ApiEndpoints.groups}/$groupId/posts?page=$page",
-        options: _getAuthOptions(),
-      );
-      final list = response['data']['data'] as List;
-      return list.map((e) => PostModel.fromJson(e)).toList();
-    } catch (e) {
-      errorHandler.handleDioError(e);
-      rethrow;
-    }
+    final list = await _fetchPaginatedData(
+      "${ApiEndpoints.groups}/$groupId/posts?page=$page",
+    );
+    return list.map((e) => PostModel.fromJson(e)).toList();
   }
 
   // 25- get group feed
   @override
   Future<List<PostModel>> getGroupFeed({int page = 1}) async {
-    try {
-      final response = await api.get(
-        "${ApiEndpoints.groups}/feed?page=$page",
-        options: _getAuthOptions(),
-      );
-      final list = response['data']['posts'] as List;
-      return list.map((e) => PostModel.fromJson(e)).toList();
-    } catch (e) {
-      errorHandler.handleDioError(e);
-      rethrow;
-    }
+    final list = await _fetchPaginatedData(
+      "${ApiEndpoints.groups}/feed?page=$page",
+      customKey: 'posts',
+    );
+    return list.map((e) => PostModel.fromJson(e)).toList();
   }
 
   // 26 - get my groups
   @override
   Future<List<GroupModel>> getMyGroups({int page = 1, String? search}) async {
-    try {
-      final query = search != null
-          ? "?page=$page&keyword=$search"
-          : "?page=$page";
-      final response = await api.get(
-        "${ApiEndpoints.myGroups}$query",
-        options: _getAuthOptions(),
-      );
-      final list = response['data']['groups'] as List;
-      return list.map((e) => GroupModel.fromJson(e)).toList();
-    } catch (e) {
-      errorHandler.handleDioError(e);
-      rethrow;
-    }
+    final query = search != null
+        ? "?page=$page&keyword=$search"
+        : "?page=$page";
+    final list = await _fetchPaginatedData(
+      "${ApiEndpoints.myGroups}$query",
+      customKey: 'groups',
+    );
+    return list.map((e) => GroupModel.fromJson(e)).toList();
   }
 
   // 27 - get joined groups
@@ -592,23 +584,17 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
     int page = 1,
     String? search,
   }) async {
-    try {
-      final query = search != null
-          ? "?page=$page&keyword=$search"
-          : "?page=$page";
-      final response = await api.get(
-        "${ApiEndpoints.joinedGroups}$query",
-        options: _getAuthOptions(),
-      );
-      final data = response['data']['groups'] as List;
-      return data
-          .where((item) => item != null)
-          .map((e) => GroupModel.fromJson(e as Map<String, dynamic>))
-          .toList();
-    } catch (e) {
-      errorHandler.handleDioError(e);
-      rethrow;
-    }
+    final query = search != null
+        ? "?page=$page&keyword=$search"
+        : "?page=$page";
+    final list = await _fetchPaginatedData(
+      "${ApiEndpoints.joinedGroups}$query",
+      customKey: 'groups',
+    );
+    return list
+        .where((item) => item != null)
+        .map((e) => GroupModel.fromJson(e as Map<String, dynamic>))
+        .toList();
   }
 
   Future<void> _simpleDelete(String path) async {
@@ -650,6 +636,30 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
         options: _getAuthOptions(),
       );
     } catch (e) {
+      errorHandler.handleDioError(e);
+      rethrow;
+    }
+  }
+
+  Future<List<dynamic>> _fetchPaginatedData(String url, {String? customKey}) async {
+    try {
+      final response = await api.get(url, options: _getAuthOptions());
+      
+      if (customKey != null && response['data'] != null && response['data'][customKey] != null) {
+        return response['data'][customKey] as List;
+      }
+
+      return response['data']['data'] as List;
+    } catch (e) {
+      if (e is DioException && e.response?.statusCode == 404) {
+        final message = e.response?.data['message'];
+        if (message == "no groups found" ||
+            message == "no posts found" ||
+            message == "no members found") {
+         
+          return [];
+        }
+      }
       errorHandler.handleDioError(e);
       rethrow;
     }

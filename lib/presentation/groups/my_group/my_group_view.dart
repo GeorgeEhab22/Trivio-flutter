@@ -12,6 +12,7 @@ import 'package:auth/presentation/groups/my_group/widgets/my_group_posts.dart';
 import 'package:auth/presentation/groups/widgets/dummy_for_skeletonizer.dart';
 import 'package:auth/presentation/manager/group_cubit/get_group/get_group_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/get_group/get_group_state.dart';
+import 'package:auth/presentation/manager/group_cubit/get_group_posts/group_posts_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/update_group/update_group_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/update_group/update_group_state.dart';
 import 'package:flutter/material.dart';
@@ -50,74 +51,83 @@ class MyGroupView extends StatelessWidget {
 
             return Skeletonizer(
               enabled: isGroupLoading,
-              child: CustomScrollView(
-                slivers: [
-                  SliverToBoxAdapter(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        MyGroupCoverImage(
-                          coverImage: group.groupCoverImage,
-                          groupId: groupId,
-                        ),
-                        const SizedBox(height: 16),
-
-                        Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              MyGroupInfo(
-                                groupName: group.groupName,
-                                groupId: groupId,
-                                description: group.groupDescription,
-                                membersCount:
-                                    (group.membersCount ?? 0) +
-                                    (group.moderatorsCount ?? 0) +
-                                    (group.adminsCount ?? 0),
-                              ),
-                              const SizedBox(height: 20),
-
-                              CustomSquareButton(
-                                label: l10n.manage,
-                                height: 13,
-                                isExpanded: true,
-                                row: true,
-                                leadingIcon: Icons.security_outlined,
-                                backgroundColor: AppColors.primary,
-                                textColor: Colors.white,
-                                iconColor: Colors.white,
-                                onTap: () => context.push(
-                                  AppRoutes.manageGroup,
-                                  extra: groupId,
-                                ),
-                              ),
-                              const SizedBox(height: 20),
-
-                              CreatePostRow(groupId: groupId),
-
-                              const SizedBox(height: 16),
-                              const Divider(),
-                              const SizedBox(height: 16),
-                              Text(
-                                l10n.mostRelevant,
-                                style: Styles.textStyle16,
-                              ),
-                              const SizedBox(height: 12),
-                            ],
+              child: NotificationListener<ScrollNotification>(
+                onNotification: (ScrollNotification scrollInfo) {
+                  if (scrollInfo is ScrollUpdateNotification &&
+                      (scrollInfo.scrollDelta ?? 0) > 0 &&
+                      scrollInfo.metrics.pixels >=
+                          scrollInfo.metrics.maxScrollExtent * 0.8) {
+                    context.read<GroupPostsCubit>().getPosts(groupId: groupId);
+                  }
+                  return false;
+                },
+                child: CustomScrollView(
+                  slivers: [
+                    SliverToBoxAdapter(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          MyGroupCoverImage(
+                            coverImage: group.groupCoverImage,
+                            groupId: groupId,
                           ),
-                        ),
-                      ],
+                          const SizedBox(height: 16),
+                          Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                MyGroupInfo(
+                                  groupName: group.groupName,
+                                  groupId: groupId,
+                                  description: group.groupDescription,
+                                  membersCount:
+                                      (group.membersCount ?? 0) +
+                                      (group.moderatorsCount ?? 0) +
+                                      (group.adminsCount ?? 0),
+                                ),
+                                const SizedBox(height: 20),
+                                CustomSquareButton(
+                                  label: l10n.manage,
+                                  height: 13,
+                                  isExpanded: true,
+                                  row: true,
+                                  leadingIcon: Icons.security_outlined,
+                                  backgroundColor: AppColors.primary,
+                                  textColor: Colors.white,
+                                  iconColor: Colors.white,
+                                  onTap: () {
+                                    context.pushNamed(
+                                      AppRoutes.manageGroup,
+                                      pathParameters: {
+                                        'groupId': groupId,
+                                      },
+                                    );
+                                  },
+                                ),
+                                const SizedBox(height: 20),
+                                CreatePostRow(groupId: groupId),
+                                const SizedBox(height: 16),
+                                const Divider(),
+                                const SizedBox(height: 16),
+                                Text(
+                                  l10n.mostRelevant,
+                                  style: Styles.textStyle16,
+                                ),
+                                const SizedBox(height: 12),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-
-                  MyGroupPosts(
-                    groupName: group.groupName,
-                    groupCoverImage: group.groupCoverImage,
-                  ),
-
-                  const SliverToBoxAdapter(child: SizedBox(height: 80)),
-                ],
+                    MyGroupPosts(
+                      groupId: groupId,
+                      groupName: group.groupName,
+                      groupCoverImage: group.groupCoverImage,
+                    ),
+                  ],
+                ),
               ),
             );
           },

@@ -1,13 +1,16 @@
 import 'package:auth/common/functions/show_custom_dialog.dart';
 import 'package:auth/core/styels.dart';
+import 'package:auth/domain/entities/group_member.dart';
 import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/authentication/widgets/show_custom_snackbar.dart';
+import 'package:auth/presentation/groups/widgets/dummy_for_skeletonizer.dart';
 import 'package:auth/presentation/manager/group_cubit/get_banned_members/get_banned_members_cubit.dart';
-import 'package:auth/presentation/manager/group_cubit/get_banned_members/get_banned_members_state.dart';
 import 'package:auth/presentation/manager/group_cubit/unban_member/unban_member_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/unban_member/unban_member_state.dart';
+import 'package:auth/presentation/manager/groups_pagination/pagination_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class BannedMembersList extends StatelessWidget {
   final String groupId;
@@ -17,81 +20,117 @@ class BannedMembersList extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
-    return MultiBlocListener(
-      listeners: [
-        BlocListener<UnbanMemberCubit, UnbanMemberState>(
-          listener: (context, state) {
-            if (state is UnbanMemberSuccess) {
-              showCustomSnackBar(context, state.message, true);
-              context.read<GetBannedMembersCubit>().getBannedMembers(
-                    groupId: groupId,
-                  );
-            }
-            if (state is UnbanMemberFailure) {
-              showCustomSnackBar(context, state.message, false);
-            }
-          },
-        ),
-      ],
+    return BlocListener<UnbanMemberCubit, UnbanMemberState>(
+      listener: (context, state) {
+        if (state is UnbanMemberSuccess) {
+          showCustomSnackBar(context, state.message, true);
+          //TODO : remove banned member locally
+
+          // context.read<GetBannedMembersCubit>().removeMemberLocally(
+          //   state.userId,
+          // );
+        }
+        if (state is UnbanMemberFailure) {
+          showCustomSnackBar(context, state.message, false);
+        }
+      },
       child: Scaffold(
         appBar: AppBar(title: Text(l10n.bannedMembers)),
-        body: BlocBuilder<GetBannedMembersCubit, GetBannedMembersState>(
+        body: BlocBuilder<GetBannedMembersCubit, PaginationState>(
           builder: (context, state) {
-            if (state is GetBannedMembersLoading) {
-              return const Center(child: CircularProgressIndicator());
-            }
+            final cubit = context.read<GetBannedMembersCubit>();
 
-            if (state is GetBannedMembersSuccess) {
-              if (state.bannedMembers.isEmpty) {
-                return Center(child: Text(l10n.noBannedMembersFound));
-              }
-              return ListView.builder(
-                itemCount: state.bannedMembers.length,
-                itemBuilder: (context, index) {
-                  final bannedMember = state.bannedMembers[index];
-                  return ListTile(
-                    leading: CircleAvatar(
-                      radius: 26,
-                      backgroundImage: NetworkImage(
-                        bannedMember.profileImageUrl ??
-                            'https://picsum.photos/500',
-                      ),
-                    ),
-                    title: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 2.0),
-                      child: Text(
-                        bannedMember.userName ?? l10n.username,
-                        style: Styles.textStyle16,
-                      ),
-                    ),
-                    trailing: Icon(
-                      Icons.more_horiz,
-                      color: Theme.of(context).iconTheme.color,
-                    ),
-                    onTap: () {
-                      showCustomDialog(
-                        context: context,
-                        confirmText: l10n.unban,
-                        confirmTextColor: Colors.red,
-                        onConfirm: () {
-                          context.read<UnbanMemberCubit>().unbanMember(
-                                groupId: groupId,
-                                targetUserId: bannedMember.userId!,
-                              );
-                        },
-                        title: l10n.unbanUserTitle,
-                        content: l10n.unbanUserContent,
-                      );
-                    },
-                  );
-                },
-              );
-            }
-            if (state is GetBannedMembersFailure) {
+            if (state is PaginationError && cubit.items.isEmpty) {
               return Center(child: Text(state.message));
             }
 
-            return const SizedBox();
+            final bool isInitialLoading =
+                state is PaginationLoading && cubit.items.isEmpty;
+            final bool isLoadingMore = state is PaginationLoadingMore;
+
+            final List<GroupMember> displayBanned = isInitialLoading
+                ? DummyData.dummyMembers
+                : [...cubit.items, if (isLoadingMore) DummyData.dummyMember];
+
+            if (state is PaginationLoaded && cubit.items.isEmpty) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.person_search_rounded,
+                      size: 80,
+                      color: Colors.grey,
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      l10n.noPendingRequests,
+                      style: const TextStyle(color: Colors.grey, fontSize: 18),
+                    ),
+                  ],
+                ),
+              );
+            }
+
+            return NotificationListener<ScrollNotification>(
+              onNotification: (scrollInfo) {
+                if (scrollInfo is ScrollUpdateNotification &&
+                    (scrollInfo.scrollDelta ?? 0) > 0 &&
+                    scrollInfo.metrics.pixels >=
+                        scrollInfo.metrics.maxScrollExtent * 0.8) {
+                  cubit.loadData();
+                }
+                return false;
+              },
+              child: ListView.builder(
+                itemCount: displayBanned.length + (cubit.hasReachedMax ? 1 : 0),
+                itemBuilder: (context, index) {
+                  if (index == displayBanned.length) {
+                    return const SizedBox(height: 50);
+                  }
+
+                  final bannedMember = displayBanned[index];
+
+                  return Skeletonizer(
+                    enabled: isInitialLoading || bannedMember.userId!.isEmpty,
+                    child: ListTile(
+                      leading: CircleAvatar(
+                        radius: 26,
+                        backgroundImage: NetworkImage(
+                          bannedMember.profileImageUrl ??
+                              'https://picsum.photos/500',
+                        ),
+                      ),
+                      title: Text(
+                        bannedMember.userName ?? l10n.username,
+                        style: Styles.textStyle16,
+                      ),
+                      trailing: Icon(
+                        Icons.more_horiz,
+                        color: Theme.of(context).iconTheme.color,
+                      ),
+                      onTap: isInitialLoading || bannedMember.userId!.isEmpty
+                          ? null
+                          : () {
+                              showCustomDialog(
+                                context: context,
+                                confirmText: l10n.unban,
+                                confirmTextColor: Colors.red,
+                                onConfirm: () {
+                                  context.read<UnbanMemberCubit>().unbanMember(
+                                    groupId: groupId,
+                                    targetUserId: bannedMember.userId!,
+                                  );
+                                },
+                                title: l10n.unbanUserTitle,
+                                content: l10n.unbanUserContent,
+                              );
+                            },
+                    ),
+                  );
+                },
+              ),
+            );
           },
         ),
       ),

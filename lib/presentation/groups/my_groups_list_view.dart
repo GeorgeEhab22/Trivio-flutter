@@ -1,12 +1,13 @@
-import 'package:auth/core/styels.dart';
+import 'package:auth/domain/entities/group.dart';
 import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/groups/widgets/dummy_for_skeletonizer.dart';
 import 'package:auth/presentation/groups/widgets/group_item.dart';
-import 'package:auth/presentation/manager/group_cubit/get_my_groups/get_my_groups_cubit.dart';
-import 'package:auth/presentation/manager/group_cubit/get_my_groups/get_my_groups_state.dart';
+import 'package:auth/presentation/groups/widgets/group_search_field.dart';
+import 'package:auth/presentation/manager/groups_pagination/pagination_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:skeletonizer/skeletonizer.dart';
+import 'package:auth/presentation/manager/group_cubit/get_my_groups/get_my_groups_cubit.dart';
 
 class MyGroupsListView extends StatelessWidget {
   const MyGroupsListView({super.key});
@@ -14,68 +15,80 @@ class MyGroupsListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return BlocBuilder<GetMyGroupsCubit, GetMyGroupsState>(
+
+    return BlocBuilder<GetMyGroupsCubit, PaginationState>(
       builder: (context, state) {
-        if (state is GetMyGroupsFailure) {
+        final cubit = context.read<GetMyGroupsCubit>();
+
+        if (state is PaginationError && cubit.items.isEmpty) {
           return Center(child: Text(state.message));
         }
-        final bool isLoading = state is GetMyGroupsLoading;
-        final groups = (state is GetMyGroupsSuccess)
-            ? state.groups
-            : DummyData.dummyGroups;
-        return Skeletonizer(
-          enabled: isLoading,
+
+        final bool isInitialLoading =
+            state is PaginationLoading && cubit.items.isEmpty;
+        final bool isLoadingMore = state is PaginationLoadingMore;
+
+        final List<Group> displayGroups = isInitialLoading
+            ? DummyData.dummyGroups
+            : [...cubit.items, if (isLoadingMore) DummyData.dummyGroup];
+
+        if (state is PaginationLoaded && cubit.items.isEmpty) {
+          return Center(child: Text(l10n.noPostsInGroups));
+        }
+
+        return NotificationListener<ScrollNotification>(
+          onNotification: (ScrollNotification scrollInfo) {
+            if (scrollInfo is ScrollUpdateNotification &&
+                (scrollInfo.scrollDelta ?? 0) > 0 &&
+                scrollInfo.metrics.pixels >=
+                    scrollInfo.metrics.maxScrollExtent * 0.8) {
+              cubit.loadData();
+            }
+            return false;
+          },
           child: ListView.builder(
             padding: EdgeInsets.zero,
-            itemCount: groups.length + 1,
+            itemCount: displayGroups.length + 1 + (cubit.hasReachedMax ? 1 : 0),
             itemBuilder: (context, index) {
               if (index == 0) {
                 return Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 12,
+                  padding: const EdgeInsets.all(16.0),
+                  child: GroupSearchField(
+                    hintText: l10n.search,
+                    onSearch: (query) {
+                      context.read<GetMyGroupsCubit>().searchGroups(query);
+                    },
                   ),
-                  child: Container(
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).cardColor,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Icon(
-                          Icons.search,
-                          color: Theme.of(context).iconTheme.color,
-                          size: 23,
-                        ),
-                        const SizedBox(width: 6),
-                        Flexible(
-                          child: Text(
-                            l10n.search, // Localized
-                            style: Styles.textStyle16.copyWith(
-                              color: Theme.of(context).textTheme.bodyMedium?.color,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
+                );
+              }
+
+              if (index == displayGroups.length + 1) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 24.0),
+                  child: Center(
+                    child: Text(
+                      l10n.noMoreGroups,
+                      style: TextStyle(color: Colors.grey),
                     ),
                   ),
                 );
               }
-              final group = groups[index - 1];
-              return GroupItem(
-                groupId: group.groupId,
-                numOfMembers:
-                    group.membersCount! +
-                    group.moderatorsCount! +
-                    group.adminsCount!,
-                title: group.groupName,
-                imageUrl: group.groupCoverImage,
-                isHorizontal: true,
-                myGroup: true,
+
+              final group = displayGroups[index - 1];
+
+              return Skeletonizer(
+                enabled: isInitialLoading || group.groupId.isEmpty,
+                child: GroupItem(
+                  groupId: group.groupId,
+                  numOfMembers:
+                      (group.membersCount ?? 0) +
+                      (group.moderatorsCount ?? 0) +
+                      (group.adminsCount ?? 0),
+                  title: group.groupName,
+                  imageUrl: group.groupCoverImage,
+                  isHorizontal: true,
+                  myGroup: true,
+                ),
               );
             },
           ),

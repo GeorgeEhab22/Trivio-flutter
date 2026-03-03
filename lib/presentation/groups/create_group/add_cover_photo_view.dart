@@ -31,7 +31,9 @@ class AddCoverPhotoView extends StatelessWidget {
         leading: IconButton(
           onPressed: () => context.pop(),
           icon: Icon(
-            isArabic ? Icons.arrow_back_ios_rounded : Icons.arrow_back_ios_new_rounded,
+            isArabic
+                ? Icons.arrow_back_ios_rounded
+                : Icons.arrow_back_ios_new_rounded,
             color: Theme.of(context).iconTheme.color,
             size: 25,
           ),
@@ -41,7 +43,7 @@ class AddCoverPhotoView extends StatelessWidget {
         listener: (context, state) {
           if (state is CreateGroupSuccess) {
             showCustomSnackBar(context, l10n.groupCreatedSuccess, true);
-            context.go(AppRoutes.myGroup, extra: state.group.groupId);
+            context.go('${AppRoutes.myGroup}/${state.group.groupId}');
           }
           if (state is CreateGroupFailure) {
             showCustomSnackBar(context, state.message, false);
@@ -56,10 +58,7 @@ class AddCoverPhotoView extends StatelessWidget {
                 child: ListView(
                   padding: const EdgeInsets.all(16),
                   children: [
-                    Text(
-                      l10n.addCoverPhoto,
-                      style: Styles.textStyleBold20,
-                    ),
+                    Text(l10n.addCoverPhoto, style: Styles.textStyleBold20),
                     const SizedBox(height: 8),
                     Text(
                       l10n.addCoverPhotoSub,
@@ -83,14 +82,14 @@ class AddCoverPhotoView extends StatelessWidget {
                           ),
                           child: cubit.groupCoverImage != null
                               ? (kIsWeb
-                                  ? Image.network(
-                                      cubit.groupCoverImage!.path,
-                                      fit: BoxFit.cover,
-                                    )
-                                  : Image.file(
-                                      File(cubit.groupCoverImage!.path),
-                                      fit: BoxFit.cover,
-                                    ))
+                                    ? Image.network(
+                                        cubit.groupCoverImage!.path,
+                                        fit: BoxFit.cover,
+                                      )
+                                    : Image.file(
+                                        File(cubit.groupCoverImage!.path),
+                                        fit: BoxFit.cover,
+                                      ))
                               : Image.asset(
                                   defaultAssetPath,
                                   fit: BoxFit.cover,
@@ -102,12 +101,15 @@ class AddCoverPhotoView extends StatelessWidget {
                           end: 12,
                           child: CustomSquareButton(
                             label: l10n.edit,
-                            backgroundColor: Theme.of(context).cardColor.withValues(alpha: 0.8),
+                            backgroundColor: Theme.of(
+                              context,
+                            ).cardColor.withValues(alpha: 0.8),
                             textColor: Colors.white,
                             textStyle: Styles.textStyle14,
                             height: 10,
                             onTap: () {
-                              final currentCubit = context.read<CreateGroupCubit>();
+                              final currentCubit = context
+                                  .read<CreateGroupCubit>();
                               BottomSheetManager.showMediaSourceSheet(
                                 context,
                                 false,

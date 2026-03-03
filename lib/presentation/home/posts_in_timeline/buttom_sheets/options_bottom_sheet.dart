@@ -30,8 +30,6 @@ class OptionsBottomSheet extends StatelessWidget {
         ? Colors.grey[700]
         : Colors.grey[300];
     final cubit = context.read<PostInteractionCubit>();
-    final postCubit = context.read<PostCubit>();
-
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).appBarTheme.backgroundColor,
@@ -79,7 +77,9 @@ class OptionsBottomSheet extends StatelessWidget {
                       return Expanded(
                         child: CustomSquareButton(
                           label: isSaved ? l10n.saved : l10n.save,
-                          icon: isSaved ? Icons.bookmark : Icons.bookmark_border,
+                          icon: isSaved
+                              ? Icons.bookmark
+                              : Icons.bookmark_border,
                           backgroundColor: Theme.of(context).cardColor,
                           onTap: () {
                             cubit.toggleSavePost(
@@ -111,22 +111,18 @@ class OptionsBottomSheet extends StatelessWidget {
             const Divider(height: 1),
             // if (post.authorId == currentUserId)
             CustomListTile(
-              icon: Icons.edit,
-              text: 'Edit post',
+              icon: Icons.edit_outlined,
+              text: l10n.edit,
               onTap: () {
+                final groupCubit = post.location == 'group'
+                    ? context.read<GroupPostsCubit>()
+                    : null;
+
                 context.pop();
+
                 context.push(
-                  AppRoutes.editCaption,
-                  extra: {
-                    'initialText': post.caption,
-                    'title': 'Edit post',
-                    'onSave': (String newText) {
-                      postCubit.editPost(
-                        postId: post.postID ?? '',
-                        newCaption: newText,
-                      );
-                    },
-                  },
+                  AppRoutes.editPostCaption,
+                  extra: {'post': post, 'groupCubit': groupCubit},
                 );
               },
             ),
@@ -172,19 +168,21 @@ class OptionsBottomSheet extends StatelessWidget {
               text: l10n.delete,
               redColor: true,
               onTap: () {
+                final groupCubit = post.location == 'group'
+                    ? context.read<GroupPostsCubit>()
+                    : null;
                 final postCubit = context.read<PostCubit>();
-                final groupPostsCubit = context.read<GroupPostsCubit>();
                 context.pop();
                 showCustomDialog(
                   context: context,
-                  title:l10n.deletePostTitle,
+                  title: l10n.deletePostTitle,
                   content: l10n.deletePostConfirm,
                   confirmText: l10n.delete,
                   confirmTextColor: Colors.red,
                   onConfirm: () {
-                    if (post.location == 'group' && post.groupID != null) {
-                      groupPostsCubit.deletePost(
-                        groupId: post.groupID!,
+                    if (post.location == 'group' && groupCubit != null) {
+                      groupCubit.deletePost(
+                        groupId: post.groupID ?? "",
                         post: post,
                       );
                     } else {

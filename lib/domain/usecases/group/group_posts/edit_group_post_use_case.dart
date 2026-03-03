@@ -11,16 +11,11 @@ class EditGroupPostUseCase {
     required String groupId,
     required String postId,
     required String newCaption,
-    List<String>? media,
   }) async {
-    if (newCaption.trim().isEmpty && (media == null || media.isEmpty)) {
-      return const Left(ValidationFailure('Updated post cannot be empty'));
-    }
     return await groupRepo.editGroupPost(
       groupId: groupId,
       postId: postId,
       newCaption: newCaption.trim(),
-      media: media,
     );
   }
 }

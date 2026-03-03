@@ -1,32 +1,30 @@
-import 'package:auth/core/errors/failure.dart';
+import 'package:auth/domain/entities/group_member.dart';
 import 'package:auth/domain/usecases/group/members/get_group_banned_members_use_case.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:auth/presentation/manager/groups_pagination/base_pagination_cubit.dart';
+import 'package:auth/presentation/manager/groups_pagination/pagination_state.dart';
+import 'package:dartz/dartz.dart';
 
-import 'package:auth/presentation/manager/group_cubit/get_banned_members/get_banned_members_state.dart';
+class GetBannedMembersCubit extends BasePaginationCubit<GroupMember> {
+  final GetGroupBannedMembersUseCase getGroupBannedMembersUseCase;
+  late String groupId;
 
-class GetBannedMembersCubit extends Cubit<GetBannedMembersState> {
-  final GetGroupBannedMembersUseCase _getGroupBannedMembersUseCase;
+  GetBannedMembersCubit({required this.getGroupBannedMembersUseCase});
 
-  GetBannedMembersCubit({
-    required GetGroupBannedMembersUseCase getGroupBannedMembersUseCase,
-  }) : _getGroupBannedMembersUseCase = getGroupBannedMembersUseCase,
-       super(GetBannedMembersInitial());
-
-  Future<void> getBannedMembers({required String groupId}) async {
-    emit(GetBannedMembersLoading());
-    final result = await _getGroupBannedMembersUseCase(groupId: groupId);
-
-    result.fold(
-      (failure) => emit(_mapFailureToState(failure)),
-      (bannedMembers) =>
-          emit(GetBannedMembersSuccess(bannedMembers: bannedMembers)),
-    );
+  @override
+  Future<Either<dynamic, List<GroupMember>>> fetchUseCase({int page = 1}) {
+    return getGroupBannedMembersUseCase(groupId: groupId, page: page);
   }
 
-  GetBannedMembersFailure _mapFailureToState(Failure failure) {
-    return GetBannedMembersFailure(
-      message: failure.message,
-      errorType: failure is NetworkFailure ? 'network' : 'server',
+  @override
+  String getItemId(GroupMember item) => item.userId!;
+
+  void removeMemberLocally(String userId) {
+    items.removeWhere((m) => m.userId == userId);
+    emit(
+      PaginationLoaded<GroupMember>(
+        items: List.from(items),
+        hasReachedMax: hasReachedMax,
+      ),
     );
   }
 }

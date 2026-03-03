@@ -31,7 +31,7 @@ class GroupFeedView extends StatelessWidget {
     return BlocListener<LeaveGroupCubit, LeaveGroupState>(
       listener: (context, state) {
         if (state is LeaveGroupSuccess) {
-          context.go(AppRoutes.groupPreview, extra: groupId);
+          context.go('${AppRoutes.groupPreview}/$groupId');
         }
         if (state is LeaveGroupFailure) {
           showCustomSnackBar(context, state.message, false);

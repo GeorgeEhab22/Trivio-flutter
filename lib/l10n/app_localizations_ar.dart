@@ -913,4 +913,25 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get weekLetter => 'أ';
+
+  @override
+  String get trivio => 'Trivio';
+
+  @override
+  String get noMorePosts => 'لا يوجد المزيد من المنشورات لعرضها';
+
+  @override
+  String get noMoreGroups => 'لا يوجد المزيد من المجموعات';
+
+  @override
+  String get noGroupsFound => 'لم يتم العثور على مجموعات.';
+
+  @override
+  String get searchGroupsHint => 'ابحث عن مجموعات...';
+
+  @override
+  String get whatsOnYourMind => 'بماذا تفكر؟';
+
+  @override
+  String get noMoreMembers => 'لا يوجد المزيد من الأعضاء';
 }

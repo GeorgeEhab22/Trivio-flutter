@@ -1,6 +1,7 @@
 import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/authentication/widgets/show_custom_snackbar.dart';
 import 'package:auth/presentation/groups/manage_group/widgets/member_row.dart';
+import 'package:auth/presentation/groups/widgets/dummy_for_skeletonizer.dart';
 import 'package:auth/presentation/manager/group_cubit/ban_member/ban_member_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/ban_member/ban_member_state.dart';
 import 'package:auth/presentation/manager/group_cubit/change_member_role/change_member_role_cubit.dart';
@@ -11,6 +12,7 @@ import 'package:auth/presentation/manager/group_cubit/get_members_by_roles/membe
 import 'package:auth/presentation/manager/group_cubit/get_members_by_roles/members_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class MembersListView extends StatelessWidget {
   final String groupId;
@@ -27,9 +29,9 @@ class MembersListView extends StatelessWidget {
             if (state is ChangeMemberRoleSuccess) {
               showCustomSnackBar(context, state.message, true);
               context.read<GroupMembersCubit>().updateMemberRoleLocally(
-                    state.userId,
-                    state.newRole,
-                  );
+                state.userId,
+                state.newRole,
+              );
             }
           },
         ),
@@ -38,8 +40,8 @@ class MembersListView extends StatelessWidget {
             if (state is BanMemberSuccess) {
               showCustomSnackBar(context, state.message, true);
               context.read<GroupMembersCubit>().removeMemberLocally(
-                    state.userId,
-                  );
+                state.userId,
+              );
             }
             if (state is BanMemberFailure) {
               showCustomSnackBar(context, state.message, false);
@@ -51,8 +53,8 @@ class MembersListView extends StatelessWidget {
             if (state is KickMemberSuccess) {
               showCustomSnackBar(context, state.message, true);
               context.read<GroupMembersCubit>().removeMemberLocally(
-                    state.userId,
-                  );
+                state.userId,
+              );
             }
           },
         ),
@@ -60,39 +62,81 @@ class MembersListView extends StatelessWidget {
       child: Scaffold(
         body: BlocBuilder<GroupMembersCubit, GroupMembersState>(
           builder: (context, state) {
-            if (state.isLoading) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            final members = state.members;
+            final cubit = context.read<GroupMembersCubit>();
+            final bool isInitialLoading =
+                state.isLoading && state.members.isEmpty;
+            final bool isLoadingMore = state.isLoadingMoreMembers;
 
-            if (members.isEmpty) {
+            if (state.errorMessage != null && state.members.isEmpty) {
+              return Center(child: Text(state.errorMessage!));
+            }
+
+            final displayMembers = isInitialLoading
+                ? DummyData.dummyMembers
+                : [...state.members, if (isLoadingMore) DummyData.dummyMember];
+
+            if (!isInitialLoading && state.members.isEmpty) {
               return Center(child: Text(l10n.noMembersFound));
             }
-            return ListView.builder(
-              itemCount: members.length,
-              itemBuilder: (context, index) {
-                final member = members[index];
-                return MemberRow(
-                  name: member.userName,
-                  image: member.profileImageUrl,
-                  role: member.role ?? l10n.member,
-                  onRoleChanged: (newRole) {
-                    context.read<ChangeMemberRoleCubit>().changeMemberRole(
+
+            return Skeletonizer(
+              enabled: isInitialLoading,
+              child: NotificationListener<ScrollNotification>(
+                onNotification: (scrollInfo) {
+                  if (scrollInfo is ScrollUpdateNotification &&
+                      scrollInfo.metrics.pixels >=
+                          scrollInfo.metrics.maxScrollExtent * 0.8) {
+                    cubit.loadMoreMembers(groupId);
+                  }
+                  return false;
+                },
+                child: ListView.builder(
+                  itemCount:
+                      displayMembers.length +
+                      (state.hasReachedMaxMembers ? 1 : 0),
+                  itemBuilder: (context, index) {
+                    if (index == displayMembers.length) {
+                      return  Padding(
+                        padding: EdgeInsets.symmetric(vertical: 24.0),
+                        child: Center(
+                          child: Text(
+                            l10n.noMoreMembers,
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                        ),
+                      );
+                    }
+
+                    final member = displayMembers[index];
+                    return Skeletonizer(
+                      enabled: isInitialLoading || member.userId!.isEmpty,
+                      child: MemberRow(
+                        name: member.userName,
+                        image: member.profileImageUrl,
+                        role: member.role ?? l10n.member,
+                        onRoleChanged: (newRole) {
+                          context
+                              .read<ChangeMemberRoleCubit>()
+                              .changeMemberRole(
+                                groupId: groupId,
+                                userId: member.userId!,
+                                newRole: newRole,
+                              );
+                        },
+                        onBan: () => context.read<BanMemberCubit>().banMember(
                           groupId: groupId,
-                          userId: member.userId!,
-                          newRole: newRole,
-                        );
+                          targetUserId: member.userId!,
+                        ),
+                        onKick: () =>
+                            context.read<KickMemberCubit>().kickMember(
+                              groupId: groupId,
+                              targetUserId: member.userId!,
+                            ),
+                      ),
+                    );
                   },
-                  onBan: () => context.read<BanMemberCubit>().banMember(
-                        groupId: groupId,
-                        targetUserId: member.userId!,
-                      ),
-                  onKick: () => context.read<KickMemberCubit>().kickMember(
-                        groupId: groupId,
-                        targetUserId: member.userId!,
-                      ),
-                );
-              },
+                ),
+              ),
             );
           },
         ),

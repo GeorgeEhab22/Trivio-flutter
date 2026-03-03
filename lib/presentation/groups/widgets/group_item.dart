@@ -2,7 +2,9 @@ import 'package:auth/core/app_routes.dart';
 import 'package:auth/core/styels.dart';
 import 'package:auth/presentation/groups/group_preview/widgets/group_image.dart';
 import 'package:auth/presentation/groups/widgets/number_of_members_row.dart';
+import 'package:auth/presentation/manager/group_cubit/get_group_posts/group_posts_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class GroupItem extends StatelessWidget {
@@ -26,14 +28,18 @@ class GroupItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
+      onTap: () async {
         if (myGroup == true) {
-          context.push(AppRoutes.myGroup, extra: groupId);
+          final cubit = context.read<GroupPostsCubit>();
+          await context.push('${AppRoutes.myGroup}/$groupId');
+          cubit.getFeedPosts();
         } else {
-          context.push(AppRoutes.groupFeed, extra: groupId);
+          context.push('${AppRoutes.groupFeed}/$groupId');
         }
       },
-      child: isHorizontal ? buildHorizontalLayout(numOfMembers) : buildVerticalLayout(),
+      child: isHorizontal
+          ? buildHorizontalLayout(numOfMembers)
+          : buildVerticalLayout(),
     );
   }
 
@@ -88,7 +94,7 @@ class GroupItem extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
 
-                NumberOfMembersRow(numOfMembers: numOfMembers,),
+                NumberOfMembersRow(numOfMembers: numOfMembers),
               ],
             ),
           ),

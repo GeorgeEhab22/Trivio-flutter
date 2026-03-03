@@ -1,30 +1,24 @@
+import 'package:auth/domain/entities/group.dart';
 import 'package:auth/domain/usecases/group/groups/get_joined_groups_use_case.dart';
-import 'package:auth/presentation/manager/group_cubit/get_joined_groups/get_joined_groups_state.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:auth/presentation/manager/groups_pagination/base_pagination_cubit.dart';
+import 'package:dartz/dartz.dart';
 
-class GetJoinedGroupsCubit extends Cubit<GetJoinedGroupsState> {
+class GetJoinedGroupsCubit extends BasePaginationCubit<Group> {
   final GetJoinedGroupsUseCase getJoinedGroupsUseCase;
+  String? currentSearch;
 
-  GetJoinedGroupsCubit({required this.getJoinedGroupsUseCase})
-    : super(GetJoinedGroupsInitial());
+  GetJoinedGroupsCubit({required this.getJoinedGroupsUseCase});
 
-  Future<void> getJoinedGroups({int page = 1, String? search}) async {
-    if (state is GetJoinedGroupsLoading) return;
-    emit(GetJoinedGroupsLoading());
+  @override
+  Future<Either<dynamic, List<Group>>> fetchUseCase({int page = 1}) {
+    return getJoinedGroupsUseCase(page: page, search: currentSearch);
+  }
 
-    final result = await getJoinedGroupsUseCase(page: page, search: search);
+  @override
+  String getItemId(Group item) => item.groupId;
 
-    result.fold(
-      (failure) {
-        return emit(GetJoinedGroupsFailure(message: failure.message));
-      },
-      (groups) {
-        if (groups.isEmpty) {
-          emit(const GetJoinedGroupsEmpty());
-        } else {
-          emit(GetJoinedGroupsSuccess(groups: groups));
-        }
-      },
-    );
+  Future<void> searchGroups(String query) {
+    currentSearch = query;
+    return loadData(refresh: true);
   }
 }

@@ -1843,6 +1843,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'w'**
   String get weekLetter;
+
+  /// No description provided for @trivio.
+  ///
+  /// In en, this message translates to:
+  /// **'Trivio'**
+  String get trivio;
+
+  /// No description provided for @noMorePosts.
+  ///
+  /// In en, this message translates to:
+  /// **'No more posts to show'**
+  String get noMorePosts;
+
+  /// No description provided for @noMoreGroups.
+  ///
+  /// In en, this message translates to:
+  /// **'No more groups'**
+  String get noMoreGroups;
+
+  /// No description provided for @noGroupsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No groups found.'**
+  String get noGroupsFound;
+
+  /// No description provided for @searchGroupsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search groups...'**
+  String get searchGroupsHint;
+
+  /// No description provided for @whatsOnYourMind.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s on your mind?'**
+  String get whatsOnYourMind;
+
+  /// No description provided for @noMoreMembers.
+  ///
+  /// In en, this message translates to:
+  /// **'No more members'**
+  String get noMoreMembers;
 }
 
 class _AppLocalizationsDelegate

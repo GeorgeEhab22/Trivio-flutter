@@ -32,11 +32,9 @@ class CreatePostRow extends StatelessWidget {
                 backgroundColor: Colors.transparent,
                 builder: (context) => AddPostBottomSheet(groupId: groupId),
               );
-              if (result != null) {
-                groupPostsCubit.getPosts(
-                  groupId: groupId,
-                  refresh: true,
-                );
+
+              if (result != null && context.mounted) {
+                groupPostsCubit.addPostOptimistically(result);
               }
             },
             label: l10n.writeSomething, // Localized

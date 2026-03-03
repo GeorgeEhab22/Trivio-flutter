@@ -331,5 +331,11 @@
   "minuteLetter": "د",
   "hourLetter": "س",
   "dayLetter": "ي",
-  "weekLetter": "أ"
+  "weekLetter": "أ",
+  "noMorePosts": "لا يوجد المزيد من المنشورات لعرضها",
+  "noMoreGroups": "لا يوجد المزيد من المجموعات",
+  "noGroupsFound": "لم يتم العثور على مجموعات.",
+  "searchGroupsHint": "ابحث عن مجموعات...",
+  "whatsOnYourMind": "بماذا تفكر؟",
+  "noMoreMembers": "لا يوجد المزيد من الأعضاء"
 }

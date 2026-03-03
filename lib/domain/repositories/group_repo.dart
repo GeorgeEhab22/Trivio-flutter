@@ -123,7 +123,6 @@ abstract class GroupRepo {
     required String groupId,
     required String postId,
     required String newCaption,
-    List<String>? media,
   });
 
   // 23 get group post  by id
