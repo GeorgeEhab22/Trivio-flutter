@@ -5,7 +5,7 @@ import 'package:auth/constants/colors.dart';
 class SettingsRow extends StatelessWidget {
   final String title;
   final String subtitle;
-  final VoidCallback onpressed;
+  final VoidCallback? onpressed;
   final bool isToggle;
 
   const SettingsRow({

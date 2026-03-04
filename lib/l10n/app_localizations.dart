@@ -1962,6 +1962,209 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Change your favourite players'**
   String get settingsFavPlayersSub;
+  /// No description provided for @retry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get retry;
+
+  /// No description provided for @errorPrefix.
+  ///
+  /// In en, this message translates to:
+  /// **'Error:'**
+  String get errorPrefix;
+
+  /// No description provided for @accountSettingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Account Settings'**
+  String get accountSettingsTitle;
+
+  /// No description provided for @accountSettingsSubSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage your account details and preferences.'**
+  String get accountSettingsSubSettings;
+
+  /// No description provided for @likedPosts.
+  ///
+  /// In en, this message translates to:
+  /// **'Liked Posts'**
+  String get likedPosts;
+
+  /// No description provided for @likedPostsSub.
+  ///
+  /// In en, this message translates to:
+  /// **'View and manage the posts you\'ve liked.'**
+  String get likedPostsSub;
+
+  /// No description provided for @privacySettingsSubSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Control who sees your posts and activity.'**
+  String get privacySettingsSubSettings;
+
+  /// No description provided for @changePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Password'**
+  String get changePassword;
+
+  /// No description provided for @changePasswordSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Update your security credentials.'**
+  String get changePasswordSub;
+
+  /// No description provided for @requireFollowRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'Require Follow Requests'**
+  String get requireFollowRequests;
+
+  /// No description provided for @requireFollowRequestsSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Manually approve followers'**
+  String get requireFollowRequestsSub;
+
+  /// No description provided for @searchableProfileToggle.
+  ///
+  /// In en, this message translates to:
+  /// **'Searchable Profile'**
+  String get searchableProfileToggle;
+
+  /// No description provided for @followInfoTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow Info'**
+  String get followInfoTitle;
+
+  /// No description provided for @followersTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Followers'**
+  String get followersTab;
+
+  /// No description provided for @followingTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Following'**
+  String get followingTab;
+
+  /// No description provided for @requestsTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Requests'**
+  String get requestsTab;
+
+  /// No description provided for @suggestionsTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggestions'**
+  String get suggestionsTab;
+
+  /// No description provided for @noUsersFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No users found.'**
+  String get noUsersFound;
+
+  /// No description provided for @noPendingRequestsSimple.
+  ///
+  /// In en, this message translates to:
+  /// **'No pending requests'**
+  String get noPendingRequestsSimple;
+
+  /// No description provided for @noLikedPostsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No liked posts yet.'**
+  String get noLikedPostsYet;
+
+  /// No description provided for @editProfileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Profile'**
+  String get editProfileTitle;
+
+  /// No description provided for @usernameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Username'**
+  String get usernameLabel;
+
+  /// No description provided for @bioLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Bio'**
+  String get bioLabel;
+
+  /// No description provided for @saveChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Changes'**
+  String get saveChanges;
+
+  /// No description provided for @changePasswordTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Password'**
+  String get changePasswordTitle;
+
+  /// No description provided for @currentPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Password'**
+  String get currentPassword;
+
+  /// No description provided for @enterCurrentPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter current password'**
+  String get enterCurrentPassword;
+
+  /// No description provided for @newPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'New Password'**
+  String get newPassword;
+
+  /// No description provided for @enterNewPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter new password'**
+  String get enterNewPassword;
+
+  /// No description provided for @confirmNewPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm New Password'**
+  String get confirmNewPassword;
+
+  /// No description provided for @reEnterNewPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Re-enter new password'**
+  String get reEnterNewPassword;
+
+  /// No description provided for @passwordUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Password Updated!'**
+  String get passwordUpdated;
+
+  /// No description provided for @saveNewPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Save New Password'**
+  String get saveNewPassword;
+
+  /// No description provided for @noUsersDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'User'**
+  String get noUsersDefault;
 }
 
 class _AppLocalizationsDelegate

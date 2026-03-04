@@ -978,4 +978,106 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsFavPlayersSub => 'Change your favourite players';
+  String get retry => 'Retry';
+
+  @override
+  String get errorPrefix => 'Error:';
+
+  @override
+  String get accountSettingsTitle => 'Account Settings';
+
+  @override
+  String get accountSettingsSubSettings =>
+      'Manage your account details and preferences.';
+
+  @override
+  String get likedPosts => 'Liked Posts';
+
+  @override
+  String get likedPostsSub => 'View and manage the posts you\'ve liked.';
+
+  @override
+  String get privacySettingsSubSettings =>
+      'Control who sees your posts and activity.';
+
+  @override
+  String get changePassword => 'Change Password';
+
+  @override
+  String get changePasswordSub => 'Update your security credentials.';
+
+  @override
+  String get requireFollowRequests => 'Require Follow Requests';
+
+  @override
+  String get requireFollowRequestsSub => 'Manually approve followers';
+
+  @override
+  String get searchableProfileToggle => 'Searchable Profile';
+
+  @override
+  String get followInfoTitle => 'Follow Info';
+
+  @override
+  String get followersTab => 'Followers';
+
+  @override
+  String get followingTab => 'Following';
+
+  @override
+  String get requestsTab => 'Requests';
+
+  @override
+  String get suggestionsTab => 'Suggestions';
+
+  @override
+  String get noUsersFound => 'No users found.';
+
+  @override
+  String get noPendingRequestsSimple => 'No pending requests';
+
+  @override
+  String get noLikedPostsYet => 'No liked posts yet.';
+
+  @override
+  String get editProfileTitle => 'Edit Profile';
+
+  @override
+  String get usernameLabel => 'Username';
+
+  @override
+  String get bioLabel => 'Bio';
+
+  @override
+  String get saveChanges => 'Save Changes';
+
+  @override
+  String get changePasswordTitle => 'Change Password';
+
+  @override
+  String get currentPassword => 'Current Password';
+
+  @override
+  String get enterCurrentPassword => 'Enter current password';
+
+  @override
+  String get newPassword => 'New Password';
+
+  @override
+  String get enterNewPassword => 'Enter new password';
+
+  @override
+  String get confirmNewPassword => 'Confirm New Password';
+
+  @override
+  String get reEnterNewPassword => 'Re-enter new password';
+
+  @override
+  String get passwordUpdated => 'Password Updated!';
+
+  @override
+  String get saveNewPassword => 'Save New Password';
+
+  @override
+  String get noUsersDefault => 'User';
 }

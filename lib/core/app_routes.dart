@@ -18,7 +18,7 @@ class AppRoutes {
   static const String notifications = '/settings/notifications';
   static const String theme = '/settings/theme';
   static const String blocked = '/settings/blocked';
-  static const String activeStates = 'settings/active_states';
+  static const String activeStates = '/settings/active_states';
   static const String saved = '/settings/saved';
   static const String search = '/search';
   
@@ -35,7 +35,7 @@ class AppRoutes {
   static const String createGroup = '/settings/groups/create_group';
   static const String addCoverPhoto = '/settings/groups/create_group/add_cover_photo';
   static const String myGroup = '/settings/groups/my_group';
-  static const String manageGroup = 'manage_group';
+  static const String manageGroup = '/manage_group';
 
   static const String groupMembersRequests = 'members_requests';
   static const String groupPendingPosts = 'pending_posts';
@@ -48,15 +48,17 @@ class AppRoutes {
 
 
 // chats
-  static const String messages = '/messages';
-  static const String chat = '/messages/chat';
-  static const String chatInfo = '/messages/chat/chat_info';
+  static const String messages = '/app/messages';
+  static const String chat = '/app/messages/chat';
+  static const String chatInfo = '/app/messages/chat/chat_info';
 
   //profile
   static const String profileSettings = '/app/profile/settings';
   static const String requests = '/app/profile/settings/requests';
-  static const String followersList = '/app/profile/followers';
-  static const String followingList = '/app/profile/following';
+  static const String followerInfo = '/app/profile/follow_info';
+  static const String editProfile = '/app/profile/settings/edit';
+  static const String changePassword = '/app/profile/settings/change_password';
+  static const String likedPosts = '/app/profile/settings/liked_posts';
 
   // interests
   static const String selectTeams = '/select-teams';

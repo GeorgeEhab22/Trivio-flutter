@@ -3,8 +3,9 @@ import 'package:dio/dio.dart';
 class ApiService {
   final String baseUrl;
   final Dio _dio;
+  final Future<String?> Function()? getToken;
 
-  ApiService({required this.baseUrl, Dio? dio})
+  ApiService({required this.baseUrl, Dio? dio, this.getToken})
       : _dio = dio ??
             Dio(BaseOptions(
               baseUrl: baseUrl,
@@ -14,7 +15,20 @@ class ApiService {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
               },
-            ));
+            )){
+    //this is to save the token in the header of every request if it exists automatically without the need to pass it in every request
+    _dio.interceptors.add(InterceptorsWrapper(
+      onRequest: (options, handler) async {
+        if (getToken != null) {
+          final token = await getToken!();
+          if (token != null && token.isNotEmpty) {
+            options.headers['Authorization'] = 'Bearer $token';
+          }
+        }
+        return handler.next(options);
+      },
+    ));
+  }
 
   // 1. Added 'options' parameter
   Future<Map<String, dynamic>> get(

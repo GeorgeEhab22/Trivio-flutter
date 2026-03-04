@@ -44,12 +44,20 @@ import 'package:auth/presentation/manager/group_cubit/update_group/update_group_
 import 'package:auth/presentation/manager/profile_cubit/interests/select_interests_cubit.dart';
 import 'package:auth/presentation/manager/sigin_in_cubit/forget_password_otp_cubit.dart';
 import 'package:auth/presentation/home/widgets/edit_page.dart';
+import 'package:auth/presentation/manager/follow_cubit/follow_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/change_password_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/profile_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/profile_liked_posts_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/profile_social_info_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/profile_state.dart';
+import 'package:auth/presentation/manager/profile_cubit/profile_update_cubit.dart';
 import 'package:auth/presentation/reels/reels_page.dart';
 import 'package:auth/presentation/settings/settings_view.dart';
 import 'package:auth/presentation/settings/theme_view.dart';
-import 'package:auth/presentation/user/follow_requests_view.dart';
-import 'package:auth/presentation/user/followers_list_view.dart';
-import 'package:auth/presentation/user/following_list_view.dart';
+import 'package:auth/presentation/user/change_password_screen.dart';
+import 'package:auth/presentation/user/edit_profile_view.dart';
+import 'package:auth/presentation/user/liked_posts_view.dart';
+import 'package:auth/presentation/user/social_info_view.dart';
 import 'package:auth/presentation/user/user_profile_settings_view.dart';
 import 'package:auth/presentation/stats/stats_view.dart';
 import 'package:auth/presentation/user/user_profile_view.dart';
@@ -103,11 +111,8 @@ CustomTransitionPage buildAnimatedPage({
 
 GoRouter createRouter(bool isLoggedIn) {
   return GoRouter(
-    // initialLocation: AppRoutes.profileSettings,
-    initialLocation: AppRoutes.selectTeams,
-
-    // initialLocation: '/signin',
-    // initialLocation: isLoggedIn ? '/app/home' : '/signin',
+    // initialLocation: AppRoutes.selectTeams,
+    initialLocation: isLoggedIn ? AppRoutes.home : AppRoutes.signIn,
     routes: [
       GoRoute(
         path: AppRoutes.signIn,
@@ -153,7 +158,6 @@ GoRouter createRouter(bool isLoggedIn) {
         path: AppRoutes.forgetPasswordOtp,
         builder: (context, state) {
           final email = state.extra as String? ?? '';
-
           return MultiBlocProvider(
             providers: [
               BlocProvider(
@@ -180,7 +184,6 @@ GoRouter createRouter(bool isLoggedIn) {
               child: EditPostPage(post: post),
             );
           }
-
           return EditPostPage(post: post);
         },
       ),
@@ -211,7 +214,6 @@ GoRouter createRouter(bool isLoggedIn) {
           ),
         ],
       ),
-      GoRoute(path: '/theme', builder: (context, state) => const ThemeView()),
       GoRoute(
         path: '/app',
         builder: (context, state) => const SizedBox.shrink(),
@@ -228,13 +230,11 @@ GoRouter createRouter(bool isLoggedIn) {
                     pageBuilder: (context, state) =>
                         NoTransitionPage(child: const HomePage()),
                     routes: [
-                      //TODO: move this router int profile page and refactor edit page
                       GoRoute(
                         path: 'edit',
                         builder: (context, state) {
                           final args =
                               state.extra as Map<String, dynamic>? ?? {};
-
                           return EditPage(
                             initialText: args['initialText'],
                             title: args['title'],
@@ -277,26 +277,75 @@ GoRouter createRouter(bool isLoggedIn) {
                 routes: [
                   GoRoute(
                     path: 'profile',
-                    pageBuilder: (context, state) =>
-                        NoTransitionPage(child: UserProfileView()),
+                    pageBuilder: (context, state) => NoTransitionPage(
+                      child: BlocProvider<FollowCubit>(
+                        create: (context) => di.sl<FollowCubit>(),
+                        child: UserProfileView(),
+                      ),
+                    ),
                     routes: [
                       GoRoute(
-                        path: 'followers',
-                        builder: (context, state) => const FollowersListView(),
-                      ),
-                      GoRoute(
-                        path: 'following',
-                        builder: (context, state) => const FollowingListView(),
+                        path: 'follow_info',
+                        builder: (context, state) {
+                          final String? tabString =
+                              state.uri.queryParameters['tab'];
+                          final int index = int.tryParse(tabString ?? '0') ?? 0;
+                          return BlocProvider(
+                            create: (context) => di.sl<ProfileSocialInfoCubit>()
+                              ..fetchFollowers(userId: null)
+                              ..fetchFollowing(userId: null)
+                              ..fetchRequests()
+                              ..fetchSuggestions(),
+                            child: SocialInfoScreen(initialTabIndex: index),
+                          );
+                        },
                       ),
                       GoRoute(
                         path: 'settings',
-                        builder: (context, state) =>
-                            const UserProfileSettings(),
+                        builder: (context, state) => BlocProvider<FollowCubit>(
+                          create: (context) => di.sl<FollowCubit>(),
+                          child: const UserProfileSettings(),
+                        ),
                         routes: [
                           GoRoute(
-                            path: 'requests',
-                            builder: (context, state) =>
-                                const FollowRequestsView(),
+                            path: 'edit',
+                            builder: (context, state) {
+                              final profileState = context
+                                  .read<ProfileCubit>()
+                                  .state;
+                              String currentName = "";
+                              String currentBio = "";
+                              String currentAvatar = "";
+                              if (profileState is ProfileLoaded) {
+                                currentName = profileState.user.name;
+                                currentBio = profileState.user.bio ?? "";
+                                currentAvatar = profileState.user.avatar;
+                              }
+                              return BlocProvider(
+                                create: (context) => ProfileUpdateCubit(
+                                  updateProfileUseCase: di.sl(),
+                                  changePasswordUseCase: di.sl(),
+                                  initialName: currentName,
+                                  initialBio: currentBio,
+                                  initialAvatar: currentAvatar,
+                                ),
+                                child: const EditProfileScreen(),
+                              );
+                            },
+                          ),
+                          GoRoute(
+                            path: 'liked_posts',
+                            builder: (context, state) => BlocProvider(
+                              create: (context) => di.sl<LikedPostsCubit>(),
+                              child: const LikedPostsScreen(),
+                            ),
+                          ),
+                          GoRoute(
+                            path: 'change_password',
+                            builder: (context, state) => BlocProvider(
+                              create: (context) => di.sl<ChangePasswordCubit>(),
+                              child: ChangePasswordScreen(),
+                            ),
                           ),
                         ],
                       ),
@@ -306,19 +355,19 @@ GoRouter createRouter(bool isLoggedIn) {
               ),
             ],
           ),
-        ],
-      ),
-      GoRoute(
-        path: '/messages',
-        builder: (context, state) => const MessagesView(),
-        routes: [
           GoRoute(
-            path: 'chat',
-            builder: (context, state) => const ChatView(),
+            path: 'messages',
+            builder: (context, state) => const MessagesView(),
             routes: [
               GoRoute(
-                path: 'chat_info',
-                builder: (context, state) => const ChatInfoView(),
+                path: 'chat',
+                builder: (context, state) => const ChatView(),
+                routes: [
+                  GoRoute(
+                    path: 'chat_info',
+                    builder: (context, state) => const ChatInfoView(),
+                  ),
+                ],
               ),
             ],
           ),
@@ -363,7 +412,7 @@ GoRouter createRouter(bool isLoggedIn) {
                 routes: [
                   GoRoute(
                     path: 'search-groups',
-                    name: AppRoutes.searchGroups,
+                    name: 'search-groups',
                     builder: (context, state) => const GroupsSearchView(),
                   ),
                   GoRoute(
@@ -429,7 +478,6 @@ GoRouter createRouter(bool isLoggedIn) {
                   ),
                   GoRoute(
                     path: 'my_group/:groupId',
-
                     builder: (context, state) {
                       final String groupId = state.pathParameters['groupId']!;
                       return MultiBlocProvider(
@@ -453,24 +501,22 @@ GoRouter createRouter(bool isLoggedIn) {
                         ),
                       );
                     },
-
                     routes: [
                       GoRoute(
                         path: 'manage_group',
-                        name: AppRoutes.manageGroup,
+                        name: 'manage_group',
                         builder: (context, state) {
                           final String groupId =
                               state.pathParameters['groupId']!;
                           return BlocProvider(
                             create: (context) => di.sl<DeleteGroupCubit>(),
-
                             child: ManageGroupView(groupId: groupId),
                           );
                         },
                         routes: [
                           GoRoute(
                             path: 'members_requests',
-                            name: AppRoutes.groupMembersRequests,
+                            name: 'members_requests',
                             builder: (context, state) {
                               final String groupId =
                                   state.pathParameters['groupId']!;
@@ -499,19 +545,19 @@ GoRouter createRouter(bool isLoggedIn) {
                           ),
                           GoRoute(
                             path: 'pending_posts',
-                            name: AppRoutes.groupPendingPosts,
+                            name: 'pending_posts',
                             builder: (context, state) =>
                                 const PendingPostsView(),
                           ),
                           GoRoute(
                             path: 'reported_posts',
-                            name: AppRoutes.groupReportedPosts,
+                            name: 'reported_posts',
                             builder: (context, state) =>
                                 const ReportedPostsView(),
                           ),
                           GoRoute(
                             path: 'members',
-                            name: AppRoutes.groupMembers,
+                            name: 'members',
                             builder: (context, state) {
                               final String groupId =
                                   state.pathParameters['groupId']!;
@@ -541,7 +587,7 @@ GoRouter createRouter(bool isLoggedIn) {
                           ),
                           GoRoute(
                             path: 'banned_members',
-                            name: AppRoutes.bannedMembers,
+                            name: 'banned_members',
                             builder: (context, state) {
                               final String groupId =
                                   state.pathParameters['groupId']!;
