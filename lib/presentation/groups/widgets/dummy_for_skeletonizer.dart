@@ -1,7 +1,9 @@
 import 'package:auth/domain/entities/group.dart';
+import 'package:auth/domain/entities/player.dart';
 import 'package:auth/domain/entities/post.dart';
 import 'package:auth/domain/entities/group_member.dart';
 import 'package:auth/domain/entities/join_request.dart';
+import 'package:auth/domain/entities/team.dart';
 
 class DummyData {
   // Groups
@@ -57,5 +59,19 @@ class DummyData {
     userEmail: 'loading.email@example.com',
     groupId: '',
     status: 'pending',
+  );
+  static final List<dynamic> dummyTeams = List.generate(
+    15,
+    (index) =>
+        const Team(name: 'Loading Team Name', logo: '', id: '', league: ''),
+  );
+  static final List<dynamic> dummyPlayers = List.generate(
+    15,
+    (index) => const Player(
+      name: 'Loading Player Name',
+      playerImage: '',
+      idTeam: '',
+      id: '',
+    ),
   );
 }

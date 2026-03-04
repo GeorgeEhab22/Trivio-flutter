@@ -77,4 +77,9 @@ class ApiEndpoints {
 
   //profile
   static const String myProfile = '/api/v1/users/me';
+  static const String updateProfile = 'users/me/updateProfile';
+  static const String favTeams = 'users/me/favTeams';
+  static const String favPlayers = 'users/me/favPlayers';
+  static const String removeFavTeams = 'users/me/removeFavTeam';
+  static const String removeFavPlayers = 'users/me/removeFavPlayer';
 }

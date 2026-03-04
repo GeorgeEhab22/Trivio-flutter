@@ -338,4 +338,17 @@
   "searchGroupsHint": "Search groups...",
   "whatsOnYourMind": "What's on your mind?",
   "noMoreMembers": "No more members"
+  "favTeamsTitle": "Your favourite teams",
+  "favTeamsDesc": "Select your interested teams to get better recommendations",
+  "favPlayersTitle": "Your favourite players",
+  "favPlayersDesc": "Select your interested players to get better recommendations",
+  "noTeamsFound": "No teams found",
+  "noPlayersFound": "No players found",
+  "skip": "Skip",
+  "finish": "Finish",
+  "update": "Update",
+  "settingsFavTeamsTitle": "Favourite teams",
+  "settingsFavTeamsSub": "Change your favourite teams",
+  "settingsFavPlayersTitle": "Favourite players",
+  "settingsFavPlayersSub": "Change your favourite players"
 }

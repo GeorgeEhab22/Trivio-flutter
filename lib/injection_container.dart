@@ -5,17 +5,21 @@ import 'package:auth/common/functions/handle_dio_error.dart';
 import 'package:auth/data/datasource/auth_remote_datasource.dart';
 import 'package:auth/data/datasource/comments_remote_datasource.dart';
 import 'package:auth/data/datasource/groups_remote_datasource.dart';
+import 'package:auth/data/datasource/interests_local_datasource.dart';
+import 'package:auth/data/datasource/interests_remote_datasource.dart';
 import 'package:auth/data/datasource/posts_remote_datasource.dart';
 import 'package:auth/data/datasource/stats_local_datasource.dart';
 import 'package:auth/data/datasource/stats_remote_datasource.dart';
 import 'package:auth/data/repositories/auth_repo_impl.dart';
 import 'package:auth/data/repositories/comment_repo_impl.dart';
 import 'package:auth/data/repositories/group_repo_impl.dart';
+import 'package:auth/data/repositories/interests_repo_impl.dart';
 import 'package:auth/data/repositories/post_repo_impl.dart';
 import 'package:auth/data/repositories/stats_repo_impl.dart';
 import 'package:auth/domain/repositories/auth_repo.dart';
 import 'package:auth/domain/repositories/comment_repo.dart';
 import 'package:auth/domain/repositories/group_repo.dart';
+import 'package:auth/domain/repositories/interests_repo.dart';
 import 'package:auth/domain/repositories/post_repo.dart';
 import 'package:auth/domain/repositories/stats_repo.dart';
 import 'package:auth/data/datasource/follow_remote_datasource.dart';
@@ -66,6 +70,9 @@ import 'package:auth/domain/usecases/follow/get_my_following.dart';
 import 'package:auth/domain/usecases/follow/get_user_followers.dart';
 import 'package:auth/domain/usecases/follow/get_user_following.dart';
 import 'package:auth/domain/usecases/follow/unfollow_user.dart';
+import 'package:auth/domain/usecases/interests/get_all_players_use_case.dart';
+import 'package:auth/domain/usecases/interests/get_all_teams_use_case.dart';
+import 'package:auth/domain/usecases/interests/search_players_use_case.dart';
 import 'package:auth/domain/usecases/post/comment_on_post_usecase.dart';
 import 'package:auth/domain/usecases/post/create_post_usecase.dart';
 import 'package:auth/domain/usecases/post/delete_post_usecase.dart';
@@ -88,6 +95,11 @@ import 'package:auth/domain/usecases/sign_in/request_otp.dart';
 import 'package:auth/domain/usecases/sign_in/signin_usecase.dart';
 import 'package:auth/domain/usecases/sign_in/verify_otp.dart';
 import 'package:auth/domain/usecases/stats/stats_usecase.dart';
+import 'package:auth/domain/usecases/interests/get_selected_fav_players_use_case.dart';
+import 'package:auth/domain/usecases/interests/get_selected_fav_teams_use_case.dart';
+import 'package:auth/domain/usecases/interests/remove_fav_players_use_case.dart';
+import 'package:auth/domain/usecases/interests/remove_fav_teams_use_case.dart';
+import 'package:auth/domain/usecases/interests/select_interests.dart';
 import 'package:auth/presentation/manager/comment_cubit/comment_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/ban_member/ban_member_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/create_group/create_group_cubit.dart';
@@ -118,6 +130,7 @@ import 'package:auth/presentation/manager/post_cubit/create_post_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/get_post/get_post_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/post_interaction_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/interests/select_interests_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_cubit.dart';
 import 'package:auth/presentation/manager/register_cubit/register_cubit.dart';
 import 'package:auth/presentation/manager/sigin_in_cubit/request_otp/request_otp_cubit.dart';
@@ -140,6 +153,8 @@ Future<void> init() async {
   await Hive.initFlutter();
   final statslocal = StatsLocalDatasource();
   await statslocal.init();
+  final interestsLocal = InterestsLocalDataSource();
+  await interestsLocal.init();
 
   String baseUrl = kIsWeb
       ? dotenv.env['LOCAL_URL']!
@@ -215,9 +230,13 @@ Future<void> init() async {
   sl.registerLazySingleton(() => SharePostUseCase(sl()));
   sl.registerLazySingleton(() => FollowUserUseCase(sl()));
   sl.registerLazySingleton(() => SavePostUseCase(sl()));
-sl.registerLazySingleton(() => CommentOnPostUseCase(sl()));
+  sl.registerLazySingleton(() => CommentOnPostUseCase(sl()));
   sl.registerFactory(
-    () => PostCubit(getPostsUseCase: sl(), deletePostUseCase: sl(),editPostUseCase: sl()),
+    () => PostCubit(
+      getPostsUseCase: sl(),
+      deletePostUseCase: sl(),
+      editPostUseCase: sl(),
+    ),
   );
 
   sl.registerFactory(
@@ -273,7 +292,6 @@ sl.registerLazySingleton(() => CommentOnPostUseCase(sl()));
         CreatePostCubit(createPostUseCase: sl(), createGroupPostUseCase: sl()),
   );
   sl.registerFactory(() => GetPostCubit(getPostUseCase: sl()));
-
 
   // groups
   sl.registerLazySingleton<GroupRemoteDataSource>(
@@ -383,7 +401,8 @@ sl.registerFactory<GroupPostsCubit>(
   sl.registerFactory(() => ThemeCubit(prefs));
 
   sl.registerLazySingleton<ProfileRemoteDataSource>(
-    () => ProfileRemoteDataSourceImpl(api: sl(), errorHandler: sl()),
+    () =>
+        ProfileRemoteDataSourceImpl(api: sl(), prefs: sl(), errorHandler: sl()),
   );
   sl.registerLazySingleton<UserProfileRepo>(
     () => UserProfileRepositoryImpl(remoteDataSource: sl()),
@@ -396,9 +415,7 @@ sl.registerFactory<GroupPostsCubit>(
   sl.registerLazySingleton<FollowRemoteDataSource>(
     () => FollowRemoteDataSourceImpl(api: sl(), errorHandler: sl()),
   );
-  sl.registerLazySingleton<FollowRepo>(
-    () => FollowRepoImpl(remote: sl()),
-  );
+  sl.registerLazySingleton<FollowRepo>(() => FollowRepoImpl(remote: sl()));
 
   sl.registerLazySingleton(() => FollowUser(sl()));
   sl.registerLazySingleton(() => UnfollowUser(sl()));
@@ -427,4 +444,34 @@ sl.registerFactory<GroupPostsCubit>(
       getMyFollowingUseCase: sl(),
     ),
   );
+
+  // select interest
+   sl.registerLazySingleton<InterestsLocalDataSource>(() => InterestsLocalDataSource());
+
+  sl.registerLazySingleton<InterestsRemoteDataSource>(
+    () => InterestsRemoteDataSourceImpl(api: sl(), prefs: sl(), errorHandler: sl(), dio: sl()),
+  );
+  sl.registerLazySingleton<InterestsRepo>(
+    () => InterestsRepoImpl(remoteDatasource: sl(), localDatasource: sl()),
+  );
+
+  sl.registerFactory(
+    () => SelectInterestsCubit(
+      selectInterestsUseCase: sl(),
+      getFavPlayersUseCase: sl(),
+      getFavTeamsUseCase: sl(),
+      getTeamsUseCase: sl(),
+      getPlayersUseCase: sl(),
+      searchPlayersUseCase: sl(),
+    ),
+  );
+  sl.registerLazySingleton(() => SelectInterestsUseCase(sl()));
+
+  sl.registerLazySingleton(() => GetSelectedFavPlayersUseCase(sl()));
+  sl.registerLazySingleton(() => RemoveFavPlayersUseCase(sl()));
+  sl.registerLazySingleton(() => GetSelectedFavTeamsUseCase(sl()));
+  sl.registerLazySingleton(() => RemoveFavTeamsUseCase(sl()));
+  sl.registerLazySingleton(() => GetAllTeamsUseCase(sl()));
+  sl.registerLazySingleton(() => GetAllPlayersUseCase(sl()));
+  sl.registerLazySingleton(() => SearchPlayersUseCase(sl()));
 }

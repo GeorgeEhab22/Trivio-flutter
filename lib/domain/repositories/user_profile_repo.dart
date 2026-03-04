@@ -4,4 +4,5 @@ import 'package:dartz/dartz.dart';
 
 abstract class UserProfileRepo {
   Future<Either<Failure, UserProfile>> getMyProfile();
+
 }

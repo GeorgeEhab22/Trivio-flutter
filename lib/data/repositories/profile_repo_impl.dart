@@ -29,4 +29,6 @@ class UserProfileRepositoryImpl implements UserProfileRepo {
       return Left(ServerFailure(e.message));
     }
   }
+
+ 
 }

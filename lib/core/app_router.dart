@@ -19,6 +19,8 @@ import 'package:auth/presentation/groups/manage_group/people_view/people_view.da
 import 'package:auth/presentation/groups/manage_group/reported_posts_view.dart';
 import 'package:auth/presentation/groups/my_group/my_group_view.dart';
 import 'package:auth/presentation/groups/widgets/edit_post_page.dart';
+import 'package:auth/presentation/interests/favourite_players_view.dart';
+import 'package:auth/presentation/interests/favourite_teams_view.dart';
 import 'package:auth/presentation/manager/group_cubit/ban_member/ban_member_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/create_group/create_group_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/delete_group/delete_group_cubit.dart';
@@ -39,6 +41,7 @@ import 'package:auth/presentation/manager/group_cubit/leave_group/leave_group_cu
 import 'package:auth/presentation/manager/group_cubit/get_members_by_roles/members_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/unban_member/unban_member_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/update_group/update_group_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/interests/select_interests_cubit.dart';
 import 'package:auth/presentation/manager/sigin_in_cubit/forget_password_otp_cubit.dart';
 import 'package:auth/presentation/home/widgets/edit_page.dart';
 import 'package:auth/presentation/reels/reels_page.dart';
@@ -68,6 +71,9 @@ import 'package:auth/core/auth_shell.dart';
 import 'package:auth/injection_container.dart' as di;
 
 int previousTabIndex = 0;
+final GlobalKey<NavigatorState> _interestsShellKey = GlobalKey<NavigatorState>(
+  debugLabel: 'interests_shell',
+);
 
 CustomTransitionPage buildAnimatedPage({
   required Widget child,
@@ -97,9 +103,11 @@ CustomTransitionPage buildAnimatedPage({
 
 GoRouter createRouter(bool isLoggedIn) {
   return GoRouter(
-    // initialLocation: AppRoutes.groups,
+    // initialLocation: AppRoutes.profileSettings,
+    initialLocation: AppRoutes.selectTeams,
+
     // initialLocation: '/signin',
-    initialLocation: isLoggedIn ? '/app/home' : '/signin',
+    // initialLocation: isLoggedIn ? '/app/home' : '/signin',
     routes: [
       GoRoute(
         path: AppRoutes.signIn,
@@ -175,6 +183,33 @@ GoRouter createRouter(bool isLoggedIn) {
 
           return EditPostPage(post: post);
         },
+      ),
+      ShellRoute(
+        navigatorKey: _interestsShellKey,
+        builder: (context, state, child) {
+          return BlocProvider(
+            create: (context) => di.sl<SelectInterestsCubit>(),
+            child: child,
+          );
+        },
+        routes: [
+          GoRoute(
+            path: AppRoutes.selectTeams,
+            builder: (context, state) {
+              final bool isEdit = state.extra as bool? ?? false;
+              return FavouriteTeamsView(isEditTeams: isEdit);
+            },
+            routes: [
+              GoRoute(
+                path: 'select-players',
+                builder: (context, state) {
+                  final bool isEdit = state.extra as bool? ?? false;
+                  return FavouritePlayersView(isEditPlayers: isEdit);
+                },
+              ),
+            ],
+          ),
+        ],
       ),
       GoRoute(path: '/theme', builder: (context, state) => const ThemeView()),
       GoRoute(

@@ -16,6 +16,7 @@ class CustomSquareButton extends StatelessWidget {
   final bool row;
   final double borderRadius;
   final double height;
+  final bool isLoading;
 
   const CustomSquareButton({
     super.key,
@@ -34,6 +35,7 @@ class CustomSquareButton extends StatelessWidget {
     this.row = false,
     this.borderRadius = 12,
     this.height = 14,
+    this.isLoading = false,
   });
 
   @override
@@ -54,7 +56,7 @@ class CustomSquareButton extends StatelessWidget {
       ),
       child: InkWell(
         borderRadius: BorderRadius.circular(borderRadius),
-        onTap: onTap,
+        onTap: isLoading ? null : onTap,
         child: Padding(
           padding: EdgeInsets.symmetric(vertical: height, horizontal: 12),
           child: row
@@ -74,7 +76,20 @@ class CustomSquareButton extends StatelessWidget {
       mainAxisSize: isExpanded ? MainAxisSize.max : MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        if (leadingIcon != null) ...[
+        if (isLoading) ...[
+          SizedBox(
+            height: 14,
+            width: 14,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              valueColor: AlwaysStoppedAnimation<Color>(
+                textColor ?? Colors.white,
+              ),
+            ),
+          ),
+          const SizedBox(width: 10),
+        ] 
+        else if (leadingIcon != null) ...[
           Icon(
             leadingIcon,
             color: iconColor ?? Theme.of(context).iconTheme.color,
@@ -82,9 +97,11 @@ class CustomSquareButton extends StatelessWidget {
           ),
           const SizedBox(width: 8),
         ],
+        
         Flexible(
           child: Text(label ?? '', textAlign: TextAlign.center, style: style),
         ),
+        
         if (trailingIcon != null) ...[
           const SizedBox(width: 8),
           Icon(

@@ -19,6 +19,9 @@ class UserProfileModel extends UserProfile {
     this.followersCount = 0,
     this.followingCount = 0,
     this.createdAt,
+    
+    super.favTeams,
+    super.favPlayers,
   }) : super(id: id, name: name, email: email, role: role);
 
   factory UserProfileModel.fromJson(Map<String, dynamic> json) {
@@ -33,6 +36,9 @@ class UserProfileModel extends UserProfile {
       createdAt: json['createdAt'] != null
           ? DateTime.tryParse(json['createdAt'])
           : null,
+
+      favTeams: List<String>.from(json['favTeams'] ?? []),
+      favPlayers: List<String>.from(json['favPlayers'] ?? []),
     );
   }
 

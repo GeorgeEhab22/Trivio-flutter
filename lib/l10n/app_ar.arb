@@ -338,4 +338,17 @@
   "searchGroupsHint": "ابحث عن مجموعات...",
   "whatsOnYourMind": "بماذا تفكر؟",
   "noMoreMembers": "لا يوجد المزيد من الأعضاء"
+  "favTeamsTitle": "فرقك المفضلة",
+  "favTeamsDesc": "اختر فرقك المفضلة للحصول على توصيات أفضل",
+  "favPlayersTitle": "لاعبوك المفضلون",
+  "favPlayersDesc": "اختر لاعبيك المفضلين للحصول على توصيات أفضل",
+  "noTeamsFound": "لم يتم العثور على فرق",
+  "noPlayersFound": "لم يتم العثور على لاعبين",
+  "skip": "تخطي",
+  "finish": "إنهاء",
+  "update": "تحديث",
+  "settingsFavTeamsTitle": "الفرق المفضلة",
+  "settingsFavTeamsSub": "تغيير فرقك المفضلة",
+  "settingsFavPlayersTitle": "اللاعبين المفضلين",
+  "settingsFavPlayersSub": "تغيير لاعبيك المفضلين"
 }
