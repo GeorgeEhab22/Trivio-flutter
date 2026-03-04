@@ -39,12 +39,20 @@ import 'package:auth/presentation/manager/group_cubit/unban_member/unban_member_
 import 'package:auth/presentation/manager/group_cubit/update_group/update_group_cubit.dart';
 import 'package:auth/presentation/manager/sigin_in_cubit/forget_password_otp_cubit.dart';
 import 'package:auth/presentation/home/widgets/edit_page.dart';
+import 'package:auth/presentation/manager/follow_cubit/follow_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/change_password_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/profile_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/profile_liked_posts_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/profile_social_info_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/profile_state.dart';
+import 'package:auth/presentation/manager/profile_cubit/profile_update_cubit.dart';
 import 'package:auth/presentation/reels/reels_page.dart';
 import 'package:auth/presentation/settings/settings_view.dart';
 import 'package:auth/presentation/settings/theme_view.dart';
-import 'package:auth/presentation/user/follow_requests_view.dart';
-import 'package:auth/presentation/user/followers_list_view.dart';
-import 'package:auth/presentation/user/following_list_view.dart';
+import 'package:auth/presentation/user/change_password_screen.dart';
+import 'package:auth/presentation/user/edit_profile_view.dart';
+import 'package:auth/presentation/user/liked_posts_view.dart';
+import 'package:auth/presentation/user/social_info_view.dart';
 import 'package:auth/presentation/user/user_profile_settings_view.dart';
 import 'package:auth/presentation/stats/stats_view.dart';
 import 'package:auth/presentation/user/user_profile_view.dart';
@@ -222,26 +230,79 @@ GoRouter createRouter(bool isLoggedIn) {
                 routes: [
                   GoRoute(
                     path: 'profile',
-                    pageBuilder: (context, state) =>
-                        NoTransitionPage(child: UserProfileView()),
+                    pageBuilder: (context, state) => NoTransitionPage(
+                      child: BlocProvider<FollowCubit>(
+                        create: (context) => di.sl<FollowCubit>(),
+                        child: UserProfileView(),
+                      ),
+                    ),
                     routes: [
                       GoRoute(
-                        path: 'followers',
-                        builder: (context, state) => const FollowersListView(),
-                      ),
-                      GoRoute(
-                        path: 'following',
-                        builder: (context, state) => const FollowingListView(),
+                        path: 'follow_info',
+                        builder: (context, state) {
+                          final String? tabString = state.uri.queryParameters['tab'];
+                          final int index = int.tryParse(tabString??'0')??0;
+                          return BlocProvider(
+                          create: (context) {
+                            final cubit = di.sl<ProfileSocialInfoCubit>();
+                            cubit.fetchFollowers(userId: null);
+                            cubit.fetchFollowing(userId: null);
+                            cubit.fetchRequests();
+
+                            return cubit;
+                          },
+                          child: SocialInfoScreen(initialTabIndex: index,),
+                        );
+                        }
                       ),
                       GoRoute(
                         path: 'settings',
-                        builder: (context, state) =>
-                            const UserProfileSettings(),
+                        builder: (context, state) => BlocProvider<FollowCubit>(
+                          create: (context) => di.sl<FollowCubit>(),
+                          child: const UserProfileSettings(),
+                        ),
                         routes: [
                           GoRoute(
-                            path: 'requests',
-                            builder: (context, state) =>
-                                const FollowRequestsView(),
+                            path: 'edit',
+                            builder: (context, state) {
+                              final profileState = context
+                                  .read<ProfileCubit>()
+                                  .state;
+
+                              String currentName = "";
+                              String currentBio = "";
+                              String currentAvatar ="";
+
+                              if (profileState is ProfileLoaded) {
+                                currentName = profileState.user.name;
+                                currentBio = profileState.user.bio!;
+                                currentAvatar = profileState.user.avatar;
+                              }
+                              return BlocProvider(
+                                create: (context) => ProfileUpdateCubit(
+                                  updateProfileUseCase: di.sl(),
+                                  changePasswordUseCase: di.sl(),
+                                  initialName: currentName,
+                                  initialBio: currentBio,
+                                  initialAvatar: currentAvatar,
+                                ),
+                                child: const EditProfileScreen(),
+                              );
+                            },
+                          ),
+                          GoRoute(
+                            path: 'liked_posts',
+                            builder: (context, state) => BlocProvider(
+                              create: (context) => di.sl<LikedPostsCubit>(),
+                              child: const LikedPostsScreen(),
+                            ),
+                          ),
+                          GoRoute(
+                            path: 'change_password',
+                            builder: (context, state) => BlocProvider(
+                              create: (context) => di.sl<ChangePasswordCubit>(),
+                              child: ChangePasswordScreen(),
+                            ),
                           ),
                         ],
                       ),
@@ -251,263 +312,17 @@ GoRouter createRouter(bool isLoggedIn) {
               ),
             ],
           ),
-        ],
-      ),
-      GoRoute(
-        path: '/messages',
-        builder: (context, state) => const MessagesView(),
-        routes: [
           GoRoute(
-            path: 'chat',
-            builder: (context, state) => const ChatView(),
+            path: 'messages',
+            builder: (context, state) => const MessagesView(),
             routes: [
               GoRoute(
-                path: 'chat_info',
-                builder: (context, state) => const ChatInfoView(),
-              ),
-            ],
-          ),
-        ],
-      ),
-      GoRoute(
-        path: '/settings',
-        builder: (context, state) => const SettingsView(),
-        routes: [
-          GoRoute(
-            path: 'theme',
-            builder: (context, state) => const ThemeView(),
-          ),
-          ShellRoute(
-            builder: (context, state, child) {
-              return MultiBlocProvider(
-                providers: [
-                  BlocProvider(
-                    create: (context) =>
-                        di.sl<GetAllGroupsCubit>()..getAllGroups(),
-                  ),
-                  BlocProvider(
-                    create: (context) =>
-                        di.sl<GetMyGroupsCubit>()..getMyGroups(),
-                  ),
-                  BlocProvider(
-                    create: (context) =>
-                        di.sl<GetJoinedGroupsCubit>()..getJoinedGroups(),
-                  ),
-                ],
-                child: child,
-              );
-            },
-            routes: [
-              GoRoute(
-                path: 'groups',
-                builder: (context, state) {
-                  return MultiBlocProvider(
-                    providers: [
-                      BlocProvider(
-                        create: (context) =>
-                            di.sl<GetGroupsPostsFeedCubit>()..fetchFeed(),
-                      ),
-                    ],
-                    child: const GroupsView(),
-                  );
-                },
+                path: 'chat',
+                builder: (context, state) => const ChatView(),
                 routes: [
                   GoRoute(
-                    path: 'group_preview',
-                    builder: (context, state) {
-                      final String groupId = state.extra as String;
-
-                      return MultiBlocProvider(
-                        providers: [
-                          BlocProvider(
-                            create: (context) => di.sl<JoinGroupCubit>(),
-                          ),
-                          BlocProvider(
-                            create: (context) =>
-                                di.sl<CancelRequestGroupCubit>(),
-                          ),
-                          BlocProvider(
-                            create: (context) =>
-                                di.sl<GetGroupCubit>()..getGroup(groupId),
-                          ),
-                        ],
-                        child: const GroupPreviewView(),
-                      );
-                    },
-                  ),
-                  GoRoute(
-                    path: 'group_feed',
-                    builder: (context, state) {
-                      final String groupId = state.extra as String;
-
-                      return MultiBlocProvider(
-                        providers: [
-                          BlocProvider(
-                            create: (context) =>
-                                di.sl<GetGroupCubit>()..getGroup(groupId),
-                          ),
-                          BlocProvider(
-                            create: (context) => di.sl<LeaveGroupCubit>(),
-                          ),
-                        ],
-                        child: GroupFeedView(groupId: groupId),
-                      );
-                    },
-                  ),
-                  ShellRoute(
-                    builder: (context, state, child) {
-                      return BlocProvider(
-                        create: (context) => di.sl<CreateGroupCubit>(),
-                        child: child,
-                      );
-                    },
-                    routes: [
-                      GoRoute(
-                        path: 'create_group',
-                        builder: (context, state) => const CreateGroupView(),
-                        routes: [
-                          GoRoute(
-                            path: 'add_cover_photo',
-                            builder: (context, state) =>
-                                const AddCoverPhotoView(),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  GoRoute(
-                    path: 'my_group',
-                    builder: (context, state) {
-                      final String groupId = state.extra as String;
-                      return MultiBlocProvider(
-                        providers: [
-                          BlocProvider(
-                            create: (context) =>
-                                di.sl<GetGroupCubit>()..getGroup(groupId),
-                          ),
-                          BlocProvider(
-                            create: (context) => di.sl<UpdateGroupCubit>(),
-                          ),
-                          BlocProvider(
-                            create: (context) => di.sl<GroupPostsCubit>(),
-                          ),
-                        ],
-                        child: MyGroupView(groupId: groupId),
-                      );
-                    },
-
-                    routes: [
-                      GoRoute(
-                        path: 'manage_group',
-                        builder: (context, state) {
-                          final String groupId = state.extra as String;
-                          return BlocProvider(
-                            create: (context) => di.sl<DeleteGroupCubit>(),
-
-                            child: ManageGroupView(groupId: groupId),
-                          );
-                        },
-                        routes: [
-                          GoRoute(
-                            path: 'members_requests',
-                            builder: (context, state) {
-                              final groupId =
-                                  (state.extra as String?) ??
-                                  "69888500a488d0dae5e0accc";
-
-                              return MultiBlocProvider(
-                                providers: [
-                                  BlocProvider(
-                                    create: (context) =>
-                                        di.sl<GetJoinRequestsCubit>()
-                                          ..getJoinRequestsGroup(
-                                            groupId: groupId,
-                                          ),
-                                  ),
-                                  BlocProvider(
-                                    create: (context) =>
-                                        di.sl<AcceptRequestCubit>(),
-                                  ),
-                                  BlocProvider(
-                                    create: (context) =>
-                                        di.sl<DeclineRequestCubit>(),
-                                  ),
-                                ],
-                                child: MembersRequestsListView(
-                                  groupId: groupId,
-                                ),
-                              );
-                            },
-                          ),
-                          GoRoute(
-                            path: 'pending_posts',
-                            builder: (context, state) =>
-                                const PendingPostsView(),
-                          ),
-                          GoRoute(
-                            path: 'reported_posts',
-                            builder: (context, state) =>
-                                const ReportedPostsView(),
-                          ),
-                          GoRoute(
-                            path: 'members',
-                            builder: (context, state) {
-                              final groupId =
-                                  (state.extra as String?) ??
-                                  "695d4782c3f2873f107b0f17";
-                              return MultiBlocProvider(
-                                providers: [
-                                  BlocProvider(
-                                    create: (context) =>
-                                        di.sl<GroupMembersCubit>()
-                                          ..getAllGroupData(groupId),
-                                  ),
-                                  BlocProvider(
-                                    create: (context) =>
-                                        di.sl<ChangeMemberRoleCubit>(),
-                                  ),
-                                  BlocProvider(
-                                    create: (context) =>
-                                        di.sl<BanMemberCubit>(),
-                                  ),
-                                  BlocProvider(
-                                    create: (context) =>
-                                        di.sl<KickMemberCubit>(),
-                                  ),
-                                ],
-                                child: PeopleView(groupId: groupId),
-                              );
-                            },
-                          ),
-                          GoRoute(
-                            path: 'banned_members',
-                            builder: (context, state) {
-                              final groupId =
-                                  (state.extra as String?) ??
-                                  "69888500a488d0dae5e0accc";
-                              return MultiBlocProvider(
-                                providers: [
-                                  BlocProvider(
-                                    create: (context) =>
-                                        di.sl<GetBannedMembersCubit>()
-                                          ..getBannedMembers(groupId: groupId),
-                                  ),
-                                  BlocProvider(
-                                    create: (context) =>
-                                        di.sl<UnbanMemberCubit>()..unbanMember(
-                                          groupId: groupId,
-                                          targetUserId:
-                                              "695c2fdc9dae082566c285c8",
-                                        ),
-                                  ),
-                                ],
-                                child: BannedMembersList(groupId: groupId),
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                    ],
+                    path: 'chat_info',
+                    builder: (context, state) => const ChatInfoView(),
                   ),
                 ],
               ),

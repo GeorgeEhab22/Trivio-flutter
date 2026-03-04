@@ -1,131 +1,52 @@
+import 'dart:io';
+
 import 'package:auth/constants/colors.dart';
-import 'package:auth/core/styels.dart';
+import 'package:auth/domain/entities/user_profile.dart';
 import 'package:auth/presentation/user/widgets/profile_social_info.dart';
 import 'package:flutter/material.dart';
+import 'package:auth/presentation/user/widgets/follow_toggle_button.dart';
 
 class ProfileInfoBox extends StatelessWidget {
-  final String username;
-  final String userAbout;
-  final String? avatarUrl;
-  final ValueNotifier<bool> isFollowing;
+  final UserProfile user;
 
-  ProfileInfoBox({
-    super.key,
-    this.username = "Username",
-    this.userAbout = "about",
-    this.avatarUrl,
-    required this.isFollowing,
-  });
+  const ProfileInfoBox({super.key, required this.user});
 
   @override
   Widget build(BuildContext context) {
-    final double avatarSize = MediaQuery.of(context).size.height * 0.12;
-
-    return Container(
-      padding: const EdgeInsets.all(12),
+    return Padding(
+      padding: const EdgeInsets.all(10.0),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          /// Avatar + Username (top aligned)
           Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(
-                width: avatarSize,
-                height: avatarSize,
-                child: Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    /// Avatar
-                    CircleAvatar(
-                      radius: avatarSize / 2,
-                      backgroundColor: Colors.black,
-                      backgroundImage:
-                          avatarUrl != null && avatarUrl!.isNotEmpty
-                          ? NetworkImage(avatarUrl!)
-                          : null,
-                      child: (avatarUrl == null || avatarUrl!.isEmpty)
-                          ? Text(
-                              username[0].toUpperCase(),
-                              style: Styles.textStyle25.copyWith(
-                                color: Colors.white,
-                              ),
-                            )
-                          : null,
-                    ),
-
-                    /// Small circular button
-                    Positioned(
-                      bottom: -2,
-                      right: -2,
-                      child: Material(
-                        color: AppColors.primary,
-                        shape: const CircleBorder(),
-                        elevation: 2,
-                        child: InkWell(
-                          customBorder: const CircleBorder(),
-                          onTap: () {
-                            // TODO: handle follow of the profile
-                            isFollowing.value = !isFollowing.value;
-                          },
-                          child: SizedBox(
-                            width: 32,
-                            height: 32,
-                            child: ValueListenableBuilder<bool>(
-                              valueListenable: isFollowing,
-                              builder: (context, isFollowing, _) {
-                                return Icon(
-                                  isFollowing ? Icons.check : Icons.add,
-                                  size: 18,
-                                  color: Colors.white,
-                                );
-                              },
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+              Stack(
+                children: [
+                  CircleAvatar(
+                    radius: 40,
+                    backgroundColor: AppColors.lightGrey,
+                    backgroundImage: user.avatar.startsWith('http')
+                        ? NetworkImage(user.avatar) as ImageProvider
+                        : FileImage(File(user.avatar)),
+                    child: user.avatar.isEmpty
+                        ? const Icon(Icons.person, size: 40, color: Colors.grey)
+                        : null,
+                  ),
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: FollowToggleButton(targetUserId: user.id),
+                  ),
+                ],
               ),
-
-              const SizedBox(width: 16),
-
-              /// Username aligned to top of avatar
+              const SizedBox(width: 20),
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 4),
-                      child: Text(
-                        username.length > 16
-                            ? username.substring(0, 16)
-                            : username,
-                        style: username.length <= 10
-                            ? Styles.textStyle25
-                            : Styles.textStyle20,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    ProfileSocialInfo(),
-                  ],
+                child: ProfileSocialInfo(
+                  numberOfFollowers: user.followersCount,
+                  numberOfFollowing: user.followingCount,
+                  numberOfPosts: user.postsCount,
                 ),
               ),
             ],
-          ),
-
-          const SizedBox(height: 12),
-
-          /// About text (under both)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 5.0),
-            child: Text(
-              userAbout,
-              style: const TextStyle(fontSize: 18),
-              maxLines: 4,
-              overflow: TextOverflow.ellipsis,
-            ),
           ),
         ],
       ),

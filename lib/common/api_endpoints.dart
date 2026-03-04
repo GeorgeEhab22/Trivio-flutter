@@ -55,26 +55,26 @@ class ApiEndpoints {
   static const joinedGroups = 'users/me/joined-groups';   // GET
 
   //profile follow
-  static String followUser(String userId) => '/api/v1/users/$userId/follow';
+  static String followUser(String userId) => 'users/$userId/follow';
 
-  static const String myFollowRequests = '/api/v1/follow-requests/me';
+  static const String myFollowRequests = 'follow-requests/me';
 
   static String acceptFollowRequest(String requestId) =>
-      '/api/v1/follow-requests/$requestId/accept';
+      'follow-requests/$requestId/accept';
 
   static String declineFollowRequest(String requestId) =>
-      '/api/v1/follow-requests/follow-requests/$requestId/decline';
+      'follow-requests/follow-requests/$requestId/decline';
 
   static String getUserFollowers(String userId) =>
-      '/api/v1/users/$userId/followers';
+      'users/$userId/followers';
 
   static String getUserFollowing(String userId) =>
-      '/api/v1/users/$userId/following';
+      'users/$userId/following';
 
-  static const String myFollowers = '/api/v1/users/me/followers';
+  static const String myFollowers = 'users/me/followers';
 
-  static const String myFollowing = '/api/v1/users/me/following';
+  static const String myFollowing = 'users/me/following';
 
   //profile
-  static const String myProfile = '/api/v1/users/me';
+  static const String myProfile = 'users/me';
 }

@@ -51,6 +51,8 @@ class AppRoutes {
   //profile
   static const String profileSettings = '/app/profile/settings';
   static const String requests = '/app/profile/settings/requests';
-  static const String followersList = '/app/profile/followers';
-  static const String followingList = '/app/profile/following';
+  static const String followerInfo = '/app/profile/follow_info';
+  static const String editProfile = '/app/profile/settings/edit';
+  static const String changePassword = '/app/profile/settings/change_password';
+  static const String likedPosts = '/app/profile/settings/liked_posts';
 }

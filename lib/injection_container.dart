@@ -86,7 +86,11 @@ import 'package:auth/domain/usecases/sign_in/request_otp.dart';
 
 import 'package:auth/domain/usecases/sign_in/signin_usecase.dart';
 import 'package:auth/domain/usecases/sign_in/verify_otp.dart';
+import 'package:auth/domain/usecases/user_profile/change_password.dart';
+import 'package:auth/domain/usecases/user_profile/get_liked.dart';
 import 'package:auth/domain/usecases/stats/stats_usecase.dart';
+import 'package:auth/domain/usecases/user_profile/get_suggestions.dart';
+import 'package:auth/domain/usecases/user_profile/update_profile.dart';
 import 'package:auth/presentation/manager/comment_cubit/comment_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/ban_member/ban_member_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/create_group/create_group_cubit.dart';
@@ -112,13 +116,16 @@ import 'package:auth/presentation/manager/group_cubit/update_group/update_group_
 import 'package:auth/presentation/manager/locale_cubit/locale_cubit.dart';
 import 'package:auth/domain/usecases/user_profile/get_my_profile.dart';
 import 'package:auth/presentation/manager/follow_cubit/follow_cubit.dart';
-import 'package:auth/presentation/manager/follow_cubit/follow_request_cubit.dart';
 import 'package:auth/presentation/manager/follow_cubit/get_follow_info_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/create_post_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/get_post/get_post_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/post_interaction_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/change_password_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/profile_liked_posts_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/profile_social_info_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/profile_update_cubit.dart';
 import 'package:auth/presentation/manager/register_cubit/register_cubit.dart';
 import 'package:auth/presentation/manager/sigin_in_cubit/request_otp/request_otp_cubit.dart';
 import 'package:auth/presentation/manager/sigin_in_cubit/sign_in_cubit.dart';
@@ -149,7 +156,9 @@ Future<void> init() async {
 
   sl.registerLazySingleton(() => Dio());
   sl.registerLazySingleton(() => prefs);
-  sl.registerLazySingleton(() => ApiService(baseUrl: baseUrl));
+  sl.registerLazySingleton(() => ApiService(baseUrl: baseUrl, getToken: () async {
+    return await sl<AuthRemoteDataSource>().getToken();
+  }));
   sl.registerLazySingleton(() => ErrorHandler());
   sl.registerFactory(() => LocaleCubit());
 
@@ -381,10 +390,29 @@ sl.registerLazySingleton(() => CommentOnPostUseCase(sl()));
   sl.registerLazySingleton<UserProfileRepo>(
     () => UserProfileRepositoryImpl(remoteDataSource: sl()),
   );
-
   sl.registerFactory(() => ProfileCubit(getMyProfile: sl()));
   sl.registerLazySingleton(() => GetMyProfile(sl()));
+  sl.registerLazySingleton(() => UpdateProfile(sl()));
+  sl.registerLazySingleton(() => ChangePassword(sl()));
+  sl.registerFactory(
+  () => ProfileUpdateCubit(
+    updateProfileUseCase: sl(),
+    changePasswordUseCase: sl(),
+  ),
+);
 
+  sl.registerFactory(
+    () => ProfileSocialInfoCubit(
+      getMyFollowersUseCase: sl(),
+      getMyFollowingUseCase: sl(),
+      getUserFollowersUseCase: sl(),
+      getUserFollowingUseCase: sl(),
+      getMyFollowRequestsUseCase: sl(),
+      acceptFollowRequest: sl(),
+      declineFollowRequest: sl(),
+      getSuggestionsUseCase: sl()
+    ),
+  );
   //follow
   sl.registerLazySingleton<FollowRemoteDataSource>(
     () => FollowRemoteDataSourceImpl(api: sl(), errorHandler: sl()),
@@ -402,22 +430,18 @@ sl.registerLazySingleton(() => CommentOnPostUseCase(sl()));
   sl.registerLazySingleton(() => GetUserFollowing(sl()));
   sl.registerLazySingleton(() => GetMyFollowers(sl()));
   sl.registerLazySingleton(() => GetMyFollowing(sl()));
+  sl.registerLazySingleton(() => GetSuggestions(sl()));
   sl.registerFactory(
     () => FollowCubit(followUserUseCase: sl(), unfollowUserUseCase: sl()),
-  );
-  sl.registerFactory(
-    () => FollowRequestCubit(
-      getMyFollowRequestsUseCase: sl(),
-      acceptFollowRequestUseCase: sl(),
-      declineFollowRequestUseCase: sl(),
-    ),
   );
   sl.registerFactory(
     () => FollowInfoCubit(
       getUserFollowersUseCase: sl(),
       getUserFollowingUseCase: sl(),
-      getMyFollowersUseCase: sl(),
-      getMyFollowingUseCase: sl(),
     ),
   );
+  // inside init()
+  sl.registerFactory(() => LikedPostsCubit(getLikedPostsUseCase: sl()));
+  sl.registerLazySingleton(() => GetLikedPostsIds(sl()));
+  sl.registerFactory(() => ChangePasswordCubit(changePasswordUseCase: sl()));
 }
