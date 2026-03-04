@@ -30,14 +30,14 @@ class UserProfileView extends StatelessWidget {
                 // TODO: Implement share profile logic
               },
               icon: const Icon(Icons.share),
-              tooltip: l10n.shareProfile, // Localized tooltip
+              tooltip: l10n.shareProfile,
             ),
             IconButton(
               onPressed: () {
                 GoRouter.of(context).push(AppRoutes.profileSettings);
               },
               icon: const Icon(Icons.menu),
-              tooltip: l10n.profileSettings, // Localized tooltip
+              tooltip: l10n.profileSettings, 
             ),
           ],
         ),
@@ -80,7 +80,7 @@ class UserProfileView extends StatelessWidget {
                         ),
                       const SizedBox(height: 10),
                       const Divider(color: AppColors.lightGrey),
-                      Text("Posts", style: Styles.textStyle30),
+                      Text(l10n.posts, style: Styles.textStyle30),
                     ],
                   ),
                 ),
@@ -90,18 +90,7 @@ class UserProfileView extends StatelessWidget {
           } 
           
           else if (state is ProfileError) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text("Error: ${state.message}"),
-                  TextButton(
-                    onPressed: () => context.read<ProfileCubit>().loadProfile(),
-                    child: const Text("Retry", style: TextStyle(color: AppColors.primary)),
-                  )
-                ],
-              ),
-            );
+
           }
           
           return const SizedBox();

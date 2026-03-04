@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:auth/domain/usecases/user_profile/change_password.dart';
 import 'package:auth/domain/usecases/user_profile/update_profile.dart';
-import 'package:auth/presentation/manager/profile_cubit/profile_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'profile_update_state.dart';
 
@@ -27,17 +26,30 @@ class ProfileUpdateCubit extends Cubit<ProfileUpdateState> {
     final draft = state as ProfileUpdateInitialState;
     emit(ProfileUpdateLoading());
     await Future.delayed(const Duration(seconds: 2));
-    final String imagePath = draft.image?.path ?? draft.originalAvatar;
-    ProfileCubit.updateMockData(draft.name, draft.bio, imagePath);
-    emit(const ProfileUpdateSuccess("Profile updated successfully (Mock)!"));
+    // final String imagePath = draft.image?.path ?? draft.originalAvatar;
+    // ProfileCubit.updateMockData(draft.name, draft.bio, imagePath);
+    // emit(const ProfileUpdateSuccess("Profile updated successfully (Mock)!"));
+    final result = await updateProfileUseCase.call(
+      username: draft.name,
+      bio: draft.bio,
+      avatarFile: draft.image,
+    );
+
+    if (isClosed) return;
+    
+    result.fold(
+      (failure) => emit(ProfileUpdateError(failure.message)),
+      (success) => emit(const ProfileUpdateSuccess("Profile updated successfully!")),
+    );
   }
 
   void onInfoChanged({String? name, String? bio, File? image}) {
-    if (state is ProfileUpdateInitialState) {
-      emit((state as ProfileUpdateInitialState).copyWith(
-        name: name,
-        bio: bio,
-        image: image,
+    final currentState = state;
+    if (currentState is ProfileUpdateInitialState) {
+      emit(currentState.copyWith(
+        name: name ?? currentState.name,
+        bio: bio ?? currentState.bio,
+        image: image ?? currentState.image,
       ));
     }
   }

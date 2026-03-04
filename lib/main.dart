@@ -21,15 +21,16 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await di.init();
   await dotenv.load(fileName: ".env");
-  await _setupDevMode();
+  //await _setupDevMode();
   
   final prefs = await SharedPreferences.getInstance();
+  //await prefs.remove('auth_token');
   final token = prefs.getString('auth_token');
   final bool isLoggedIn = token != null && token.isNotEmpty;
   
   final bool isDesktop = !kIsWeb && (Platform.isWindows || Platform.isMacOS || Platform.isLinux);
   final bool enableDevicePreview = !kReleaseMode && (isDesktop || kIsWeb);
-
+  
   runApp(
     DevicePreview(
       enabled: enableDevicePreview,
@@ -49,10 +50,10 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider( 
       providers: [
         BlocProvider(create: (context) => di.sl<PostCubit>()..fetchPosts()),
-    BlocProvider(create: (context) => di.sl<PostInteractionCubit>()),
+        BlocProvider(create: (context) => di.sl<PostInteractionCubit>()),
         BlocProvider(create: (_) => di.sl<ThemeCubit>()),
         BlocProvider(create: (_) => di.sl<LocaleCubit>()), 
-                BlocProvider(create: (context) => ProfileCubit(getMyProfile: di.sl())),
+        BlocProvider(create: (_) => ProfileCubit(getMyProfile: di.sl())..loadProfile()),
 
       ],
       child: BlocBuilder<LocaleCubit, Locale>( 
@@ -147,7 +148,7 @@ Future<void> _setupDevMode() async {
   final prefs = await SharedPreferences.getInstance();
 
   // 1. Paste your long JWT string here
-const String devToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MzM2ZmNlZDdhNzZhYzZjMTczOGQ1YSIsInVzZXJuYW1lIjoic2hpbWFhIiwiZW1haWwiOiJrc2hpbWFhMTQxMEBnbWFpbC5jb20iLCJpYXQiOjE3NzA1NDc2ODh9.Kn42u5KCyax6fGfrMqQeaRdqmJJqLSgv2otGVkAON1M";
+  const String devToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MzM2ZmNlZDdhNzZhYzZjMTczOGQ1YSIsInVzZXJuYW1lIjoic2hpbWFhIiwiZW1haWwiOiJrc2hpbWFhMTQxMEBnbWFpbC5jb20iLCJpYXQiOjE3NzA1NDc2ODh9.Kn42u5KCyax6fGfrMqQeaRdqmJJqLSgv2otGVkAON1M";
   await prefs.setString('auth_token', devToken);
   print("🛠️ DEV MODE: Token injected. App will start as logged in.");
 }

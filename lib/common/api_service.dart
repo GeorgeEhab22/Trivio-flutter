@@ -19,9 +19,6 @@ class ApiService {
     //this is to save the token in the header of every request if it exists automatically without the need to pass it in every request
     _dio.interceptors.add(InterceptorsWrapper(
       onRequest: (options, handler) async {
-        // Use the callback to get the token if it exists
-        final token = await getToken!();
-  print("📤 SENDING TOKEN: Bearer $token");
         if (getToken != null) {
           final token = await getToken!();
           if (token != null && token.isNotEmpty) {
@@ -66,19 +63,6 @@ class ApiService {
     dynamic data, // Changed to dynamic
     Options? options, // Added options
   }) async {
-    //FILE upload handling 
-    if (data is Map<String, dynamic>) {
-    // Check if any value in the map is a MultipartFile
-    bool hasFile = data.values.any((value) => value is MultipartFile);
-    
-    if (hasFile) {
-      data = FormData.fromMap(data); // Convert Map to FormData for Dio
-      // Optional: Dio usually overrides this automatically, but this is safer
-      options ??= Options();
-      options.headers ??= {};
-      options.headers!['Content-Type'] = 'multipart/form-data';
-    }
-  }
     final res = await _dio.patch(
       endPoint,
       data: data,

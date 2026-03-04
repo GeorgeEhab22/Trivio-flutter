@@ -15,18 +15,18 @@ class UserProfileRepositoryImpl implements UserProfileRepo {
   @override
   Future<Either<Failure, UserProfile>> getMyProfile() async {
     try {
-      // final model = await remoteDataSource.getMyProfile();
-      // final entity = model.toEntity();
-      final dummyProfile = UserProfile(
-        id: "65f1a2b3c4d5e6f7890abc12",
-        name: "John Doe",
-        email: "john.doe@example.com",
-        avatar: "https://example.com/avatar.jpg",
-        followersCount: 42,
-        followingCount: 15,
-        postsCount: 10,
-      );
-      return Right(dummyProfile);
+      final model = await remoteDataSource.getMyProfile();
+      final entity = model.toEntity();
+      // final dummyProfile = UserProfile(
+      //   id: "65f1a2b3c4d5e6f7890abc12",
+      //   name: "John Doe",
+      //   email: "john.doe@example.com",
+      //   avatar: "https://example.com/avatar.jpg",
+      //   followersCount: 42,
+      //   followingCount: 15,
+      //   postsCount: 10,
+      // );
+      return Right(entity);
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));
     }

@@ -1,5 +1,6 @@
 import 'package:auth/constants/colors.dart';
 import 'package:auth/core/styels.dart';
+import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/authentication/widgets/show_custom_snackbar.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_social_info_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_social_info_state.dart';
@@ -20,16 +21,7 @@ class SocialInfoScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool isMyProfile = userId == null;
     final int tabCount = isMyProfile ? 4 : 2;
-
-    // Trigger initial fetches - typically done in a post-frame callback or initState,
-    // but works here for a quick refresh.
-    final cubit = context.read<ProfileSocialInfoCubit>();
-    cubit.fetchFollowers(userId: userId);
-    cubit.fetchFollowing(userId: userId);
-    if (isMyProfile) {
-      cubit.fetchRequests();
-      cubit.fetchSuggestions();
-    }
+    final l10n = AppLocalizations.of(context)!;
 
     return DefaultTabController(
       length: tabCount,
@@ -47,11 +39,11 @@ class SocialInfoScreen extends StatelessWidget {
             indicatorColor: AppColors.primary,
             indicatorWeight: 3,
             tabs: [
-              const Tab(text: "Followers"),
-              const Tab(text: "Following"),
+              Tab(text: l10n.followers),
+              Tab(text: l10n.following),
               if (isMyProfile) ...[
-                const Tab(text: "Requests"),
-                const Tab(text: "Suggestions"),
+                Tab(text: l10n.requestsTab),
+                Tab(text: l10n.suggestionsTab),
               ],
             ],
           ),
@@ -62,7 +54,6 @@ class SocialInfoScreen extends StatelessWidget {
               showCustomSnackBar(context, state.message, true);
             }
             if (state is SocialInfoFailure) {
-              print("🔴 SocialInfo Screen Error: ${state.message}");
               showCustomSnackBar(context, state.message, false);
             }
           },
@@ -81,7 +72,7 @@ class SocialInfoScreen extends StatelessWidget {
                       isFollowingList: false,
                       hasReachedMax: state.hasReachedMaxFollowers,
                       onLoadMore: () =>
-                          cubit.fetchFollowers(userId: userId, loadMore: true),
+                          context.read<ProfileSocialInfoCubit>().fetchFollowers(userId: userId, loadMore: true),
                     ),
 
                     // 2️⃣ Following List
@@ -90,7 +81,7 @@ class SocialInfoScreen extends StatelessWidget {
                       isFollowingList: true,
                       hasReachedMax: state.hasReachedMaxFollowing,
                       onLoadMore: () =>
-                          cubit.fetchFollowing(userId: userId, loadMore: true),
+                          context.read<ProfileSocialInfoCubit>().fetchFollowing(userId: userId, loadMore: true),
                     ),
 
                     // 3️⃣ Requests List (Only if it's "My" profile)
@@ -113,10 +104,11 @@ class SocialInfoScreen extends StatelessWidget {
 
   // Implementation of the Requests tab
   Widget _buildRequestsList(BuildContext context, List requests) {
+    final l10n = AppLocalizations.of(context)!;
     if (requests.isEmpty) {
       return Center(
         child: Text(
-          "No pending requests",
+          l10n.noPendingRequestsSimple,
           style: Styles.textStyle20.copyWith(color: Colors.grey),
         ),
       );

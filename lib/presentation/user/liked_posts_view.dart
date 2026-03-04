@@ -1,5 +1,6 @@
 import 'package:auth/constants/colors.dart';
 import 'package:auth/core/styels.dart';
+import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_liked_posts_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_liked_posts_state.dart';
 import 'package:flutter/material.dart';
@@ -10,9 +11,10 @@ class LikedPostsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: Text("Liked Posts", style: Styles.textStyle20),
+        title: Text(l10n.likedPosts, style: Styles.textStyle20),
       ),
       body: BlocBuilder<LikedPostsCubit, LikedPostsState>(
         builder: (context, state) {
@@ -47,7 +49,7 @@ class LikedPostsScreen extends StatelessWidget {
           } else if (state is LikedPostsError) {
             return Center(child: Text(state.message));
           }
-          return const Center(child: Text("No liked posts yet."));
+          return Center(child: Text(l10n.noLikedPostsYet));
         },
       ),
     );

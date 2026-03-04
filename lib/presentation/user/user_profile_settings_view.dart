@@ -39,14 +39,13 @@ class UserProfileSettings extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // 2. Pass the dynamic user to the info box
                     ProfileInfoBox(user: user),
                     
                     CustomProfileFilledButton(
                       onpressed: () {
                         GoRouter.of(context).push(AppRoutes.editProfile);
                       },
-                      displayText: "Edit Profile",
+                      displayText: l10n.editProfile,
                       icon: FontAwesomeIcons.userPen,
                       color: AppColors.primary,
                     ),
@@ -63,51 +62,51 @@ class UserProfileSettings extends StatelessWidget {
                         shrinkWrap: true,
                         children: [
                           SettingsRow(
-                            title: "Account Settings",
-                            subtitle: "Manage your account details and preferences.",
+                            title: l10n.accountSettings,
+                            subtitle: l10n.accountSettingsSub,
                             onpressed: () {},
                           ),
                           const Divider(color: AppColors.lightGrey),
                           SettingsRow(
-                            title: "Liked Posts",
-                            subtitle: "View and manage the posts you've liked.",
+                            title: l10n.likedPosts,
+                            subtitle: l10n.likedPostsSub,
                             onpressed: () => context.push(AppRoutes.likedPosts),
                           ),
                           const Divider(color: AppColors.lightGrey),
                           SettingsRow(
-                            title: "Privacy Settings",
-                            subtitle: "Control who sees your posts and activity.",
+                            title: l10n.privacySettings,
+                            subtitle: l10n.privacySettingsSub,
                             onpressed: () {},
                           ),
                           const Divider(color: AppColors.lightGrey),
                           SettingsRow(
-                            title: "Change Password",
-                            subtitle: "Update your security credentials.",
+                            title: l10n.changePassword,
+                            subtitle: l10n.changePasswordSub,
                             onpressed: () => context.push(AppRoutes.changePassword),
                           ),
                           const Divider(color: AppColors.lightGrey),
                           SettingsRow(
-                            title: "Notification Preferences",
-                            subtitle: "Customize your notification alerts.",
+                            title: l10n.notificationPrefs,
+                            subtitle: l10n.notificationPrefsSub,
                             onpressed: () {},
                           ),
                           const Divider(color: AppColors.lightGrey),
                           SettingsRow(
-                            title: "App Preferences",
-                            subtitle: "Adjust language, theme, and data usage",
+                            title: l10n.appPrefs,
+                            subtitle: l10n.appPrefsSub,
                             onpressed: () {},
                           ),
                           const Divider(color: AppColors.lightGrey),
-                          const SettingsRow(
-                            title: "Require Follow Requests",
-                            subtitle: "Manually approve followers",
+                          SettingsRow(
+                            title: l10n.requireFollowRequests,
+                            subtitle: l10n.requireFollowRequestsSub,
                             onpressed: null,
                             isToggle: true,
                           ),
                           const Divider(color: AppColors.lightGrey),
-                          const SettingsRow(
-                            title: "Searchable Profile",
-                            subtitle: "Allow your profile to appear in search results",
+                          SettingsRow(
+                            title: l10n.searchableProfile,
+                            subtitle: l10n.searchableProfileSub,
                             onpressed: null,
                             isToggle: true,
                           ),

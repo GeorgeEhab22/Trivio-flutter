@@ -331,5 +331,45 @@
   "hourLetter": "h",
   "dayLetter": "d",
   "weekLetter": "w",
-  "trivio": "Trivio"
+  "trivio": "Trivio",
+  "retry": "Retry",
+  "errorPrefix": "Error:",
+  "editProfile": "Edit Profile",
+  "accountSettingsTitle": "Account Settings",
+  "accountSettingsSubSettings": "Manage your account details and preferences.",
+  "likedPosts": "Liked Posts",
+  "likedPostsSub": "View and manage the posts you've liked.",
+  "privacySettingsSubSettings": "Control who sees your posts and activity.",
+  "changePassword": "Change Password",
+  "changePasswordSub": "Update your security credentials.",
+  "requireFollowRequests": "Require Follow Requests",
+  "requireFollowRequestsSub": "Manually approve followers",
+  "searchableProfileToggle": "Searchable Profile",
+
+  "followInfoTitle": "Follow Info",
+  "followersTab": "Followers",
+  "followingTab": "Following",
+  "requestsTab": "Requests",
+  "suggestionsTab": "Suggestions",
+  "noUsersFound": "No users found.",
+  "noPendingRequestsSimple": "No pending requests",
+
+  "noLikedPostsYet": "No liked posts yet.",
+
+  "editProfileTitle": "Edit Profile",
+  "usernameLabel": "Username",
+  "bioLabel": "Bio",
+  "saveChanges": "Save Changes",
+
+  "changePasswordTitle": "Change Password",
+  "currentPassword": "Current Password",
+  "enterCurrentPassword": "Enter current password",
+  "newPassword": "New Password",
+  "enterNewPassword": "Enter new password",
+  "confirmNewPassword": "Confirm New Password",
+  "reEnterNewPassword": "Re-enter new password",
+  "passwordUpdated": "Password Updated!",
+  "saveNewPassword": "Save New Password",
+
+  "noUsersDefault": "User"
 }

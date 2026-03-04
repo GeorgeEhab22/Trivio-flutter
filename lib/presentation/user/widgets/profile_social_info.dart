@@ -31,17 +31,17 @@ class ProfileSocialInfo extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           StatItem(
-            label: "followers",
+            label: l10n.followers,
             count: numberOfFollowers,
             onTap: () => context.go('${AppRoutes.followerInfo}?tab=0'),
           ),
           StatItem(
-            label: "following",
+            label: l10n.following,
             count: numberOfFollowing,
             onTap: () => context.go('${AppRoutes.followerInfo}?tab=1'),
           ),
           StatItem(
-            label: "posts",
+            label: l10n.posts,
             count: numberOfPosts,
             onTap: () {
               // Scroll to posts or show post info

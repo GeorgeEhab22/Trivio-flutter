@@ -511,7 +511,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get blockUserConfirm => 'هل أنت متأكد من رغبتك في حظر هذا المستخدم؟';
 
   @override
-  String get cancelBtn => 'إلغاء';
+  String get cancelBtn => 'الغاء';
 
   @override
   String get followers => 'المتابعين';
@@ -913,4 +913,109 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get weekLetter => 'أ';
+
+  @override
+  String get trivio => 'Trivio';
+
+  @override
+  String get retry => 'إعادة المحاولة';
+
+  @override
+  String get errorPrefix => 'خطأ:';
+
+  @override
+  String get accountSettingsTitle => 'إعدادات الحساب';
+
+  @override
+  String get accountSettingsSubSettings => 'إدارة تفاصيل حسابك وتفضيلاتك.';
+
+  @override
+  String get likedPosts => 'المنشورات المعجب بها';
+
+  @override
+  String get likedPostsSub => 'عرض وإدارة المنشورات التي أعجبتك.';
+
+  @override
+  String get privacySettingsSubSettings => 'التحكم في من يرى منشوراتك ونشاطك.';
+
+  @override
+  String get changePassword => 'تغيير كلمة المرور';
+
+  @override
+  String get changePasswordSub => 'تحديث بيانات الأمان الخاصة بك.';
+
+  @override
+  String get requireFollowRequests => 'طلب الموافقة على المتابعة';
+
+  @override
+  String get requireFollowRequestsSub => 'الموافقة يدوياً على المتابعين';
+
+  @override
+  String get searchableProfileToggle => 'ملف شخصي قابل للبحث';
+
+  @override
+  String get followInfoTitle => 'معلومات المتابعة';
+
+  @override
+  String get followersTab => 'المتابعون';
+
+  @override
+  String get followingTab => 'المتابَعون';
+
+  @override
+  String get requestsTab => 'الطلبات';
+
+  @override
+  String get suggestionsTab => 'اقتراحات';
+
+  @override
+  String get noUsersFound => 'لم يتم العثور على مستخدمين.';
+
+  @override
+  String get noPendingRequestsSimple => 'لا توجد طلبات معلقة';
+
+  @override
+  String get noLikedPostsYet => 'لا توجد منشورات معجب بها بعد.';
+
+  @override
+  String get editProfileTitle => 'تعديل الملف الشخصي';
+
+  @override
+  String get usernameLabel => 'اسم المستخدم';
+
+  @override
+  String get bioLabel => 'السيرة الذاتية';
+
+  @override
+  String get saveChanges => 'حفظ التغييرات';
+
+  @override
+  String get changePasswordTitle => 'تغيير كلمة المرور';
+
+  @override
+  String get currentPassword => 'كلمة المرور الحالية';
+
+  @override
+  String get enterCurrentPassword => 'أدخل كلمة المرور الحالية';
+
+  @override
+  String get newPassword => 'كلمة المرور الجديدة';
+
+  @override
+  String get enterNewPassword => 'أدخل كلمة المرور الجديدة';
+
+  @override
+  String get confirmNewPassword => 'تأكيد كلمة المرور الجديدة';
+
+  @override
+  String get reEnterNewPassword => 'أعد إدخال كلمة المرور الجديدة';
+
+  @override
+  String get passwordUpdated => 'تم تحديث كلمة المرور!';
+
+  @override
+  String get saveNewPassword => 'حفظ كلمة المرور الجديدة';
+
+  @override
+  String get noUsersDefault => 'مستخدم';
 }

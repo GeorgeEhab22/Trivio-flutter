@@ -2,6 +2,7 @@ import 'package:auth/constants/colors.dart';
 import 'package:auth/core/styels.dart';
 import 'package:auth/domain/entities/follow.dart';
 import 'package:auth/domain/entities/user_profile_preview.dart';
+import 'package:auth/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class FollowInfoList extends StatelessWidget {
@@ -20,8 +21,9 @@ class FollowInfoList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     if (data.isEmpty) {
-      return const Center(child: Text("No users found.", style: Styles.textStyle20));
+      return Center(child: Text(l10n.noUsersFound, style: Styles.textStyle20));
     }
 
     return ListView.builder(
@@ -44,7 +46,7 @@ class FollowInfoList extends StatelessWidget {
 
         if (item is Follow) {
           final targetRef = isFollowingList ? item.user : item.follower;
-          name = targetRef.preview?.name ?? "User";
+          name = targetRef.preview?.name ?? l10n.unknownUser;
           avatar = targetRef.preview?.avatarUrl;
           id = targetRef.id;
         } else if (item is UserProfilePreview) {

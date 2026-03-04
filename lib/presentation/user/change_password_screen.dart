@@ -1,5 +1,6 @@
 import 'package:auth/constants/colors.dart';
 import 'package:auth/core/styels.dart';
+import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/authentication/widgets/password_field.dart';
 import 'package:auth/presentation/manager/profile_cubit/change_password_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/change_password_state.dart';
@@ -45,16 +46,17 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: Text("Change Password", style: Styles.textStyle20),
+        title: Text(l10n.changePassword, style: Styles.textStyle20),
       ),
       body: BlocListener<ChangePasswordCubit, ChangePasswordState>(
         listener: (context, state) {
           if (state is ChangePasswordSuccess) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text("Password Updated!"),
+              SnackBar(
+                content: Text(l10n.passwordUpdated),
                 backgroundColor: Colors.green,
               ),
             );
@@ -81,8 +83,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                   onVisibilityToggle: () =>
                       setState(() => _isCurrentVisible = !_isCurrentVisible),
                   onSubmit: _handleSubmit,
-                  label: "Current Password",
-                  hint: "Enter current password",
+                  label: l10n.currentPassword,
+                  hint: l10n.enterCurrentPassword,
                   isLogin: true, // login mode hides complex requirements
                 ),
                 const SizedBox(height: 25),
@@ -94,8 +96,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                   onVisibilityToggle: () =>
                       setState(() => _isNewVisible = !_isNewVisible),
                   onSubmit: _handleSubmit,
-                  label: "New Password",
-                  hint: "Enter new password",
+                  label: l10n.newPassword,
+                  hint: l10n.enterNewPassword,
                 ),
                 const SizedBox(height: 25),
 
@@ -107,8 +109,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                   onVisibilityToggle: () =>
                       setState(() => _isConfirmVisible = !_isConfirmVisible),
                   onSubmit: _handleSubmit,
-                  label: "Confirm New Password",
-                  hint: "Re-enter new password",
+                  label: l10n.confirmNewPassword,
+                  hint: l10n.reEnterNewPassword,
                   isConfirm: true,
                 ),
 
@@ -131,9 +133,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                           : _handleSubmit,
                       child: state is ChangePasswordLoading
                           ? const CircularProgressIndicator(color: Colors.white)
-                          : const Text(
-                              "Save New Password",
-                              style: TextStyle(fontSize: 16),
+                          : Text(
+                              l10n.saveNewPassword,
+                              style: const TextStyle(fontSize: 16),
                             ),
                     );
                   },

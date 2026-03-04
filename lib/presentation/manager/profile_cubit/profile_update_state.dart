@@ -25,11 +25,13 @@ class ProfileUpdateInitialState extends ProfileUpdateState {
     String? name,
     String? bio,
     File? image,
+    String? originalAvatar,
   }) {
     return ProfileUpdateInitialState(
       name: name ?? this.name,
       bio: bio ?? this.bio,
       image: image ?? this.image,
+      originalAvatar: originalAvatar ?? this.originalAvatar,
     );
   }
   String get avatarPath => image != null ? image!.path : originalAvatar;

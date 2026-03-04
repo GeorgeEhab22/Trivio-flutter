@@ -71,10 +71,12 @@ class ApiEndpoints {
   static String getUserFollowing(String userId) =>
       'users/$userId/following';
 
-  static const String myFollowers = 'users/me/followers';
-
-  static const String myFollowing = 'users/me/following';
-
   //profile
+  static const String myFollowers = 'users/me/followers';
+  static const String myFollowing = 'users/me/following';
   static const String myProfile = 'users/me';
+  static const String updateProfile = 'users/update-profile';
+  static const String changePassword = 'users/change-password';
+  static const String suggestions = 'users/suggestions';
+  static const String likedPostsIds = 'users/me/likedPostsId';
 }
