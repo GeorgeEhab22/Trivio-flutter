@@ -24,15 +24,24 @@ class PostActionItem extends StatelessWidget {
     final content = Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        icon,
+        SizedBox(
+          width: 20,
+          child: Center(child: icon),
+        ),
         const SizedBox(width: 5),
-        Text(
-          count.toString().localizeDigits(context),
-          style: Styles.textStyle14.copyWith(
-            fontWeight: FontWeight.w500,
-            color: color,
+        SizedBox(
+          width: 18,
+          child: Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: Text(
+              count.toString().localizeDigits(context),
+              style: Styles.textStyle14.copyWith(
+                fontWeight: FontWeight.w500,
+                color: color,
+              ),
+              textDirection: TextDirection.ltr,
+            ),
           ),
-          textDirection: TextDirection.ltr,
         ),
       ],
     );

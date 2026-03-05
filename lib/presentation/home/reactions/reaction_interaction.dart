@@ -33,7 +33,7 @@ class _ReactionInteractionState extends State<ReactionInteraction> {
     '😮',
     '😢',
     '😡',
-    '🥅',
+    '⚽',
     '🚩',
   ];
   static const List<ReactionType> _reactionList = [

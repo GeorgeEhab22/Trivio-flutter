@@ -194,6 +194,43 @@ class PostsRemoteDataSourceImpl implements PostsRemoteDataSource {
     return _readId(items.first);
   }
 
+  int _extractCommentsCountFromResponse(Map<String, dynamic> response) {
+    List<dynamic> asList(dynamic value) => value is List ? value : const [];
+
+    final data = response['data'];
+    if (data is Map<String, dynamic>) {
+      final direct = asList(data['data']);
+      if (direct.isNotEmpty) {
+        return direct.length;
+      }
+      final nested = data['data'];
+      if (nested is Map<String, dynamic>) {
+        final nestedData = asList(nested['data']);
+        if (nestedData.isNotEmpty) {
+          return nestedData.length;
+        }
+      }
+    }
+
+    final fallback = asList(response['data']);
+    if (fallback.isNotEmpty) {
+      return fallback.length;
+    }
+    return 0;
+  }
+
+  Future<int> _fetchCommentsCountForPost(String postId) async {
+    try {
+      final response = await api.get(
+        "${ApiEndpoints.fetchPosts}/$postId/comments",
+        options: _getAuthOptions(),
+      );
+      return _extractCommentsCountFromResponse(response);
+    } catch (_) {
+      return 0;
+    }
+  }
+
   @override
   Future<PostModel> createPost({
     String? caption,
@@ -250,8 +287,20 @@ class PostsRemoteDataSourceImpl implements PostsRemoteDataSource {
         "${ApiEndpoints.fetchPosts}?page=$page&limit=$limit",
       );
       if (response['data'] != null && response['data']['posts'] != null) {
-        final List data = response['data']['posts'];
-        return data.map((e) => PostModel.fromJson(e)).toList();
+        final posts = (response['data']['posts'] as List)
+            .whereType<Map<String, dynamic>>()
+            .toList();
+        return Future.wait(
+          posts.map((rawPost) async {
+            final post = Map<String, dynamic>.from(rawPost);
+            final postId = _cleanId(post['_id'] ?? post['id']);
+            if (postId != null) {
+              final commentsCount = await _fetchCommentsCountForPost(postId);
+              post['commentsCount'] = commentsCount;
+            }
+            return PostModel.fromJson(post);
+          }),
+        );
       } else {
         return [];
       }
@@ -268,7 +317,11 @@ class PostsRemoteDataSourceImpl implements PostsRemoteDataSource {
         "${ApiEndpoints.fetchSinglePost}/$postId",
         options: _getAuthOptions(),
       );
-      return PostModel.fromJson(response['data']['post']);
+      final post = Map<String, dynamic>.from(
+        response['data']['post'] as Map<String, dynamic>,
+      );
+      post['commentsCount'] = await _fetchCommentsCountForPost(postId);
+      return PostModel.fromJson(post);
     } catch (e) {
       errorHandler.handleDioError(e);
       rethrow;

@@ -75,7 +75,7 @@ class PeopleReacted extends StatelessWidget {
       case ReactionType.angry:
         return '😡';
       case ReactionType.goal:
-        return '🥅';
+        return '⚽';
       case ReactionType.offside:
         return '🚩';
       case ReactionType.none:

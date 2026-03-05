@@ -47,7 +47,7 @@ class ReactionButton extends StatelessWidget {
       case ReactionType.angry:
         return '😡';
       case ReactionType.goal:
-        return '🥅';
+        return '⚽';
       case ReactionType.offside:
         return '🚩';
       default:

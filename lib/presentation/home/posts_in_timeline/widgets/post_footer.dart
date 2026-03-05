@@ -83,23 +83,28 @@ class PostFooter extends StatelessWidget {
                 ],
               ),
             ),
-            if (hasReactions) ...[
-              const SizedBox(width: 8),
-              PeopleReacted(
-                color: isDark ? AppColors.darkGreen : AppColors.primary,
-                topReactions: _topReactionTypes(),
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => ReactionsScreen.forPost(
-                        postId: post.postID ?? '',
-                        currentUserId: currentUserId,
-                      ),
-                    ),
-                  );
-                },
+            SizedBox(
+              width: 52,
+              child: Align(
+                alignment: AlignmentDirectional.centerEnd,
+                child: hasReactions
+                    ? PeopleReacted(
+                        color: isDark ? AppColors.darkGreen : AppColors.primary,
+                        topReactions: _topReactionTypes(),
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => ReactionsScreen.forPost(
+                                postId: post.postID ?? '',
+                                currentUserId: currentUserId,
+                              ),
+                            ),
+                          );
+                        },
+                      )
+                    : const SizedBox.shrink(),
               ),
-            ],
+            ),
           ],
         ),
       ),

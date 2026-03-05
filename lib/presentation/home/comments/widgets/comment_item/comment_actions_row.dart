@@ -120,23 +120,29 @@ class CommentActionsRow extends StatelessWidget {
                 ],
               ),
             ),
-            if (hasReactions) ...[
-              const SizedBox(width: 8),
-              PeopleReacted(
-                color: trailingTextColor,
-                topReactions: _topReactionTypes(),
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => ReactionsScreen.forComment(
-                        commentId: comment.id,
-                        currentUserId: effectiveCurrentUserId,
-                      ),
-                    ),
-                  );
-                },
+            const SizedBox(width: 8),
+            SizedBox(
+              width: 56,
+              child: Align(
+                alignment: AlignmentDirectional.centerEnd,
+                child: hasReactions
+                    ? PeopleReacted(
+                        color: trailingTextColor,
+                        topReactions: _topReactionTypes(),
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => ReactionsScreen.forComment(
+                                commentId: comment.id,
+                                currentUserId: effectiveCurrentUserId,
+                              ),
+                            ),
+                          );
+                        },
+                      )
+                    : const SizedBox.shrink(),
               ),
-            ],
+            ),
           ],
         ),
       ),

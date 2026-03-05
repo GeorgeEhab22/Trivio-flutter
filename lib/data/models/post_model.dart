@@ -135,28 +135,12 @@ class PostModel extends Post {
     final mediaList = (raw['media'] as List<dynamic>? ?? [])
         .map((m) => m.toString())
         .toList();
-    final commentsList = (raw['comments'] as List<dynamic>? ?? [])
-        .whereType<Map<String, dynamic>>()
-        .toList();
-
-    var topLevelCommentsCount = parseInt(
-      raw['commentsCount'] ?? raw['comments_count'],
+    final totalCommentsCount = parseInt(
+      raw['commentsCount'] ??
+          raw['comments_count'] ??
+          raw['repliesCount'] ??
+          raw['replies_count'],
     );
-    if (topLevelCommentsCount == 0 && commentsList.isNotEmpty) {
-      topLevelCommentsCount = commentsList.length;
-    }
-
-    var repliesCount = parseInt(
-      raw['totalRepliesCount'] ?? raw['repliesCount'] ?? raw['replies_count'],
-    );
-    if (repliesCount == 0 && commentsList.isNotEmpty) {
-      repliesCount = commentsList.fold<int>(
-        0,
-        (sum, comment) => sum + parseInt(comment['repliesCount']),
-      );
-    }
-
-    final totalCommentsWithReplies = topLevelCommentsCount + repliesCount;
 
     return PostModel(
       postID: (raw['_id'] ?? '').toString(),
@@ -176,7 +160,7 @@ class PostModel extends Post {
       groupID: gID,
       groupName: gName,
       groupCoverImage: gCover,
-      commentsCount: totalCommentsWithReplies,
+      commentsCount: totalCommentsCount,
       reactionCountsByType: reactionCountsByType,
     );
   }
