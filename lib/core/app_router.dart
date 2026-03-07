@@ -449,6 +449,11 @@ GoRouter createRouter(bool isLoggedIn) {
                           BlocProvider(
                             create: (context) => di.sl<LeaveGroupCubit>(),
                           ),
+                          BlocProvider(
+                            create: (context) =>
+                                di.sl<GroupPostsCubit>()
+                                  ..getPosts(groupId: groupId),
+                          ),
                         ],
                         child: GroupFeedView(groupId: groupId),
                       );

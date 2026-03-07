@@ -1,5 +1,4 @@
 import 'package:auth/common/functions/custom_list_tile.dart';
-import 'package:auth/core/app_routes.dart';
 import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/groups/group_feed/widgets/leave_group_button.dart';
 import 'package:auth/presentation/groups/widgets/common_group_buttom_sheet.dart';

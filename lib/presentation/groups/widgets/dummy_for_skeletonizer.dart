@@ -26,9 +26,10 @@ class DummyData {
   // Posts
   static final List<Post> dummyPosts = List.generate(5, (index) => dummyPost);
 
-  static const Post dummyPost = Post(
+  static Post dummyPost = Post(
     postID: '',
     authorId: '',
+    createdAt: DateTime(2026, 3, 7),
     caption: 'Loading more content...',
     type: 'text',
   );

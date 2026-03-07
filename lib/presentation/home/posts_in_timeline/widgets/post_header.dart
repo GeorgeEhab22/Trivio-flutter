@@ -1,6 +1,8 @@
 import 'package:auth/presentation/home/posts_in_timeline/widgets/follow_button.dart';
 import 'package:auth/presentation/manager/group_cubit/get_group_posts/group_posts_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/profile_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/profile_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:auth/domain/entities/post.dart';
@@ -23,6 +25,16 @@ class PostHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool isGroupPost = post.location == "group";
+    String authorName = "Not Me";
+    String? authorImage;
+
+    final profileState = context.read<ProfileCubit>().state;
+
+    if (profileState is ProfileLoaded &&
+        post.authorId == profileState.user.id) {
+      authorName = profileState.user.name;
+      authorImage = profileState.user.avatar;
+    }
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       child: Row(
@@ -30,7 +42,9 @@ class PostHeader extends StatelessWidget {
         children: [
           Expanded(
             child: AuthorInfo(
-              authorName: "messi",
+              authorName: authorName,
+              authorImage: authorImage,
+              createdAt: post.createdAt,
               showTimeInline: false,
               isGroupPost: isGroupPost,
               groupImage: post.groupCoverImage,
@@ -44,7 +58,7 @@ class PostHeader extends StatelessWidget {
                 if (post.authorId != currentUserId)
                   FollowButton(
                     currentUserId: currentUserId,
-                    authorId: post.authorId ?? '',
+                    authorId: post.authorId??'',
                     initialFollowStatus: isFollowing,
                   ),
               ],

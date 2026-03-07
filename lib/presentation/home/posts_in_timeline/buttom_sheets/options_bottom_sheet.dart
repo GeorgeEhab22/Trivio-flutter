@@ -109,7 +109,7 @@ class OptionsBottomSheet extends StatelessWidget {
 
             const SizedBox(height: 12),
             const Divider(height: 1),
-            // if (post.authorId == currentUserId)
+            if (post.authorId == currentUserId)
             CustomListTile(
               icon: Icons.edit_outlined,
               text: l10n.edit,
@@ -162,7 +162,7 @@ class OptionsBottomSheet extends StatelessWidget {
               },
             ),
 
-            // if (post.authorId == currentUserId)
+            if (post.authorId == currentUserId)
             CustomListTile(
               icon: Icons.delete_rounded,
               text: l10n.delete,

@@ -25,6 +25,7 @@ class PostModel extends Post {
     super.groupID,
     super.groupName,
     super.groupCoverImage,
+    required super.createdAt,
   });
 
   /// Accepts either the whole response or just the `post` map.
@@ -33,7 +34,7 @@ class PostModel extends Post {
         (json['data'] != null && json['data']['post'] != null)
         ? json['data']['post'] as Map<String, dynamic>
         : json;
-//  get group id as object that contain name and id and cover
+    //  get group id as object that contain name and id and cover
     final dynamic groupData = raw['groupID'];
     String? gID;
     String? gName;
@@ -92,6 +93,9 @@ class PostModel extends Post {
       groupID: gID,
       groupName: gName,
       groupCoverImage: gCover,
+      createdAt: raw['createdAt'] != null
+          ? DateTime.parse(raw['createdAt'] as String)
+          : DateTime.now(),
     );
   }
 
@@ -122,6 +126,7 @@ class PostModel extends Post {
       'groupID': groupID,
       'groupName': groupName,
       'groupCoverImage': groupCoverImage,
+      'createdAt': createdAt.toIso8601String(),
     };
   }
 
@@ -139,6 +144,7 @@ class PostModel extends Post {
       groupID: groupID,
       groupName: groupName,
       groupCoverImage: groupCoverImage,
+      createdAt: createdAt,
     );
   }
 
@@ -159,6 +165,7 @@ class PostModel extends Post {
         angryCount: 0,
         wowCount: 0,
       ),
+      createdAt: post.createdAt,
     );
   }
 }

@@ -3,6 +3,8 @@ import 'package:auth/presentation/groups/widgets/dummy_for_skeletonizer.dart';
 import 'package:auth/presentation/groups/widgets/group_post_card.dart';
 import 'package:auth/presentation/manager/group_cubit/get_group_posts/group_posts_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/get_group_posts/group_posts_state.dart';
+import 'package:auth/presentation/manager/profile_cubit/profile_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/profile_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -13,7 +15,12 @@ class GroupsPostsFeed extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final profileState = context.read<ProfileCubit>().state;
+    String myUserId = '';
 
+    if (profileState is ProfileLoaded) {
+      myUserId = profileState.user.id;
+    }
     return BlocBuilder<GroupPostsCubit, GroupPostsState>(
       builder: (context, state) {
         final cubit = context.read<GroupPostsCubit>();
@@ -43,11 +50,11 @@ class GroupsPostsFeed extends StatelessWidget {
               (context, index) {
                 if (index >= displayPosts.length) {
                   if (isLoadingMore) {
-                    return const Skeletonizer(
+                    return Skeletonizer(
                       enabled: true,
                       child: GroupPostCard(
                         post: DummyData.dummyPost,
-                        currentUserId: "USER_ID",
+                        currentUserId: myUserId,
                         isFollowing: true,
                       ),
                     );
@@ -69,7 +76,7 @@ class GroupsPostsFeed extends StatelessWidget {
 
                 return GroupPostCard(
                   post: displayPosts[index],
-                  currentUserId: "USER_ID",
+                  currentUserId: myUserId,
                   isFollowing: true,
                 );
               },

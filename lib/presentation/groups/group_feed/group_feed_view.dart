@@ -1,5 +1,4 @@
 import 'package:auth/common/functions/custom_square_button.dart';
-import 'package:auth/constants/colors.dart';
 import 'package:auth/core/app_routes.dart';
 import 'package:auth/core/styels.dart';
 import 'package:auth/l10n/app_localizations.dart';
@@ -7,10 +6,12 @@ import 'package:auth/presentation/authentication/widgets/show_custom_snackbar.da
 import 'package:auth/presentation/groups/group_feed/widgets/group_feed_app_bar.dart';
 import 'package:auth/presentation/groups/group_feed/widgets/leave_group_button.dart';
 import 'package:auth/presentation/groups/group_preview/widgets/group_image.dart';
+import 'package:auth/presentation/groups/my_group/widgets/create_post_row.dart';
+import 'package:auth/presentation/groups/my_group/widgets/my_group_posts.dart';
+import 'package:auth/presentation/manager/group_cubit/get_group_posts/group_posts_cubit.dart';
 import 'package:auth/presentation/groups/widgets/common_group_buttom_sheet.dart';
 import 'package:auth/presentation/groups/widgets/dummy_for_skeletonizer.dart';
 import 'package:auth/presentation/groups/widgets/number_of_members_row.dart';
-import 'package:auth/presentation/home/add_post/add_post_bottom_sheet.dart';
 import 'package:auth/presentation/manager/group_cubit/get_group/get_group_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/get_group/get_group_state.dart';
 import 'package:auth/presentation/manager/group_cubit/leave_group/leave_group_cubit.dart';
@@ -52,110 +53,92 @@ class GroupFeedView extends StatelessWidget {
 
             return Skeletonizer(
               enabled: isLoading,
-              child: ListView(
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      GroupImage(image: group.groupCoverImage),
-                      Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              group.groupName,
-                              style: Styles.textStyleBold20,
-                            ),
-                            const SizedBox(height: 8),
-                            NumberOfMembersRow(
-                              numOfMembers:
-                                  group.membersCount! +
-                                  group.moderatorsCount! +
-                                  group.adminsCount!,
-                            ),
-                            const SizedBox(height: 20),
-
-                            CustomSquareButton(
-                              label: l10n.joined, 
-                              height: 13,
-                              onTap: () {
-                                final leaveGroupCubit = context.read<LeaveGroupCubit>();
-                                showCommonGroupBottomSheet(
-                                  context: context,
-                                  actions: [
-                                    BlocProvider.value(
-                                      value: leaveGroupCubit,
-                                      child: LeaveGroupButton(
-                                        groupId: group.groupId,
-                                      ),
-                                    ),
-                                  ],
-                                );
-                              },
-                              row: true,
-                              isExpanded: true,
-                              trailingIcon: Icons.arrow_drop_down_outlined,
-                              leadingIcon: Icons.groups,
-                              backgroundColor: Theme.of(context).cardColor,
-                              textStyle: Styles.textStyle16,
-                            ),
-                            const SizedBox(height: 20),
-
-                            Row(
+              child: NotificationListener<ScrollNotification>(
+                onNotification: (ScrollNotification scrollInfo) {
+                  if (scrollInfo is ScrollUpdateNotification &&
+                      (scrollInfo.scrollDelta ?? 0) > 0 &&
+                      scrollInfo.metrics.pixels >=
+                          scrollInfo.metrics.maxScrollExtent * 0.8) {
+                    context.read<GroupPostsCubit>().getPosts(groupId: groupId);
+                  }
+                  return false;
+                },
+                child: CustomScrollView(
+                  slivers: [
+                    SliverToBoxAdapter(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          GroupImage(image: group.groupCoverImage),
+                          Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const CircleAvatar(
-                                  radius: 20,
-                                  backgroundImage: NetworkImage(
-                                    'https://picsum.photos/500',
-                                  ),
+                                Text(
+                                  group.groupName,
+                                  style: Styles.textStyleBold20,
                                 ),
-                                const SizedBox(width: 8),
-                                Expanded(
-                                  child: CustomSquareButton(
-                                    onTap: () async {
-                                      await showModalBottomSheet(
-                                        context: context,
-                                        isScrollControlled: true,
-                                        backgroundColor: Colors.transparent,
-                                        builder: (context) =>
-                                            AddPostBottomSheet(
-                                              groupId: group.groupId,
-                                            ),
-                                      );
-                                    },
-                                    label: l10n.writeSomething, // Localized
-                                    borderColor: Theme.of(context).colorScheme.outlineVariant,
-                                    borderRadius: 20,
-                                    height: 12,
-                                    backgroundColor: Theme.of(context).cardColor,
-                                    alignment: CrossAxisAlignment.start,
-                                  ),
+                                const SizedBox(height: 8),
+                                NumberOfMembersRow(
+                                  numOfMembers:
+                                      (group.membersCount ?? 0) +
+                                      (group.moderatorsCount ?? 0) +
+                                      (group.adminsCount ?? 0),
                                 ),
-                                IconButton(
-                                  onPressed: () {},
-                                  icon: Icon(
-                                    Icons.photo,
-                                    color: AppColors.primary,
-                                  ),
+                                const SizedBox(height: 20),
+
+                                CustomSquareButton(
+                                  label: l10n.joined,
+                                  height: 13,
+                                  onTap: () {
+                                    final leaveGroupCubit = context
+                                        .read<LeaveGroupCubit>();
+                                    showCommonGroupBottomSheet(
+                                      context: context,
+                                      actions: [
+                                        BlocProvider.value(
+                                          value: leaveGroupCubit,
+                                          child: LeaveGroupButton(
+                                            groupId: group.groupId,
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                  row: true,
+                                  isExpanded: true,
+                                  trailingIcon: Icons.arrow_drop_down_outlined,
+                                  leadingIcon: Icons.groups,
+                                  backgroundColor: Theme.of(context).cardColor,
+                                  textStyle: Styles.textStyle16,
                                 ),
+                                const SizedBox(height: 20),
+
+                                CreatePostRow(groupId: groupId),
+
+                                const SizedBox(height: 16),
+                                const Divider(),
+                                const SizedBox(height: 16),
+
+                                Text(
+                                  l10n.mostRelevant,
+                                  style: Styles.textStyle16,
+                                ),
+                                const SizedBox(height: 12),
                               ],
                             ),
-                            const SizedBox(height: 16),
-                            const Divider(),
-                            const SizedBox(height: 16),
-
-                            Text(
-                              l10n.mostRelevant, 
-                              style: Styles.textStyle16,
-                            ),
-                            const SizedBox(height: 12),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                ],
+                    ),
+                    MyGroupPosts(
+                      groupId: groupId,
+                      groupName: group.groupName,
+                      groupCoverImage: group.groupCoverImage,
+                    ),
+                  ],
+                ),
               ),
             );
           },
