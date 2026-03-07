@@ -43,7 +43,7 @@ class MyGroupInfo extends StatelessWidget {
             ),
             InkWell(
               borderRadius: BorderRadius.circular(8),
-              onTap: () => context.push(AppRoutes.groupMembers),
+              onTap: () => context.push(AppRoutes.groupMembers(groupId)),
               child: Padding(
                 padding: const EdgeInsets.all(4.0),
                 child: NumberOfMembersRow(numOfMembers: membersCount),

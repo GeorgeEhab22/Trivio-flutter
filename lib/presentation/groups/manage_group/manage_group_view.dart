@@ -54,17 +54,17 @@ class ManageGroupView extends StatelessWidget {
                 CustomListTile(
                   icon: Icons.person_add_outlined,
                   text: l10n.membersRequests,
-                  onTap: () => context.pushNamed(AppRoutes.groupMembersRequests,pathParameters: {'groupId': groupId}),
+                  onTap: () => context.push(AppRoutes.groupMembersRequests(groupId)),
                 ),
                 CustomListTile(
                   icon: Icons.post_add_outlined,
                   text: l10n.pendingPosts,
-                  onTap: () => context.pushNamed(AppRoutes.groupPendingPosts,pathParameters: {'groupId': groupId}),
+                  onTap: () => context.push(AppRoutes.groupPendingPosts(groupId)),
                 ),
                 CustomListTile(
                   icon: Icons.report_gmailerrorred_outlined,
                   text: l10n.reportedPosts,
-                  onTap: () => context.pushNamed(AppRoutes.groupReportedPosts,pathParameters: {'groupId': groupId}),
+                  onTap: () => context.push(AppRoutes.groupReportedPosts(groupId)),
                 ),
               ],
             ),
@@ -76,12 +76,12 @@ class ManageGroupView extends StatelessWidget {
                 CustomListTile(
                   icon: Icons.group_outlined,
                   text: l10n.people,
-                  onTap: () => context.pushNamed(AppRoutes.groupMembers,pathParameters: {'groupId': groupId}),
+                  onTap: () => context.push(AppRoutes.groupMembers(groupId)),
                 ),
                 CustomListTile(
                   icon: Icons.person_off_outlined,
                   text: l10n.bannedMembers,
-                  onTap: () => context.pushNamed(AppRoutes.bannedMembers,pathParameters: {'groupId': groupId}),
+                  onTap: () => context.push(AppRoutes.bannedMembers(groupId)),
                 ),
               ],
             ),

@@ -97,11 +97,8 @@ class MyGroupView extends StatelessWidget {
                                   textColor: Colors.white,
                                   iconColor: Colors.white,
                                   onTap: () {
-                                    context.pushNamed(
-                                      AppRoutes.manageGroup,
-                                      pathParameters: {
-                                        'groupId': groupId,
-                                      },
+                                    context.push(
+                                      AppRoutes.manageGroup(groupId),
                                     );
                                   },
                                 ),

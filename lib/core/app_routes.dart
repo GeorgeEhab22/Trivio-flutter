@@ -30,19 +30,18 @@ class AppRoutes {
 
 // groups
   static const String groups = '/settings/groups';
-  static const String groupPreview = '/settings/groups/group_preview';
-  static const String groupFeed = '/settings/groups/group_feed';
+  static String groupPreview(String groupId) => '/settings/groups/group_preview/$groupId';
+  static String groupFeed(String groupId) => '/settings/groups/group_feed/$groupId';
   static const String createGroup = '/settings/groups/create_group';
   static const String addCoverPhoto = '/settings/groups/create_group/add_cover_photo';
-  static const String myGroup = '/settings/groups/my_group';
-  static const String manageGroup = '/manage_group';
+  static String myGroup(String groupId) => '/settings/groups/my_group/$groupId';
+  static String manageGroup(String groupId) => '${myGroup(groupId)}/manage_group';
 
-  static const String groupMembersRequests = 'members_requests';
-  static const String groupPendingPosts = 'pending_posts';
-  static const String groupReportedPosts = 'reported_posts';
-
-  static const String groupMembers = 'members';
-  static const String bannedMembers = 'banned_members';
+  static String groupMembersRequests(String groupId) => '${manageGroup(groupId)}/members_requests';
+  static String groupPendingPosts(String groupId) => '${manageGroup(groupId)}/pending_posts';
+  static String groupReportedPosts(String groupId) => '${manageGroup(groupId)}/reported_posts';
+  static String groupMembers(String groupId) => '${manageGroup(groupId)}/members';
+  static String bannedMembers(String groupId) => '${manageGroup(groupId)}/banned_members';
 
   static const String searchGroups = '/settings/groups/search-groups';
 

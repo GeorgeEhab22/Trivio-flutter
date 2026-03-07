@@ -337,7 +337,7 @@
   "noGroupsFound": "No groups found.",
   "searchGroupsHint": "Search groups...",
   "whatsOnYourMind": "What's on your mind?",
-  "noMoreMembers": "No more members"
+  "noMoreMembers": "No more members",
   "favTeamsTitle": "Your favourite teams",
   "favTeamsDesc": "Select your interested teams to get better recommendations",
   "favPlayersTitle": "Your favourite players",
@@ -350,7 +350,7 @@
   "settingsFavTeamsTitle": "Favourite teams",
   "settingsFavTeamsSub": "Change your favourite teams",
   "settingsFavPlayersTitle": "Favourite players",
-  "settingsFavPlayersSub": "Change your favourite players"
+  "settingsFavPlayersSub": "Change your favourite players",
   "retry": "Retry",
   "errorPrefix": "Error:",
   "editProfile": "Edit Profile",

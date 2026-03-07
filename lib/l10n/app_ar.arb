@@ -336,7 +336,7 @@
   "noGroupsFound": "لم يتم العثور على مجموعات.",
   "searchGroupsHint": "ابحث عن مجموعات...",
   "whatsOnYourMind": "بماذا تفكر؟",
-  "noMoreMembers": "لا يوجد المزيد من الأعضاء"
+  "noMoreMembers": "لا يوجد المزيد من الأعضاء",
   "favTeamsTitle": "فرقك المفضلة",
   "favTeamsDesc": "اختر فرقك المفضلة للحصول على توصيات أفضل",
   "favPlayersTitle": "لاعبوك المفضلون",
@@ -349,7 +349,7 @@
   "settingsFavTeamsTitle": "الفرق المفضلة",
   "settingsFavTeamsSub": "تغيير فرقك المفضلة",
   "settingsFavPlayersTitle": "اللاعبين المفضلين",
-  "settingsFavPlayersSub": "تغيير لاعبيك المفضلين"
+  "settingsFavPlayersSub": "تغيير لاعبيك المفضلين",
   "retry": "إعادة المحاولة",
   "shareProfile": "مشاركة الملف الشخصي",
   "profileSettings": "إعدادات الملف الشخصي",

@@ -412,7 +412,6 @@ GoRouter createRouter(bool isLoggedIn) {
                 routes: [
                   GoRoute(
                     path: 'search-groups',
-                    name: 'search-groups',
                     builder: (context, state) => const GroupsSearchView(),
                   ),
                   GoRoute(
@@ -504,7 +503,6 @@ GoRouter createRouter(bool isLoggedIn) {
                     routes: [
                       GoRoute(
                         path: 'manage_group',
-                        name: 'manage_group',
                         builder: (context, state) {
                           final String groupId =
                               state.pathParameters['groupId']!;
@@ -516,7 +514,6 @@ GoRouter createRouter(bool isLoggedIn) {
                         routes: [
                           GoRoute(
                             path: 'members_requests',
-                            name: 'members_requests',
                             builder: (context, state) {
                               final String groupId =
                                   state.pathParameters['groupId']!;
@@ -545,19 +542,16 @@ GoRouter createRouter(bool isLoggedIn) {
                           ),
                           GoRoute(
                             path: 'pending_posts',
-                            name: 'pending_posts',
                             builder: (context, state) =>
                                 const PendingPostsView(),
                           ),
                           GoRoute(
                             path: 'reported_posts',
-                            name: 'reported_posts',
                             builder: (context, state) =>
                                 const ReportedPostsView(),
                           ),
                           GoRoute(
                             path: 'members',
-                            name: 'members',
                             builder: (context, state) {
                               final String groupId =
                                   state.pathParameters['groupId']!;
@@ -587,7 +581,6 @@ GoRouter createRouter(bool isLoggedIn) {
                           ),
                           GoRoute(
                             path: 'banned_members',
-                            name: 'banned_members',
                             builder: (context, state) {
                               final String groupId =
                                   state.pathParameters['groupId']!;

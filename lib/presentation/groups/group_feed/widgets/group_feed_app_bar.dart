@@ -32,16 +32,6 @@ class GroupFeedAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
       actions: [
         IconButton(
-          icon: Icon(
-            Icons.search,
-            color: Theme.of(context).iconTheme.color,
-            size: 28,
-          ),
-          onPressed: () {
-            context.push(AppRoutes.search);
-          },
-        ),
-        IconButton(
           onPressed: () {
             final leaveGroupCubit = context.read<LeaveGroupCubit>();
             showCommonGroupBottomSheet(

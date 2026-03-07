@@ -41,7 +41,7 @@ class SuggestedGroupsRowList extends StatelessWidget {
                   description: group.groupDescription,
                   imageUrl: group.groupCoverImage,
                   onJoinGroup: () => context.push(
-                    '${AppRoutes.groupPreview}/${group.groupId}',
+                    AppRoutes.groupPreview(group.groupId),
                   ),
                 ),
               );

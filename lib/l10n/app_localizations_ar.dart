@@ -934,6 +934,8 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get noMoreMembers => 'لا يوجد المزيد من الأعضاء';
+
+  @override
   String get favTeamsTitle => 'فرقك المفضلة';
 
   @override
@@ -971,6 +973,8 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get settingsFavPlayersSub => 'تغيير لاعبيك المفضلين';
+
+  @override
   String get retry => 'إعادة المحاولة';
 
   @override

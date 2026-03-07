@@ -939,6 +939,8 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noMoreMembers => 'No more members';
+
+  @override
   String get favTeamsTitle => 'Your favourite teams';
 
   @override
@@ -978,6 +980,8 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsFavPlayersSub => 'Change your favourite players';
+
+  @override
   String get retry => 'Retry';
 
   @override

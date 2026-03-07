@@ -31,10 +31,10 @@ class GroupItem extends StatelessWidget {
       onTap: () async {
         if (myGroup == true) {
           final cubit = context.read<GroupPostsCubit>();
-          await context.push('${AppRoutes.myGroup}/$groupId');
+          await context.push(AppRoutes.myGroup(groupId));
           cubit.getFeedPosts();
         } else {
-          context.push('${AppRoutes.groupFeed}/$groupId');
+          context.push(AppRoutes.groupFeed(groupId));
         }
       },
       child: isHorizontal

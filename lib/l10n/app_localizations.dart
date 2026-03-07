@@ -1885,6 +1885,7 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No more members'**
   String get noMoreMembers;
+
   /// No description provided for @favTeamsTitle.
   ///
   /// In en, this message translates to:
@@ -1962,6 +1963,7 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Change your favourite players'**
   String get settingsFavPlayersSub;
+
   /// No description provided for @retry.
   ///
   /// In en, this message translates to:
