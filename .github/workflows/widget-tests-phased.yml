@@ -1,0 +1,26 @@
+name: Widget Tests (Phased)
+
+on:
+  pull_request:
+    branches: ["*"]
+
+jobs:
+  touched-widget-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Run touched widget tests
+        shell: pwsh
+        run: |
+          ./tool/ci/run_touched_widget_tests.ps1 -BaseRef "origin/${{ github.base_ref }}" -HeadRef "HEAD"
