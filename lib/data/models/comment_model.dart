@@ -1,3 +1,4 @@
+import 'package:auth/core/json_parser.dart';
 import 'package:auth/domain/entities/comment.dart';
 import 'package:auth/domain/entities/reaction.dart';
 import 'package:auth/domain/entities/reaction_type.dart';
@@ -21,196 +22,113 @@ class CommentModel extends Comment {
     super.repliesCount = 0,
     super.parentCommentId,
   });
-
   factory CommentModel.fromJson(Map<String, dynamic> json) {
-    String? normalizeId(String value) {
-      final parsed = value.trim();
-      if (parsed.isEmpty) {
-        return null;
-      }
-      final lowered = parsed.toLowerCase();
-      if (lowered == 'null' || lowered == 'undefined') {
-        return null;
-      }
-      return parsed;
-    }
+    final Map<String, dynamic> raw =
+        (json['data'] != null && json['data']['comment'] != null)
+        ? json['data']['comment'] as Map<String, dynamic>
+        : json;
 
-    String? parseId(dynamic value) {
-      if (value == null) {
-        return null;
-      }
-      if (value is Map<String, dynamic>) {
-        final nested =
-            value['_id'] ??
-            value['id'] ??
-            value[r'$oid'] ??
-            value['oid'] ??
-            value['value'];
-        return parseId(nested);
-      }
-      if (value is String) {
-        return normalizeId(value);
-      }
-      return normalizeId(value.toString());
-    }
+    final dynamic userData = raw['userId'] ?? raw['author'] ?? raw['user'];
+    final dynamic postData = raw['postId'] ?? raw['post'];
 
-    DateTime parseDate(dynamic value, DateTime fallback) {
-      if (value == null) {
-        return fallback;
-      }
-      return DateTime.tryParse(value.toString()) ?? fallback;
-    }
-
-    bool parseBool(dynamic value) {
-      if (value is bool) {
-        return value;
-      }
-      if (value is num) {
-        return value != 0;
-      }
-      if (value is String) {
-        final normalized = value.trim().toLowerCase();
-        return normalized == 'true' || normalized == '1';
-      }
-      return false;
-    }
-
-    final dynamic userData = json['userId'] ?? json['author'] ?? json['user'];
-    final dynamic postData = json['postId'] ?? json['post'];
-
-    final String authorId = userData is Map<String, dynamic>
-        ? (userData['_id'] ?? userData['id'] ?? '').toString()
-        : (json['authorId'] ?? userData ?? '').toString();
-
-    final String postId = postData is Map<String, dynamic>
-        ? (postData['_id'] ?? postData['id'] ?? '').toString()
-        : (postData ?? '').toString();
-
-    final String authorName =
-        (json['authorName'] ??
-                json['userName'] ??
-                (userData is Map<String, dynamic>
-                    ? (userData['username'] ?? userData['name'])
-                    : null) ??
-                'Unknown User')
-            .toString();
-
-    final String? authorImage =
-        (json['authorImage'] ??
-                (userData is Map<String, dynamic>
-                    ? (userData['profileImage'] ??
-                          userData['profilePicture'] ??
-                          userData['avatar'])
-                    : null))
-            ?.toString();
-
-    final DateTime createdAt = parseDate(json['createdAt'], DateTime.now());
-    final bool serverIsEdited = parseBool(json['isEdited']);
-    DateTime? editedAt;
-    if (json['editedAt'] != null) {
-      editedAt = DateTime.tryParse(json['editedAt'].toString());
-    } else if (serverIsEdited && json['updatedAt'] != null) {
-      editedAt = DateTime.tryParse(json['updatedAt'].toString());
-    }
-    final bool isEdited = serverIsEdited || editedAt != null;
-
-    final dynamic reactionsJson = json['reactions'];
-    final List<Reaction> reactions = reactionsJson is List
-        ? reactionsJson
-              .whereType<Map<String, dynamic>>()
-              .map((r) => ReactionModel.fromJson(r).toEntity())
-              .toList()
-        : <Reaction>[];
-    final Map<String, dynamic> reactionMap =
-        (json['reactionCounts'] as Map<String, dynamic>? ?? <String, dynamic>{});
-    final reactionCountsByType = <ReactionType, int>{
-      ReactionType.like: parseInt(reactionMap['like']),
-      ReactionType.love: parseInt(reactionMap['love']),
-      ReactionType.haha: parseInt(reactionMap['haha']),
-      ReactionType.wow: parseInt(reactionMap['wow']),
-      ReactionType.sad: parseInt(reactionMap['sad']),
-      ReactionType.angry: parseInt(reactionMap['angry']),
-      ReactionType.goal: parseInt(reactionMap['goal']),
-      ReactionType.offside: parseInt(reactionMap['offside']),
-    }..removeWhere((_, count) => count <= 0);
-    final int reactionsCountFromJson = parseInt(
-      json['reactionsCount'] ?? json['reactions_count'],
+    final userReaction = JsonParser.parseReactionType(
+      raw['userReaction'] ?? raw['myReaction'] ?? raw['currentUserReaction'],
     );
-    final int reactionsCount = reactionsCountFromJson > 0
-        ? reactionsCountFromJson
-        : reactions.length;
+    final reactionCounts = JsonParser.mapReactionCounts(raw['reactionCounts']);
+    final reactionsList = _parseReactionsList(raw['reactions']);
 
-    ReactionType parseReactionType(dynamic value) {
-      final raw = (value ?? '').toString().trim().toLowerCase();
-      if (raw.isEmpty) return ReactionType.none;
-      try {
-        return ReactionType.values.firstWhere((item) => item.name == raw);
-      } catch (_) {
-        return ReactionType.none;
-      }
+    final authorId =
+        JsonParser.parseId(userData) ?? (raw['authorId']?.toString() ?? '');
+    final postId = JsonParser.parseId(postData) ?? '';
+
+    // Safely parse dates
+    final DateTime? createdAt = raw['createdAt'] != null
+        ? DateTime.tryParse(raw['createdAt'].toString())
+        : null;
+
+    final DateTime? updatedAt = (raw['editedAt'] ?? raw['updatedAt']) != null
+        ? DateTime.tryParse((raw['editedAt'] ?? raw['updatedAt']).toString())
+        : null;
+
+    bool serverIsEdited = false;
+    if (raw['isEdited'] is bool) {
+      serverIsEdited = raw['isEdited'];
+    } else if (raw['isEdited'] is String) {
+      serverIsEdited = raw['isEdited'].toLowerCase() == 'true';
     }
-
-    final ReactionType userReaction = parseReactionType(
-      json['userReaction'] ?? json['myReaction'] ?? json['currentUserReaction'],
-    );
-
-    final dynamic parentRaw =
-        json['parentCommentId'] ??
-        json['parentId'] ??
-        json['parent'] ??
-        json['parentComment'];
-    final String? parsedParentId = parseId(parentRaw);
+    
 
     return CommentModel(
-      id: parseId(json['_id'] ?? json['id']) ?? '',
+      id: JsonParser.parseId(raw['_id'] ?? raw['id']) ?? '',
       postId: postId,
       authorId: authorId,
-      authorName: authorName,
-      authorImage: authorImage,
-      text: (json['text'] ?? '').toString(),
-      createdAt: createdAt,
-      editedAt: editedAt,
-      isEdited: isEdited,
-      reactions: reactions,
-      reactionsCount: userReaction != ReactionType.none && reactionsCount == 0
-          ? 1
-          : reactionsCount,
+      authorName: _parseAuthorName(raw, userData),
+      authorImage: _parseAuthorImage(raw, userData),
+      text: raw['text']?.toString() ?? '',
+      createdAt: createdAt ?? DateTime.now(),
+      editedAt: updatedAt,
+     isEdited: serverIsEdited ,
+      reactions: reactionsList,
       userReaction: userReaction,
-      reactionCountsByType: reactionCountsByType,
-      repliesCount: parseInt(json['repliesCount']),
-      parentCommentId: parsedParentId,
+      reactionCountsByType: reactionCounts,
+      reactionsCount: _calculateTotalReactions(
+        raw,
+        userReaction,
+        reactionsList.length,
+      ),
+      repliesCount: JsonParser.parseInt(raw['repliesCount']),
+      parentCommentId: JsonParser.parseId(
+        raw['parentCommentId'] ?? raw['parentId'] ?? raw['parent'],
+      ),
     );
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      '_id': id,
-      'postId': postId,
-      'authorId': authorId,
-      'authorName': authorName,
-      'authorImage': authorImage,
-      'text': text,
-      'createdAt': createdAt.toIso8601String(),
-      'editedAt': editedAt?.toIso8601String(),
-      'isEdited': isEdited,
-      'reactions': reactions
-          .map((r) => ReactionModel.fromEntity(r).toJson())
-          .toList(),
-      'reactionsCount': reactionsCount,
-      'userReaction': userReaction.name,
-      'reactionCounts': {
-        'like': reactionCountsByType[ReactionType.like] ?? 0,
-        'love': reactionCountsByType[ReactionType.love] ?? 0,
-        'haha': reactionCountsByType[ReactionType.haha] ?? 0,
-        'wow': reactionCountsByType[ReactionType.wow] ?? 0,
-        'sad': reactionCountsByType[ReactionType.sad] ?? 0,
-        'angry': reactionCountsByType[ReactionType.angry] ?? 0,
-        'goal': reactionCountsByType[ReactionType.goal] ?? 0,
-        'offside': reactionCountsByType[ReactionType.offside] ?? 0,
-      },
-      'repliesCount': repliesCount,
-      'parentCommentId': parentCommentId,
-    };
+  static String _parseAuthorName(Map<String, dynamic> json, dynamic userData) {
+    final name = json['authorName'] ?? json['userName'];
+    if (name != null) return name.toString();
+    if (userData is Map<String, dynamic>) {
+      return (userData['username'] ?? userData['name'] ?? 'Unknown User')
+          .toString();
+    }
+    return 'Unknown User';
+  }
+
+  static String? _parseAuthorImage(
+    Map<String, dynamic> json,
+    dynamic userData,
+  ) {
+    final img = json['authorImage'];
+    if (img != null) return img.toString();
+    if (userData is Map<String, dynamic>) {
+      return (userData['profilePicture'] ??
+              userData['profileImage'] ??
+              userData['avatar'])
+          ?.toString();
+    }
+    return null;
+  }
+
+  static List<Reaction> _parseReactionsList(dynamic list) {
+    if (list is! List) return [];
+    return list
+        .whereType<Map<String, dynamic>>()
+        .map((r) => ReactionModel.fromJson(r).toEntity())
+        .toList();
+  }
+
+  static int _calculateTotalReactions(
+    Map<String, dynamic> json,
+    ReactionType userReaction,
+    int listLength,
+  ) {
+    final count = JsonParser.parseInt(
+      json['reactionsCount'] ?? json['reactions_count'],
+    );
+    if (count > 0) return count;
+    if (userReaction != ReactionType.none) {
+      return listLength > 0 ? listLength : 1;
+    }
+    return listLength;
   }
 
   Comment toEntity() => Comment(
@@ -269,10 +187,4 @@ class CommentModel extends Comment {
       parentCommentId: null,
     );
   }
-}
-
-int parseInt(dynamic value) {
-  if (value is int) return value;
-  if (value is String) return int.tryParse(value) ?? 0;
-  return 0;
 }

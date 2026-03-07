@@ -91,7 +91,6 @@ class CommentsBlocConsumer extends StatelessWidget {
     );
   }
 
-  // --- Helper Mapping Functions ---
   static final List<Comment> _dummyComments = List.generate(
     5,
     (index) => Comment(

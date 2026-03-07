@@ -1,5 +1,4 @@
-import 'dart:core';
-
+import 'package:auth/core/json_parser.dart';
 import 'package:auth/data/models/reaction_model.dart';
 import 'package:auth/domain/entities/mentions.dart';
 import 'package:auth/domain/entities/post.dart';
@@ -7,7 +6,7 @@ import 'package:auth/domain/entities/reaction.dart';
 import 'package:auth/domain/entities/reaction_type.dart';
 
 class PostModel extends Post {
-  final int updateCount; // maps "__v"
+  final int updateCount;
   final int views;
   final DummyReactionCounter reactionCounts;
 
@@ -34,135 +33,100 @@ class PostModel extends Post {
   });
 
   factory PostModel.fromJson(Map<String, dynamic> json) {
-    int parseInt(dynamic value) {
-      if (value is int) return value;
-      if (value is num) return value.toInt();
-      if (value is String) return int.tryParse(value) ?? 0;
-      return 0;
-    }
-
-    ReactionType parseReactionType(dynamic rawType) {
-      final value = (rawType ?? '').toString().trim().toLowerCase();
-      if (value.isEmpty) {
-        return ReactionType.none;
-      }
-      try {
-        return ReactionType.values.firstWhere((type) => type.name == value);
-      } catch (_) {
-        return ReactionType.none;
-      }
-    }
-
     final Map<String, dynamic> raw =
         (json['data'] != null && json['data']['post'] != null)
-        ? json['data']['post'] as Map<String, dynamic>
-        : json;
+            ? json['data']['post'] as Map<String, dynamic>
+            : json;
 
-    final dynamic groupData = raw['groupID'];
-    String? gID;
-    String? gName;
-    String? gCover;
+    final dummyReactions = _parseReactionCounter(raw['reactionCounts']);
 
-    if (groupData is String) {
-      gID = groupData;
-    } else if (groupData is Map<String, dynamic>) {
-      gID = (groupData['_id'] ?? '').toString();
-      gName = groupData['name']?.toString();
-      gCover = (groupData['coverImage'] ?? groupData['logo'])?.toString();
-    }
-
-    final Map<String, dynamic> reactionMap =
-        (raw['reactionCounts'] as Map<String, dynamic>? ?? <String, dynamic>{});
-
-    final dummyReactions = DummyReactionCounter(
-      likesCount: parseInt(reactionMap['like']),
-      lovesCount: parseInt(reactionMap['love']),
-      hahaCount: parseInt(reactionMap['haha']),
-      sadCount: parseInt(reactionMap['sad']),
-      angryCount: parseInt(reactionMap['angry']),
-      wowCount: parseInt(reactionMap['wow']),
-      goalCount: parseInt(reactionMap['goal']),
-      offsideCount: parseInt(reactionMap['offside']),
-    );
-    final reactionCountsByType = <ReactionType, int>{
-      ReactionType.like: dummyReactions.likesCount,
-      ReactionType.love: dummyReactions.lovesCount,
-      ReactionType.haha: dummyReactions.hahaCount,
-      ReactionType.wow: dummyReactions.wowCount,
-      ReactionType.sad: dummyReactions.sadCount,
-      ReactionType.angry: dummyReactions.angryCount,
-      ReactionType.goal: dummyReactions.goalCount,
-      ReactionType.offside: dummyReactions.offsideCount,
-    }..removeWhere((_, count) => count <= 0);
-
-    final reactionsJson = raw['reactions'];
-    final List<Reaction> reactions = reactionsJson is List
-        ? reactionsJson
-              .whereType<Map<String, dynamic>>()
-              .map((item) => ReactionModel.fromJson(item).toEntity())
-              .toList()
-        : const <Reaction>[];
-
-    var totalReactionsCount = parseInt(
-      raw['reactionsCount'] ?? raw['reactions_count'],
-    );
-    if (totalReactionsCount == 0) {
-      totalReactionsCount = dummyReactions.total;
-    }
-    if (totalReactionsCount == 0 && reactions.isNotEmpty) {
-      totalReactionsCount = reactions.length;
-    }
-
-    final userReaction = parseReactionType(
+    final userReaction = JsonParser.parseReactionType(
       raw['userReaction'] ?? raw['myReaction'] ?? raw['currentUserReaction'],
-    );
-    if (userReaction != ReactionType.none && totalReactionsCount == 0) {
-      totalReactionsCount = 1;
-    }
-
-    final mentionsJson = raw['mentions'] as List<dynamic>? ?? [];
-    final userIds = <String>[];
-    final usernames = <String>[];
-
-    for (final m in mentionsJson) {
-      final map = m as Map<String, dynamic>;
-      userIds.add((map['_id'] ?? '').toString());
-      usernames.add((map['username'] ?? '').toString());
-    }
-
-    final mentions = Mentions(userIds: userIds, usernames: usernames);
-
-    final mediaList = (raw['media'] as List<dynamic>? ?? [])
-        .map((m) => m.toString())
-        .toList();
-    final totalCommentsCount = parseInt(
-      raw['commentsCount'] ??
-          raw['comments_count'] ??
-          raw['repliesCount'] ??
-          raw['replies_count'],
     );
 
     return PostModel(
-      postID: (raw['_id'] ?? '').toString(),
-      updateCount: parseInt(raw['__v']),
-      authorId: (raw['authorID'] ?? raw['authorId'] ?? '').toString(),
-      type: (raw['type'] ?? 'public').toString(),
-      caption: raw['caption']?.toString(),
-      location: raw['location']?.toString(),
-      mentions: mentions,
-      media: mediaList,
-      views: parseInt(raw['views']),
-      flagged: (raw['flagged'] ?? false) as bool,
+      postID: JsonParser.parseString(raw['_id']),
+      updateCount: JsonParser.parseInt(raw['__v']),
+      authorId: JsonParser.parseString(raw['authorID'] ?? raw['authorId']),
+      type: JsonParser.parseString(raw['type'], fallback: 'public'),
+      caption: JsonParser.parseString(raw['caption']),
+      location: JsonParser.parseString(raw['location']),
+      views: JsonParser.parseInt(raw['views']),
+      flagged: raw['flagged'],
+      media: JsonParser.parseStringList(raw['media']),
+      mentions: _parseMentions(raw['mentions']),
+
+      // Group Data Handling
+      groupID: _parseGroupData(raw['groupID'], 'id'),
+      groupName: _parseGroupData(raw['groupID'], 'name'),
+      groupCoverImage: _parseGroupData(raw['groupID'], 'cover'),
+
+      reactions: _parseReactions(raw['reactions']),
       reactionCounts: dummyReactions,
-      reactions: reactions,
-      reactionsCount: totalReactionsCount,
+      reactionCountsByType: JsonParser.mapReactionCounts(raw['reactionCounts']),
+
+      reactionsCount: _calculateTotalReactions(raw, dummyReactions),
       userReaction: userReaction,
-      groupID: gID,
-      groupName: gName,
-      groupCoverImage: gCover,
-      commentsCount: totalCommentsCount,
-      reactionCountsByType: reactionCountsByType,
+      //TODO: Handle commentsCount properly 
+      commentsCount: JsonParser.parseInt(
+        raw['commentsCount'] ?? raw['comments_count'] ?? raw['repliesCount'],
+      ),
     );
+  }
+
+
+  static DummyReactionCounter _parseReactionCounter(dynamic map) {
+    final m = map is Map<String, dynamic> ? map : <String, dynamic>{};
+    return DummyReactionCounter(
+      likesCount: JsonParser.parseInt(m['like']),
+      lovesCount: JsonParser.parseInt(m['love']),
+      hahaCount: JsonParser.parseInt(m['haha']),
+      sadCount: JsonParser.parseInt(m['sad']),
+      angryCount: JsonParser.parseInt(m['angry']),
+      wowCount: JsonParser.parseInt(m['wow']),
+      goalCount: JsonParser.parseInt(m['goal']),
+      offsideCount: JsonParser.parseInt(m['offside']),
+    );
+  }
+
+  static Mentions _parseMentions(dynamic list) {
+    final items = list is List
+        ? list.whereType<Map<String, dynamic>>()
+        : <Map<String, dynamic>>[];
+    return Mentions(
+      userIds: items.map((m) => JsonParser.parseString(m['_id'])).toList(),
+      usernames: items
+          .map((m) => JsonParser.parseString(m['username']))
+          .toList(),
+    );
+  }
+
+  static String? _parseGroupData(dynamic data, String key) {
+    if (data is Map<String, dynamic>) {
+      if (key == 'id') return JsonParser.parseString(data['_id']);
+      if (key == 'name') return JsonParser.parseString(data['name']);
+      if (key == 'cover') {
+        return JsonParser.parseString(data['coverImage'] ?? data['logo']);
+      }
+    }
+    return data is String && key == 'id' ? data : null;
+  }
+
+  static List<Reaction> _parseReactions(dynamic list) {
+    if (list is! List) return [];
+    return list
+        .whereType<Map<String, dynamic>>()
+        .map((r) => ReactionModel.fromJson(r).toEntity())
+        .toList();
+  }
+
+  static int _calculateTotalReactions(
+    Map<String, dynamic> raw,
+    DummyReactionCounter dummy,
+  ) {
+    final count = JsonParser.parseInt(raw['reactionsCount'] );
+    if (count > 0) return count;
+    return dummy.total > 0 ? dummy.total : 0;
   }
 
   Map<String, dynamic> toJson() {
@@ -194,8 +158,6 @@ class PostModel extends Post {
       'reactionsCount': reactionsCount,
       'userReaction': userReaction.name,
       'groupID': groupID,
-      'groupName': groupName,
-      'groupCoverImage': groupCoverImage,
       'commentsCount': commentsCount,
     };
   }
@@ -217,7 +179,7 @@ class PostModel extends Post {
       groupName: groupName,
       groupCoverImage: groupCoverImage,
       commentsCount: commentsCount,
-      reactionCountsByType: reactionCountsByType,
+      reactionCountsByType: JsonParser.mapReactionCounts(toJson()['reactionCounts']),
     );
   }
 
@@ -234,8 +196,7 @@ class PostModel extends Post {
       reactionsCount: post.reactionsCount,
       userReaction: post.userReaction,
       reactionCounts: DummyReactionCounter(
-        likesCount:
-            post.reactionCountsByType[ReactionType.like] ?? post.reactionsCount,
+        likesCount: post.reactionCountsByType[ReactionType.like] ?? post.reactionsCount,
         lovesCount: post.reactionCountsByType[ReactionType.love] ?? 0,
         hahaCount: post.reactionCountsByType[ReactionType.haha] ?? 0,
         sadCount: post.reactionCountsByType[ReactionType.sad] ?? 0,

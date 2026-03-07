@@ -1,4 +1,3 @@
-import 'package:auth/domain/entities/comment_history.dart';
 import 'package:auth/domain/entities/reaction.dart';
 import 'package:auth/domain/entities/reaction_type.dart';
 import 'package:equatable/equatable.dart';
@@ -19,7 +18,6 @@ class Comment extends Equatable {
   final int repliesCount;
   final String? parentCommentId;
   final List<Comment>? repliesList;
-  final List<CommentRevision>? history;
   final bool isEdited;
 
   const Comment({
@@ -38,9 +36,8 @@ class Comment extends Equatable {
     this.repliesCount = 0,
     this.parentCommentId,
     this.repliesList = const [],
-    this.history,
     bool? isEdited,
-  }) : isEdited = isEdited ?? editedAt != null;
+  }) : isEdited = isEdited ?? false;
 
   Comment copyWith({
     String? id,
@@ -58,7 +55,6 @@ class Comment extends Equatable {
     int? repliesCount,
     String? parentCommentId,
     List<Comment>? repliesList,
-    List<CommentRevision>? history,
     bool? isEdited,
   }) {
     final resolvedEditedAt = editedAt ?? this.editedAt;
@@ -78,8 +74,7 @@ class Comment extends Equatable {
       repliesCount: repliesCount ?? this.repliesCount,
       parentCommentId: parentCommentId ?? this.parentCommentId,
       repliesList: repliesList ?? this.repliesList,
-      history: history ?? this.history,
-      isEdited: isEdited ?? this.isEdited || resolvedEditedAt != null,
+      isEdited: isEdited ?? this.isEdited,
     );
   }
 
@@ -103,7 +98,6 @@ class Comment extends Equatable {
     repliesCount,
     parentCommentId,
     repliesList,
-    history,
     isEdited,
   ];
 }

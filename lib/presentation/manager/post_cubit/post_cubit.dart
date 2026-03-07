@@ -22,10 +22,10 @@ class PostCubit extends Cubit<PostState> {
   final SharedPreferences prefs;
 
   static const String _commentsCountFloorsPrefsKey =
-      'post_comments_count_floors_v2';
+      'post_comments_count_floors';
   static const String _commentsCountCeilingsPrefsKey =
-      'post_comments_count_ceilings_v2';
-  static const String _reactionsSnapshotPrefsKey = 'post_reactions_snapshot_v1';
+      'post_comments_count_ceilings';
+  static const String _reactionsSnapshotPrefsKey = 'post_reactions_snapshot';
   bool _isCommentsCountFloorsLoaded = false;
   bool _isCommentsCountCeilingsLoaded = false;
   bool _isReactionsSnapshotLoaded = false;

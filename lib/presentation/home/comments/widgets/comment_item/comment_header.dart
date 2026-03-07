@@ -50,7 +50,7 @@ class CommentHeader extends StatelessWidget {
               authorImage: comment.authorImage ?? '',
             ),
           ),
-           if (comment.isEdited || comment.editedAt != null)
+           if (comment.isEdited )
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(

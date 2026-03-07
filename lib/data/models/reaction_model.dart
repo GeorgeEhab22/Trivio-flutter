@@ -1,3 +1,4 @@
+import 'package:auth/core/json_parser.dart';
 import 'package:auth/domain/entities/reaction.dart';
 import 'package:auth/domain/entities/reaction_type.dart';
 
@@ -12,29 +13,20 @@ class ReactionModel extends Reaction {
   });
 
   factory ReactionModel.fromJson(Map<String, dynamic> json) {
-    String parseIdSafely(dynamic value) {
-      if (value == null) return '';
-      if (value is Map<String, dynamic>) {
-        final nested = value['_id'] ?? value['id'] ?? '';
-        return nested.toString();
-      }
-      return value.toString();
-    }
-
-    final rawUser = json['userId'] ?? json['user'] ?? json['author'];
-    final userMap = rawUser is Map<String, dynamic> ? rawUser : null;
+    final dynamic userRaw = json['userId'] ?? json['user'] ?? json['author'];
+    final bool isUserPopulated = userRaw is Map<String, dynamic>;
 
     return ReactionModel(
-      id: parseIdSafely(json['_id'] ?? json['id']),
-      userId: parseIdSafely(rawUser),
-      postId: parseIdSafely(
-        json['postId'] ?? json['modelId'],
-      ),
-      type: _mapStringToReactionType(
-        json['type'] ?? json['reaction'],
-      ),
-      username: userMap?['username']?.toString(),
-      profilePicture: userMap?['profilePicture']?.toString(),
+      id: JsonParser.parseId(json['_id'] ?? json['id']) ?? '',
+      userId: JsonParser.parseId(userRaw) ?? '',
+      postId: JsonParser.parseId(json['modelId'] ?? json['postId']) ?? '',
+      type: JsonParser.parseReactionType(json['reaction'] ?? json['type']),
+      username: isUserPopulated 
+          ? JsonParser.parseString(userRaw['username']) 
+          : JsonParser.parseString(json['username']),
+      profilePicture: isUserPopulated 
+          ? JsonParser.parseString(userRaw['profilePicture'] ?? userRaw['profileImage']) 
+          : JsonParser.parseString(json['profilePicture']),
     );
   }
 
@@ -43,14 +35,13 @@ class ReactionModel extends Reaction {
       '_id': id,
       'userId': userId,
       'postId': postId,
-      'type': type.name,
+      'reaction': type.name, 
       'username': username,
       'profilePicture': profilePicture,
     };
   }
 
-  Reaction toEntity() =>
-      Reaction(
+  Reaction toEntity() => Reaction(
         id: id,
         userId: userId,
         postId: postId,
@@ -77,15 +68,5 @@ class ReactionModel extends Reaction {
       postId: '',
       type: ReactionType.none,
     );
-  }
-
-  static ReactionType _mapStringToReactionType(String? typeStr) {
-    if (typeStr == null) return ReactionType.none;
-
-    try {
-      return ReactionType.values.firstWhere((e) => e.name == typeStr);
-    } catch (e) {
-      return ReactionType.none;
-    }
   }
 }
