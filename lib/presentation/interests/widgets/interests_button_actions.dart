@@ -49,6 +49,7 @@ class InterestsButtonActions extends StatelessWidget {
               children: [
                 CustomSquareButton(
                   label: l10n.update,
+                  textColor: enableButton ? Colors.white:Colors.black,
                   row: true,
                   height: 11,
                   isLoading: isSubmitting,
@@ -90,6 +91,7 @@ class InterestsButtonActions extends StatelessWidget {
               ),
               CustomSquareButton(
                 label: isTeams ? l10n.next : l10n.finish,
+                textColor: enableButton ? Colors.white:Colors.black,
                 row: true,
                 height: 11,
                 isLoading: isSubmitting && !isTeams,
