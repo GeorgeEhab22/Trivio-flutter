@@ -11,7 +11,6 @@ class EditCommentUseCase {
 
   Future<Either<Failure, Comment>> call({
     required String commentId,
-    required String userId,
     required String newContent,
   }) async {
     if (commentId.trim().isEmpty) {
@@ -21,20 +20,12 @@ class EditCommentUseCase {
       return const Left(ValidationFailure('Invalid Comment ID'));
     }
 
-    if (userId.trim().isEmpty) {
-      return const Left(ValidationFailure('User ID is required'));
-    }
-    if (!Validator.isValidId(userId)) {
-      return const Left(ValidationFailure('Invalid User ID'));
-    }
-
     if (newContent.trim().isEmpty) {
       return const Left(ValidationFailure('New comment content cannot be empty'));
     }
 
     return await repository.editComment(
       commentId: commentId,
-      userId: userId,
       newContent: newContent.trim(),
     );
   }

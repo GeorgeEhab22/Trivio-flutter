@@ -9,7 +9,14 @@ class GetCommentsUseCase {
 
   GetCommentsUseCase(this.repository);
 
-  Future<Either<Failure, List<Comment>>> call(String postId) async {
+  Future<Either<Failure, List<Comment>>> call(
+    String postId, {
+    int? page,
+    int? limit,
+    String? sort,
+    String? fields,
+    String? keyword,
+  }) async {
     if (postId.trim().isEmpty) {
       return const Left(ValidationFailure('Post ID is required'));
     }
@@ -18,6 +25,20 @@ class GetCommentsUseCase {
       return const Left(ValidationFailure('Invalid Post ID format'));
     }
 
-    return await repository.getComments(postId);
+    if (page != null && page < 1) {
+      return const Left(ValidationFailure('Page must be greater than 0'));
+    }
+    if (limit != null && limit < 1) {
+      return const Left(ValidationFailure('Limit must be greater than 0'));
+    }
+
+    return await repository.getComments(
+      postId,
+      page: page,
+      limit: limit,
+      sort: sort,
+      fields: fields,
+      keyword: keyword,
+    );
   }
 }

@@ -1,6 +1,5 @@
 import 'package:auth/common/functions/copy_to_clipboard.dart';
 import 'package:auth/constants/colors.dart';
-import 'package:auth/core/app_routes.dart';
 import 'package:auth/domain/entities/comment.dart';
 import 'package:auth/presentation/authentication/widgets/show_custom_snackbar.dart';
 import 'package:auth/presentation/manager/comment_cubit/comment_cubit.dart';
@@ -187,16 +186,18 @@ class BottomSheetManager {
                 ),
               ),
               if (isOwner) ...[
-                actionTile(
-                  icon: Icons.reply_outlined,
-                  label: l10n.reply,
-                  textColor: Theme.of(context).textTheme.bodyMedium?.color,
-                  onTap: () {
-                    context.pop();
-                    cubit.triggerReply(comment);
-                  },
-                ),
-                divider(),
+                if (!comment.isReply) ...[
+                  actionTile(
+                    icon: Icons.reply_outlined,
+                    label: l10n.reply,
+                    textColor: Theme.of(context).textTheme.bodyMedium?.color,
+                    onTap: () {
+                      context.pop();
+                      cubit.triggerReply(comment);
+                    },
+                  ),
+                  divider(),
+                ],
                 actionTile(
                   icon: Icons.copy_outlined,
                   label: l10n.copyComment,
@@ -218,38 +219,31 @@ class BottomSheetManager {
                   },
                 ),
                 divider(),
-                if (comment.editedAt == null)
+                
                   actionTile(
                     icon: Icons.edit_outlined,
                     label: l10n.edit,
                     textColor: Theme.of(context).textTheme.bodyMedium?.color,
                     onTap: () {
                       context.pop();
-                      context.push(AppRoutes.editCaption);
+                      cubit.triggerEdit(comment);
                     },
                   ),
-                if (comment.editedAt != null)
+               
+              ],
+              if (!isOwner) ...[
+                if (!comment.isReply) ...[
                   actionTile(
-                    icon: Icons.history,
-                    label: l10n.viewEditHistory,
+                    icon: Icons.reply_outlined,
+                    label: l10n.reply,
                     textColor: Theme.of(context).textTheme.bodyMedium?.color,
                     onTap: () {
                       context.pop();
-                      //cubit.showHistory(comment.id);
+                      cubit.triggerReply(comment);
                     },
                   ),
-              ],
-              if (!isOwner) ...[
-                actionTile(
-                  icon: Icons.reply_outlined,
-                  label: l10n.reply,
-                  textColor: Theme.of(context).textTheme.bodyMedium?.color,
-                  onTap: () {
-                    context.pop();
-                    cubit.triggerReply(comment);
-                  },
-                ),
-                divider(),
+                  divider(),
+                ],
                 actionTile(
                   icon: Icons.copy_outlined,
                   label: l10n.copyComment,

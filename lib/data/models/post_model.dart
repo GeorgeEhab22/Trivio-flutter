@@ -1,12 +1,12 @@
-import 'dart:core';
-import 'package:auth/domain/entities/post.dart';
+import 'package:auth/core/json_parser.dart';
+import 'package:auth/data/models/reaction_model.dart';
 import 'package:auth/domain/entities/mentions.dart';
+import 'package:auth/domain/entities/post.dart';
+import 'package:auth/domain/entities/reaction.dart';
 import 'package:auth/domain/entities/reaction_type.dart';
 
 class PostModel extends Post {
-  final int updateCount; // maps "__v"
-  @override
-  final List<String> media; // server media URLs / filenames
+  final int updateCount;
   final int views;
   final DummyReactionCounter reactionCounts;
 
@@ -14,9 +14,9 @@ class PostModel extends Post {
     required super.postID,
     required this.updateCount,
     required this.reactionCounts,
-    required this.media,
-    required super.authorId, // from Post entity
-    required super.type, // from Post entity
+    required super.media,
+    required super.authorId,
+    required super.type,
     super.caption,
     super.location,
     super.mentions,
@@ -25,74 +25,108 @@ class PostModel extends Post {
     super.groupID,
     super.groupName,
     super.groupCoverImage,
+    super.commentsCount = 0,
+    super.reactions = const [],
+    super.reactionsCount = 0,
+    super.userReaction = ReactionType.none,
+    super.reactionCountsByType = const <ReactionType, int>{},
   });
 
-  /// Accepts either the whole response or just the `post` map.
   factory PostModel.fromJson(Map<String, dynamic> json) {
     final Map<String, dynamic> raw =
         (json['data'] != null && json['data']['post'] != null)
-        ? json['data']['post'] as Map<String, dynamic>
-        : json;
-//  get group id as object that contain name and id and cover
-    final dynamic groupData = raw['groupID'];
-    String? gID;
-    String? gName;
-    String? gCover;
+            ? json['data']['post'] as Map<String, dynamic>
+            : json;
 
-    if (groupData is String) {
-      gID = groupData;
-    } else if (groupData is Map<String, dynamic>) {
-      gID = groupData['_id'];
-      gName = groupData['name'];
-      gCover = groupData['coverImage'] ?? groupData['logo'];
-    }
-    // --- reactionCounts ---
-    final Map<String, dynamic> reactionMap =
-        raw['reactionCounts'] as Map<String, dynamic>? ?? {};
+    final dummyReactions = _parseReactionCounter(raw['reactionCounts']);
 
-    final dummyReactions = DummyReactionCounter(
-      likesCount: (reactionMap['like'] ?? 0) as int,
-      lovesCount: (reactionMap['love'] ?? 0) as int,
-      hahaCount: (reactionMap['haha'] ?? 0) as int,
-      sadCount: (reactionMap['sad'] ?? 0) as int,
-      angryCount: (reactionMap['angry'] ?? 0) as int,
-      wowCount: (reactionMap['wow'] ?? 0) as int,
+    final userReaction = JsonParser.parseReactionType(
+      raw['userReaction'] ?? raw['myReaction'] ?? raw['currentUserReaction'],
     );
-
-    // --- mentions ---
-    final mentionsJson = raw['mentions'] as List<dynamic>? ?? [];
-    final userIds = <String>[];
-    final usernames = <String>[];
-
-    for (final m in mentionsJson) {
-      final map = m as Map<String, dynamic>;
-      userIds.add(map['_id'] as String? ?? '');
-      usernames.add(map['username'] as String? ?? '');
-    }
-
-    final mentions = Mentions(userIds: userIds, usernames: usernames);
-
-    // --- media (list of URLs / filenames coming from backend) ---
-    final mediaList = (raw['media'] as List<dynamic>? ?? [])
-        .map((m) => m as String)
-        .toList();
 
     return PostModel(
-      postID: raw['_id'] as String? ?? '',
-      updateCount: (raw['__v'] ?? 0) as int,
-      authorId: raw['authorID'] as String? ?? '',
-      type: raw['type'] as String? ?? 'public',
-      caption: raw['caption'] as String?,
-      location: raw['location'] as String?,
-      mentions: mentions,
-      media: mediaList,
-      views: (raw['views'] ?? 0) as int,
-      flagged: (raw['flagged'] ?? false) as bool,
+      postID: JsonParser.parseString(raw['_id']),
+      updateCount: JsonParser.parseInt(raw['__v']),
+      authorId: JsonParser.parseString(raw['authorID'] ?? raw['authorId']),
+      type: JsonParser.parseString(raw['type'], fallback: 'public'),
+      caption: JsonParser.parseString(raw['caption']),
+      location: JsonParser.parseString(raw['location']),
+      views: JsonParser.parseInt(raw['views']),
+      flagged: raw['flagged'],
+      media: JsonParser.parseStringList(raw['media']),
+      mentions: _parseMentions(raw['mentions']),
+
+      // Group Data Handling
+      groupID: _parseGroupData(raw['groupID'], 'id'),
+      groupName: _parseGroupData(raw['groupID'], 'name'),
+      groupCoverImage: _parseGroupData(raw['groupID'], 'cover'),
+
+      reactions: _parseReactions(raw['reactions']),
       reactionCounts: dummyReactions,
-      groupID: gID,
-      groupName: gName,
-      groupCoverImage: gCover,
+      reactionCountsByType: JsonParser.mapReactionCounts(raw['reactionCounts']),
+
+      reactionsCount: _calculateTotalReactions(raw, dummyReactions),
+      userReaction: userReaction,
+      //TODO: Handle commentsCount properly 
+      commentsCount: JsonParser.parseInt(
+        raw['commentsCount'] ?? raw['comments_count'] ?? raw['repliesCount'],
+      ),
     );
+  }
+
+
+  static DummyReactionCounter _parseReactionCounter(dynamic map) {
+    final m = map is Map<String, dynamic> ? map : <String, dynamic>{};
+    return DummyReactionCounter(
+      likesCount: JsonParser.parseInt(m['like']),
+      lovesCount: JsonParser.parseInt(m['love']),
+      hahaCount: JsonParser.parseInt(m['haha']),
+      sadCount: JsonParser.parseInt(m['sad']),
+      angryCount: JsonParser.parseInt(m['angry']),
+      wowCount: JsonParser.parseInt(m['wow']),
+      goalCount: JsonParser.parseInt(m['goal']),
+      offsideCount: JsonParser.parseInt(m['offside']),
+    );
+  }
+
+  static Mentions _parseMentions(dynamic list) {
+    final items = list is List
+        ? list.whereType<Map<String, dynamic>>()
+        : <Map<String, dynamic>>[];
+    return Mentions(
+      userIds: items.map((m) => JsonParser.parseString(m['_id'])).toList(),
+      usernames: items
+          .map((m) => JsonParser.parseString(m['username']))
+          .toList(),
+    );
+  }
+
+  static String? _parseGroupData(dynamic data, String key) {
+    if (data is Map<String, dynamic>) {
+      if (key == 'id') return JsonParser.parseString(data['_id']);
+      if (key == 'name') return JsonParser.parseString(data['name']);
+      if (key == 'cover') {
+        return JsonParser.parseString(data['coverImage'] ?? data['logo']);
+      }
+    }
+    return data is String && key == 'id' ? data : null;
+  }
+
+  static List<Reaction> _parseReactions(dynamic list) {
+    if (list is! List) return [];
+    return list
+        .whereType<Map<String, dynamic>>()
+        .map((r) => ReactionModel.fromJson(r).toEntity())
+        .toList();
+  }
+
+  static int _calculateTotalReactions(
+    Map<String, dynamic> raw,
+    DummyReactionCounter dummy,
+  ) {
+    final count = JsonParser.parseInt(raw['reactionsCount'] );
+    if (count > 0) return count;
+    return dummy.total > 0 ? dummy.total : 0;
   }
 
   Map<String, dynamic> toJson() {
@@ -118,10 +152,13 @@ class PostModel extends Post {
         'sad': reactionCounts.sadCount,
         'angry': reactionCounts.angryCount,
         'wow': reactionCounts.wowCount,
+        'goal': reactionCounts.goalCount,
+        'offside': reactionCounts.offsideCount,
       },
+      'reactionsCount': reactionsCount,
+      'userReaction': userReaction.name,
       'groupID': groupID,
-      'groupName': groupName,
-      'groupCoverImage': groupCoverImage,
+      'commentsCount': commentsCount,
     };
   }
 
@@ -135,30 +172,46 @@ class PostModel extends Post {
       media: media,
       flagged: flagged,
       reactions: reactions,
+      reactionsCount: reactionsCount,
+      userReaction: userReaction,
       postID: postID,
       groupID: groupID,
       groupName: groupName,
       groupCoverImage: groupCoverImage,
+      commentsCount: commentsCount,
+      reactionCountsByType: JsonParser.mapReactionCounts(toJson()['reactionCounts']),
     );
   }
 
   factory PostModel.fromEntity(Post post) {
     return PostModel(
-      postID: '',
+      postID: post.postID,
       updateCount: 0,
       authorId: post.authorId,
       type: post.type,
       caption: post.caption,
       mentions: post.mentions,
-      media: const [],
+      media: post.media ?? const [],
+      reactions: post.reactions ?? const [],
+      reactionsCount: post.reactionsCount,
+      userReaction: post.userReaction,
       reactionCounts: DummyReactionCounter(
-        likesCount: 0,
-        lovesCount: 0,
-        hahaCount: 0,
-        sadCount: 0,
-        angryCount: 0,
-        wowCount: 0,
+        likesCount: post.reactionCountsByType[ReactionType.like] ?? post.reactionsCount,
+        lovesCount: post.reactionCountsByType[ReactionType.love] ?? 0,
+        hahaCount: post.reactionCountsByType[ReactionType.haha] ?? 0,
+        sadCount: post.reactionCountsByType[ReactionType.sad] ?? 0,
+        angryCount: post.reactionCountsByType[ReactionType.angry] ?? 0,
+        wowCount: post.reactionCountsByType[ReactionType.wow] ?? 0,
+        goalCount: post.reactionCountsByType[ReactionType.goal] ?? 0,
+        offsideCount: post.reactionCountsByType[ReactionType.offside] ?? 0,
       ),
+      commentsCount: post.commentsCount,
+      location: post.location,
+      flagged: post.flagged,
+      groupID: post.groupID,
+      groupName: post.groupName,
+      groupCoverImage: post.groupCoverImage,
+      reactionCountsByType: post.reactionCountsByType,
     );
   }
 }

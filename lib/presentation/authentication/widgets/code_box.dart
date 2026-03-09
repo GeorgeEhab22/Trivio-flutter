@@ -48,7 +48,6 @@ class CodeBox extends StatelessWidget {
           enabled: enabled, 
           textAlign: TextAlign.center,
           keyboardType: TextInputType.number,
-          maxLength: 1,
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,

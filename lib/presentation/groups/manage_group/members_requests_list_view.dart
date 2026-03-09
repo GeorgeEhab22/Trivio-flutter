@@ -1,4 +1,5 @@
 import 'package:auth/common/functions/show_custom_dialog.dart';
+import 'package:auth/core/errors/error_parser.dart';
 import 'package:auth/core/styels.dart';
 import 'package:auth/domain/entities/join_request.dart';
 import 'package:auth/l10n/app_localizations.dart';
@@ -46,7 +47,11 @@ class MembersRequestsListView extends StatelessWidget {
               );
             }
             if (state is DeclineRequestFailure) {
-              showCustomSnackBar(context, state.message, false);
+              final errorMessage = ErrorParser.localizeError(
+                context,
+                state.message,
+              );
+              showCustomSnackBar(context, errorMessage, false);
             }
           },
         ),

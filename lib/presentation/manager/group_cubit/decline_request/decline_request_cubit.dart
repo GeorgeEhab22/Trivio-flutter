@@ -23,28 +23,17 @@ class DeclineRequestCubit extends Cubit<DeclineRequestState> {
     );
     result.fold(
       (failure) => emit(_mapFailureToState(failure)),
-      (_) => emit( DeclineRequestSuccess(requestId)),
+      (_) => emit(DeclineRequestSuccess(requestId)),
     );
   }
 
   DeclineRequestFailure _mapFailureToState(Failure failure) {
-    switch (failure.runtimeType) {
-      case const (ValidationFailure):
-        return DeclineRequestFailure(
-          message: failure.message,
-          errorType: 'validation',
-        );
-      case const (NetworkFailure):
-        return DeclineRequestFailure(
-          message: failure.message,
-          errorType: 'network',
-        );
-      default:
-        return DeclineRequestFailure(
-          message: failure.message,
-          errorType: 'server',
-        );
-    }
+    return DeclineRequestFailure(
+      message: failure.message,
+      errorType: failure is NetworkFailure
+          ? 'network'
+          : (failure is ValidationFailure ? 'validation' : 'server'),
+    );
   }
 
   void resetState() => emit(const DeclineRequestInitial());

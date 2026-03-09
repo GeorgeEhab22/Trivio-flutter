@@ -1,14 +1,14 @@
+import 'package:auth/common/functions/number_extensions.dart';
 import 'package:auth/constants/colors.dart';
 import 'package:auth/core/styels.dart';
 import 'package:flutter/material.dart';
-import 'package:auth/common/functions/format_number.dart';
 
 class PostActionItem extends StatelessWidget {
   final Widget icon;
   final int count;
   final Color? color;
   final VoidCallback? onTap;
-  final String? tooltip; // optional for accessibility
+  final String? tooltip; 
 
   const PostActionItem({
     super.key,
@@ -24,15 +24,24 @@ class PostActionItem extends StatelessWidget {
     final content = Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        icon,
+        SizedBox(
+          width: 20,
+          child: Center(child: icon),
+        ),
         const SizedBox(width: 5),
-        Text(
-          formatNumber(count),
-          style: Styles.textStyle14.copyWith(
-            fontWeight: FontWeight.w500,
-            color: color,
+        SizedBox(
+          width: 18,
+          child: Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: Text(
+              count.toString().localizeDigits(context),
+              style: Styles.textStyle14.copyWith(
+                fontWeight: FontWeight.w500,
+                color: color,
+              ),
+              textDirection: TextDirection.ltr,
+            ),
           ),
-          textDirection: TextDirection.ltr,
         ),
       ],
     );

@@ -1,9 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:auth/common/api_endpoints.dart';
 import 'package:auth/common/functions/handle_dio_error.dart';
-import 'package:auth/data/core/error/exceptions.dart'; // Ensure this is imported for AuthException
+import 'package:auth/core/json_parser.dart';
+import 'package:auth/data/core/error/exceptions.dart';
 import 'package:auth/data/models/post_model.dart';
-import 'package:flutter/foundation.dart';
+import 'package:auth/data/models/reaction_model.dart';
+import 'package:auth/domain/entities/reaction.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../common/api_service.dart';
@@ -14,52 +16,47 @@ abstract class PostsRemoteDataSource {
     List<XFile>? media,
     required String type,
   });
-
   Future<List<PostModel>> fetchPosts({int page = 1, int limit = 20});
-
   Future<PostModel> fetchSinglePost(String postId);
-
   Future<PostModel> editPost({
     required String postId,
     String? newCaption,
     String? newType,
   });
-
   Future<void> deletePost(String postId);
-
   Future<PostModel> sharePost({
     required String postId,
     required String userId,
     String? additionalContent,
   });
-
   Future<PostModel> toggleSavePost({
     required String postId,
     required String userId,
   });
-
   Future<void> reportPost({
     required String postId,
     required String userId,
     required String reason,
   });
-
   Future<void> toggleFollowUser({
     required String followerId,
     required String followeeId,
   });
-
-  Future<PostModel> reactToPost({
+  Future<String?> reactToPost({
     required String postId,
-    required String userId,
     required String reactionType,
+    bool isUpdate = false,
+    String? reactionId,
   });
-
-  Future<PostModel> removeReactionFromPost({
+  Future<void> removeReactionFromPost({
     required String postId,
-    required String userId,
+    String? reactionId,
   });
-
+  Future<List<Reaction>> fetchAllPostReactions({
+    required String postId,
+    int limit = 10,
+    int maxPages = 20,
+  });
   Future<List<PostModel>> searchPosts(String query);
 }
 
@@ -76,10 +73,44 @@ class PostsRemoteDataSourceImpl implements PostsRemoteDataSource {
 
   Options _getAuthOptions() {
     final token = prefs.getString('auth_token');
-    if (token == null) {
-      throw AuthException('No auth token found');
-    }
+    if (token == null) throw AuthException('No auth token found');
     return Options(headers: {'Authorization': 'Bearer $token'});
+  }
+
+  @override
+  Future<List<PostModel>> fetchPosts({int page = 1, int limit = 20}) async {
+    try {
+      final response = await api.get(
+        "${ApiEndpoints.fetchPosts}?page=$page&limit=$limit",
+        options: _getAuthOptions(),
+      );
+
+      final List? postsRaw =
+          response['data']?['posts'] ?? response['data']?['data'];
+      if (postsRaw == null) return [];
+
+      return postsRaw
+          .whereType<Map<String, dynamic>>()
+          .map((json) => PostModel.fromJson(json))
+          .toList();
+    } catch (e) {
+      errorHandler.handleDioError(e);
+      rethrow;
+    }
+  }
+
+  @override
+  Future<PostModel> fetchSinglePost(String postId) async {
+    try {
+      final response = await api.get(
+        "${ApiEndpoints.fetchSinglePost}/$postId",
+        options: _getAuthOptions(),
+      );
+      return PostModel.fromJson(response);
+    } catch (e) {
+      errorHandler.handleDioError(e);
+      rethrow;
+    }
   }
 
   @override
@@ -89,79 +120,113 @@ class PostsRemoteDataSourceImpl implements PostsRemoteDataSource {
     required String type,
   }) async {
     try {
-      final token = prefs.getString('auth_token');
-      if (token == null) {
-        throw AuthException('No auth token found');
-      }
-      type = type.toLowerCase();
-
       final formData = FormData.fromMap({
         'caption': caption ?? '',
-        'type': type,
+        'type': type.toLowerCase(),
       });
 
-      if (media != null) {
+      if (media != null && media.isNotEmpty) {
         for (var file in media) {
-          MultipartFile multipartFile;
-
-          if (kIsWeb) {
-            final bytes = await file.readAsBytes();
-            multipartFile = MultipartFile.fromBytes(bytes, filename: file.name);
-          } else {
-            multipartFile = await MultipartFile.fromFile(
-              file.path,
-              filename: file.name,
-            );
-          }
-
-          formData.files.add(MapEntry('media', multipartFile));
+          final bytes = await file.readAsBytes();
+          formData.files.add(
+            MapEntry(
+              'media',
+              MultipartFile.fromBytes(bytes, filename: file.name),
+            ),
+          );
         }
       }
 
       final response = await api.post(
         ApiEndpoints.createPost,
         data: formData,
-        options: Options(headers: {'Authorization': 'Bearer $token'}),
+        options: _getAuthOptions(),
       );
 
-      return PostModel.fromJson(response['data']['post']);
-   } catch (e) {
+      return PostModel.fromJson(response);
+    } catch (e) {
       errorHandler.handleDioError(e);
       rethrow;
     }
   }
 
- @override
-Future<List<PostModel>> fetchPosts({int page = 1, int limit = 20}) async {
-  try {
-    final response = await api.get(
-      "${ApiEndpoints.fetchPosts}?page=$page&limit=$limit",
-    );
-    if (response['data'] != null && response['data']['posts'] != null) {
-      final List data = response['data']['posts']; 
-      return data.map((e) => PostModel.fromJson(e)).toList();
-    } else {
-      return []; 
-    }
-  } catch (e) {
-    errorHandler.handleDioError(e);
-    rethrow;
-  }
-}
+  @override
+  Future<String?> reactToPost({
+    required String postId,
+    required String reactionType,
+    bool isUpdate = false,
+    String? reactionId,
+  }) async {
+    final endpoint = ApiEndpoints.reactionsOnPost(postId);
 
- @override
-Future<PostModel> fetchSinglePost(String postId) async {
-  try {
-    final response = await api.get(
-      "${ApiEndpoints.fetchSinglePost}/$postId",
-      options: _getAuthOptions(), 
-    );
-    return PostModel.fromJson(response['data']['post']);
-  } catch (e) {
-    errorHandler.handleDioError(e);
-    rethrow;
+    try {
+      final response = await api.post(
+        endpoint,
+        data: {'reaction': reactionType},
+        options: _getAuthOptions(),
+      );
+      return JsonParser.parseId(response['data']?['reaction']);
+    } on DioException catch (e) {
+      final msg = e.response?.data?['message']?.toString().toLowerCase() ?? '';
+      if (msg.contains('already reacted') || msg.contains('use patch')) {
+        return reactToPost(
+          postId: postId,
+          reactionType: reactionType,
+          isUpdate: true,
+          reactionId: reactionId,
+        );
+      }
+      errorHandler.handleDioError(e);
+      rethrow;
+    } catch (e) {
+      errorHandler.handleDioError(e);
+      rethrow;
+    }
   }
-}
+
+  @override
+  Future<void> removeReactionFromPost({
+    required String postId,
+    String? reactionId,
+  }) async {
+    try {
+      final normalizedId = JsonParser.parseId(reactionId);
+      final url = (normalizedId != null && !normalizedId.startsWith('local-'))
+          ? ApiEndpoints.reactionById(normalizedId)
+          : ApiEndpoints.reactionsOnPost(postId);
+
+      await api.delete(url, options: _getAuthOptions());
+    } catch (e) {
+      errorHandler.handleDioError(e);
+      rethrow;
+    }
+  }
+
+  @override
+  Future<List<Reaction>> fetchAllPostReactions({
+    required String postId,
+    int limit = 10,
+    int maxPages = 20,
+  }) async {
+    try {
+      final response = await api.get(
+        ApiEndpoints.reactionsOnPost(postId),
+        options: _getAuthOptions(),
+      );
+
+      final List? items = response['data']['data'];
+
+      if (items == null) return [];
+
+      return items
+          .whereType<Map<String, dynamic>>()
+          .map((item) => ReactionModel.fromJson(item).toEntity())
+          .toList();
+    } catch (e) {
+      errorHandler.handleDioError(e);
+      rethrow;
+    }
+  }
 
   @override
   Future<PostModel> editPost({
@@ -173,9 +238,9 @@ Future<PostModel> fetchSinglePost(String postId) async {
       final response = await api.patch(
         "${ApiEndpoints.editPost}/$postId",
         data: {'caption': newCaption},
-        options: _getAuthOptions(), // Added Auth
+        options: _getAuthOptions(),
       );
-      return PostModel.fromJson(response['data']['post']);
+      return PostModel.fromJson(response);
     } catch (e) {
       errorHandler.handleDioError(e);
       rethrow;
@@ -187,7 +252,7 @@ Future<PostModel> fetchSinglePost(String postId) async {
     try {
       await api.delete(
         "${ApiEndpoints.deletePost}/$postId",
-        options: _getAuthOptions(), // Added Auth
+        options: _getAuthOptions(),
       );
     } catch (e) {
       errorHandler.handleDioError(e);
@@ -205,10 +270,11 @@ Future<PostModel> fetchSinglePost(String postId) async {
       final response = await api.post(
         "${ApiEndpoints.sharePost}$postId",
         data: {'userId': userId, 'content': additionalContent},
-        options: _getAuthOptions(), // Added Auth
+        options: _getAuthOptions(),
       );
-
-      return PostModel.fromJson(response['data'][0]);
+      final data = response['data'];
+      final target = data is List ? data.first : data;
+      return PostModel.fromJson(target);
     } catch (e) {
       errorHandler.handleDioError(e);
       rethrow;
@@ -224,10 +290,11 @@ Future<PostModel> fetchSinglePost(String postId) async {
       final response = await api.post(
         "${ApiEndpoints.toggleSavePost}$postId",
         data: {'userId': userId},
-        options: _getAuthOptions(), // Added Auth
+        options: _getAuthOptions(),
       );
-
-      return PostModel.fromJson(response['data'][0]);
+      final data = response['data'];
+      final target = data is List ? data.first : data;
+      return PostModel.fromJson(target);
     } catch (e) {
       errorHandler.handleDioError(e);
       rethrow;
@@ -244,7 +311,7 @@ Future<PostModel> fetchSinglePost(String postId) async {
       await api.post(
         "${ApiEndpoints.reportPost}$postId",
         data: {'userId': userId, 'reason': reason},
-        options: _getAuthOptions(), // Added Auth
+        options: _getAuthOptions(),
       );
     } catch (e) {
       errorHandler.handleDioError(e);
@@ -261,47 +328,8 @@ Future<PostModel> fetchSinglePost(String postId) async {
       await api.post(
         "${ApiEndpoints.toggleFollow}$followeeId",
         data: {'followerId': followerId},
-        options: _getAuthOptions(), // Added Auth
+        options: _getAuthOptions(),
       );
-    } catch (e) {
-      errorHandler.handleDioError(e);
-      rethrow;
-    }
-  }
-
-  @override
-  Future<PostModel> reactToPost({
-    required String postId,
-    required String userId,
-    required String reactionType,
-  }) async {
-    try {
-      final response = await api.post(
-        "${ApiEndpoints.addReactionToPost}$postId",
-        data: {'userId': userId, 'reactionType': reactionType},
-        options: _getAuthOptions(), // Added Auth
-      );
-
-      return PostModel.fromJson(response['data'][0]);
-    } catch (e) {
-      errorHandler.handleDioError(e);
-      rethrow;
-    }
-  }
-
-  @override
-  Future<PostModel> removeReactionFromPost({
-    required String postId,
-    required String userId,
-  }) async {
-    try {
-      final response = await api.delete(
-        "${ApiEndpoints.removeReactionFromPost}$postId",
-        data: {'userId': userId},
-        options: _getAuthOptions(), // Added Auth
-      );
-
-      return PostModel.fromJson(response['data'][0]);
     } catch (e) {
       errorHandler.handleDioError(e);
       rethrow;
@@ -312,9 +340,11 @@ Future<PostModel> fetchSinglePost(String postId) async {
   Future<List<PostModel>> searchPosts(String query) async {
     try {
       final response = await api.get("${ApiEndpoints.searchPosts}?q=$query");
-
-      final data = response['data'] as List;
-      return data.map((e) => PostModel.fromJson(e)).toList();
+      final List data = response['data'] ?? [];
+      return data
+          .whereType<Map<String, dynamic>>()
+          .map((e) => PostModel.fromJson(e))
+          .toList();
     } catch (e) {
       errorHandler.handleDioError(e);
       rethrow;

@@ -190,7 +190,7 @@ class AppLocalizationsAr extends AppLocalizations {
       'يجب أن تشمل أحرف كبيرة، صغيرة، أرقام ورموز';
 
   @override
-  String get reqMinLength => '8 أحرف على الأقل';
+  String get reqMinLength => '٨ أحرف على الأقل';
 
   @override
   String get reqUppercase => 'حرف واحد كبير على الأقل';
@@ -260,6 +260,45 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get defaultUserName => 'اسم المستخدم';
+
+  @override
+  String get reactionsTitle => 'التفاعلات';
+
+  @override
+  String get reactionsTabAll => 'الكل';
+
+  @override
+  String get reactionsYou => 'أنت';
+
+  @override
+  String get reactionsLoadError => 'تعذر تحميل التفاعلات.';
+
+  @override
+  String get reactionsEmptyAll => 'لا توجد تفاعلات بعد.';
+
+  @override
+  String get reactionsEmptyType => 'لا يوجد مستخدمون بهذا التفاعل حتى الآن.';
+
+  @override
+  String get reactionsEncouragement => 'كن أول من يتفاعل مع هذا المنشور.';
+
+  @override
+  String get reactionLike => 'إعجاب';
+
+  @override
+  String get reactionLove => 'حب';
+
+  @override
+  String get reactionHaha => 'مضحك';
+
+  @override
+  String get reactionWow => 'انبهار';
+
+  @override
+  String get reactionSad => 'حزين';
+
+  @override
+  String get reactionAngry => 'غاضب';
 
   @override
   String get reactionGoal => 'هدف';
@@ -334,6 +373,12 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get commentsTitle => 'التعليقات';
+
+  @override
+  String get peopleReactedLabel => 'الأشخاص الذين تفاعلوا';
+
+  @override
+  String get shareLabel => 'مشاركة';
 
   @override
   String get noCommentsYet => 'لا توجد تعليقات بعد';
@@ -624,6 +669,15 @@ class AppLocalizationsAr extends AppLocalizations {
   String get mostRelevant => 'الأكثر صلة';
 
   @override
+  String get commentsSortNewest => 'الأحدث';
+
+  @override
+  String get commentsSortMostRelated => 'الأكثر صلة';
+
+  @override
+  String get commentsSortMostReplied => 'الأكثر ردودًا';
+
+  @override
   String get about => 'حول المجموعة';
 
   @override
@@ -746,11 +800,14 @@ class AppLocalizationsAr extends AppLocalizations {
   String get unban => 'إلغاء الحظر';
 
   @override
-  String get unbanUserTitle => 'إلغاء حظر المستخدم';
+  String unbanUserTitle(Object name) {
+    return 'إلغاء حظر $name';
+  }
 
   @override
-  String get unbanUserContent =>
-      'هل أنت متأكد أنك تريد إلغاء حظر هذا المستخدم؟';
+  String unbanUserContent(Object name) {
+    return 'هل أنت متأكد من إلغاء حظر $name؟ سيتمكن من الانضمام للمجموعة مرة أخرى.';
+  }
 
   @override
   String get noAdminsFound => 'لم يتم العثور على مسؤولين';
@@ -915,7 +972,104 @@ class AppLocalizationsAr extends AppLocalizations {
   String get weekLetter => 'أ';
 
   @override
-  String get trivio => 'Trivio';
+  String get commentAdded => 'تم إضافة التعليق';
+
+  @override
+  String get commentUpdated => 'تم تحديث التعليق بنجاح';
+
+  @override
+  String get commentDeleted => 'تم حذف التعليق';
+
+  @override
+  String get commentReported => 'تم الإبلاغ عن التعليق';
+
+  @override
+  String get commentHidden => 'تم إخفاء التعليق';
+
+  @override
+  String get commentLoadError => 'تعذر تحميل التعليقات.';
+
+  @override
+  String get commentAddError => 'فشل نشر تعليقك.';
+
+  @override
+  String get commentDeleteError => 'تعذر حذف التعليق.';
+
+  @override
+  String get unexpected_error =>
+      'An unexpected error occurred. Please try again.';
+
+  @override
+  String get noBannedMembers => 'لا يوجد أعضاء محظورون.';
+
+  @override
+  String get unbanSuccess => 'تم إلغاء حظر العضو بنجاح.';
+
+  @override
+  String get editPost => 'Edit post';
+
+  @override
+  String get no_internet => 'لا يوجد اتصال بالإنترنت. يرجى التحقق من الشبكة.';
+
+  @override
+  String get user_not_found => 'المستخدم غير موجود.';
+
+  @override
+  String get serverError => 'الخادم غير متوفر حالياً.';
+
+  @override
+  String get wrong_password => 'البريد الإلكتروني أو كلمة المرور غير صحيحة.';
+
+  @override
+  String get email_taken => 'هذا البريد الإلكتروني مستخدم بالفعل.';
+
+  @override
+  String get username_taken => 'اسم المستخدم هذا محجوز بالفعل.';
+
+  @override
+  String get invalid_code => 'الرمز الذي أدخلته غير صحيح.';
+
+  @override
+  String get code_expired => 'انتهت صلاحية الرمز. يرجى طلب رمز جديد.';
+
+  @override
+  String get too_many_attempts => 'محاولات كثيرة جداً. يرجى المحاولة لاحقاً.';
+
+  @override
+  String get sessionError => 'انتهت الجلسة. يرجى تسجيل الدخول مرة أخرى.';
+
+  @override
+  String get alreadyMemberError => 'هذا المستخدم عضو بالفعل في المجموعة.';
+
+  @override
+  String get requestCanceledSuccess => 'تم إلغاء طلب الانضمام الخاص بك.';
+
+  @override
+  String get cancelRequestError => 'تعذر إلغاء الطلب. يرجى المحاولة مرة أخرى.';
+
+  @override
+  String get cancelRequestTitle => 'إلغاء الطلب؟';
+
+  @override
+  String get cancelRequestConfirm =>
+      'هل أنت متأكد من رغبتك في إلغاء طلب الانضمام إلى هذه المجموعة؟';
+
+  @override
+  String get loadingReplies => 'جارٍ تحميل الردود...';
+
+  @override
+  String get hideReplies => 'إخفاء الردود';
+
+  @override
+  String showRepliesCount(int count) {
+    return 'إظهار الردود ($count)';
+  }
+
+  @override
+  String get noRepliesOnCommentYet => 'لا توجد ردود على هذا التعليق حتى الآن';
+
+  @override
+  String get edited => 'تم تعديله';
 
   @override
   String get noMorePosts => 'لا يوجد المزيد من المنشورات لعرضها';
@@ -934,6 +1088,8 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get noMoreMembers => 'لا يوجد المزيد من الأعضاء';
+
+  @override
   String get favTeamsTitle => 'فرقك المفضلة';
 
   @override
@@ -971,6 +1127,8 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get settingsFavPlayersSub => 'تغيير لاعبيك المفضلين';
+
+  @override
   String get retry => 'إعادة المحاولة';
 
   @override

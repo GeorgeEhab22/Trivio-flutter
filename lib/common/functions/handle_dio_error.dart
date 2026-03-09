@@ -7,30 +7,30 @@ class ErrorHandler {
   void handleDioError(Object error) {
     if (error is DioException) {
       dynamic errorData = error.response?.data;
-      String errorMessage = 'An unexpected error occurred';
+      
+      String errorKey = 'unexpected_error'; 
 
       if (errorData is String) {
         try {
           errorData = jsonDecode(errorData);
-        } catch (_) {
-        }
+        } catch (_) {}
       }
 
       if (errorData is Map) {
         if (errorData['message'] != null) {
-          errorMessage = errorData['message'].toString();
+          errorKey = errorData['message'].toString();
         } else if (errorData['error'] is Map && errorData['error']['message'] != null) {
-          errorMessage = errorData['error']['message'].toString();
+          errorKey = errorData['error']['message'].toString();
         } else if (errorData['error'] is String) {
-          errorMessage = errorData['error'].toString();
+          errorKey = errorData['error'].toString();
         }
       }
 
-      throw ServerException(errorMessage);
+      throw ServerException(errorKey);
     } else if (error is SocketException) {
-      throw NetworkException('No internet connection');
+      throw NetworkException('no_internet');
     } else {
-      throw ServerException('Unexpected error occurred');
+      throw ServerException('unexpected_error');
     }
   }
 }

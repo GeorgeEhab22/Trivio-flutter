@@ -1,5 +1,5 @@
-import 'package:auth/domain/entities/comment_history.dart';
 import 'package:auth/domain/entities/reaction.dart';
+import 'package:auth/domain/entities/reaction_type.dart';
 import 'package:equatable/equatable.dart';
 
 class Comment extends Equatable {
@@ -12,11 +12,13 @@ class Comment extends Equatable {
   final DateTime createdAt;
   final DateTime? editedAt;
   final List<Reaction> reactions;
+  final int reactionsCount;
+  final ReactionType userReaction;
+  final Map<ReactionType, int> reactionCountsByType;
+  final int repliesCount;
   final String? parentCommentId;
   final List<Comment>? repliesList;
-  final List<CommentRevision>? history;
-
-
+  final bool isEdited;
 
   const Comment({
     required this.id,
@@ -28,28 +30,74 @@ class Comment extends Equatable {
     required this.createdAt,
     this.editedAt,
     this.reactions = const [],
+    this.reactionsCount = 0,
+    this.userReaction = ReactionType.none,
+    this.reactionCountsByType = const <ReactionType, int>{},
+    this.repliesCount = 0,
     this.parentCommentId,
     this.repliesList = const [],
-    this.history,
-  });
+    bool? isEdited,
+  }) : isEdited = isEdited ?? false;
 
-  
+  Comment copyWith({
+    String? id,
+    String? postId,
+    String? authorId,
+    String? authorName,
+    String? authorImage,
+    String? text,
+    DateTime? createdAt,
+    DateTime? editedAt,
+    List<Reaction>? reactions,
+    int? reactionsCount,
+    ReactionType? userReaction,
+    Map<ReactionType, int>? reactionCountsByType,
+    int? repliesCount,
+    String? parentCommentId,
+    List<Comment>? repliesList,
+    bool? isEdited,
+  }) {
+    final resolvedEditedAt = editedAt ?? this.editedAt;
+    return Comment(
+      id: id ?? this.id,
+      postId: postId ?? this.postId,
+      authorId: authorId ?? this.authorId,
+      authorName: authorName ?? this.authorName,
+      authorImage: authorImage ?? this.authorImage,
+      text: text ?? this.text,
+      createdAt: createdAt ?? this.createdAt,
+      editedAt: resolvedEditedAt,
+      reactions: reactions ?? this.reactions,
+      reactionsCount: reactionsCount ?? this.reactionsCount,
+      userReaction: userReaction ?? this.userReaction,
+      reactionCountsByType: reactionCountsByType ?? this.reactionCountsByType,
+      repliesCount: repliesCount ?? this.repliesCount,
+      parentCommentId: parentCommentId ?? this.parentCommentId,
+      repliesList: repliesList ?? this.repliesList,
+      isEdited: isEdited ?? this.isEdited,
+    );
+  }
 
   bool get isReply => parentCommentId != null;
-  int get likesCount => reactions.length;
+  int get likesCount => reactionsCount;
 
   @override
   List<Object?> get props => [
-        id,
-        postId,
-        authorId,
-        authorName,
-        authorImage,
-        text,
-        createdAt,
-        reactions,
-        parentCommentId,
-        repliesList  ,
-        history,
-      ];
+    id,
+    postId,
+    authorId,
+    authorName,
+    authorImage,
+    text,
+    createdAt,
+    editedAt,
+    reactions,
+    reactionsCount,
+    userReaction,
+    reactionCountsByType,
+    repliesCount,
+    parentCommentId,
+    repliesList,
+    isEdited,
+  ];
 }

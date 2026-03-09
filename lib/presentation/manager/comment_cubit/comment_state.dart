@@ -22,11 +22,25 @@ final class CommentLoaded extends CommentState {
   final List<Comment> comments;
   final bool isRefetching;
   final Comment? replyingToComment;
+  final Set<String> expandedReplyParentIds;
+  final Set<String> loadingReplyParentIds;
 
-  const CommentLoaded(this.comments, {this.isRefetching = false, this.replyingToComment});
+  const CommentLoaded(
+    this.comments, {
+    this.isRefetching = false,
+    this.replyingToComment,
+    this.expandedReplyParentIds = const <String>{},
+    this.loadingReplyParentIds = const <String>{},
+  });
 
   @override
-  List<Object?> get props => [comments, isRefetching, replyingToComment];
+  List<Object?> get props => [
+    comments,
+    isRefetching,
+    replyingToComment,
+    expandedReplyParentIds,
+    loadingReplyParentIds,
+  ];
 }
 
 final class CommentError extends CommentState {
@@ -59,10 +73,11 @@ final class CommentActionLoading extends CommentState {}
 
 final class CommentActionSuccess extends CommentState {
   final String message;
-  const CommentActionSuccess(this.message);
+  final int commentsDelta;
+  const CommentActionSuccess(this.message, {this.commentsDelta = 0});
 
   @override
-  List<Object> get props => [message];
+  List<Object> get props => [message, commentsDelta];
 }
 
 final class CommentActionError extends CommentState {

@@ -11,7 +11,6 @@ class CancelRequestGroupCubit extends Cubit<CancelRequestGroupState> {
   })  : _cancelRequestUseCase = cancelRequestUseCase,
         super(const CancelRequestGroupInitial());
 
-
   Future<void> cancelRequestGroup({required String groupId}) async {
     emit(const CancelRequestGroupLoading());
 
@@ -24,14 +23,13 @@ class CancelRequestGroupCubit extends Cubit<CancelRequestGroupState> {
   }
 
   CancelRequestGroupFailure _mapFailureToState(Failure failure) {
-    switch (failure.runtimeType) {
-      case const (ValidationFailure):
-        return CancelRequestGroupFailure(message: failure.message, errorType: 'validation');
-      case const (NetworkFailure):
-        return CancelRequestGroupFailure(message: failure.message, errorType: 'network');
-      default:
-        return CancelRequestGroupFailure(message: failure.message, errorType: 'server');
-    }
+
+    return CancelRequestGroupFailure(
+      message: failure.message,
+      errorType: failure is NetworkFailure 
+          ? 'network' 
+          : (failure is ValidationFailure ? 'validation' : 'server'),
+    );
   }
 
   void resetState() => emit(const CancelRequestGroupInitial());

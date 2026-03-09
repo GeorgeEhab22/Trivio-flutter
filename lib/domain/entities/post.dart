@@ -1,8 +1,8 @@
 import 'package:auth/domain/entities/mentions.dart';
 import 'package:auth/domain/entities/reaction.dart';
+import 'package:auth/domain/entities/reaction_type.dart';
 import 'package:equatable/equatable.dart';
 
-// TODO : write the acual class after finish the backend in all entities.. filse..
 class Post extends Equatable {
   final String? authorId;
   final String? postID;
@@ -16,6 +16,10 @@ class Post extends Equatable {
   final String? groupID;
   final String? groupName;
   final String? groupCoverImage;
+  final int commentsCount;
+  final int reactionsCount;
+  final ReactionType userReaction;
+  final Map<ReactionType, int> reactionCountsByType;
 
   const Post({
     this.authorId,
@@ -30,9 +34,12 @@ class Post extends Equatable {
     this.groupID,
     this.groupName,
     this.groupCoverImage,
+    this.commentsCount = 0,
+    this.reactionsCount = 0,
+    this.userReaction = ReactionType.none,
+    this.reactionCountsByType = const <ReactionType, int>{},
   });
-  //TODO : delete copy with when take group id as object in backend
- Post copyWith({
+  Post copyWith({
     String? authorId,
     String? postID,
     String? caption,
@@ -45,6 +52,10 @@ class Post extends Equatable {
     String? groupID,
     String? groupName,
     String? groupCoverImage,
+    int? commentsCount,
+    int? reactionsCount,
+    ReactionType? userReaction,
+    Map<ReactionType, int>? reactionCountsByType,
   }) {
     return Post(
       authorId: authorId ?? this.authorId,
@@ -59,10 +70,14 @@ class Post extends Equatable {
       groupID: groupID ?? this.groupID,
       groupName: groupName ?? this.groupName,
       groupCoverImage: groupCoverImage ?? this.groupCoverImage,
+      commentsCount: commentsCount ?? this.commentsCount,
+      reactionsCount: reactionsCount ?? this.reactionsCount,
+      userReaction: userReaction ?? this.userReaction,
+      reactionCountsByType: reactionCountsByType ?? this.reactionCountsByType,
     );
   }
 
-  int get likesCount => reactions?.length ?? 0;
+  int get likesCount => reactionsCount;
   //int get commentsCount => comments.length;
 
   @override
@@ -73,5 +88,9 @@ class Post extends Equatable {
     mentions,
     location,
     groupID,
+    commentsCount,
+    reactionsCount,
+    userReaction,
+    reactionCountsByType,
   ];
 }

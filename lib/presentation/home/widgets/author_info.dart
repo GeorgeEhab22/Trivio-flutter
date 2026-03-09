@@ -1,4 +1,5 @@
 import 'package:auth/common/functions/format_time.dart';
+import 'package:auth/common/functions/number_extensions.dart';
 import 'package:auth/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:auth/constants/colors.dart';
@@ -99,6 +100,9 @@ class AuthorInfo extends StatelessWidget {
   }
 
   Widget _buildStackedText(BuildContext context, TextStyle defaultAuthorStyle, AppLocalizations l10n) {
+    // Localized digits applied to the time string
+    final timeText = formatTime(context, createdAt).localizeDigits(context);
+    
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -108,35 +112,39 @@ class AuthorInfo extends StatelessWidget {
           overflow: TextOverflow.ellipsis,
           maxLines: 1,
         ),
-        Row(
-          children: [
-            if (isGroupPost) ...[
-              Flexible(
-                child: Text(
-                  authorName,
-                  style: Styles.textStyle14.copyWith(color: AppColors.lightGrey),
-                  overflow: TextOverflow.ellipsis,
+        if (isGroupPost || timeText.isNotEmpty)
+          Row(
+            children: [
+              if (isGroupPost) ...[
+                Flexible(
+                  child: Text(
+                    authorName,
+                    style: Styles.textStyle14.copyWith(color: AppColors.lightGrey),
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
-              ),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 4),
-                child: Icon(Icons.circle, size: 3, color: AppColors.lightGrey),
-              ),
+                if (timeText.isNotEmpty)
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 4),
+                    child: Icon(Icons.circle, size: 3, color: AppColors.lightGrey),
+                  ),
+              ],
+              if (timeText.isNotEmpty)
+                Text(
+                  timeText,
+                  style: Styles.textStyle14.copyWith(color: AppColors.lightGrey),
+                  textDirection: TextDirection.ltr,
+                ),
             ],
-            Text(
-              // Passed context to formatTime for localization
-              formatTime(context, createdAt),
-              style: Styles.textStyle14.copyWith(color: AppColors.lightGrey),
-              // Direction LTR ensures time stamps like "5m" don't flip to "m5"
-              textDirection: TextDirection.ltr, 
-            ),
-          ],
-        ),
+          ),
       ],
     );
   }
 
   Widget _buildInlineText(BuildContext context, TextStyle defaultAuthorStyle) {
+    // Localized digits applied to the time string
+    final timeText = formatTime(context, createdAt).localizeDigits(context);
+    
     return Row(
       children: [
         Flexible(
@@ -146,12 +154,14 @@ class AuthorInfo extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
           ),
         ),
-        const SizedBox(width: 4),
-        Text(
-          formatTime(context, createdAt),
-          style: Styles.textStyle14.copyWith(color: AppColors.lightGrey),
-          textDirection: TextDirection.ltr,
-        ),
+        if (timeText.isNotEmpty) ...[
+          const SizedBox(width: 4),
+          Text(
+            timeText,
+            style: Styles.textStyle14.copyWith(color: AppColors.lightGrey),
+            textDirection: TextDirection.ltr,
+          ),
+        ],
       ],
     );
   }

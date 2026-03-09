@@ -21,7 +21,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await di.init();
   await dotenv.load(fileName: ".env");
-  //await _setupDevMode();
+  await _setupDevMode();
   
   final prefs = await SharedPreferences.getInstance();
   //await prefs.remove('auth_token');
@@ -148,7 +148,7 @@ Future<void> _setupDevMode() async {
   final prefs = await SharedPreferences.getInstance();
 
   // 1. Paste your long JWT string here
-  const String devToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MzM2ZmNlZDdhNzZhYzZjMTczOGQ1YSIsInVzZXJuYW1lIjoic2hpbWFhIiwiZW1haWwiOiJrc2hpbWFhMTQxMEBnbWFpbC5jb20iLCJpYXQiOjE3NzA1NDc2ODh9.Kn42u5KCyax6fGfrMqQeaRdqmJJqLSgv2otGVkAON1M";
+const String devToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YTc4ODg1M2VmODE5ZGI0MDY0YThlZCIsInVzZXJuYW1lIjoibWVubmEiLCJlbWFpbCI6Im1lbm5hdHVsbGFoODg4QGdtYWlsLmNvbSIsImlhdCI6MTc3MzAxOTgxNH0.-g4fS6umsQQBjT2ah93Six_Q_dnJp8qihBmHISbK0Cc";
   await prefs.setString('auth_token', devToken);
   print("🛠️ DEV MODE: Token injected. App will start as logged in.");
 }

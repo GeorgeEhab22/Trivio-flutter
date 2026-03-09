@@ -1,3 +1,4 @@
+import 'package:auth/constants/colors.dart';
 import 'package:auth/core/custom_app_bar.dart';
 import 'package:auth/presentation/home/add_post/add_post_bottom_sheet.dart';
 import 'package:auth/presentation/home/posts_in_timeline/time_line_list_view.dart';
@@ -79,7 +80,7 @@ class HomeView extends StatelessWidget {
       right: 20,
       child: FloatingActionButton(
         shape: const CircleBorder(),
-        backgroundColor: const Color(0xff42C83C),
+        backgroundColor:AppColors.darkGreen,
         child: const Icon(Icons.add, color: Colors.white),
         onPressed: () async {
           final newPost = await showModalBottomSheet(

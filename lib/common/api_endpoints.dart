@@ -29,30 +29,31 @@ class ApiEndpoints {
   static const toggleFollow = 'users/follow'; // POST {userId}
 
   // REACTIONS (On Posts)
-  static const addReactionToPost = 'posts/react'; // POST {postId}
-  static const removeReactionFromPost = 'posts/remove-react'; // DELETE {postId}
+  static String reactionsOnPost(String postId) => 'posts/$postId/reacts';
+  static String reactionById(String reactionId) => 'reacts/$reactionId';
 
   // COMMENTS
   static const getComments = 'comments/all-comments'; // GET {postId}
+  static const getComment = 'comments'; // GET {commentId}
   static const addComment = 'comments/add'; // POST
-  static const deleteComment = 'comments/delete'; // DELETE {commentId}
-  static const editComment = 'comments/edit'; // PATCH {commentId}
-  static const getReplies = 'comments/all-replies'; // GET {commentId}
+  static const addReplyToComment = 'comments'; // POST {commentId}/replies
+  static const deleteComment = 'comments'; // DELETE {commentId}
+  static const editComment = 'comments'; // PUT {commentId}
+  static const getReplies = 'comments'; // GET {commentId}/replies
 
   // COMMENT REACTIONS
-  static const reactToComment = 'comments/react'; // POST {commentId}
-  static const removeReactionFromComment =
-      'comments/remove-react'; // DELETE {commentId}
+  static String reactionsOnComment(String commentId) =>
+      'comments/$commentId/reacts';
 
   // COMMENT MENTIONS
   static const mentionUsersInComment = 'comments/mentions'; // POST {commentId}
 
   // GROUPS
-  static const groups = 'groups';            // POST (create), GET (all)
+  static const groups = 'groups'; // POST (create), GET (all)
 
   // USERS / ME
-  static const myGroups = 'users/me/my-groups';           // GET
-  static const joinedGroups = 'users/me/joined-groups';   // GET
+  static const myGroups = 'users/me/my-groups'; // GET
+  static const joinedGroups = 'users/me/joined-groups'; // GET
 
   //profile follow
   static String followUser(String userId) => 'users/$userId/follow';

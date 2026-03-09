@@ -5,39 +5,53 @@ import 'package:flutter/material.dart';
 class ReactionButton extends StatelessWidget {
   final ReactionType? reactionType;
   final int count;
-  
-  const ReactionButton({
-    super.key,
-    required this.count,
-    this.reactionType,
-  });
+
+  const ReactionButton({super.key, required this.count, this.reactionType});
 
   @override
   Widget build(BuildContext context) {
     final type = reactionType ?? ReactionType.none;
-    final color = _getColor(context, type);
-    final iconData = _getIcon(type);
-    
-    return PostActionItem(
-      icon: Icon(iconData, size: 22, color: color),
-      count: count,
-      color: color,
+    final color = _neutralActionColor(context);
+    final leading = _buildLeading(context, type, color);
+
+    return PostActionItem(icon: leading, count: count, color: color);
+  }
+
+  Widget _buildLeading(BuildContext context, ReactionType type, Color color) {
+    if (type == ReactionType.none) {
+      return Icon(Icons.thumb_up_alt_outlined, size: 20, color: color);
+    }
+
+    return Text(
+      _getEmoji(type),
+      style: const TextStyle(fontSize: 20, height: 1),
     );
   }
 
-  Color _getColor(BuildContext context, ReactionType type) {
-    switch (type) {
-      case ReactionType.goal: return Colors.green;
-      case ReactionType.offside: return Colors.red;
-      default: return Theme.of(context).iconTheme.color ?? Colors.grey;
-    }
+  Color _neutralActionColor(BuildContext context) {
+    return Theme.of(context).iconTheme.color ?? Colors.grey;
   }
 
-  IconData _getIcon(ReactionType type) {
+  String _getEmoji(ReactionType type) {
     switch (type) {
-      case ReactionType.goal: return Icons.sports_soccer;
-      case ReactionType.offside: return Icons.flag;
-      default: return Icons.sports_soccer_outlined;
+      case ReactionType.like:
+        return '👍';
+      case ReactionType.love:
+        return '❤️';
+      case ReactionType.haha:
+        return '😂';
+      case ReactionType.wow:
+        return '😮';
+      case ReactionType.sad:
+        return '😢';
+      case ReactionType.angry:
+        return '😡';
+      case ReactionType.goal:
+        return '⚽';
+      case ReactionType.offside:
+        return '🚩';
+      default:
+        return '👍';
     }
   }
 }

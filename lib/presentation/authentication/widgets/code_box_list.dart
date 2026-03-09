@@ -33,43 +33,45 @@ class CodeBoxList extends StatelessWidget {
         textDirection: TextDirection.ltr,
         child: LayoutBuilder(
           builder: (context, constraints) {
-            return Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(length, (index) {
-                // --- LOGIC: Disable box if the previous one is empty ---
-                bool isBoxActive = true;
-                if (index > 0) {
-                  // Enable this box only if the previous controller has text
-                  isBoxActive = controllers[index - 1].text.isNotEmpty;
-                }
+            return AnimatedBuilder(
+              animation: Listenable.merge(controllers),
+              builder: (context, _) {
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(length, (index) {
+                    bool isBoxActive = true;
+                    if (index > 0) {
+                      isBoxActive = controllers[index - 1].text.isNotEmpty;
+                    }
 
-                return Expanded(
-                  child: Container(
-                    margin: EdgeInsets.symmetric(horizontal: spacing),
-                    child: CodeBox(
-                      controller: controllers[index],
-                      focusNode: focusNodes[index],
-                      // Combined check: overall enabled state AND box-specific sequence
-                      enabled: enabled && isBoxActive, 
-                      onChanged: (value) => CodeBoxHandlers.onCodeChanged(
-                        value,
-                        index,
-                        focusNodes,
-                        controllers,
-                        context,
-                        onComplete,
-                        isForVerification,
+                    return Expanded(
+                      child: Container(
+                        margin: EdgeInsets.symmetric(horizontal: spacing),
+                        child: CodeBox(
+                          controller: controllers[index],
+                          focusNode: focusNodes[index],
+                          enabled: enabled && isBoxActive,
+                          onChanged: (value) => CodeBoxHandlers.onCodeChanged(
+                            value,
+                            index,
+                            focusNodes,
+                            controllers,
+                            context,
+                            onComplete,
+                            isForVerification,
+                          ),
+                          onKeyEvent: (event) => CodeBoxHandlers.onKeyEvent(
+                            event,
+                            index,
+                            controllers,
+                            focusNodes,
+                          ),
+                        ),
                       ),
-                      onKeyEvent: (event) => CodeBoxHandlers.onKeyEvent(
-                        event,
-                        index,
-                        controllers,
-                        focusNodes,
-                      ),
-                    ),
-                  ),
+                    );
+                  }),
                 );
-              }),
+              },
             );
           },
         ),

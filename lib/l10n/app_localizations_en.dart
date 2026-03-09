@@ -264,6 +264,45 @@ class AppLocalizationsEn extends AppLocalizations {
   String get defaultUserName => 'User Name';
 
   @override
+  String get reactionsTitle => 'Reactions';
+
+  @override
+  String get reactionsTabAll => 'All';
+
+  @override
+  String get reactionsYou => 'You';
+
+  @override
+  String get reactionsLoadError => 'Couldn\'t load reactions.';
+
+  @override
+  String get reactionsEmptyAll => 'No reactions yet.';
+
+  @override
+  String get reactionsEmptyType => 'No users reacted with this reaction yet.';
+
+  @override
+  String get reactionsEncouragement => 'Be the first to react to this post.';
+
+  @override
+  String get reactionLike => 'Like';
+
+  @override
+  String get reactionLove => 'Love';
+
+  @override
+  String get reactionHaha => 'Haha';
+
+  @override
+  String get reactionWow => 'Wow';
+
+  @override
+  String get reactionSad => 'Sad';
+
+  @override
+  String get reactionAngry => 'Angry';
+
+  @override
   String get reactionGoal => 'Goal';
 
   @override
@@ -336,6 +375,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get commentsTitle => 'Comments';
+
+  @override
+  String get peopleReactedLabel => 'People reacted';
+
+  @override
+  String get shareLabel => 'share';
 
   @override
   String get noCommentsYet => 'No comments yet';
@@ -627,6 +672,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mostRelevant => 'Most relevant';
 
   @override
+  String get commentsSortNewest => 'Newest';
+
+  @override
+  String get commentsSortMostRelated => 'Most related';
+
+  @override
+  String get commentsSortMostReplied => 'Most replied';
+
+  @override
   String get about => 'About';
 
   @override
@@ -751,10 +805,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get unban => 'Unban';
 
   @override
-  String get unbanUserTitle => 'Unban user';
+  String unbanUserTitle(Object name) {
+    return 'Unban $name';
+  }
 
   @override
-  String get unbanUserContent => 'Are you sure you want to unban this user?';
+  String unbanUserContent(Object name) {
+    return 'Are you sure you want to unban $name? They will be able to join the group again.';
+  }
 
   @override
   String get noAdminsFound => 'No Admins found';
@@ -920,7 +978,108 @@ class AppLocalizationsEn extends AppLocalizations {
   String get weekLetter => 'w';
 
   @override
-  String get trivio => 'Trivio';
+  String get commentAdded => 'Comment added';
+
+  @override
+  String get commentUpdated => 'Comment updated successfully';
+
+  @override
+  String get commentDeleted => 'Comment deleted';
+
+  @override
+  String get commentReported => 'Comment reported';
+
+  @override
+  String get commentHidden => 'Comment hidden';
+
+  @override
+  String get commentLoadError => 'Couldn\'t load comments.';
+
+  @override
+  String get commentAddError => 'Failed to post your comment.';
+
+  @override
+  String get commentDeleteError => 'Couldn\'t delete the comment.';
+
+  @override
+  String get unexpected_error =>
+      'An unexpected error occurred. Please try again.';
+
+  @override
+  String get noBannedMembers => 'No banned members found.';
+
+  @override
+  String get unbanSuccess => 'Member has been unbanned successfully.';
+
+  @override
+  String get editPost => 'Edit post';
+
+  @override
+  String get no_internet =>
+      'No internet connection. Please check your network.';
+
+  @override
+  String get user_not_found => 'User not found.';
+
+  @override
+  String get serverError => 'The server is currently unavailable.';
+
+  @override
+  String get wrong_password =>
+      'The password or email you entered is incorrect.';
+
+  @override
+  String get email_taken => 'This email is already in use.';
+
+  @override
+  String get username_taken => 'This username is already taken.';
+
+  @override
+  String get invalid_code => 'The code you entered is incorrect.';
+
+  @override
+  String get code_expired => 'This code has expired. Please request a new one.';
+
+  @override
+  String get too_many_attempts => 'Too many attempts. Please try again later.';
+
+  @override
+  String get sessionError => 'Session expired. Please sign in again.';
+
+  @override
+  String get alreadyMemberError =>
+      'This user is already a member of the group.';
+
+  @override
+  String get requestCanceledSuccess => 'Your join request has been canceled.';
+
+  @override
+  String get cancelRequestError =>
+      'Could not cancel the request. Please try again.';
+
+  @override
+  String get cancelRequestTitle => 'Cancel Request?';
+
+  @override
+  String get cancelRequestConfirm =>
+      'Are you sure you want to cancel your request to join this group?';
+
+  @override
+  String get loadingReplies => 'Loading replies...';
+
+  @override
+  String get hideReplies => 'Hide replies';
+
+  @override
+  String showRepliesCount(int count) {
+    return 'Show replies ($count)';
+  }
+
+  @override
+  String get noRepliesOnCommentYet => 'No replies on this comment yet';
+
+  @override
+  String get edited => 'Edited';
 
   @override
   String get noMorePosts => 'No more posts to show';
@@ -939,6 +1098,8 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noMoreMembers => 'No more members';
+
+  @override
   String get favTeamsTitle => 'Your favourite teams';
 
   @override
@@ -978,6 +1139,8 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsFavPlayersSub => 'Change your favourite players';
+
+  @override
   String get retry => 'Retry';
 
   @override

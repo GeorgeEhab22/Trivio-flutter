@@ -31,10 +31,13 @@ import 'package:auth/domain/repositories/user_profile_repo.dart';
 import 'package:auth/domain/usecases/comment/add_comment_usecase.dart';
 import 'package:auth/domain/usecases/comment/delete_comment_usecase.dart';
 import 'package:auth/domain/usecases/comment/edit_comment_usecase.dart';
+import 'package:auth/domain/usecases/comment/get_comment_usecase.dart';
+import 'package:auth/domain/usecases/comment/get_comment_reactions_usecase.dart';
 import 'package:auth/domain/usecases/comment/get_comments_usecase.dart';
 import 'package:auth/domain/usecases/comment/get_replies_usecase.dart';
 import 'package:auth/domain/usecases/comment/mention_users_in_comment_usecase.dart';
 import 'package:auth/domain/usecases/comment/react_to_comment_usecase.dart';
+import 'package:auth/domain/usecases/comment/remove_reaction_from_comment_usecase.dart';
 import 'package:auth/domain/usecases/group/accept_join_request_use_case.dart';
 import 'package:auth/domain/usecases/group/cancel_request_use_case.dart';
 import 'package:auth/domain/usecases/group/decline_join_request_use_case.dart';
@@ -79,6 +82,7 @@ import 'package:auth/domain/usecases/post/delete_post_usecase.dart';
 import 'package:auth/domain/usecases/post/edit_post_usecase.dart';
 import 'package:auth/domain/usecases/post/get_posts_usecase.dart';
 import 'package:auth/domain/usecases/post/get_post_usecase.dart';
+import 'package:auth/domain/usecases/post/get_post_reactions_usecase.dart';
 import 'package:auth/domain/usecases/post/react_to_post_usecase.dart';
 import 'package:auth/domain/usecases/post/remove_reaction_from_post_usecase.dart';
 import 'package:auth/domain/usecases/post/report_post_usecase.dart';
@@ -232,6 +236,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => EditPostUseCase(sl()));
   sl.registerLazySingleton(() => GetPostsUseCase(sl()));
   sl.registerLazySingleton(() => GetPostUseCase(sl()));
+  sl.registerLazySingleton(() => GetPostReactionsUseCase(sl()));
   sl.registerLazySingleton(() => ReactToPostUseCase(sl()));
   sl.registerLazySingleton(() => RemoveReactionFromPostUseCase(sl()));
   sl.registerLazySingleton(() => ReportPostUseCase(sl()));
@@ -243,8 +248,10 @@ Future<void> init() async {
   sl.registerFactory(
     () => PostCubit(
       getPostsUseCase: sl(),
+      getPostReactionsUseCase: sl(),
       deletePostUseCase: sl(),
       editPostUseCase: sl(),
+      prefs: sl(),
     ),
   );
 
@@ -278,10 +285,13 @@ Future<void> init() async {
   sl.registerLazySingleton(() => AddCommentUseCase(sl()));
   sl.registerLazySingleton(() => DeleteCommentUseCase(sl()));
   sl.registerLazySingleton(() => EditCommentUseCase(sl()));
+  sl.registerLazySingleton(() => GetCommentUseCase(sl()));
   sl.registerLazySingleton(() => GetCommentsUseCase(sl()));
+  sl.registerLazySingleton(() => GetCommentReactionsUseCase(sl()));
   sl.registerLazySingleton(() => GetRepliesUseCase(sl()));
   sl.registerLazySingleton(() => MentionUsersInCommentUseCase(sl()));
   sl.registerLazySingleton(() => ReactToCommentUseCase(sl()));
+  sl.registerLazySingleton(() => RemoveReactionFromCommentUseCase(sl()));
 
   // Cubit
   sl.registerFactory(
@@ -289,10 +299,13 @@ Future<void> init() async {
       addCommentUseCase: sl(),
       deleteCommentUseCase: sl(),
       editCommentUseCase: sl(),
+      getCommentUseCase: sl(),
+      getCommentReactionsUseCase: sl(),
       getCommentsUseCase: sl(),
       getRepliesUseCase: sl(),
       mentionUsersInCommentUseCase: sl(),
       reactToCommentUseCase: sl(),
+      removeReactionFromCommentUseCase: sl(),
     ),
   );
 

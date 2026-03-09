@@ -13,7 +13,7 @@ class CommentRepliesList extends StatelessWidget {
     required this.currentUserId,
     this.onReplyTap,
   });
- 
+
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
@@ -23,11 +23,14 @@ class CommentRepliesList extends StatelessWidget {
       padding: EdgeInsets.zero,
       itemBuilder: (context, index) {
         final reply = replies[index];
+        final isLastReplyInThread = index == replies.length - 1;
         return CommentItem(
           comment: reply,
           currentUserId: currentUserId,
-          replies: const [],
+          replies: reply.repliesList ?? [],
           onReplyTap: onReplyTap,
+          showReplyTree: true,
+          isLastReplyInThread: isLastReplyInThread,
         );
       },
     );

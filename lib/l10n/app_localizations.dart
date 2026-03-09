@@ -590,6 +590,84 @@ abstract class AppLocalizations {
   /// **'User Name'**
   String get defaultUserName;
 
+  /// No description provided for @reactionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reactions'**
+  String get reactionsTitle;
+
+  /// No description provided for @reactionsTabAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get reactionsTabAll;
+
+  /// No description provided for @reactionsYou.
+  ///
+  /// In en, this message translates to:
+  /// **'You'**
+  String get reactionsYou;
+
+  /// No description provided for @reactionsLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load reactions.'**
+  String get reactionsLoadError;
+
+  /// No description provided for @reactionsEmptyAll.
+  ///
+  /// In en, this message translates to:
+  /// **'No reactions yet.'**
+  String get reactionsEmptyAll;
+
+  /// No description provided for @reactionsEmptyType.
+  ///
+  /// In en, this message translates to:
+  /// **'No users reacted with this reaction yet.'**
+  String get reactionsEmptyType;
+
+  /// No description provided for @reactionsEncouragement.
+  ///
+  /// In en, this message translates to:
+  /// **'Be the first to react to this post.'**
+  String get reactionsEncouragement;
+
+  /// No description provided for @reactionLike.
+  ///
+  /// In en, this message translates to:
+  /// **'Like'**
+  String get reactionLike;
+
+  /// No description provided for @reactionLove.
+  ///
+  /// In en, this message translates to:
+  /// **'Love'**
+  String get reactionLove;
+
+  /// No description provided for @reactionHaha.
+  ///
+  /// In en, this message translates to:
+  /// **'Haha'**
+  String get reactionHaha;
+
+  /// No description provided for @reactionWow.
+  ///
+  /// In en, this message translates to:
+  /// **'Wow'**
+  String get reactionWow;
+
+  /// No description provided for @reactionSad.
+  ///
+  /// In en, this message translates to:
+  /// **'Sad'**
+  String get reactionSad;
+
+  /// No description provided for @reactionAngry.
+  ///
+  /// In en, this message translates to:
+  /// **'Angry'**
+  String get reactionAngry;
+
   /// No description provided for @reactionGoal.
   ///
   /// In en, this message translates to:
@@ -733,6 +811,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Comments'**
   String get commentsTitle;
+
+  /// No description provided for @peopleReactedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'People reacted'**
+  String get peopleReactedLabel;
+
+  /// No description provided for @shareLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'share'**
+  String get shareLabel;
 
   /// No description provided for @noCommentsYet.
   ///
@@ -1292,6 +1382,24 @@ abstract class AppLocalizations {
   /// **'Most relevant'**
   String get mostRelevant;
 
+  /// No description provided for @commentsSortNewest.
+  ///
+  /// In en, this message translates to:
+  /// **'Newest'**
+  String get commentsSortNewest;
+
+  /// No description provided for @commentsSortMostRelated.
+  ///
+  /// In en, this message translates to:
+  /// **'Most related'**
+  String get commentsSortMostRelated;
+
+  /// No description provided for @commentsSortMostReplied.
+  ///
+  /// In en, this message translates to:
+  /// **'Most replied'**
+  String get commentsSortMostReplied;
+
   /// No description provided for @about.
   ///
   /// In en, this message translates to:
@@ -1535,14 +1643,14 @@ abstract class AppLocalizations {
   /// No description provided for @unbanUserTitle.
   ///
   /// In en, this message translates to:
-  /// **'Unban user'**
-  String get unbanUserTitle;
+  /// **'Unban {name}'**
+  String unbanUserTitle(Object name);
 
   /// No description provided for @unbanUserContent.
   ///
   /// In en, this message translates to:
-  /// **'Are you sure you want to unban this user?'**
-  String get unbanUserContent;
+  /// **'Are you sure you want to unban {name}? They will be able to join the group again.'**
+  String unbanUserContent(Object name);
 
   /// No description provided for @noAdminsFound.
   ///
@@ -1844,11 +1952,197 @@ abstract class AppLocalizations {
   /// **'w'**
   String get weekLetter;
 
-  /// No description provided for @trivio.
+  /// No description provided for @commentAdded.
   ///
   /// In en, this message translates to:
-  /// **'Trivio'**
-  String get trivio;
+  /// **'Comment added'**
+  String get commentAdded;
+
+  /// No description provided for @commentUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Comment updated successfully'**
+  String get commentUpdated;
+
+  /// No description provided for @commentDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Comment deleted'**
+  String get commentDeleted;
+
+  /// No description provided for @commentReported.
+  ///
+  /// In en, this message translates to:
+  /// **'Comment reported'**
+  String get commentReported;
+
+  /// No description provided for @commentHidden.
+  ///
+  /// In en, this message translates to:
+  /// **'Comment hidden'**
+  String get commentHidden;
+
+  /// No description provided for @commentLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load comments.'**
+  String get commentLoadError;
+
+  /// No description provided for @commentAddError.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to post your comment.'**
+  String get commentAddError;
+
+  /// No description provided for @commentDeleteError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t delete the comment.'**
+  String get commentDeleteError;
+
+  /// No description provided for @unexpected_error.
+  ///
+  /// In en, this message translates to:
+  /// **'An unexpected error occurred. Please try again.'**
+  String get unexpected_error;
+
+  /// No description provided for @noBannedMembers.
+  ///
+  /// In en, this message translates to:
+  /// **'No banned members found.'**
+  String get noBannedMembers;
+
+  /// No description provided for @unbanSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Member has been unbanned successfully.'**
+  String get unbanSuccess;
+
+  /// No description provided for @editPost.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit post'**
+  String get editPost;
+
+  /// No description provided for @no_internet.
+  ///
+  /// In en, this message translates to:
+  /// **'No internet connection. Please check your network.'**
+  String get no_internet;
+
+  /// No description provided for @user_not_found.
+  ///
+  /// In en, this message translates to:
+  /// **'User not found.'**
+  String get user_not_found;
+
+  /// No description provided for @serverError.
+  ///
+  /// In en, this message translates to:
+  /// **'The server is currently unavailable.'**
+  String get serverError;
+
+  /// No description provided for @wrong_password.
+  ///
+  /// In en, this message translates to:
+  /// **'The password or email you entered is incorrect.'**
+  String get wrong_password;
+
+  /// No description provided for @email_taken.
+  ///
+  /// In en, this message translates to:
+  /// **'This email is already in use.'**
+  String get email_taken;
+
+  /// No description provided for @username_taken.
+  ///
+  /// In en, this message translates to:
+  /// **'This username is already taken.'**
+  String get username_taken;
+
+  /// No description provided for @invalid_code.
+  ///
+  /// In en, this message translates to:
+  /// **'The code you entered is incorrect.'**
+  String get invalid_code;
+
+  /// No description provided for @code_expired.
+  ///
+  /// In en, this message translates to:
+  /// **'This code has expired. Please request a new one.'**
+  String get code_expired;
+
+  /// No description provided for @too_many_attempts.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many attempts. Please try again later.'**
+  String get too_many_attempts;
+
+  /// No description provided for @sessionError.
+  ///
+  /// In en, this message translates to:
+  /// **'Session expired. Please sign in again.'**
+  String get sessionError;
+
+  /// No description provided for @alreadyMemberError.
+  ///
+  /// In en, this message translates to:
+  /// **'This user is already a member of the group.'**
+  String get alreadyMemberError;
+
+  /// No description provided for @requestCanceledSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Your join request has been canceled.'**
+  String get requestCanceledSuccess;
+
+  /// No description provided for @cancelRequestError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not cancel the request. Please try again.'**
+  String get cancelRequestError;
+
+  /// No description provided for @cancelRequestTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel Request?'**
+  String get cancelRequestTitle;
+
+  /// No description provided for @cancelRequestConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to cancel your request to join this group?'**
+  String get cancelRequestConfirm;
+
+  /// No description provided for @loadingReplies.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading replies...'**
+  String get loadingReplies;
+
+  /// No description provided for @hideReplies.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide replies'**
+  String get hideReplies;
+
+  /// No description provided for @showRepliesCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Show replies ({count})'**
+  String showRepliesCount(int count);
+
+  /// No description provided for @noRepliesOnCommentYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No replies on this comment yet'**
+  String get noRepliesOnCommentYet;
+
+  /// No description provided for @edited.
+  ///
+  /// In en, this message translates to:
+  /// **'Edited'**
+  String get edited;
 
   /// No description provided for @noMorePosts.
   ///
@@ -1885,6 +2179,7 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No more members'**
   String get noMoreMembers;
+
   /// No description provided for @favTeamsTitle.
   ///
   /// In en, this message translates to:
@@ -1962,6 +2257,7 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Change your favourite players'**
   String get settingsFavPlayersSub;
+
   /// No description provided for @retry.
   ///
   /// In en, this message translates to:

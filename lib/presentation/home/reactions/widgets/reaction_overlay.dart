@@ -2,7 +2,7 @@ import 'package:auth/domain/entities/reaction_type.dart';
 import 'package:flutter/material.dart';
 
 OverlayEntry buildReactionsOverlay({
-  required Rect anchor, 
+  required Rect anchor,
   required List<String> emojiList,
   required List<String> reactionNames,
   required List<ReactionType> reactionList,
@@ -15,16 +15,26 @@ OverlayEntry buildReactionsOverlay({
   return OverlayEntry(
     builder: (context) {
       final screenSize = MediaQuery.of(context).size;
+      final itemCount = [
+        emojiList.length,
+        reactionNames.length,
+        reactionList.length,
+      ].reduce((a, b) => a < b ? a : b);
 
       const bubblePaddingH = 10.0;
-      const itemHorizontal = 12.0; 
+      const itemHorizontal = 12.0;
       const emojiSize = 24.0;
       final itemWidth = emojiSize + (itemHorizontal * 2);
-      final bubbleWidth = (emojiList.length * itemWidth) + (bubblePaddingH * 2);
+      final bubbleWidth = (itemCount * itemWidth) + (bubblePaddingH * 2);
       const bubbleHeightEstimate = 64.0;
-      
+
       double left = anchor.center.dx - bubbleWidth / 2;
-      left = left.clamp(8.0, screenSize.width - bubbleWidth - 8.0);
+      final maxLeft = screenSize.width - bubbleWidth - 8.0;
+      if (maxLeft <= 8.0) {
+        left = 8.0;
+      } else {
+        left = left.clamp(8.0, maxLeft);
+      }
 
       double top = anchor.top - bubbleHeightEstimate - 8.0;
       if (top < 8.0) {
@@ -51,13 +61,21 @@ OverlayEntry buildReactionsOverlay({
                 onExit: (_) => onHoverChange(false),
                 child: GestureDetector(
                   behavior: HitTestBehavior.opaque,
-                  onTap: () {}, 
+                  onTap: () {},
                   child: Material(
                     color: Colors.transparent,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 8,
+                      ),
+                      constraints: BoxConstraints(
+                        maxWidth: screenSize.width - 16,
+                      ),
                       decoration: BoxDecoration(
-                        color: Theme.of(context).cardColor, // Respect dark/light theme
+                        color: Theme.of(
+                          context,
+                        ).cardColor, // Respect dark/light theme
                         borderRadius: BorderRadius.circular(30),
                         boxShadow: const [
                           BoxShadow(
@@ -67,26 +85,31 @@ OverlayEntry buildReactionsOverlay({
                           ),
                         ],
                       ),
-                      // Force LTR so the emoji order matches the list index order
                       child: Directionality(
                         textDirection: TextDirection.ltr,
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: List.generate(emojiList.length, (index) {
-                            final isHovering = hoveringReaction == reactionList[index];
-                            return _buildReactionItem(
-                              emoji: emojiList[index],
-                              label: reactionNames[index],
-                              isHovering: isHovering,
-                              onHover: (hovering) {
-                                onHoverChange(hovering);
-                                hoveringReaction = hovering ? reactionList[index] : null;
-                              },
-                              onTap: () {
-                                onReactionSelected(reactionList[index]);
-                              },
-                            );
-                          }),
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: List.generate(itemCount, (index) {
+                              final isHovering =
+                                  hoveringReaction == reactionList[index];
+                              return _buildReactionItem(
+                                emoji: emojiList[index],
+                                label: reactionNames[index],
+                                isHovering: isHovering,
+                                onHover: (hovering) {
+                                  onHoverChange(hovering);
+                                  hoveringReaction = hovering
+                                      ? reactionList[index]
+                                      : null;
+                                },
+                                onTap: () {
+                                  onReactionSelected(reactionList[index]);
+                                },
+                              );
+                            }),
+                          ),
                         ),
                       ),
                     ),
@@ -122,16 +145,16 @@ Widget _buildReactionItem({
             if (isHovering)
               Text(
                 label,
-                style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             AnimatedScale(
               duration: const Duration(milliseconds: 150),
               scale: isHovering ? 1.4 : 1.0,
               curve: Curves.easeOutBack,
-              child: Text(
-                emoji,
-                style: const TextStyle(fontSize: 24),
-              ),
+              child: Text(emoji, style: const TextStyle(fontSize: 24)),
             ),
           ],
         ),

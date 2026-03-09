@@ -1,5 +1,6 @@
 import 'package:auth/core/errors/failure.dart';
 import 'package:auth/domain/entities/post.dart';
+import 'package:auth/domain/entities/reaction.dart';
 import 'package:auth/domain/entities/reaction_type.dart';
 import 'package:dartz/dartz.dart';
 import 'package:image_picker/image_picker.dart';
@@ -54,15 +55,22 @@ abstract class PostRepo {
 
   Future<Either<Failure, void>> deletePost(String postId);
 
-  Future<Either<Failure, Post>> reactToPost({
+  Future<Either<Failure, String?>> reactToPost({
     required String postId,
-    required String userId,
     required ReactionType reactionType,
+    bool isUpdate = false,
+    String? reactionId,
   });
 
-  Future<Either<Failure, Post>> removeReactionFromPost({
+  Future<Either<Failure, void>> removeReactionFromPost({
     required String postId,
-    required String userId,
+    String? reactionId,
+  });
+
+  Future<Either<Failure, List<Reaction>>> getPostReactions({
+    required String postId,
+    int limit = 10,
+    int maxPages = 20,
   });
 
   Future<Either<Failure, List<Post>>> searchPosts(String query);

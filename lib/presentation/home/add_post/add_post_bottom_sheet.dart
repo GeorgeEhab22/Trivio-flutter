@@ -7,6 +7,8 @@ import 'package:auth/presentation/home/add_post/privacy_selector.dart';
 import 'package:auth/presentation/home/add_post/selected_media_preview.dart';
 import 'package:auth/injection_container.dart' as di;
 import 'package:auth/presentation/manager/post_cubit/create_post_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/profile_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/profile_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -90,8 +92,12 @@ class _AddPostBottomSheetState extends State<AddPostBottomSheet> {
                           AddPostHeader(
                             isPostEnabled: isButtonEnabled,
                             onPost: () {
-                              // TODO:Replace with actual current user ID from Auth Bloc
-                              cubit.submitPost(userId: "curr_user_id", groupId: widget.groupId);
+                              final state = context.read<ProfileCubit>().state;
+                              String userId = '';
+                              if (state is ProfileLoaded) {
+                                userId = state.user.id;
+                              }
+                              cubit.submitPost(userId: userId, groupId: widget.groupId);
                             },
                           ),
                           PostInputField(

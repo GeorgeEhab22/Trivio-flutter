@@ -1,4 +1,5 @@
 import 'package:auth/core/app_routes.dart';
+import 'package:auth/core/errors/error_parser.dart';
 import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/authentication/widgets/show_custom_snackbar.dart';
 import 'package:auth/presentation/manager/register_cubit/verify_code_state.dart';
@@ -13,7 +14,8 @@ class VerifyCodeListener {
       showCustomSnackBar(context, l10n.verificationSuccess, true);
       context.go(AppRoutes.signIn);
     } else if (state is VerifyCodeError) {
-      showCustomSnackBar(context, state.message, false);
+      final localizedError = ErrorParser.localizeError(context, state.message);
+      showCustomSnackBar(context, localizedError, false);
     } else if (state is VerifyCodeResent) {
       showCustomSnackBar(context, l10n.codeResent, true);
     }

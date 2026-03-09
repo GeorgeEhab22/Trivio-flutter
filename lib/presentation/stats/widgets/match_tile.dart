@@ -1,4 +1,5 @@
 import 'package:auth/common/functions/match_status_helper.dart';
+import 'package:auth/common/functions/number_extensions.dart';
 import 'package:auth/constants/colors.dart';
 import 'package:auth/core/styels.dart';
 import 'package:auth/data/models/stats_dart/matches.dart';
@@ -90,9 +91,16 @@ class MatchTile extends StatelessWidget {
                       children: [
                         Text(
                           match.utcDate != null
-                              ? DateFormat('HH:mm').format(
-                                  DateTime.parse(match.utcDate!).toLocal(),
-                                )
+                              ? DateFormat(
+                                      'hh:mm a',
+                                      Localizations.localeOf(
+                                        context,
+                                      ).languageCode,
+                                    ) // Pass locale here
+                                    .format(
+                                      DateTime.parse(match.utcDate!).toLocal(),
+                                    )
+                                    .localizeDigits(context)
                               : "TBD",
                           style: Styles.textStyle14.copyWith(
                             color: Theme.of(
