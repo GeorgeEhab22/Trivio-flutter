@@ -14,6 +14,7 @@ import 'package:auth/presentation/groups/widgets/dummy_for_skeletonizer.dart';
 import 'package:auth/presentation/groups/widgets/number_of_members_row.dart';
 import 'package:auth/presentation/manager/group_cubit/get_group/get_group_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/get_group/get_group_state.dart';
+import 'package:auth/presentation/manager/group_cubit/get_joined_groups/get_joined_groups_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/leave_group/leave_group_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/leave_group/leave_group_state.dart';
 import 'package:flutter/material.dart';
@@ -32,6 +33,7 @@ class GroupFeedView extends StatelessWidget {
     return BlocListener<LeaveGroupCubit, LeaveGroupState>(
       listener: (context, state) {
         if (state is LeaveGroupSuccess) {
+          context.read<GetJoinedGroupsCubit>().removeGroupLocally(groupId);
           context.go(AppRoutes.groupPreview(groupId));
         }
         if (state is LeaveGroupFailure) {
@@ -80,11 +82,17 @@ class GroupFeedView extends StatelessWidget {
                                   style: Styles.textStyleBold20,
                                 ),
                                 const SizedBox(height: 8),
-                                NumberOfMembersRow(
-                                  numOfMembers:
-                                      (group.membersCount ?? 0) +
-                                      (group.moderatorsCount ?? 0) +
-                                      (group.adminsCount ?? 0),
+                                InkWell(
+                                  borderRadius: BorderRadius.circular(8),
+                                  onTap: () => context.push(
+                                    AppRoutes.groupMembers(groupId),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(4.0),
+                                    child: NumberOfMembersRow(
+                                      numOfMembers: group.totalMembers,
+                                    ),
+                                  ),
                                 ),
                                 const SizedBox(height: 20),
 

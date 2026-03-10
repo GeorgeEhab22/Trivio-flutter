@@ -47,6 +47,13 @@ class PostModel extends Post {
       gName = groupData['name'];
       gCover = groupData['coverImage'] ?? groupData['logo'];
     }
+
+    //TODO : remove when backend is fixed to add mobile ip
+    // and change to your ip
+    if (gCover != null && gCover.contains('localhost')) {
+        gCover = gCover.replaceAll('localhost', '192.168.1.5'); 
+      }
+    /////////////////////////////////////////////////
     // --- reactionCounts ---
     final Map<String, dynamic> reactionMap =
         raw['reactionCounts'] as Map<String, dynamic>? ?? {};
@@ -74,9 +81,23 @@ class PostModel extends Post {
     final mentions = Mentions(userIds: userIds, usernames: usernames);
 
     // --- media (list of URLs / filenames coming from backend) ---
+    // final mediaList = (raw['media'] as List<dynamic>? ?? [])
+    //     .map((m) => m as String)
+    //     .toList();
+
+    //TODO: remove when backend is fixed to add mobile ip and change to your ip and un comment the above code
     final mediaList = (raw['media'] as List<dynamic>? ?? [])
-        .map((m) => m as String)
+        .map((m) {
+          String url = m as String;
+          if (url.contains('localhost')) {
+            return url.replaceAll('localhost', '192.168.1.5'); 
+          }
+          return url;
+        })
         .toList();
+    /////////////////////////////////////////////////
+
+
 
     return PostModel(
       postID: raw['_id'] as String? ?? '',

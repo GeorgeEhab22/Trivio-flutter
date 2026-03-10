@@ -25,6 +25,11 @@ class Group extends Equatable {
     this.creatorId,
   });
 
+  int get totalMembers => 
+      (membersCount ?? 0) + 
+      (adminsCount ?? 0) + 
+      (moderatorsCount ?? 0);
+
   @override
   List<Object?> get props => [
     groupId,

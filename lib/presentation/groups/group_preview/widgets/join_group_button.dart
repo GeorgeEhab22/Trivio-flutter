@@ -42,6 +42,8 @@ class JoinGroupButton extends StatelessWidget {
           listener: (context, state) {
             if (state is CancelRequestGroupFailure) {
               showCustomSnackBar(context, state.message, false);
+            } else if (state is CancelRequestGroupSuccess) {
+              context.read<JoinGroupCubit>().removeRequestLocally(groupId);
             }
           },
         ),
@@ -50,6 +52,10 @@ class JoinGroupButton extends StatelessWidget {
         builder: (context) {
           final joinState = context.watch<JoinGroupCubit>().state;
           final cancelState = context.watch<CancelRequestGroupCubit>().state;
+          //TODO change when backend add reuest status to group model
+          final String? serverStatus =
+              joinState.serverConfirmedRequests[groupId];
+          bool isRequested = serverStatus == 'pending';
 
           String label = l10n.join;
           Color color = AppColors.primary;
@@ -57,7 +63,7 @@ class JoinGroupButton extends StatelessWidget {
             context.read<JoinGroupCubit>().joinGroup(groupId: groupId);
           };
 
-          if (joinState is JoinGroupSuccess || cancelState is CancelRequestGroupFailure) {
+          if (isRequested) {
             label = l10n.requested;
             color = Colors.grey;
             onTap = () {
@@ -72,19 +78,19 @@ class JoinGroupButton extends StatelessWidget {
                     .cancelRequestGroup(groupId: groupId),
               );
             };
-          }
-
-          if (cancelState is CancelRequestGroupSuccess) {
+          } else {
             label = l10n.join;
             color = AppColors.primary;
             onTap = () {
               context.read<JoinGroupCubit>().joinGroup(groupId: groupId);
             };
           }
-          
+
           return CustomSquareButton(
             label: label,
-            onTap: (joinState is JoinGroupLoading || cancelState is CancelRequestGroupLoading)
+            onTap:
+                (joinState is JoinGroupLoading ||
+                    cancelState is CancelRequestGroupLoading)
                 ? () {}
                 : onTap,
             backgroundColor: color,

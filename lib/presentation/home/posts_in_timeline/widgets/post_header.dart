@@ -25,6 +25,7 @@ class PostHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool isGroupPost = post.location == "group";
+    //TODO: change with actual users when backend return the name and the image of author
     String authorName = "Not Me";
     String? authorImage;
 

@@ -33,4 +33,18 @@ class GetMyGroupsCubit extends BasePaginationCubit<Group> {
       ),
     );
   }
+  void insertGroupLocally(Group newGroup) {
+    final exists = items.any((group) => group.groupId == newGroup.groupId);
+
+    if (!exists) {
+      items.insert(0, newGroup);
+
+      emit(
+        PaginationLoaded<Group>(
+          items: List.from(items),
+          hasReachedMax: hasReachedMax,
+        ),
+      );
+    }
+  }
 }

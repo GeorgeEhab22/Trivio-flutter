@@ -3,6 +3,8 @@ import 'package:auth/presentation/groups/widgets/dummy_for_skeletonizer.dart';
 import 'package:auth/presentation/groups/widgets/suggest_card.dart';
 import 'package:auth/presentation/manager/group_cubit/get_groups/get_groups_cubit.dart';
 import 'package:auth/presentation/manager/groups_pagination/pagination_state.dart';
+import 'package:auth/presentation/manager/profile_cubit/profile_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/profile_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -13,6 +15,12 @@ class SuggestedGroupsRowList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final profileState = context.read<ProfileCubit>().state;
+    String myUserId = '';
+
+    if (profileState is ProfileLoaded) {
+      myUserId = profileState.user.id;
+    }
     return BlocBuilder<GetAllGroupsCubit, PaginationState>(
       builder: (context, state) {
         final cubit = context.read<GetAllGroupsCubit>();
@@ -34,15 +42,22 @@ class SuggestedGroupsRowList extends StatelessWidget {
             physics: const BouncingScrollPhysics(),
             itemBuilder: (context, index) {
               final group = groups[index];
+              final bool isMyGroup = group.creatorId == myUserId;
               return Skeletonizer(
                 enabled: isInitialLoading || group.groupId.isEmpty,
                 child: SuggestCard(
+                  groupId: group.groupId,
                   groupName: group.groupName,
                   description: group.groupDescription,
                   imageUrl: group.groupCoverImage,
-                  onJoinGroup: () => context.push(
-                    AppRoutes.groupPreview(group.groupId),
-                  ),
+                  isMyGroup: isMyGroup,
+                  onCardTap: isInitialLoading
+                      ? null
+                      : () => context.push(
+                          isMyGroup
+                              ? AppRoutes.myGroup(group.groupId)
+                              : AppRoutes.groupPreview(group.groupId),
+                        ),
                 ),
               );
             },

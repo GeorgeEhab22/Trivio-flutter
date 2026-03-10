@@ -18,7 +18,7 @@ class LeaveGroupCubit extends Cubit<LeaveGroupState> {
 
     result.fold(
       (failure) => emit(_mapFailureToState(failure)),
-      (_) => emit(const LeaveGroupSuccess()),
+      (_) => emit(LeaveGroupSuccess(groupId: groupId)),
     );
   }
 

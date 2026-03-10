@@ -87,13 +87,11 @@ class JoinedGroupsListView extends StatelessWidget {
                 enabled: isInitialLoading || group.groupId.isEmpty,
                 child: GroupItem(
                   groupId: group.groupId,
-                  numOfMembers:
-                      (group.membersCount ?? 0) +
-                      (group.moderatorsCount ?? 0) +
-                      (group.adminsCount ?? 0),
+                  numOfMembers: group.totalMembers,
                   title: group.groupName,
                   imageUrl: group.groupCoverImage,
                   isHorizontal: true,
+                  creatorId: group.creatorId,
                 ),
               );
             },

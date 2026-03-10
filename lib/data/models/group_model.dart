@@ -16,12 +16,19 @@ class GroupModel extends Group {
 
   factory GroupModel.fromJson(Map<String, dynamic> json) {
     final Map<String, dynamic> data = json['group'] ?? json;
-
+  //TODO : remove when backend is fixed to add mobile ip
+  // and change to your ip
+  
+    String? logoUrl = data['logo'] as String?;
+    if (logoUrl != null && logoUrl.contains('localhost')) {
+      logoUrl = logoUrl.replaceAll('localhost', '192.168.1.5');
+    }
+  /////////////////////////////////////////////////
     return GroupModel(
       groupId: data['_id'] as String,
       groupName: data['name'] as String,
       groupDescription: data['description']?.toString() ??"",
-      groupCoverImage: data['logo'] as String?,
+      groupCoverImage: logoUrl,
       membersCount: data['members'] as int? ?? 0,
       adminsCount: data['admins'] as int? ?? 0,
       moderatorsCount: data['moderators'] as int? ?? 0,
