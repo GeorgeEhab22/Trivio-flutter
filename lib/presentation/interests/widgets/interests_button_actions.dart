@@ -22,6 +22,8 @@ class InterestsButtonActions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     final cubit = context.read<SelectInterestsCubit>();
 
     return BlocBuilder<SelectInterestsCubit, SelectInterestsState>(
@@ -49,6 +51,13 @@ class InterestsButtonActions extends StatelessWidget {
               children: [
                 CustomSquareButton(
                   label: l10n.update,
+                  textColor: isDarkMode
+                      ? Colors
+                            .white 
+                      : (enableButton
+                            ? Colors.white
+                            : Colors
+                                  .black), 
                   row: true,
                   height: 11,
                   isLoading: isSubmitting,
@@ -90,6 +99,9 @@ class InterestsButtonActions extends StatelessWidget {
               ),
               CustomSquareButton(
                 label: isTeams ? l10n.next : l10n.finish,
+                textColor: isDarkMode
+                    ? Colors.white
+                    : (enableButton ? Colors.white : Colors.black),
                 row: true,
                 height: 11,
                 isLoading: isSubmitting && !isTeams,

@@ -4,7 +4,9 @@ import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/groups/widgets/dummy_for_skeletonizer.dart';
 import 'package:auth/presentation/groups/widgets/suggest_card.dart';
 import 'package:auth/presentation/manager/group_cubit/get_groups/get_groups_cubit.dart';
-import 'package:auth/presentation/manager/groups_pagination/pagination_state.dart';
+import 'package:auth/presentation/manager/group_cubit/get_groups/get_groups_state.dart';
+import 'package:auth/presentation/manager/profile_cubit/profile_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/profile_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -19,17 +21,23 @@ class DiscoverGroupsListView extends StatelessWidget {
     double screenWidth = MediaQuery.of(context).size.width;
     double availableWidth = (screenWidth - 42) / 2;
 
-    return BlocBuilder<GetAllGroupsCubit, PaginationState>(
+    final profileState = context.read<ProfileCubit>().state;
+    String myUserId = ''; 
+    
+    if (profileState is ProfileLoaded) {
+      myUserId = profileState.user.id; 
+    }
+    return BlocBuilder<GetAllGroupsCubit, GetAllGroupsState>(
       builder: (context, state) {
         final cubit = context.read<GetAllGroupsCubit>();
 
-        if (state is PaginationError && cubit.items.isEmpty) {
+        if (state is GetAllGroupsError && cubit.items.isEmpty) {
           return Center(child: Text(state.message));
         }
 
         final bool isInitialLoading =
-            state is PaginationLoading && cubit.items.isEmpty;
-        final bool isLoadingMore = state is PaginationLoadingMore;
+            state is GetAllGroupsLoading && cubit.items.isEmpty;
+        final bool isLoadingMore = state is GetAllGroupsLoadingMore;
 
         final List<Group> displayGroups = isInitialLoading
             ? DummyData.dummyGroups
@@ -41,7 +49,7 @@ class DiscoverGroupsListView extends StatelessWidget {
                 (scrollInfo.scrollDelta ?? 0) > 0 &&
                 scrollInfo.metrics.pixels >=
                     scrollInfo.metrics.maxScrollExtent * 0.8) {
-              cubit.loadData();
+               cubit.loadData();
             }
             return false;
           },
@@ -70,21 +78,26 @@ class DiscoverGroupsListView extends StatelessWidget {
                   ),
                   delegate: SliverChildBuilderDelegate((context, index) {
                     final group = displayGroups[index];
+                    final bool isMyGroup = group.creatorId == myUserId;
                     return Skeletonizer(
                       enabled: isInitialLoading || group.groupId.isEmpty,
                       child: SuggestCard(
+                        groupId: group.groupId,
                         imageUrl: group.groupCoverImage,
                         groupName: group.groupName,
                         description: group.groupDescription,
                         isRow: false,
-                        onJoinGroup: isInitialLoading
+                        isMyGroup:isMyGroup ,
+                       onCardTap: isInitialLoading
                             ? null
                             : () => context.push(
-                                '${AppRoutes.groupPreview}/${group.groupId}',
-                              ),
+                                  isMyGroup 
+                                    ? AppRoutes.myGroup(group.groupId) 
+                                    : AppRoutes.groupPreview(group.groupId), 
+                                ),
                       ),
                     );
-                  }, childCount: displayGroups.length),
+                  }, childCount: isInitialLoading ? 4 : displayGroups.length),
                 ),
                 if (cubit.hasReachedMax && cubit.items.isNotEmpty)
                   const SliverToBoxAdapter(child: SizedBox(height: 50)),

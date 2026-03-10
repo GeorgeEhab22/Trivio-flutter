@@ -6,6 +6,8 @@ import 'package:auth/presentation/manager/group_cubit/ban_member/ban_member_cubi
 import 'package:auth/presentation/manager/group_cubit/ban_member/ban_member_state.dart';
 import 'package:auth/presentation/manager/group_cubit/change_member_role/change_member_role_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/change_member_role/change_member_role_state.dart';
+import 'package:auth/presentation/manager/group_cubit/get_group/get_group_cubit.dart';
+import 'package:auth/presentation/manager/group_cubit/get_group/get_group_state.dart';
 import 'package:auth/presentation/manager/group_cubit/kick_member/kick_member_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/kick_member/kick_member_state.dart';
 import 'package:auth/presentation/manager/group_cubit/get_members_by_roles/members_cubit.dart';
@@ -63,6 +65,14 @@ class MembersListView extends StatelessWidget {
         body: BlocBuilder<GroupMembersCubit, GroupMembersState>(
           builder: (context, state) {
             final cubit = context.read<GroupMembersCubit>();
+            final groupState = context.read<GetGroupCubit>().state;
+            String myRoleInGroup = 'member';
+            if (groupState is GetGroupSuccess) {
+              myRoleInGroup = groupState.group.role ?? 'member';
+              print("==== MY ROLE FROM BACKEND ====");
+              print("Raw Role: ${groupState.group.role}");
+              print("Role used in UI: $myRoleInGroup");
+            }
             final bool isInitialLoading =
                 state.isLoading && state.members.isEmpty;
             final bool isLoadingMore = state.isLoadingMoreMembers;
@@ -96,7 +106,7 @@ class MembersListView extends StatelessWidget {
                       (state.hasReachedMaxMembers ? 1 : 0),
                   itemBuilder: (context, index) {
                     if (index == displayMembers.length) {
-                      return  Padding(
+                      return Padding(
                         padding: EdgeInsets.symmetric(vertical: 24.0),
                         child: Center(
                           child: Text(
@@ -109,28 +119,30 @@ class MembersListView extends StatelessWidget {
 
                     final member = displayMembers[index];
                     return Skeletonizer(
-                      enabled: isInitialLoading || member.userId!.isEmpty,
+                      enabled: isInitialLoading || member.userId.isEmpty,
                       child: MemberRow(
                         name: member.userName,
                         image: member.profileImageUrl,
-                        role: member.role ?? l10n.member,
+                        role: member.role,
+                        targetUserId: member.userId,
+                        myRole: myRoleInGroup,
                         onRoleChanged: (newRole) {
                           context
                               .read<ChangeMemberRoleCubit>()
                               .changeMemberRole(
                                 groupId: groupId,
-                                userId: member.userId!,
+                                userId: member.userId,
                                 newRole: newRole,
                               );
                         },
                         onBan: () => context.read<BanMemberCubit>().banMember(
                           groupId: groupId,
-                          targetUserId: member.userId!,
+                          targetUserId: member.userId,
                         ),
                         onKick: () =>
                             context.read<KickMemberCubit>().kickMember(
                               groupId: groupId,
-                              targetUserId: member.userId!,
+                              targetUserId: member.userId,
                             ),
                       ),
                     );

@@ -16,7 +16,12 @@ class TimelineListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final profileState = context.read<ProfileCubit>().state;
+    String myUserId = '';
 
+    if (profileState is ProfileLoaded) {
+      myUserId = profileState.user.id;
+    }
     return BlocConsumer<PostCubit, PostState>(
       listener: (context, state) {
         if (state is PostsLoadingMoreError) {

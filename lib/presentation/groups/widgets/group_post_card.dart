@@ -73,39 +73,41 @@ class GroupPostCard extends StatelessWidget {
           }
           if (interactionState is ReportPostLoading) isProcessing = true;
 
-          return Opacity(
-            opacity: isProcessing ? 0.5 : 1.0,
-            child: AbsorbPointer(
-              absorbing: isProcessing,
-              child: Card(
-                margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                color: Theme.of(context).appBarTheme.backgroundColor,
-                elevation: 0.2,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 6),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      PostHeader(
-                        post: post,
-                        currentUserId: currentUserId,
-                        isFollowing: isFollowing,
-                      ),
-                      PostContent(post: post),
-                      const SizedBox(height: 8),
-                      const Divider(
-                        height: 1,
-                        color: Color(0xFFF3F4F6),
-                        thickness: 0.7,
-                        indent: 12,
-                        endIndent: 12,
-                      ),
-                      PostFooter(
-                        post: post,
-                        currentUserId: currentUserId,
-                        currentReaction: currentReaction,
-                      ),
-                    ],
+          return RepaintBoundary(
+            child: Opacity(
+              opacity: isProcessing ? 0.5 : 1.0,
+              child: AbsorbPointer(
+                absorbing: isProcessing,
+                child: Card(
+                  margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                  color: Theme.of(context).appBarTheme.backgroundColor,
+                  elevation: 0.2,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 6),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        PostHeader(
+                          post: post,
+                          currentUserId: currentUserId,
+                          isFollowing: isFollowing,
+                        ),
+                        PostContent(post: post),
+                        const SizedBox(height: 8),
+                        const Divider(
+                          height: 1,
+                          color: Color(0xFFF3F4F6),
+                          thickness: 0.7,
+                          indent: 12,
+                          endIndent: 12,
+                        ),
+                        PostFooter(
+                          post: post,
+                          currentUserId: currentUserId,
+                          currentReaction: currentReaction,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),

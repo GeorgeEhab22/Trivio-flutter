@@ -30,19 +30,60 @@ class PostModel extends Post {
     super.reactionsCount = 0,
     super.userReaction = ReactionType.none,
     super.reactionCountsByType = const <ReactionType, int>{},
+    required super.createdAt, 
   });
 
   factory PostModel.fromJson(Map<String, dynamic> json) {
     final Map<String, dynamic> raw =
         (json['data'] != null && json['data']['post'] != null)
-            ? json['data']['post'] as Map<String, dynamic>
-            : json;
+        ? json['data']['post'] as Map<String, dynamic>
+        : json;
 
     final dummyReactions = _parseReactionCounter(raw['reactionCounts']);
+
+    final dynamic groupData = raw['groupID'];
+    String? gID;
+    String? gName;
+    String? gCover;
+
+    if (groupData is String) {
+      gID = groupData;
+    } else if (groupData is Map<String, dynamic>) {
+      gID = groupData['_id'];
+      gName = groupData['name'];
+      gCover = groupData['coverImage'] ?? groupData['logo'];
+    }
+
+    //TODO : remove when backend is fixed to add mobile ip
+    // and change to your ip
+    if (gCover != null && gCover.contains('localhost')) {
+      gCover = gCover.replaceAll('localhost', '192.168.1.5');
+    }
 
     final userReaction = JsonParser.parseReactionType(
       raw['userReaction'] ?? raw['myReaction'] ?? raw['currentUserReaction'],
     );
+
+    final mentionsJson = raw['mentions'] as List<dynamic>? ?? [];
+    final userIds = <String>[];
+    final usernames = <String>[];
+
+    for (final m in mentionsJson) {
+      final map = m as Map<String, dynamic>;
+      userIds.add(map['_id'] as String? ?? '');
+      usernames.add(map['username'] as String? ?? '');
+    }
+
+    final mentions = Mentions(userIds: userIds, usernames: usernames);
+
+    //TODO: remove when backend is fixed to add mobile ip and change to your ip and un comment the above code
+    final mediaList = (raw['media'] as List<dynamic>? ?? []).map((m) {
+      String url = m as String;
+      if (url.contains('localhost')) {
+        return url.replaceAll('localhost', '192.168.1.5');
+      }
+      return url;
+    }).toList();
 
     return PostModel(
       postID: JsonParser.parseString(raw['_id']),
@@ -53,13 +94,12 @@ class PostModel extends Post {
       location: JsonParser.parseString(raw['location']),
       views: JsonParser.parseInt(raw['views']),
       flagged: raw['flagged'],
-      media: JsonParser.parseStringList(raw['media']),
-      mentions: _parseMentions(raw['mentions']),
+      media: mediaList,
+      mentions: mentions,
 
-      // Group Data Handling
-      groupID: _parseGroupData(raw['groupID'], 'id'),
-      groupName: _parseGroupData(raw['groupID'], 'name'),
-      groupCoverImage: _parseGroupData(raw['groupID'], 'cover'),
+      groupID: gID,
+      groupName: gName,
+      groupCoverImage: gCover,
 
       reactions: _parseReactions(raw['reactions']),
       reactionCounts: dummyReactions,
@@ -67,13 +107,17 @@ class PostModel extends Post {
 
       reactionsCount: _calculateTotalReactions(raw, dummyReactions),
       userReaction: userReaction,
-      //TODO: Handle commentsCount properly 
+
+      //TODO: Handle commentsCount properly
       commentsCount: JsonParser.parseInt(
         raw['commentsCount'] ?? raw['comments_count'] ?? raw['repliesCount'],
       ),
+
+      createdAt: raw['createdAt'] != null
+          ? DateTime.parse(raw['createdAt'] as String)
+          : DateTime.now(),
     );
   }
-
 
   static DummyReactionCounter _parseReactionCounter(dynamic map) {
     final m = map is Map<String, dynamic> ? map : <String, dynamic>{};
@@ -89,29 +133,6 @@ class PostModel extends Post {
     );
   }
 
-  static Mentions _parseMentions(dynamic list) {
-    final items = list is List
-        ? list.whereType<Map<String, dynamic>>()
-        : <Map<String, dynamic>>[];
-    return Mentions(
-      userIds: items.map((m) => JsonParser.parseString(m['_id'])).toList(),
-      usernames: items
-          .map((m) => JsonParser.parseString(m['username']))
-          .toList(),
-    );
-  }
-
-  static String? _parseGroupData(dynamic data, String key) {
-    if (data is Map<String, dynamic>) {
-      if (key == 'id') return JsonParser.parseString(data['_id']);
-      if (key == 'name') return JsonParser.parseString(data['name']);
-      if (key == 'cover') {
-        return JsonParser.parseString(data['coverImage'] ?? data['logo']);
-      }
-    }
-    return data is String && key == 'id' ? data : null;
-  }
-
   static List<Reaction> _parseReactions(dynamic list) {
     if (list is! List) return [];
     return list
@@ -124,7 +145,7 @@ class PostModel extends Post {
     Map<String, dynamic> raw,
     DummyReactionCounter dummy,
   ) {
-    final count = JsonParser.parseInt(raw['reactionsCount'] );
+    final count = JsonParser.parseInt(raw['reactionsCount']);
     if (count > 0) return count;
     return dummy.total > 0 ? dummy.total : 0;
   }
@@ -158,7 +179,10 @@ class PostModel extends Post {
       'reactionsCount': reactionsCount,
       'userReaction': userReaction.name,
       'groupID': groupID,
+      'groupName': groupName,
+      'groupCoverImage': groupCoverImage,
       'commentsCount': commentsCount,
+      'createdAt': createdAt.toIso8601String(), 
     };
   }
 
@@ -179,7 +203,10 @@ class PostModel extends Post {
       groupName: groupName,
       groupCoverImage: groupCoverImage,
       commentsCount: commentsCount,
-      reactionCountsByType: JsonParser.mapReactionCounts(toJson()['reactionCounts']),
+      reactionCountsByType: JsonParser.mapReactionCounts(
+        toJson()['reactionCounts'],
+      ),
+      createdAt: createdAt, 
     );
   }
 
@@ -196,7 +223,8 @@ class PostModel extends Post {
       reactionsCount: post.reactionsCount,
       userReaction: post.userReaction,
       reactionCounts: DummyReactionCounter(
-        likesCount: post.reactionCountsByType[ReactionType.like] ?? post.reactionsCount,
+        likesCount:
+            post.reactionCountsByType[ReactionType.like] ?? post.reactionsCount,
         lovesCount: post.reactionCountsByType[ReactionType.love] ?? 0,
         hahaCount: post.reactionCountsByType[ReactionType.haha] ?? 0,
         sadCount: post.reactionCountsByType[ReactionType.sad] ?? 0,
@@ -212,6 +240,7 @@ class PostModel extends Post {
       groupName: post.groupName,
       groupCoverImage: post.groupCoverImage,
       reactionCountsByType: post.reactionCountsByType,
+      createdAt: post.createdAt,
     );
   }
 }

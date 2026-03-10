@@ -16,19 +16,15 @@ class LeaveGroupLoading extends LeaveGroupState {
 }
 
 class LeaveGroupSuccess extends LeaveGroupState {
-
-  const LeaveGroupSuccess();
-
+  final String groupId;
+  const LeaveGroupSuccess({required this.groupId});
 }
 
 class LeaveGroupFailure extends LeaveGroupState {
   final String message;
   final String? errorType;
 
-  const LeaveGroupFailure({
-    required this.message,
-    this.errorType,
-  });
+  const LeaveGroupFailure({required this.message, this.errorType});
 
   @override
   List<Object?> get props => [message, errorType];

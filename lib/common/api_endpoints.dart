@@ -76,8 +76,8 @@ class ApiEndpoints {
   static const String myFollowers = 'users/me/followers';
   static const String myFollowing = 'users/me/following';
   static const String myProfile = 'users/me';
-  static const String updateProfile = 'users/update-profile';
-  static const String changePassword = 'users/change-password';
+  static const String updateProfile = 'users/me/updateProfile';
+  static const String changePassword = 'users/me/changePassword';
   static const String suggestions = 'users/suggestions';
   static const String likedPostsIds = 'users/me/likedPostsId';
 

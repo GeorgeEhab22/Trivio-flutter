@@ -1,23 +1,84 @@
-import 'package:auth/domain/usecases/group/groups/get_my_groups_use_case.dart';
-import 'package:auth/presentation/manager/groups_pagination/base_pagination_cubit.dart';
-
 import 'package:auth/domain/entities/group.dart';
-import 'package:auth/presentation/manager/groups_pagination/pagination_state.dart';
-import 'package:dartz/dartz.dart';
+import 'package:auth/domain/usecases/group/groups/get_my_groups_use_case.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'get_my_groups_state.dart';
 
-class GetMyGroupsCubit extends BasePaginationCubit<Group> {
+class GetMyGroupsCubit extends Cubit<GetMyGroupsState> {
   final GetMyGroupsUseCase getMyGroupsUseCase;
+
+  GetMyGroupsCubit({required this.getMyGroupsUseCase})
+    : super(GetMyGroupsInitial());
+
+  List<Group> items = [];
+  int page = 1;
+  bool hasReachedMax = false;
+  bool _isFetching = false;
   String? currentSearch;
 
-  GetMyGroupsCubit({required this.getMyGroupsUseCase});
+  Future<void> loadData({bool refresh = false}) async {
+    if (_isFetching ||
+        state is GetMyGroupsLoading ||
+        state is GetMyGroupsLoadingMore) {
+      return;
+    }
+    _isFetching = true;
 
-  @override
-  Future<Either<dynamic, List<Group>>> fetchUseCase({int page = 1}) {
-    return getMyGroupsUseCase(page: page, search: currentSearch);
+    if (refresh) {
+      items.clear();
+      page = 1;
+      hasReachedMax = false;
+    }
+
+    if (items.isEmpty) {
+      emit(GetMyGroupsLoading());
+    } else {
+      if (hasReachedMax) {
+        _isFetching = false;
+        return;
+      }
+      emit(GetMyGroupsLoadingMore(groups: List.from(items)));
+    }
+
+    final result = await getMyGroupsUseCase(page: page, search: currentSearch);
+
+    result.fold(
+      (failure) {
+        _isFetching = false;
+        emit(
+          GetMyGroupsError(message: failure.message, groups: List.from(items)),
+        );
+      },
+      (newItems) {
+        if (isClosed) return;
+
+        if (newItems.isEmpty) {
+          hasReachedMax = true;
+        } else {
+          final existingIds = items.map((e) => e.groupId).toSet();
+          final uniqueItems = newItems
+              .where((e) => !existingIds.contains(e.groupId))
+              .toList();
+
+          if (uniqueItems.isEmpty) {
+            hasReachedMax = true;
+          } else {
+            items.addAll(uniqueItems);
+            page++;
+          }
+        }
+
+        emit(
+          GetMyGroupsLoaded(
+            groups: List.from(items),
+            hasReachedMax: hasReachedMax,
+          ),
+        );
+        Future.delayed(const Duration(milliseconds: 500), () {
+          _isFetching = false;
+        });
+      },
+    );
   }
-
-  @override
-  String getItemId(Group item) => item.groupId;
 
   Future<void> searchGroups(String query) {
     currentSearch = query;
@@ -27,10 +88,20 @@ class GetMyGroupsCubit extends BasePaginationCubit<Group> {
   void removeGroupLocally(String groupId) {
     items.removeWhere((group) => group.groupId == groupId);
     emit(
-      PaginationLoaded<Group>(
-        items: List.from(items),
-        hasReachedMax: hasReachedMax,
-      ),
+      GetMyGroupsLoaded(groups: List.from(items), hasReachedMax: hasReachedMax),
     );
+  }
+
+  void insertGroupLocally(Group newGroup) {
+    final exists = items.any((group) => group.groupId == newGroup.groupId);
+    if (!exists) {
+      items.insert(0, newGroup);
+      emit(
+        GetMyGroupsLoaded(
+          groups: List.from(items),
+          hasReachedMax: hasReachedMax,
+        ),
+      );
+    }
   }
 }

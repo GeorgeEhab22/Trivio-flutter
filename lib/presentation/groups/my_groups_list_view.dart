@@ -3,7 +3,7 @@ import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/groups/widgets/dummy_for_skeletonizer.dart';
 import 'package:auth/presentation/groups/widgets/group_item.dart';
 import 'package:auth/presentation/groups/widgets/group_search_field.dart';
-import 'package:auth/presentation/manager/groups_pagination/pagination_state.dart';
+import 'package:auth/presentation/manager/group_cubit/get_my_groups/get_my_groups_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -16,23 +16,23 @@ class MyGroupsListView extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
-    return BlocBuilder<GetMyGroupsCubit, PaginationState>(
+    return BlocBuilder<GetMyGroupsCubit, GetMyGroupsState>(
       builder: (context, state) {
         final cubit = context.read<GetMyGroupsCubit>();
 
-        if (state is PaginationError && cubit.items.isEmpty) {
+        if (state is GetMyGroupsError && cubit.items.isEmpty) {
           return Center(child: Text(state.message));
         }
 
         final bool isInitialLoading =
-            state is PaginationLoading && cubit.items.isEmpty;
-        final bool isLoadingMore = state is PaginationLoadingMore;
+            state is GetMyGroupsLoading && cubit.items.isEmpty;
+        final bool isLoadingMore = state is GetMyGroupsLoadingMore;
 
         final List<Group> displayGroups = isInitialLoading
             ? DummyData.dummyGroups
             : [...cubit.items, if (isLoadingMore) DummyData.dummyGroup];
 
-        if (state is PaginationLoaded && cubit.items.isEmpty) {
+        if (state is GetMyGroupsLoaded && cubit.items.isEmpty) {
           return Center(child: Text(l10n.noPostsInGroups));
         }
 
@@ -80,14 +80,11 @@ class MyGroupsListView extends StatelessWidget {
                 enabled: isInitialLoading || group.groupId.isEmpty,
                 child: GroupItem(
                   groupId: group.groupId,
-                  numOfMembers:
-                      (group.membersCount ?? 0) +
-                      (group.moderatorsCount ?? 0) +
-                      (group.adminsCount ?? 0),
+                  numOfMembers:group.totalMembers,
                   title: group.groupName,
                   imageUrl: group.groupCoverImage,
                   isHorizontal: true,
-                  myGroup: true,
+                  creatorId: group.creatorId,
                 ),
               );
             },

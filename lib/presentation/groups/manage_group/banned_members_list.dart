@@ -20,82 +20,120 @@ class BannedMembersList extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
-    // return MultiBlocListener(
-    //   listeners: [
-    //     BlocListener<UnbanMemberCubit, UnbanMemberState>(
-    //       listener: (context, state) {
-    //         if (state is UnbanMemberSuccess) {
-    //           showCustomSnackBar(context, l10n.unbanSuccess, true);
-              
-    //           context.read<GetBannedMembersCubit>().getBannedMembers(
-    //                 groupId: groupId,
-    //               );
-    //         }
-    //         if (state is UnbanMemberFailure) {
-    //           showCustomSnackBar(context, l10n.unexpected_error, false);
-    //         }
-    //       },
-    //     ),
-    //   ],
-    //   child: Scaffold(
-    //     appBar: AppBar(title: Text(l10n.bannedMembers)),
-    //     body: BlocBuilder<GetBannedMembersCubit, PaginationState>(
-    //       builder: (context, state) {
-    //         final cubit = context.read<GetBannedMembersCubit>();
+    return BlocListener<UnbanMemberCubit, UnbanMemberState>(
+      listener: (context, state) {
+        if (state is UnbanMemberSuccess) {
+          showCustomSnackBar(context, state.message, true);
+          //TODO : remove banned member locally
 
-    //         if (state is PaginationError && cubit.items.isEmpty) {
-    //           return Center(child: Text(state.message));
-    //         }
+          // context.read<GetBannedMembersCubit>().removeMemberLocally(
+          //   state.userId,
+          // );
+        }
+        if (state is UnbanMemberFailure) {
+          showCustomSnackBar(context, state.message, false);
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(title: Text(l10n.bannedMembers)),
+        body: BlocBuilder<GetBannedMembersCubit, PaginationState>(
+          builder: (context, state) {
+            final cubit = context.read<GetBannedMembersCubit>();
 
-    //         if (state is GetBannedMembersSuccess) {
-    //           if (state.bannedMembers.isEmpty) {
-    //             return Center(child: Text(l10n.noBannedMembers));
-    //           }
-    //           return ListView.builder(
-    //             itemCount: state.bannedMembers.length,
-    //             itemBuilder: (context, index) {
-    //               final bannedMember = state.bannedMembers[index];
-    //               final userName = bannedMember.userName ?? l10n.username;
+            if (state is PaginationError && cubit.items.isEmpty) {
+              return Center(child: Text(state.message));
+            }
 
-    //               return ListTile(
-    //                 leading: CircleAvatar(
-    //                   radius: 26,
-    //                   backgroundImage: NetworkImage(
-    //                     bannedMember.profileImageUrl ?? 'https://picsum.photos/500',
-    //                   ),
-    //                 ),
-    //                 title: Text(userName, style: Styles.textStyle16),
-    //                 trailing: Icon(
-    //                   Icons.more_horiz,
-    //                   color: Theme.of(context).iconTheme.color,
-    //                 ),
-    //                 onTap: () {
-    //                   showCustomDialog(
-    //                     context: context,
-    //                     confirmText: l10n.unban,
-    //                     confirmTextColor: Colors.red,
-    //                     onConfirm: () {
-    //                       context.read<UnbanMemberCubit>().unbanMember(
-    //                             groupId: groupId,
-    //                             targetUserId: bannedMember.userId!,
-    //                           );
-    //                     },
-    //                     title: l10n.unbanUserTitle(userName),
-    //                     content: l10n.unbanUserContent(userName),
-    //                   );
-    //                 },
-    //               );
-    //             },
-    //           );
-    //         }
-    //         if (state is GetBannedMembersFailure) {
-    //           return Center(child: Text(state.message));
-    //         }
+            final bool isInitialLoading =
+                state is PaginationLoading && cubit.items.isEmpty;
+            final bool isLoadingMore = state is PaginationLoadingMore;
 
-            return const SizedBox();
-    //      },
-    //    ),
-    //  ),
-    // );
+            final List<GroupMember> displayBanned = isInitialLoading
+                ? DummyData.dummyMembers
+                : [...cubit.items, if (isLoadingMore) DummyData.dummyMember];
+
+            if (state is PaginationLoaded && cubit.items.isEmpty) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.person_search_rounded,
+                      size: 80,
+                      color: Colors.grey,
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      l10n.noPendingRequests,
+                      style: const TextStyle(color: Colors.grey, fontSize: 18),
+                    ),
+                  ],
+                ),
+              );
+            }
+
+            return NotificationListener<ScrollNotification>(
+              onNotification: (scrollInfo) {
+                if (scrollInfo is ScrollUpdateNotification &&
+                    (scrollInfo.scrollDelta ?? 0) > 0 &&
+                    scrollInfo.metrics.pixels >=
+                        scrollInfo.metrics.maxScrollExtent * 0.8) {
+                  cubit.loadData();
+                }
+                return false;
+              },
+              child: ListView.builder(
+                itemCount: displayBanned.length + (cubit.hasReachedMax ? 1 : 0),
+                itemBuilder: (context, index) {
+                  if (index == displayBanned.length) {
+                    return const SizedBox(height: 50);
+                  }
+
+                  final bannedMember = displayBanned[index];
+
+                  return Skeletonizer(
+                    enabled: isInitialLoading || bannedMember.userId.isEmpty,
+                    child: ListTile(
+                      leading: CircleAvatar(
+                        radius: 26,
+                        backgroundImage: NetworkImage(
+                          bannedMember.profileImageUrl ??
+                              'https://picsum.photos/500',
+                        ),
+                      ),
+                      title: Text(
+                        bannedMember.userName,
+                        style: Styles.textStyle16,
+                      ),
+                      trailing: Icon(
+                        Icons.more_horiz,
+                        color: Theme.of(context).iconTheme.color,
+                      ),
+                      onTap: isInitialLoading || bannedMember.userId.isEmpty
+                          ? null
+                          : () {
+                              showCustomDialog(
+                                context: context,
+                                confirmText: l10n.unban,
+                                confirmTextColor: Colors.red,
+                                onConfirm: () {
+                                  context.read<UnbanMemberCubit>().unbanMember(
+                                    groupId: groupId,
+                                    targetUserId: bannedMember.userId,
+                                  );
+                                },
+                                title: l10n.unbanUserTitle(bannedMember.userName),
+                                content: l10n.unbanUserContent(bannedMember.userName),
+                              );
+                            },
+                    ),
+                  );
+                },
+              ),
+            );
+          },
+        ),
+      ),
+    );
   }
 }

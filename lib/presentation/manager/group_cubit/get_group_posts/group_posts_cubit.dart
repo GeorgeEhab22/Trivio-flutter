@@ -185,7 +185,7 @@ class GroupPostsCubit extends Cubit<GroupPostsState> {
   }
 
   Future<void> deletePost({required String groupId, required Post post}) async {
-    final String postId = post.postID ?? '';
+    final String postId = post.postID;
     final backupPosts = List<Post>.from(posts);
 
     emit(GroupPostsDeleting(postId: postId));

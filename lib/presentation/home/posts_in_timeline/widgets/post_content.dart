@@ -68,7 +68,7 @@ class PostContent extends StatelessWidget {
         if (hasMedia)
           isVideo(post.media![0])
               ? PostVideo(videoUrl: post.media![0])
-              : PostImageSlider(images: post.media!, postId: post.postID ?? ''),
+              : PostImageSlider(images: post.media!, postId: post.postID ),
       ],
     );
   }

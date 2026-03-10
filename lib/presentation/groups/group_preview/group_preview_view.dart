@@ -29,8 +29,8 @@ class GroupPreviewView extends StatelessWidget {
           }
           final bool isLoading = state is GetGroupLoading;
 
-          final group = (state is GetGroupSuccess) 
-              ? state.group 
+          final group = (state is GetGroupSuccess)
+              ? state.group
               : DummyData.dummyGroup;
 
           return Skeletonizer(
@@ -47,16 +47,11 @@ class GroupPreviewView extends StatelessWidget {
                       children: [
                         Text(group.groupName, style: Styles.textStyleBold20),
                         const SizedBox(height: 8),
-                        NumberOfMembersRow(
-                          numOfMembers:
-                              (group.membersCount ?? 0) +
-                              (group.moderatorsCount ?? 0) +
-                              (group.adminsCount ?? 0),
-                        ),
+                        NumberOfMembersRow(numOfMembers: group.totalMembers),
                         const SizedBox(height: 20),
                         JoinGroupButton(groupId: group.groupId),
                         const SizedBox(height: 20),
-              
+
                         Text(l10n.about, style: Styles.textStyleBold18),
                         const SizedBox(height: 12),
                         ExpandableText(

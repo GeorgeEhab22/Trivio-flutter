@@ -1,12 +1,16 @@
 import 'package:auth/common/functions/bottom_sheet_manager.dart';
 import 'package:auth/common/functions/custom_square_button.dart';
 import 'package:auth/constants/colors.dart';
+import 'package:auth/constants/paths.dart';
 import 'package:auth/core/app_routes.dart';
 import 'package:auth/core/styels.dart';
 import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/authentication/widgets/show_custom_snackbar.dart';
 import 'package:auth/presentation/manager/group_cubit/create_group/create_group_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/create_group/create_group_state.dart';
+import 'package:auth/presentation/manager/group_cubit/get_groups/get_groups_cubit.dart';
+import 'package:auth/presentation/manager/group_cubit/get_joined_groups/get_joined_groups_cubit.dart';
+import 'package:auth/presentation/manager/group_cubit/get_my_groups/get_my_groups_cubit.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -20,7 +24,6 @@ class AddCoverPhotoView extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final isArabic = Localizations.localeOf(context).languageCode == 'ar';
-    const String defaultAssetPath = 'assets/images/Football Community.png';
 
     return Scaffold(
       appBar: AppBar(
@@ -43,7 +46,10 @@ class AddCoverPhotoView extends StatelessWidget {
         listener: (context, state) {
           if (state is CreateGroupSuccess) {
             showCustomSnackBar(context, l10n.groupCreatedSuccess, true);
-            context.go('${AppRoutes.myGroup}/${state.group.groupId}');
+            context.read<GetMyGroupsCubit>().insertGroupLocally(state.group);
+            context.read<GetJoinedGroupsCubit>().insertGroupLocally(state.group);
+            context.read<GetAllGroupsCubit>().insertGroupLocally(state.group);
+            context.go(AppRoutes.myGroup(state.group.groupId));
           }
           if (state is CreateGroupFailure) {
             showCustomSnackBar(context, state.message, false);
@@ -91,7 +97,7 @@ class AddCoverPhotoView extends StatelessWidget {
                                         fit: BoxFit.cover,
                                       ))
                               : Image.asset(
-                                  defaultAssetPath,
+                                  Paths.defaultGroupImage,
                                   fit: BoxFit.cover,
                                 ),
                         ),

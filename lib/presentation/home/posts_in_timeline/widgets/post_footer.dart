@@ -56,7 +56,7 @@ class PostFooter extends StatelessWidget {
               child: Row(
                 children: [
                   ReactionAction(
-                    postId: post.postID ?? '',
+                    postId: post.postID ,
                     currentUserId: currentUserId,
                     initialReaction: resolvedReaction,
                     initialCount: resolvedCount,
@@ -64,7 +64,7 @@ class PostFooter extends StatelessWidget {
                   ),
                   _ActionDivider(color: dividerColor),
                   CommentAction(
-                    postId: post.postID ?? '',
+                    postId: post.postID,
                     currentUserId: currentUserId,
                     commentsCount: post.commentsCount,
                     sharesCount: presentationShareCount,
@@ -76,7 +76,7 @@ class PostFooter extends StatelessWidget {
                   _ActionDivider(color: dividerColor),
                   const SizedBox(width: 10),
                   SendPostButton(
-                    postId: post.postID ?? '',
+                    postId: post.postID,
                     compact: true,
                     iconColor: Colors.white,
                   ),
@@ -95,7 +95,7 @@ class PostFooter extends StatelessWidget {
                           Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (_) => ReactionsScreen.forPost(
-                                postId: post.postID ?? '',
+                                postId: post.postID,
                                 currentUserId: currentUserId,
                               ),
                             ),

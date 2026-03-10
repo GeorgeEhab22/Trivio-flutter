@@ -31,10 +31,12 @@ class OptionsBottomSheet extends StatelessWidget {
         : Colors.grey[300];
     final cubit = context.read<PostInteractionCubit>();
     final postCubit = context.read<PostCubit>();
+
     GroupPostsCubit? groupPostsCubit;
-    try {
-      groupPostsCubit = context.read<GroupPostsCubit>();
-    } catch (_) {}
+      if (post.location == 'group') {
+        groupPostsCubit = context.read<GroupPostsCubit>();
+      }
+    
 
     return Container(
       decoration: BoxDecoration(
@@ -47,7 +49,6 @@ class OptionsBottomSheet extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Handle Bar
             Container(
               width: 45,
               height: 5,
@@ -58,7 +59,6 @@ class OptionsBottomSheet extends StatelessWidget {
               ),
             ),
 
-            // Top Buttons Row
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 14),
               child: Row(
@@ -89,7 +89,7 @@ class OptionsBottomSheet extends StatelessWidget {
                           backgroundColor: Theme.of(context).cardColor,
                           onTap: () {
                             cubit.toggleSavePost(
-                              postId: post.postID ?? '',
+                              postId: post.postID ,
                               userId: currentUserId,
                               currentSavedStatus: isSaved,
                             );
@@ -105,7 +105,6 @@ class OptionsBottomSheet extends StatelessWidget {
                       icon: Icons.link_outlined,
                       backgroundColor: Theme.of(context).cardColor,
                       onTap: () {
-                        // Assuming the logic for clipboard remains the same
                         copyToClipboard(context, post.caption ?? l10n.noLink);
                       },
                     ),
@@ -117,11 +116,10 @@ class OptionsBottomSheet extends StatelessWidget {
             const SizedBox(height: 12),
             const Divider(height: 1),
 
-            // Edit Post (Only show if current user is the author)
             if (post.authorId == currentUserId)
               CustomListTile(
-                icon: Icons.edit,
-                text: l10n.editPost,
+                icon: Icons.edit_outlined,
+                text: l10n.editPost, 
                 onTap: () {
                   context.pop();
                   context.push(
@@ -131,7 +129,7 @@ class OptionsBottomSheet extends StatelessWidget {
                       'title': l10n.editPost,
                       'onSave': (String newText) {
                         postCubit.editPost(
-                          postId: post.postID ?? '',
+                          postId: post.postID,
                           newCaption: newText,
                         );
                       },
@@ -166,7 +164,7 @@ class OptionsBottomSheet extends StatelessWidget {
                       child: ReportReasonsBottomSheet(
                         onReportSelected: (reason) {
                           cubit.reportPost(
-                            postId: post.postID ?? '',
+                            postId: post.postID ,
                             userId: currentUserId,
                             reason: reason,
                           );
@@ -193,11 +191,9 @@ class OptionsBottomSheet extends StatelessWidget {
                     confirmText: l10n.delete,
                     confirmTextColor: Colors.red,
                     onConfirm: () {
-                      if (post.location == 'group' &&
-                          post.groupID != null &&
-                          groupPostsCubit != null) {
+                      if (post.location == 'group' && groupPostsCubit != null) {
                         groupPostsCubit.deletePost(
-                          groupId: post.groupID!,
+                          groupId: post.groupID ?? "",
                           post: post,
                         );
                       } else {

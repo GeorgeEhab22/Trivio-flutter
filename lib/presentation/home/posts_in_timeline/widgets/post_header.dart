@@ -32,10 +32,17 @@ class PostHeader extends StatelessWidget {
     final Color iconBorderColor = isDark
         ? Colors.white.withValues(alpha: 0.12)
         : Colors.black.withValues(alpha: 0.08);
-    final state = context.read<ProfileCubit>().state;
-    String username = 'Unknown';
-    if (state is ProfileLoaded) {
-      username = state.user.name;
+  
+    //TODO: change with actual users when backend return the name and the image of author
+    String authorName = "Not Me";
+    String? authorImage;
+
+    final profileState = context.read<ProfileCubit>().state;
+
+    if (profileState is ProfileLoaded &&
+        post.authorId == profileState.user.id) {
+      authorName = profileState.user.name;
+      authorImage = profileState.user.avatar;
     }
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
@@ -44,7 +51,9 @@ class PostHeader extends StatelessWidget {
         children: [
           Expanded(
             child: AuthorInfo(
-              authorName: username,
+              authorName: authorName,
+              authorImage: authorImage,
+              createdAt: post.createdAt,
               showTimeInline: false,
               isGroupPost: isGroupPost,
               groupImage: post.groupCoverImage,
@@ -59,7 +68,7 @@ class PostHeader extends StatelessWidget {
                 if (post.authorId != currentUserId)
                   FollowButton(
                     currentUserId: currentUserId,
-                    authorId: post.authorId ?? '',
+                    authorId: post.authorId,
                     initialFollowStatus: isFollowing,
                   ),
               ],

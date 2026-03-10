@@ -81,10 +81,7 @@ class MyGroupView extends StatelessWidget {
                                   groupName: group.groupName,
                                   groupId: groupId,
                                   description: group.groupDescription,
-                                  membersCount:
-                                      (group.membersCount ?? 0) +
-                                      (group.moderatorsCount ?? 0) +
-                                      (group.adminsCount ?? 0),
+                                  membersCount:group.totalMembers,
                                 ),
                                 const SizedBox(height: 20),
                                 CustomSquareButton(
@@ -97,11 +94,8 @@ class MyGroupView extends StatelessWidget {
                                   textColor: Colors.white,
                                   iconColor: Colors.white,
                                   onTap: () {
-                                    context.pushNamed(
-                                      AppRoutes.manageGroup,
-                                      pathParameters: {
-                                        'groupId': groupId,
-                                      },
+                                    context.push(
+                                      AppRoutes.manageGroup(groupId),
                                     );
                                   },
                                 ),

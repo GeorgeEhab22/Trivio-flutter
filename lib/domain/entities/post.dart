@@ -4,8 +4,8 @@ import 'package:auth/domain/entities/reaction_type.dart';
 import 'package:equatable/equatable.dart';
 
 class Post extends Equatable {
-  final String? authorId;
-  final String? postID;
+  final String authorId;
+  final String postID;
   final String? caption;
   final String type;
   final Mentions? mentions;
@@ -20,11 +20,12 @@ class Post extends Equatable {
   final int reactionsCount;
   final ReactionType userReaction;
   final Map<ReactionType, int> reactionCountsByType;
+  final DateTime createdAt;
 
   const Post({
-    this.authorId,
+    required this.authorId,
     required this.type,
-    this.postID,
+    required this.postID,
     this.caption,
     this.flagged,
     this.mentions,
@@ -38,6 +39,7 @@ class Post extends Equatable {
     this.reactionsCount = 0,
     this.userReaction = ReactionType.none,
     this.reactionCountsByType = const <ReactionType, int>{},
+    required this.createdAt,
   });
   Post copyWith({
     String? authorId,
@@ -56,6 +58,7 @@ class Post extends Equatable {
     int? reactionsCount,
     ReactionType? userReaction,
     Map<ReactionType, int>? reactionCountsByType,
+    DateTime? createdAt,
   }) {
     return Post(
       authorId: authorId ?? this.authorId,
@@ -74,6 +77,7 @@ class Post extends Equatable {
       reactionsCount: reactionsCount ?? this.reactionsCount,
       userReaction: userReaction ?? this.userReaction,
       reactionCountsByType: reactionCountsByType ?? this.reactionCountsByType,
+      createdAt: createdAt ?? this.createdAt,
     );
   }
 
@@ -92,5 +96,6 @@ class Post extends Equatable {
     reactionsCount,
     userReaction,
     reactionCountsByType,
+    createdAt,
   ];
 }

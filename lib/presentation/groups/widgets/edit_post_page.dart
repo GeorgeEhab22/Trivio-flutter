@@ -93,12 +93,12 @@ class _EditPostPageState extends State<EditPostPage> {
   if (widget.post.location == 'group' && widget.post.groupID != null) {
     context.read<GroupPostsCubit>().editPost(
       groupId: widget.post.groupID!,
-      postId: widget.post.postID ?? '',
+      postId: widget.post.postID,
       newCaption: newText,
     );
   } else {
     context.read<PostCubit>().editPost(
-      postId: widget.post.postID ?? '',
+      postId: widget.post.postID,
       newCaption: newText,
     );
   }

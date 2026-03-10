@@ -112,7 +112,7 @@ class _MyGroupDescriptionState extends State<MyGroupDescription> {
                   setState(() => isEditingDesc = false);
                   descController.text = widget.groupDescription ?? "";
                 },
-          icon: const Icon(Icons.close, color: Colors.red),
+          icon: const Icon(Icons.close,),
         ),
         isLoading
             ? const SizedBox(
@@ -129,7 +129,7 @@ class _MyGroupDescriptionState extends State<MyGroupDescription> {
                     groupId: widget.groupId,
                   );
                 },
-                icon: const Icon(Icons.check, color: Colors.green),
+                icon: const Icon(Icons.check,),
               ),
       ],
     );

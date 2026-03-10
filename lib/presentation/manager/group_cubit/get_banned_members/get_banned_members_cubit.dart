@@ -16,7 +16,7 @@ class GetBannedMembersCubit extends BasePaginationCubit<GroupMember> {
   }
 
   @override
-  String getItemId(GroupMember item) => item.userId!;
+  String getItemId(GroupMember item) => item.userId;
 
   void removeMemberLocally(String userId) {
     items.removeWhere((m) => m.userId == userId);

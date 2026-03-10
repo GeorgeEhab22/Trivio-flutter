@@ -1,18 +1,18 @@
 import 'package:equatable/equatable.dart';
 
 class GroupMember extends Equatable {
-  final String? userId;
-  final String? userName;
+  final String userId;
+  final String userName;
   final String? profileImageUrl;
-  final String? role; // admin , moderator , member
-  final String? status; // active , banned
+  final String role; // admin , moderator , member
+  final String status; // active , banned
 
   const GroupMember({
-    this.userId,
-    this.userName,
+    required this.userId,
+    required this.userName,
     this.profileImageUrl,
-    this.role,
-    this.status,
+    required this.role,
+    required this.status,
   });
 
   GroupMember copyWith({

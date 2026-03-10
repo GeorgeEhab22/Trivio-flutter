@@ -203,7 +203,7 @@ class PostCubit extends Cubit<PostState> {
     var didMutateCeilings = false;
     final updated = source.map((post) {
       final postId = post.postID;
-      if (postId == null || postId.trim().isEmpty) {
+      if ( postId.trim().isEmpty) {
         return post;
       }
 
@@ -251,7 +251,7 @@ class PostCubit extends Cubit<PostState> {
     var didMutateCache = false;
     final updated = source.map((post) {
       final postId = post.postID;
-      if (postId == null || postId.trim().isEmpty) {
+      if (postId.trim().isEmpty) {
         return post;
       }
 
@@ -405,8 +405,8 @@ class PostCubit extends Cubit<PostState> {
       0,
       _applyReactionSnapshot(_applyCommentsCountFloors([newPost])).first,
     );
-    final postId = newPost.postID?.trim();
-    if (postId != null && postId.isNotEmpty) {
+    final postId = newPost.postID.trim();
+    if ( postId.isNotEmpty) {
       _hydratedCurrentUserReactionPostIds.remove(postId);
     }
     emit(PostLoaded(List.from(posts), hasReachedMax: hasReachedMax));
@@ -421,8 +421,8 @@ class PostCubit extends Cubit<PostState> {
     }
 
     final candidates = posts.where((post) {
-      final postId = post.postID?.trim();
-      if (postId == null || postId.isEmpty) {
+      final postId = post.postID.trim();
+      if ( postId.isEmpty) {
         return false;
       }
       if (_hydratedCurrentUserReactionPostIds.contains(postId)) {
@@ -445,8 +445,8 @@ class PostCubit extends Cubit<PostState> {
     var didMutate = false;
 
     for (final post in candidates) {
-      final postId = post.postID?.trim();
-      if (postId == null || postId.isEmpty) {
+      final postId = post.postID.trim();
+      if ( postId.isEmpty) {
         continue;
       }
 
@@ -631,7 +631,7 @@ class PostCubit extends Cubit<PostState> {
   }
 
   Future<void> deletePost({required Post post}) async {
-    final String postId = post.postID ?? '';
+    final String postId = post.postID;
     emit(DeletePostLoading(postId: postId));
     final result = await deletePostUseCase(postId);
     if (isClosed) return;

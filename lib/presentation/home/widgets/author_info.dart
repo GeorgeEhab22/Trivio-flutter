@@ -1,5 +1,6 @@
 import 'package:auth/common/functions/format_time.dart';
 import 'package:auth/common/functions/number_extensions.dart';
+import 'package:auth/constants/paths.dart';
 import 'package:auth/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:auth/constants/colors.dart';
@@ -10,7 +11,7 @@ class AuthorInfo extends StatelessWidget {
   final String? authorImage;
   final String? groupName;      
   final String? groupImage;     
-  final DateTime? createdAt;
+  final DateTime createdAt;
   final bool showTimeInline;
   final double avatarRadius;
   final TextStyle? authorTextStyle;
@@ -21,7 +22,7 @@ class AuthorInfo extends StatelessWidget {
     this.authorImage,
     this.groupName,             
     this.groupImage,
-    this.createdAt,
+   required this.createdAt,
     super.key,
     this.showTimeInline = false,
     this.avatarRadius = 22,
@@ -168,12 +169,27 @@ class AuthorInfo extends StatelessWidget {
 
   Widget getImage(String? url) {
     if (url == null || url.isEmpty) {
+      if (isGroupPost) {
+        return Image.asset(
+          Paths.defaultGroupImage,
+          fit: BoxFit.cover,
+        );
+      }
       return const Icon(Icons.person, color: Colors.grey);
     }
+
     return Image.network(
       url,
       fit: BoxFit.cover,
-      errorBuilder: (context, error, stackTrace) => const Icon(Icons.person, color: Colors.grey),
+      errorBuilder: (context, error, stackTrace) {
+        if (isGroupPost) {
+          return Image.asset(
+            Paths.defaultGroupImage,
+            fit: BoxFit.cover,
+          );
+        }
+        return const Icon(Icons.person, color: Colors.grey);
+      },
     );
   }
 }

@@ -4,7 +4,7 @@ import 'package:auth/presentation/groups/widgets/dummy_for_skeletonizer.dart';
 import 'package:auth/presentation/groups/widgets/group_item.dart';
 import 'package:auth/presentation/groups/widgets/group_search_field.dart';
 import 'package:auth/presentation/manager/group_cubit/get_joined_groups/get_joined_groups_cubit.dart';
-import 'package:auth/presentation/manager/groups_pagination/pagination_state.dart';
+import 'package:auth/presentation/manager/group_cubit/get_joined_groups/get_joined_groups_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -15,15 +15,15 @@ class JoinedGroupsListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return BlocBuilder<GetJoinedGroupsCubit, PaginationState>(
+    return BlocBuilder<GetJoinedGroupsCubit, GetJoinedGroupsState>(
       builder: (context, state) {
         final cubit = context.read<GetJoinedGroupsCubit>();
 
-        if (state is PaginationError && cubit.items.isEmpty) {
+        if (state is GetJoinedGroupsError && cubit.items.isEmpty) {
           return Center(child: Text(state.message));
         }
 
-        if (state is PaginationLoaded && cubit.items.isEmpty) {
+        if (state is GetJoinedGroupsLoaded && cubit.items.isEmpty) {
           return SizedBox(
             height: 110,
             child: Center(
@@ -37,8 +37,8 @@ class JoinedGroupsListView extends StatelessWidget {
         }
 
         final bool isInitialLoading =
-            state is PaginationLoading && cubit.items.isEmpty;
-        final bool isLoadingMore = state is PaginationLoadingMore;
+            state is GetJoinedGroupsLoading && cubit.items.isEmpty;
+        final bool isLoadingMore = state is GetJoinedGroupsLoadingMore;
 
         final List<Group> displayGroups = isInitialLoading
             ? DummyData.dummyGroups
@@ -50,7 +50,7 @@ class JoinedGroupsListView extends StatelessWidget {
                 (scrollInfo.scrollDelta ?? 0) > 0 &&
                 scrollInfo.metrics.pixels >=
                     scrollInfo.metrics.maxScrollExtent * 0.8) {
-              cubit.loadData();
+               cubit.loadData();
             }
             return false;
           },
@@ -87,13 +87,11 @@ class JoinedGroupsListView extends StatelessWidget {
                 enabled: isInitialLoading || group.groupId.isEmpty,
                 child: GroupItem(
                   groupId: group.groupId,
-                  numOfMembers:
-                      (group.membersCount ?? 0) +
-                      (group.moderatorsCount ?? 0) +
-                      (group.adminsCount ?? 0),
+                  numOfMembers: group.totalMembers,
                   title: group.groupName,
                   imageUrl: group.groupCoverImage,
                   isHorizontal: true,
+                  creatorId: group.creatorId,
                 ),
               );
             },

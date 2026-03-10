@@ -4,7 +4,7 @@ import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/groups/widgets/dummy_for_skeletonizer.dart';
 import 'package:auth/presentation/groups/widgets/group_item.dart';
 import 'package:auth/presentation/manager/group_cubit/get_groups/get_groups_cubit.dart';
-import 'package:auth/presentation/manager/groups_pagination/pagination_state.dart';
+import 'package:auth/presentation/manager/group_cubit/get_groups/get_groups_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -105,12 +105,12 @@ class _GroupsSearchViewState extends State<GroupsSearchView> {
           ),
         ),
       ),
-      body: BlocBuilder<GetAllGroupsCubit, PaginationState>(
+      body: BlocBuilder<GetAllGroupsCubit, GetAllGroupsState>(
         builder: (context, state) {
           final cubit = context.read<GetAllGroupsCubit>();
           final bool isInitialLoading =
-              state is PaginationLoading && cubit.items.isEmpty;
-          final bool isLoadingMore = state is PaginationLoadingMore;
+              state is GetAllGroupsLoading && cubit.items.isEmpty;
+          final bool isLoadingMore = state is GetAllGroupsLoadingMore;
 
           if (cubit.items.isEmpty && !isInitialLoading) {
             return Center(

@@ -8,7 +8,7 @@ import 'package:auth/domain/entities/team.dart';
 class DummyData {
   // Groups
   static final List<Group> dummyGroups = List.generate(
-    8,
+    3,
     (index) => dummyGroup,
   );
 
@@ -24,18 +24,19 @@ class DummyData {
   );
 
   // Posts
-  static final List<Post> dummyPosts = List.generate(5, (index) => dummyPost);
+  static final List<Post> dummyPosts = List.generate(3, (index) => dummyPost);
 
-  static const Post dummyPost = Post(
+  static Post dummyPost = Post(
     postID: '',
     authorId: '',
+    createdAt: DateTime(2026, 3, 7),
     caption: 'Loading more content...',
     type: 'text',
   );
 
   // Members (Used for Members, Admins, Moderators, and Banned)
   static final List<GroupMember> dummyMembers = List.generate(
-    10,
+    3,
     (index) => dummyMember,
   );
 
@@ -43,12 +44,12 @@ class DummyData {
     userId: '',
     userName: 'Loading Member Name',
     profileImageUrl: null,
-    role: 'member',
+    role: 'member', status: 'active',
   );
 
   // Join Requests
   static final List<JoinRequest> dummyRequests = List.generate(
-    6,
+    3,
     (index) => dummyRequest,
   );
 
@@ -61,12 +62,12 @@ class DummyData {
     status: 'pending',
   );
   static final List<dynamic> dummyTeams = List.generate(
-    15,
+    12,
     (index) =>
         const Team(name: 'Loading Team Name', logo: '', id: '', league: ''),
   );
   static final List<dynamic> dummyPlayers = List.generate(
-    15,
+    12,
     (index) => const Player(
       name: 'Loading Player Name',
       playerImage: '',
