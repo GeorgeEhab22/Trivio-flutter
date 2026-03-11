@@ -11,6 +11,7 @@ class ReactionAction extends StatelessWidget {
   final ReactionType initialReaction;
   final int initialCount;
   final String? initialReactionId;
+  final bool isVertical;
 
   const ReactionAction({
     super.key,
@@ -19,6 +20,7 @@ class ReactionAction extends StatelessWidget {
     required this.initialReaction,
     required this.initialCount,
     this.initialReactionId,
+    this.isVertical = false,
   });
 
   @override
@@ -93,6 +95,7 @@ class ReactionAction extends StatelessWidget {
         return ReactionInteraction(
           reactionType: currentReaction,
           count: currentCount,
+          isVertical: isVertical,
 
           onTap: () {
             context.read<PostInteractionCubit>().toggleReaction(

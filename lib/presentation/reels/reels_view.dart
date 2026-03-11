@@ -76,7 +76,7 @@ class ReelsView extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           ReelsReactionButton(
-                            postId: reel.postID,
+                            reel: reel,
                             currentUserId: currentUserId,
                           ),
                           const SizedBox(height: 16),

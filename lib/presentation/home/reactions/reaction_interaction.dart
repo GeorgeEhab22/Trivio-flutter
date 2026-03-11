@@ -9,6 +9,7 @@ class ReactionInteraction extends StatefulWidget {
   final int count;
   final VoidCallback onTap;
   final Function(ReactionType) onReactionSelected;
+  final bool isVertical;
 
   const ReactionInteraction({
     super.key,
@@ -16,6 +17,7 @@ class ReactionInteraction extends StatefulWidget {
     required this.count,
     required this.onTap,
     required this.onReactionSelected,
+    this.isVertical = false,
   });
 
   @override
@@ -147,6 +149,7 @@ class _ReactionInteractionState extends State<ReactionInteraction> {
       child: ReactionButton(
         count: widget.count,
         reactionType: widget.reactionType,
+        isVertical: widget.isVertical,
       ),
     );
   }
