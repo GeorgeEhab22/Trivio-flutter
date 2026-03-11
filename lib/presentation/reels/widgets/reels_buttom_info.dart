@@ -1,9 +1,17 @@
+import 'package:auth/domain/entities/post.dart';
 import 'package:auth/presentation/home/posts_in_timeline/widgets/follow_button.dart';
 import 'package:auth/presentation/home/widgets/exbandable_text.dart';
 import 'package:flutter/material.dart';
 
 class ReelsBottomInfo extends StatelessWidget {
-  const ReelsBottomInfo({super.key});
+  final Post reel; 
+  final String currentUserId; 
+
+  const ReelsBottomInfo({
+    super.key,
+    required this.reel,
+    required this.currentUserId,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -16,52 +24,48 @@ class ReelsBottomInfo extends StatelessWidget {
         children: [
           Row(
             children: [
-              const CircleAvatar(
+              CircleAvatar(
                 radius: 18,
                 backgroundColor: Colors.white24,
-                child: Icon(Icons.person, color: Colors.white, size: 20),
+                backgroundImage: reel.authorImage != null 
+                    ? NetworkImage(reel.authorImage!) 
+                    : null,
+                child: reel.authorImage == null 
+                    ? const Icon(Icons.person, color: Colors.white, size: 20) 
+                    : null,
               ),
               const SizedBox(width: 10),
 
-              const Text(
-                'user_name',
-                style: TextStyle(
+              Text(
+                reel.authorName ?? 'wait backend', 
+                style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
                   shadows: [
-                    Shadow(
-                      offset: Offset(0, 1),
-                      blurRadius: 2,
-                      color: Colors.black87,
-                    ),
+                    Shadow(offset: Offset(0, 1), blurRadius: 2, color: Colors.black87),
                   ],
                 ),
               ),
               const SizedBox(width: 15),
 
               FollowButton(
-                currentUserId: "1",
-                authorId: "2",
-                initialFollowStatus: false,
+                currentUserId: currentUserId,
+                authorId: reel.authorId,
+                initialFollowStatus: false, 
               ),
             ],
           ),
           const SizedBox(height: 12),
 
           ExpandableText(
-            text:
-                'This is a caption for the reel... #flutter #reels #ui_design',
+            text: reel.caption ?? '', 
             previewLines: 2,
             textStyle: const TextStyle(
               color: Colors.white,
               fontSize: 14,
               shadows: [
-                Shadow(
-                  offset: Offset(0, 1),
-                  blurRadius: 2,
-                  color: Colors.black87,
-                ),
+                Shadow(offset: Offset(0, 1), blurRadius: 2, color: Colors.black87),
               ],
             ),
           ),

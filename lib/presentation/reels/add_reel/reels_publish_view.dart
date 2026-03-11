@@ -1,9 +1,14 @@
 import 'dart:io';
+import 'package:auth/injection_container.dart' as di;
+import 'package:auth/presentation/authentication/widgets/show_custom_snackbar.dart';
+import 'package:auth/presentation/manager/post_cubit/create_post_cubit.dart';
 import 'package:auth/presentation/reels/add_reel/widgets/publish_controls_overlay.dart';
 import 'package:auth/presentation/reels/add_reel/widgets/reels_publish_view_app_bar.dart';
 import 'package:auth/presentation/reels/add_reel/widgets/video_preview.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:video_player/video_player.dart';
 
@@ -27,21 +32,39 @@ class _ReelsPublishViewState extends State<ReelsPublishView> {
   }
 
   Future<void> _initVideo() async {
-    _controller = kIsWeb
-        ? VideoPlayerController.networkUrl(Uri.parse(widget.videoFile.path))
-        : VideoPlayerController.file(File(widget.videoFile.path));
+    if (kIsWeb) {
+      _controller = VideoPlayerController.networkUrl(
+        Uri.parse(widget.videoFile.path),
+      );
+    } else {
+      _controller = VideoPlayerController.file(File(widget.videoFile.path));
+    }
 
-    await _controller.initialize();
-
+    _controller.setVolume(0);
     _controller.setLooping(false);
 
-    _controller.play();
+    _controller
+        .initialize()
+        .then((_) {
+          if (!mounted) return;
 
-    _controller.addListener(() {
-      if (mounted) setState(() {});
-    });
+          _controller.addListener(() {
+            if (mounted) setState(() {});
+          });
 
-    setState(() => _isInitialized = true);
+          setState(() {
+            _isInitialized = true;
+          });
+
+          _controller.play();
+
+          Future.delayed(
+            const Duration(seconds: 1),
+            () => _controller.setVolume(1.0),
+          );
+        })
+        .catchError((error) {
+        });
   }
 
   @override
@@ -53,25 +76,46 @@ class _ReelsPublishViewState extends State<ReelsPublishView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      resizeToAvoidBottomInset: false,
-      appBar: ReelsPublishViewAppBar(),
-      body: Stack(
-        children: [
-          if (_isInitialized)
-            VideoPreviewWidget(controller: _controller)
-          else
-            const Center(child: CircularProgressIndicator(color: Colors.white)),
-
-          if (_isInitialized)
-            PublishControlsOverlay(
-              controller: _controller,
-              captionController: _captionController,
+    return BlocProvider(
+      create: (context) => di.sl<CreatePostCubit>(),
+      child: BlocConsumer<CreatePostCubit, CreatePostState>(
+        listener: (context, state) {
+          if (state is CreatePostSuccess) {
+            context.pop();
+            showCustomSnackBar(context, "Reel shared successfully!", true);
+          } else if (state is CreatePostError) {
+            showCustomSnackBar(context, state.message, false);
+          }
+        },
+        builder: (context, state) {
+          return Scaffold(
+            backgroundColor: Colors.black,
+            resizeToAvoidBottomInset: false,
+            appBar: ReelsPublishViewAppBar(
+              videoFile: widget.videoFile,
+              caption: _captionController.text,
             ),
-        ],
+            body: Stack(
+              children: [
+                if (_isInitialized)
+                  VideoPreviewWidget(controller: _controller)
+                else
+                  const Center(
+                    child: CircularProgressIndicator(color: Colors.white),
+                  ),
+
+                if (_isInitialized)
+                  state is CreatePostLoading
+                      ? const Center(child: CircularProgressIndicator())
+                      : PublishControlsOverlay(
+                          controller: _controller,
+                          captionController: _captionController,
+                        ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }
 }
-
