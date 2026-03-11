@@ -30,7 +30,7 @@ class PostModel extends Post {
     super.reactionsCount = 0,
     super.userReaction = ReactionType.none,
     super.reactionCountsByType = const <ReactionType, int>{},
-    required super.createdAt, 
+    required super.createdAt,
   });
 
   factory PostModel.fromJson(Map<String, dynamic> json) {
@@ -79,9 +79,17 @@ class PostModel extends Post {
     //TODO: remove when backend is fixed to add mobile ip and change to your ip and un comment the above code
     final mediaList = (raw['media'] as List<dynamic>? ?? []).map((m) {
       String url = m as String;
-      if (url.contains('localhost')) {
-        return url.replaceAll('localhost', '192.168.1.5');
-      }
+
+      // if (url.contains('localhost') || url.contains('192.168.1.5')) {
+      //   if (url.toLowerCase().endsWith('.mp4') ||
+      //       url.toLowerCase().endsWith('.mov') ||
+      //       url.toLowerCase().endsWith('.webm')) {
+      //     return 'https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4';
+      //   }
+
+      //   return url.replaceAll('localhost', '192.168.1.5');
+      // }
+
       return url;
     }).toList();
 
@@ -182,7 +190,7 @@ class PostModel extends Post {
       'groupName': groupName,
       'groupCoverImage': groupCoverImage,
       'commentsCount': commentsCount,
-      'createdAt': createdAt.toIso8601String(), 
+      'createdAt': createdAt.toIso8601String(),
     };
   }
 
@@ -206,7 +214,7 @@ class PostModel extends Post {
       reactionCountsByType: JsonParser.mapReactionCounts(
         toJson()['reactionCounts'],
       ),
-      createdAt: createdAt, 
+      createdAt: createdAt,
     );
   }
 

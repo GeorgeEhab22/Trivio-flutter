@@ -8,19 +8,27 @@ import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
 import 'package:auth/presentation/reels/buttons/reels_comment_button.dart';
 import 'package:auth/presentation/reels/buttons/reels_more_button.dart';
 import 'package:auth/presentation/reels/buttons/reels_reaction_button.dart';
-import 'package:auth/presentation/reels/buttons/reels_save_button.dart';
 import 'package:auth/presentation/reels/buttons/reels_share_button.dart';
-import 'package:auth/presentation/reels/widgets/reels_app_bar.dart';
 import 'package:auth/presentation/reels/widgets/reels_buttom_info.dart';
-import 'package:auth/presentation/reels/widgets/video_player_widget.dart';
+import 'package:auth/presentation/reels/video_play/video_player_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:cached_video_player_plus/cached_video_player_plus.dart';
+import 'package:video_player/video_player.dart';
 
 class ReelItem extends StatefulWidget {
   final Post reel;
   final String currentUserId;
+  final CachedVideoPlayerPlus? cachedPlayer;
+  final int index;
 
-  const ReelItem({super.key, required this.reel, required this.currentUserId});
+  const ReelItem({
+    super.key,
+    required this.reel,
+    required this.currentUserId,
+    this.cachedPlayer,
+    required this.index,
+  });
 
   @override
   State<ReelItem> createState() => _ReelItemState();
@@ -30,21 +38,7 @@ class _ReelItemState extends State<ReelItem> {
   bool _isCommentsOpen = false;
 
   void _toggleComments() {
-    setState(() {
-      _isCommentsOpen = !_isCommentsOpen;
-    });
-  }
-
-  Widget _buildBottomGradient() {
-    return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Colors.transparent, Colors.black54, Colors.black87],
-          begin: Alignment.center,
-          end: Alignment.bottomCenter,
-        ),
-      ),
-    );
+    setState(() => _isCommentsOpen = !_isCommentsOpen);
   }
 
   @override
@@ -69,7 +63,10 @@ class _ReelItemState extends State<ReelItem> {
             child: Stack(
               fit: StackFit.expand,
               children: [
-                VideoPlayerWidget(url: widget.reel.media!.first),
+                VideoPlayerWidget(
+                  url: widget.reel.media!.first,
+                  cachedPlayer: widget.cachedPlayer,
+                ),
                 AnimatedOpacity(
                   opacity: _isCommentsOpen ? 0.0 : 1.0,
                   duration: const Duration(milliseconds: 200),
@@ -78,14 +75,28 @@ class _ReelItemState extends State<ReelItem> {
                     child: Stack(
                       fit: StackFit.expand,
                       children: [
-                        IgnorePointer(child: _buildBottomGradient()),
+                        IgnorePointer(
+                          child: Container(
+                            decoration: const BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  Colors.transparent,
+                                  Colors.black54,
+                                  Colors.black87,
+                                ],
+                                begin: Alignment.center,
+                                end: Alignment.bottomCenter,
+                              ),
+                            ),
+                          ),
+                        ),
                         ReelsBottomInfo(
                           reel: widget.reel,
                           currentUserId: widget.currentUserId,
                         ),
                         Positioned(
                           right: 16,
-                          bottom: 20,
+                          bottom: 50,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
@@ -93,32 +104,51 @@ class _ReelItemState extends State<ReelItem> {
                                 reel: widget.reel,
                                 currentUserId: widget.currentUserId,
                               ),
-                              const SizedBox(height: 16),
+                              const SizedBox(height: 6),
                               ReelsCommentButton(
                                 reel: widget.reel,
                                 currentUserId: widget.currentUserId,
                                 onToggleComments: _toggleComments,
                               ),
-                              const SizedBox(height: 16),
+                              const SizedBox(height: 6),
                               const ReelsShareButton(count: 0),
-                              const SizedBox(height: 16),
+                              const SizedBox(height: 6),
                               SendPostButton(
                                 postId: widget.reel.postID,
                                 iconColor: Colors.white,
-                                compact: true,
+                                compact: false,
                               ),
-                              const SizedBox(height: 16),
-                              const ReelsSaveButton(),
-                              const SizedBox(height: 16),
-                              ReelsMoreButton(onTap: () {}),
+                              const SizedBox(height: 14),
+                              ReelsMoreButton(
+                                reel: widget.reel,
+                                currentUserId: widget.currentUserId,
+                              ),
                             ],
                           ),
                         ),
-                        const ReelsAppBar(),
                       ],
                     ),
                   ),
                 ),
+
+                if (widget.cachedPlayer != null &&
+                    widget.cachedPlayer!.isInitialized &&
+                    !_isCommentsOpen)
+                  Positioned(
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    child: VideoProgressIndicator(
+                      widget.cachedPlayer!.controller,
+                      allowScrubbing: true,
+                      padding: const EdgeInsets.symmetric(vertical: 2),
+                      colors: const VideoProgressColors(
+                        playedColor: Colors.white,
+                        bufferedColor: Colors.transparent,
+                        backgroundColor: Colors.transparent,
+                      ),
+                    ),
+                  ),
               ],
             ),
           ),
