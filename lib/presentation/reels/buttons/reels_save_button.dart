@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ReelsSaveButton extends StatelessWidget {
-  final String count;
-  final VoidCallback onTap;
-
-  const ReelsSaveButton({super.key, required this.count, required this.onTap});
+  const ReelsSaveButton({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -13,30 +10,14 @@ class ReelsSaveButton extends StatelessWidget {
       child: Column(
         children: [
           IconButton(
-            onPressed: onTap,
+            onPressed: () {},
             icon: const Icon(
               Icons.bookmark_border,
               color: Colors.white,
-              size: 32,
+              size: 28,
             ),
             padding: EdgeInsets.zero,
             constraints: const BoxConstraints(),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            count,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-              shadows: [
-                Shadow(
-                  offset: Offset(0, 1),
-                  blurRadius: 2.0,
-                  color: Colors.black54,
-                ),
-              ],
-            ),
           ),
         ],
       ),

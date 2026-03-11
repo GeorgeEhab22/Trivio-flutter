@@ -1,6 +1,7 @@
 import 'package:auth/injection_container.dart' as di;
 import 'package:auth/domain/entities/post.dart';
 import 'package:auth/presentation/home/comments/comments_view.dart';
+import 'package:auth/presentation/home/share_post/send_post_button.dart';
 import 'package:auth/presentation/manager/comment_cubit/comment_cubit.dart';
 import 'package:auth/presentation/manager/comment_cubit/comment_state.dart';
 import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
@@ -99,9 +100,15 @@ class _ReelItemState extends State<ReelItem> {
                                 onToggleComments: _toggleComments,
                               ),
                               const SizedBox(height: 16),
-                              ReelsShareButton(count: 'Share', onTap: () {}),
+                              const ReelsShareButton(count: 0),
                               const SizedBox(height: 16),
-                              ReelsSaveButton(count: 'Save', onTap: () {}),
+                              SendPostButton(
+                                postId: widget.reel.postID,
+                                iconColor: Colors.white,
+                                compact: true,
+                              ),
+                              const SizedBox(height: 16),
+                              const ReelsSaveButton(),
                               const SizedBox(height: 16),
                               ReelsMoreButton(onTap: () {}),
                             ],
@@ -117,7 +124,6 @@ class _ReelItemState extends State<ReelItem> {
           ),
         ),
 
-        
         AnimatedPositioned(
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeOutCubic,
@@ -131,11 +137,12 @@ class _ReelItemState extends State<ReelItem> {
               create: (context) => di.sl<CommentCubit>(),
               child: BlocListener<CommentCubit, CommentState>(
                 listener: (context, state) {
-                  if (state is CommentActionSuccess && state.commentsDelta != 0) {
+                  if (state is CommentActionSuccess &&
+                      state.commentsDelta != 0) {
                     context.read<PostCubit>().incrementCommentsCount(
-                          widget.reel.postID,
-                          by: state.commentsDelta,
-                        );
+                      widget.reel.postID,
+                      by: state.commentsDelta,
+                    );
                   }
                 },
                 child: CommentsView(
@@ -147,7 +154,7 @@ class _ReelItemState extends State<ReelItem> {
             ),
           ),
         ),
-        
+
         if (_isCommentsOpen)
           Positioned(
             top: 0,
