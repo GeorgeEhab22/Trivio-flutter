@@ -51,7 +51,8 @@ import 'package:auth/presentation/manager/profile_cubit/profile_liked_posts_cubi
 import 'package:auth/presentation/manager/profile_cubit/profile_social_info_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_state.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_update_cubit.dart';
-import 'package:auth/presentation/reels/reels_page.dart';
+import 'package:auth/presentation/reels/add_reel/reels_publish_view.dart';
+import 'package:auth/presentation/reels/reels_view.dart';
 import 'package:auth/presentation/settings/settings_view.dart';
 import 'package:auth/presentation/settings/theme_view.dart';
 import 'package:auth/presentation/user/change_password_screen.dart';
@@ -77,6 +78,7 @@ import 'package:auth/domain/usecases/sign_in/request_otp.dart';
 import 'package:auth/core/app_routes.dart';
 import 'package:auth/core/auth_shell.dart';
 import 'package:auth/injection_container.dart' as di;
+import 'package:image_picker/image_picker.dart';
 
 int previousTabIndex = 0;
 final GlobalKey<NavigatorState> _interestsShellKey = GlobalKey<NavigatorState>(
@@ -112,8 +114,8 @@ CustomTransitionPage buildAnimatedPage({
 GoRouter createRouter(bool isLoggedIn) {
   return GoRouter(
     // initialLocation: AppRoutes.selectTeams,
-    // initialLocation: isLoggedIn ? AppRoutes.home : AppRoutes.signIn,
-    initialLocation: AppRoutes.signIn,
+    initialLocation: isLoggedIn ? AppRoutes.reels : AppRoutes.signIn,
+    // initialLocation: AppRoutes.signIn,
     routes: [
       GoRoute(
         path: AppRoutes.signIn,
@@ -252,7 +254,16 @@ GoRouter createRouter(bool isLoggedIn) {
                   GoRoute(
                     path: 'reels',
                     pageBuilder: (context, state) =>
-                        NoTransitionPage(child: const ReelsPage()),
+                        const NoTransitionPage(child: ReelsView()),
+                    routes: [
+                      GoRoute(
+                        path: 'publish',
+                        builder: (context, state) {
+                          final videoFile = state.extra as XFile;
+                          return ReelsPublishView(videoFile: videoFile);
+                        },
+                      ),
+                    ],
                   ),
                 ],
               ),
