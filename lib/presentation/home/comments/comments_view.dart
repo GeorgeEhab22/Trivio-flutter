@@ -20,6 +20,7 @@ class CommentsView extends StatefulWidget {
   final int sharesCount;
   final int reactionsCount;
   final List<ReactionType> topReactions;
+  final bool isReelView;
 
   const CommentsView({
     super.key,
@@ -28,6 +29,7 @@ class CommentsView extends StatefulWidget {
     this.sharesCount = 0,
     this.reactionsCount = 0,
     this.topReactions = const <ReactionType>[],
+    this.isReelView = false,
   });
 
   @override
@@ -124,7 +126,9 @@ class _CommentsViewState extends State<CommentsView> {
     final hasReactions = widget.reactionsCount > 0;
 
     return Container(
-      height: MediaQuery.of(context).size.height * 0.95,
+      height:
+          MediaQuery.of(context).size.height *
+          (widget.isReelView ? 0.65 : 0.95),
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
         boxShadow: [

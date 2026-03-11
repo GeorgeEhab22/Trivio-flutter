@@ -1,14 +1,7 @@
 import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_state.dart';
-import 'package:auth/presentation/reels/widgets/reels_app_bar.dart';
-import 'package:auth/presentation/reels/buttons/reels_comment_button.dart';
-import 'package:auth/presentation/reels/buttons/reels_more_button.dart';
-import 'package:auth/presentation/reels/buttons/reels_reaction_button.dart';
-import 'package:auth/presentation/reels/buttons/reels_save_button.dart';
-import 'package:auth/presentation/reels/buttons/reels_share_button.dart';
-import 'package:auth/presentation/reels/widgets/reels_buttom_info.dart';
-import 'package:auth/presentation/reels/widgets/video_player_widget.dart';
+import 'package:auth/presentation/reels/widgets/reel_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -50,7 +43,7 @@ class ReelsView extends StatelessWidget {
               itemCount: reels.length,
               itemBuilder: (context, index) {
                 //TODO : using this filter of posts and access reels from posts untill the endponit finished
-                final reels = state.posts.where((p) {
+                final reelsFiltered = state.posts.where((p) {
                   if (p.media == null || p.media!.isEmpty) return false;
 
                   final String firstMedia = p.media!.first.toLowerCase();
@@ -59,46 +52,11 @@ class ReelsView extends StatelessWidget {
                       firstMedia.endsWith('.webm');
                 }).toList();
 
-                final reel = reels[index];
-                return Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    VideoPlayerWidget(url: reel.media!.first),
+                if (index >= reelsFiltered.length) return const SizedBox();
 
-                    IgnorePointer(child: _buildBottomGradient()),
+                final reel = reelsFiltered[index];
 
-                    ReelsBottomInfo(reel: reel, currentUserId: currentUserId),
-
-                    Positioned(
-                      right: 16,
-                      bottom: 20,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          ReelsReactionButton(
-                            reel: reel,
-                            currentUserId: currentUserId,
-                          ),
-                          const SizedBox(height: 16),
-                          ReelsCommentButton(
-                            count: reel.commentsCount.toString(),
-                            onTap: () {
-                              //TODO : ADD Comments sheeet
-                            },
-                          ),
-                          const SizedBox(height: 16),
-                          ReelsShareButton(count: 'Share', onTap: () {}),
-                          const SizedBox(height: 16),
-                          ReelsSaveButton(count: 'Save', onTap: () {}),
-                          const SizedBox(height: 16),
-                          ReelsMoreButton(onTap: () {}),
-                        ],
-                      ),
-                    ),
-
-                    const ReelsAppBar(),
-                  ],
-                );
+                return ReelItem(reel: reel, currentUserId: currentUserId);
               },
             );
           } else if (state is PostError) {
@@ -111,18 +69,6 @@ class ReelsView extends StatelessWidget {
           }
           return const SizedBox();
         },
-      ),
-    );
-  }
-
-  Widget _buildBottomGradient() {
-    return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Colors.transparent, Colors.black54, Colors.black87],
-          begin: Alignment.center,
-          end: Alignment.bottomCenter,
-        ),
       ),
     );
   }

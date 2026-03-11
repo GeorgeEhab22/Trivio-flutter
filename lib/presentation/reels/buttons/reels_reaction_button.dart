@@ -57,16 +57,13 @@ class ReelsReactionButton extends StatelessWidget {
       resolvedCount = 1;
     }
 
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16.0),
-      child: ReactionAction(
-        postId: reel.postID,
-        currentUserId: currentUserId,
-        initialReaction: resolvedReaction,
-        initialCount: resolvedCount,
-        initialReactionId: _resolveCurrentUserReactionId(),
-        isVertical: true,
-      ),
+    return ReactionAction(
+      postId: reel.postID,
+      currentUserId: currentUserId,
+      initialReaction: resolvedReaction,
+      initialCount: resolvedCount,
+      initialReactionId: _resolveCurrentUserReactionId(),
+      isVertical: true,
     );
   }
 }
