@@ -13,7 +13,7 @@ import 'package:go_router/go_router.dart';
 class UserProfileView extends StatelessWidget {
   UserProfileView({super.key});
 
-  final ValueNotifier<bool> followNotifier = ValueNotifier(false);
+  //final ValueNotifier<bool> followNotifier = ValueNotifier(false);
 
   @override
   Widget build(BuildContext context) {
@@ -84,7 +84,7 @@ class UserProfileView extends StatelessWidget {
                     ],
                   ),
                 ),
-                // Your posts grid logic will follow here
+                // TODO: Replace with actual posts list
               ],
             );
           } 

@@ -88,7 +88,9 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       final Map<String, dynamic> data = {};
       
       if (username != null && username.isNotEmpty) data["username"] = username;
-      if (bio != null) data["bio"] = bio;
+      if (bio != null && bio.trim().isNotEmpty) {
+        data["bio"] = bio;
+      }
       
       // ONLY add the avatar if a NEW file was actually picked
       if (avatarFile != null) {
@@ -103,7 +105,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
         ApiEndpoints.updateProfile, 
         data: FormData.fromMap(data),
       );
-      
+      //print("Server Response Data: ${response['data']['user']}");
       return UserProfileModel.fromJson(response['data']['user']);
     } catch (e) {
     //  if (e is DioException) {

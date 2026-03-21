@@ -69,24 +69,26 @@ class EditProfileScreen extends StatelessWidget {
                     },
                     child: Stack(
                       children: [
-                        CircleAvatar(
-                          radius: 60,
-                          backgroundColor: AppColors.lightGrey,
-                          // Logic: New Local Image > Original Image > Null
-                          backgroundImage: localImage != null
-                              ? FileImage(localImage)
-                              : (originalAvatar
-                                    .isNotEmpty) // This check is crucial
-                              ? _getProfileImage(originalAvatar)
-                              : null,
-                          child: (localImage == null && originalAvatar.isEmpty)
-                              ? const Icon(
-                                  Icons.person,
-                                  size: 60,
-                                  color: Colors.grey,
-                                )
-                              : null,
-                        ),
+                        Container(
+        width: 120,
+        height: 120,
+        decoration: const BoxDecoration(
+          shape: BoxShape.circle,
+          color: AppColors.lightGrey, // This is your "Gray" background
+        ),
+        child: ClipOval(
+          child: _buildAvatarContent(localImage, originalAvatar),
+        ),
+      ),
+      Positioned(
+        bottom: 0,
+        right: 0,
+        child: CircleAvatar(
+          radius: 18,
+          backgroundColor: AppColors.primary,
+          child: const Icon(Icons.camera_alt, color: Colors.white, size: 18),
+        ),
+      ),
                         Positioned(
                           bottom: 0,
                           right: 0,
@@ -128,6 +130,7 @@ class EditProfileScreen extends StatelessWidget {
                     initialValue: bio,
                     cursorColor: AppColors.primary,
                     maxLines: 3,
+                    maxLength: 120,
                     decoration: _buildInputDecoration(
                       l10n.bioLabel,
                       Icons.description_outlined,
@@ -193,11 +196,43 @@ class EditProfileScreen extends StatelessWidget {
     );
   }
 
-  ImageProvider _getProfileImage(String path) {
-  if (path.isEmpty) return const AssetImage('assets/images/default_avatar.png'); // Fallback
-  if (path.startsWith('http')) {
-    return NetworkImage(path);
+  Widget _buildAvatarContent(File? localImage, String originalAvatar) {
+  // 1. Show newly picked local image immediately
+  if (localImage != null) {
+    return Image.file(
+      localImage,
+      fit: BoxFit.cover,
+      width: 120,
+      height: 120,
+    );
   }
-  return FileImage(File(path));
+
+  // 2. Show network image if URL exists
+  if (originalAvatar.isNotEmpty && originalAvatar.startsWith('http')) {
+    return Image.network(
+      originalAvatar,
+      fit: BoxFit.cover,
+      width: 120,
+      height: 120,
+      // If the URL is broken or 404s, show the icon
+      errorBuilder: (context, error, stackTrace) => const Icon(
+        Icons.person,
+        size: 60,
+        color: Colors.grey,
+      ),
+      // Optional: Show a tiny spinner while it's downloading
+      loadingBuilder: (context, child, loadingProgress) {
+        if (loadingProgress == null) return child;
+        return const Center(child: CircularProgressIndicator(strokeWidth: 2));
+      },
+    );
+  }
+
+  // 3. Fallback for empty/invalid URLs
+  return const Icon(
+    Icons.person,
+    size: 60,
+    color: Colors.grey,
+  );
 }
 }
