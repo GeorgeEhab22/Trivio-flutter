@@ -1,7 +1,8 @@
-import 'dart:io';
 import 'package:auth/common/api_endpoints.dart';
 import 'package:auth/common/functions/handle_dio_error.dart';
 import 'package:auth/data/core/error/exceptions.dart';
+import 'package:flutter/foundation.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:auth/domain/entities/post.dart';
 import 'package:auth/domain/entities/user_profile_preview.dart';
@@ -14,7 +15,7 @@ abstract class ProfileRemoteDataSource {
   Future<UserProfileModel> updateProfile({
     String? username,
     String? bio,
-    File? avatarFile,
+    XFile? avatarFile,
   });
   Future<void> changePassword(String currentPassword, String newPassword);
   Future<List<UserProfilePreview>> getSuggestions();
@@ -81,7 +82,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   Future<UserProfileModel> updateProfile({
     String? username,
     String? bio,
-    File? avatarFile,
+    XFile? avatarFile,
   }) async {
     try {
       // Create a plain Map first
@@ -93,11 +94,19 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       }
       
       // ONLY add the avatar if a NEW file was actually picked
-      if (avatarFile != null) {
-        data["avatar"] = await MultipartFile.fromFile(
-          avatarFile.path,
-          filename: avatarFile.path.split('/').last,
-        );
+    if (avatarFile != null) {
+        if (kIsWeb) {
+          final bytes = await avatarFile.readAsBytes();
+          data["avatar"] = MultipartFile.fromBytes(
+            bytes,
+            filename: 'profile_image.jpg', 
+          );
+        } else {
+          data["avatar"] = await MultipartFile.fromFile(
+            avatarFile.path,
+            filename: avatarFile.path.split('/').last, 
+          );
+        }
       }
 
       //print("🚀 URL: ${api.baseUrl}${ApiEndpoints.updateProfile}");

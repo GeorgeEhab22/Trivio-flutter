@@ -1,5 +1,5 @@
-import 'dart:io';
 import 'package:equatable/equatable.dart';
+import 'package:image_picker/image_picker.dart';
 
 abstract class ProfileUpdateState extends Equatable {
   const ProfileUpdateState();
@@ -11,7 +11,7 @@ abstract class ProfileUpdateState extends Equatable {
 class ProfileUpdateInitialState extends ProfileUpdateState {
   final String name;
   final String bio;
-  final File? image;
+  final XFile? image;
   final String originalAvatar;
 
   const ProfileUpdateInitialState({
@@ -24,7 +24,7 @@ class ProfileUpdateInitialState extends ProfileUpdateState {
   ProfileUpdateInitialState copyWith({
     String? name,
     String? bio,
-    File? image,
+    XFile? image,
     String? originalAvatar,
   }) {
     return ProfileUpdateInitialState(

@@ -26,7 +26,7 @@ class ReelsMoreButton extends StatelessWidget {
 
           showModalBottomSheet(
             context: context,
-            backgroundColor: Colors.transparent,
+            backgroundColor: const Color(0xFF18191a),
             useRootNavigator: true,
             builder: (ctx) => Theme(
               data: ThemeData.dark(),

@@ -1,7 +1,6 @@
 import 'package:auth/injection_container.dart' as di;
 import 'package:auth/domain/entities/post.dart';
 import 'package:auth/presentation/home/comments/comments_view.dart';
-import 'package:auth/presentation/home/share_post/send_post_button.dart';
 import 'package:auth/presentation/manager/comment_cubit/comment_cubit.dart';
 import 'package:auth/presentation/manager/comment_cubit/comment_state.dart';
 import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
@@ -36,6 +35,7 @@ class ReelItem extends StatefulWidget {
 
 class _ReelItemState extends State<ReelItem> {
   bool _isCommentsOpen = false;
+  bool _isSpeedingUp = false; 
 
   void _toggleComments() {
     setState(() => _isCommentsOpen = !_isCommentsOpen);
@@ -66,12 +66,20 @@ class _ReelItemState extends State<ReelItem> {
                 VideoPlayerWidget(
                   url: widget.reel.media!.first,
                   cachedPlayer: widget.cachedPlayer,
+                  onSpeedUpChanged: (isSpeedingUp) {
+                    if (mounted) {
+                      setState(() {
+                        _isSpeedingUp = isSpeedingUp;
+                      });
+                    }
+                  },
                 ),
+                
                 AnimatedOpacity(
-                  opacity: _isCommentsOpen ? 0.0 : 1.0,
+                  opacity: (_isCommentsOpen || _isSpeedingUp) ? 0.0 : 1.0,
                   duration: const Duration(milliseconds: 200),
                   child: IgnorePointer(
-                    ignoring: _isCommentsOpen,
+                    ignoring: _isCommentsOpen || _isSpeedingUp,
                     child: Stack(
                       fit: StackFit.expand,
                       children: [
@@ -90,10 +98,12 @@ class _ReelItemState extends State<ReelItem> {
                             ),
                           ),
                         ),
+                        
                         ReelsBottomInfo(
                           reel: widget.reel,
                           currentUserId: widget.currentUserId,
                         ),
+                        
                         Positioned(
                           right: 16,
                           bottom: 50,
@@ -113,12 +123,7 @@ class _ReelItemState extends State<ReelItem> {
                               const SizedBox(height: 6),
                               const ReelsShareButton(count: 0),
                               const SizedBox(height: 6),
-                              SendPostButton(
-                                postId: widget.reel.postID,
-                                iconColor: Colors.white,
-                                compact: false,
-                              ),
-                              const SizedBox(height: 14),
+                              
                               ReelsMoreButton(
                                 reel: widget.reel,
                                 currentUserId: widget.currentUserId,
@@ -126,6 +131,7 @@ class _ReelItemState extends State<ReelItem> {
                             ],
                           ),
                         ),
+                      
                       ],
                     ),
                   ),

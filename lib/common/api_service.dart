@@ -4,7 +4,7 @@ class ApiService {
   final String baseUrl;
   final Dio _dio;
   final Future<String?> Function()? getToken;
-
+  Dio get dio => _dio;
   ApiService({required this.baseUrl, Dio? dio, this.getToken})
       : _dio = dio ??
             Dio(BaseOptions(

@@ -20,9 +20,9 @@ class GroupModel extends Group {
   // and change to your ip
   
     String? logoUrl = data['logo'] as String?;
-    if (logoUrl != null && logoUrl.contains('localhost')) {
-      logoUrl = logoUrl.replaceAll('localhost', '192.168.1.5');
-    }
+    // if (logoUrl != null && logoUrl.contains('localhost')) {
+    //   logoUrl = logoUrl.replaceAll('localhost', '192.168.1.28');
+    // }
   /////////////////////////////////////////////////
     return GroupModel(
       groupId: data['_id'] as String,

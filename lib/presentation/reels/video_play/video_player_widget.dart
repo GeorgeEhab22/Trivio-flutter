@@ -10,8 +10,14 @@ import 'package:visibility_detector/visibility_detector.dart';
 class VideoPlayerWidget extends StatefulWidget {
   final String url;
   final CachedVideoPlayerPlus? cachedPlayer;
+  final ValueChanged<bool>? onSpeedUpChanged; 
 
-  const VideoPlayerWidget({super.key, required this.url, this.cachedPlayer});
+  const VideoPlayerWidget({
+    super.key, 
+    required this.url, 
+    this.cachedPlayer,
+    this.onSpeedUpChanged,
+  });
 
   @override
   State<VideoPlayerWidget> createState() => _VideoPlayerWidgetState();
@@ -100,6 +106,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
     if (player != null && player.controller.value.isPlaying) {
       player.controller.setPlaybackSpeed(2.0);
       setState(() => _isSpeedingUp = true);
+      widget.onSpeedUpChanged?.call(true); 
     }
   }
 
@@ -108,6 +115,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
     if (player != null) {
       player.controller.setPlaybackSpeed(1.0);
       setState(() => _isSpeedingUp = false);
+      widget.onSpeedUpChanged?.call(false); 
     }
   }
 
@@ -159,6 +167,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                 ),
               ),
               VideoPlayPauseIcon(isPlaying: player.controller.value.isPlaying),
+              
               if (_isSpeedingUp)
                 Positioned(
                   bottom: 24, 
@@ -167,11 +176,13 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                     child: VideoTimerAndSpeedOverlay(controller: player.controller),
                   ),
                 ),
-              Positioned(
-                bottom: 24, 
-                right: 16,
-                child: VideoMuteButton(isMuted: _isMuted, onTap: _toggleMute),
-              ),
+              
+              if (!_isSpeedingUp)
+                Positioned(
+                  bottom: 20, 
+                  right: 16,
+                  child: VideoMuteButton(isMuted: _isMuted, onTap: _toggleMute),
+                ),
             ],
           ],
         ),

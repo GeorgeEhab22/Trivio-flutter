@@ -1,7 +1,10 @@
 import 'package:auth/domain/entities/post.dart';
 import 'package:auth/presentation/home/posts_in_timeline/widgets/follow_button.dart';
 import 'package:auth/presentation/home/widgets/exbandable_text.dart';
+import 'package:auth/presentation/manager/profile_cubit/profile_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/profile_state.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ReelsBottomInfo extends StatelessWidget {
   final Post reel;
@@ -15,6 +18,16 @@ class ReelsBottomInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+      String authorName = reel.authorName ??"Not Me";
+    String? authorImage;
+
+    final profileState = context.read<ProfileCubit>().state;
+
+    if (profileState is ProfileLoaded &&
+        reel.authorId == profileState.user.id) {
+      authorName = profileState.user.name;
+      authorImage = profileState.user.avatar;
+    }
     return Positioned(
       left: 16,
       bottom: 20,
@@ -27,8 +40,8 @@ class ReelsBottomInfo extends StatelessWidget {
               CircleAvatar(
                 radius: 18,
                 backgroundColor: Colors.white24,
-                backgroundImage: reel.authorImage != null
-                    ? NetworkImage(reel.authorImage!)
+                backgroundImage:authorImage != null
+                    ? NetworkImage(authorImage)
                     : null,
                 child: reel.authorImage == null
                     ? const Icon(Icons.person, color: Colors.white, size: 20)
@@ -37,7 +50,7 @@ class ReelsBottomInfo extends StatelessWidget {
               const SizedBox(width: 10),
 
               Text(
-                reel.authorName ?? 'wait backend',
+                authorName,
                 style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,

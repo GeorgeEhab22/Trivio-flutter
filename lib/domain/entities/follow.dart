@@ -23,21 +23,23 @@ class UserReference {
   UserReference._({required this.id, this.preview});
 
   factory UserReference.fromJson(dynamic json) {
-    if (json is String) {
-      return UserReference._(id: json);
-    } else if (json is Map<String, dynamic>) {
-      return UserReference._(
-        id: json['_id'],
-        preview: UserProfilePreview(
-          id: json['_id'],
-          name: json['name'],
-          avatarUrl: json['avatar'],
-        ),
-      );
-    } else {
-      throw Exception('Invalid user reference: $json');
-    }
+  if (json == null) return UserReference._(id: ''); 
+
+  if (json is String) {
+    return UserReference._(id: json);
+  } else if (json is Map) { 
+    return UserReference._(
+      id: (json['_id'] ?? json['id'] ?? '').toString(),
+      preview: UserProfilePreview(
+        id: (json['_id'] ?? json['id'] ?? '').toString(),
+        name: (json['username'] ?? json['name'] ?? 'Unknown').toString(),
+        avatarUrl: json['avatar'] ?? json['profilePicture'],
+      ),
+    );
+  } else {
+    return UserReference._(id: json.toString());
   }
+}
 
   dynamic toJson() {
     return preview != null

@@ -16,6 +16,8 @@ class PostModel extends Post {
     required this.reactionCounts,
     required super.media,
     required super.authorId,
+    required super.authorName,
+    required super.authorImage,
     required super.type,
     super.caption,
     super.location,
@@ -57,7 +59,23 @@ class PostModel extends Post {
     //TODO : remove when backend is fixed to add mobile ip
     // and change to your ip
     if (gCover != null && gCover.contains('localhost')) {
-      gCover = gCover.replaceAll('localhost', '192.168.1.5');
+      gCover = gCover.replaceAll('localhost', '192.168.1.28');
+    }
+    final dynamic authorData = raw['authorID'] ?? raw['authorId'];
+    String aId = '';
+    String? aName;
+    String? aImage;
+
+    if (authorData is String) {
+      aId = authorData;
+    } else if (authorData is Map<String, dynamic>) {
+      aId = authorData['_id'] ?? '';
+      aName = authorData['username'] ?? authorData['name'];
+      aImage = authorData['avatar'] ?? authorData['profilePicture'];
+
+      if (aImage != null && aImage.contains('localhost')) {
+        aImage = aImage.replaceAll('localhost', '192.168.1.28');
+      }
     }
 
     final userReaction = JsonParser.parseReactionType(
@@ -96,7 +114,9 @@ class PostModel extends Post {
     return PostModel(
       postID: JsonParser.parseString(raw['_id']),
       updateCount: JsonParser.parseInt(raw['__v']),
-      authorId: JsonParser.parseString(raw['authorID'] ?? raw['authorId']),
+      authorId: aId,
+      authorName: aName,
+      authorImage: aImage,
       type: JsonParser.parseString(raw['type'], fallback: 'public'),
       caption: JsonParser.parseString(raw['caption']),
       location: JsonParser.parseString(raw['location']),
@@ -197,6 +217,8 @@ class PostModel extends Post {
   Post toEntity() {
     return Post(
       authorId: authorId,
+      authorName: authorName,
+      authorImage: authorImage,
       type: type,
       caption: caption,
       mentions: mentions,
@@ -223,6 +245,8 @@ class PostModel extends Post {
       postID: post.postID,
       updateCount: 0,
       authorId: post.authorId,
+      authorName: post.authorName,
+      authorImage: post.authorImage,
       type: post.type,
       caption: post.caption,
       mentions: post.mentions,
