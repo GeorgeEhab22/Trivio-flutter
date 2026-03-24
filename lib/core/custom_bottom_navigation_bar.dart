@@ -30,7 +30,8 @@ class _GlassmorphismNavState extends State<GlassmorphismNav>
   void initState() {
     super.initState();
 
-    _routeForIndex = widget.routeForIndex ??
+    _routeForIndex =
+        widget.routeForIndex ??
         {
           0: '/app/home',
           1: '/app/reels',
@@ -74,6 +75,8 @@ class _GlassmorphismNavState extends State<GlassmorphismNav>
   @override
   Widget build(BuildContext context) {
     final isReel = widget.currentIndex == 1;
+    final isChatbot = widget.currentIndex == 2;
+
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     // Define colors based on theme
@@ -90,10 +93,7 @@ class _GlassmorphismNavState extends State<GlassmorphismNav>
             Colors.white.withOpacity(0.05), // Very subtle gradient in dark
             Colors.white.withOpacity(0.02),
           ]
-        : [
-            Colors.white.withOpacity(0.25),
-            Colors.white.withOpacity(0.05),
-          ];
+        : [Colors.white.withOpacity(0.25), Colors.white.withOpacity(0.05)];
 
     final shadowColor = isDarkMode
         ? Colors.black.withOpacity(0.4) // Stronger shadow in dark mode
@@ -105,7 +105,7 @@ class _GlassmorphismNavState extends State<GlassmorphismNav>
       margin: const EdgeInsets.all(20),
       height: 70,
       decoration: BoxDecoration(
-        color: isReel ? const Color(0xFF18191a) : backgroundColor,
+        color: isReel || isChatbot ? const Color(0xFF18191a) : backgroundColor,
         borderRadius: BorderRadius.circular(35),
         border: Border.all(color: borderColor, width: 1.5),
         boxShadow: [
@@ -206,16 +206,3 @@ class _GlassmorphismNavState extends State<GlassmorphismNav>
   }
 }
 
-class ChatBotPage extends StatelessWidget {
-  const ChatBotPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: Theme.of(context).scaffoldBackgroundColor,
-      child: const Center(
-        child: Text("🤖 ChatBot Page", style: TextStyle(fontSize: 24)),
-      ),
-    );
-  }
-}

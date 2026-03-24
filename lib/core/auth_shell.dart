@@ -8,16 +8,14 @@ import 'package:auth/core/custom_bottom_navigation_bar.dart';
 class AuthShell extends StatelessWidget {
   // Either a child (for ShellRoute) OR a navigationShell (for StatefulShellRoute.indexedStack)
   final Widget? child;
-  final dynamic navigationShell; // dynamic to avoid version/type issues with go_router internals
+  final dynamic
+  navigationShell; // dynamic to avoid version/type issues with go_router internals
 
-  const AuthShell({
-    this.child,
-    this.navigationShell,
-    super.key,
-  }) : assert(
-          child != null || navigationShell != null,
-          'Either child or navigationShell must be provided',
-        );
+  const AuthShell({this.child, this.navigationShell, super.key})
+    : assert(
+        child != null || navigationShell != null,
+        'Either child or navigationShell must be provided',
+      );
 
   // Canonical index <-> route
   static const Map<int, String> indexToRoute = {
@@ -87,56 +85,60 @@ class AuthShell extends StatelessWidget {
       try {
         currentIndex = navigationShell.currentIndex as int;
       } catch (_) {
-        currentIndex =
-            locationToIndex(GoRouterState.of(context).uri.toString());
+        currentIndex = locationToIndex(
+          GoRouterState.of(context).uri.toString(),
+        );
       }
     } else {
       currentIndex = locationToIndex(GoRouterState.of(context).uri.toString());
     }
 
     final isReel = currentIndex == 1;
-    
+    final isChatbot = currentIndex == 2;
+
     // swipe detection thresholds
     const velocityThreshold = 500.0;
     const distanceThreshold = 80.0;
     double dragDelta = 0.0;
 
-    final Widget body =
-        navigationShell != null ? (navigationShell as Widget) : (child ?? const SizedBox.shrink());
+    final Widget body = navigationShell != null
+        ? (navigationShell as Widget)
+        : (child ?? const SizedBox.shrink());
 
     return Scaffold(
-      backgroundColor: 
-      isReel
+      backgroundColor: isReel || isChatbot
           ? const Color(0xFF18191a)
           : Theme.of(context).scaffoldBackgroundColor,
       body: RawGestureDetector(
         gestures: {
           HorizontalDragGestureRecognizer:
               GestureRecognizerFactoryWithHandlers<
-                  HorizontalDragGestureRecognizer>(
-            () => HorizontalDragGestureRecognizer()
-              ..dragStartBehavior = DragStartBehavior.start,
-            (HorizontalDragGestureRecognizer instance) {
-              instance
-                ..onStart = (_) {
-                  dragDelta = 0.0;
-                }
-                ..onUpdate = (details) {
-                  dragDelta += details.delta.dx;
-                }
-                ..onEnd = (details) {
-                  final vx = details.velocity.pixelsPerSecond.dx;
-                  if (vx.abs() >= velocityThreshold) {
-                    _onSwipe(context, vx < 0);
-                    return;
-                  }
+                HorizontalDragGestureRecognizer
+              >(
+                () =>
+                    HorizontalDragGestureRecognizer()
+                      ..dragStartBehavior = DragStartBehavior.start,
+                (HorizontalDragGestureRecognizer instance) {
+                  instance
+                    ..onStart = (_) {
+                      dragDelta = 0.0;
+                    }
+                    ..onUpdate = (details) {
+                      dragDelta += details.delta.dx;
+                    }
+                    ..onEnd = (details) {
+                      final vx = details.velocity.pixelsPerSecond.dx;
+                      if (vx.abs() >= velocityThreshold) {
+                        _onSwipe(context, vx < 0);
+                        return;
+                      }
 
-                  if (dragDelta.abs() >= distanceThreshold) {
-                    _onSwipe(context, dragDelta < 0);
-                  }
-                };
-            },
-          ),
+                      if (dragDelta.abs() >= distanceThreshold) {
+                        _onSwipe(context, dragDelta < 0);
+                      }
+                    };
+                },
+              ),
         },
         behavior: HitTestBehavior.translucent,
         child: body,

@@ -86,4 +86,8 @@ class ApiEndpoints {
   static const String favPlayers = 'users/me/favPlayers';
   static const String removeFavTeams = 'users/me/removeFavTeam';
   static const String removeFavPlayers = 'users/me/removeFavPlayer';
+   //chatbot
+  static const String chatbotHistory = 'users/chatbot/get-history';
+  static const String chatbotSendMessage = 'users/chatbot/send-message';
+
 }

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:auth/common/api_service.dart';
 import 'package:auth/common/functions/handle_dio_error.dart';
 import 'package:auth/data/datasource/auth_remote_datasource.dart';
+import 'package:auth/data/datasource/chatbot_remote_datasource.dart';
 import 'package:auth/data/datasource/comments_remote_datasource.dart';
 import 'package:auth/data/datasource/groups_remote_datasource.dart';
 import 'package:auth/data/datasource/interests_local_datasource.dart';
@@ -11,12 +12,14 @@ import 'package:auth/data/datasource/posts_remote_datasource.dart';
 import 'package:auth/data/datasource/stats_local_datasource.dart';
 import 'package:auth/data/datasource/stats_remote_datasource.dart';
 import 'package:auth/data/repositories/auth_repo_impl.dart';
+import 'package:auth/data/repositories/chatbot_repo_impl.dart';
 import 'package:auth/data/repositories/comment_repo_impl.dart';
 import 'package:auth/data/repositories/group_repo_impl.dart';
 import 'package:auth/data/repositories/interests_repo_impl.dart';
 import 'package:auth/data/repositories/post_repo_impl.dart';
 import 'package:auth/data/repositories/stats_repo_impl.dart';
 import 'package:auth/domain/repositories/auth_repo.dart';
+import 'package:auth/domain/repositories/chatbot_repo.dart';
 import 'package:auth/domain/repositories/comment_repo.dart';
 import 'package:auth/domain/repositories/group_repo.dart';
 import 'package:auth/domain/repositories/interests_repo.dart';
@@ -28,6 +31,8 @@ import 'package:auth/data/repositories/follow_repo_impl.dart';
 import 'package:auth/data/repositories/profile_repo_impl.dart';
 import 'package:auth/domain/repositories/follow_repo.dart';
 import 'package:auth/domain/repositories/user_profile_repo.dart';
+import 'package:auth/domain/usecases/chatbot/get_chat_history_usecase.dart';
+import 'package:auth/domain/usecases/chatbot/send_message_usecase.dart';
 import 'package:auth/domain/usecases/comment/add_comment_usecase.dart';
 import 'package:auth/domain/usecases/comment/delete_comment_usecase.dart';
 import 'package:auth/domain/usecases/comment/edit_comment_usecase.dart';
@@ -108,6 +113,7 @@ import 'package:auth/domain/usecases/interests/remove_fav_teams_use_case.dart';
 import 'package:auth/domain/usecases/interests/select_interests.dart';
 import 'package:auth/domain/usecases/user_profile/get_suggestions.dart';
 import 'package:auth/domain/usecases/user_profile/update_profile.dart';
+import 'package:auth/presentation/manager/chatbot_cubit/chatbot_cubit.dart';
 import 'package:auth/presentation/manager/comment_cubit/comment_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/ban_member/ban_member_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/create_group/create_group_cubit.dart';
@@ -417,6 +423,25 @@ sl.registerFactory<GroupPostsCubit>(
 
   // get groups posts feed
   sl.registerLazySingleton(() => GetGroupsPostsFeedUseCase(sl()));
+  // ==========================================================================
+  // FEATURE: Chatbot
+  // ==========================================================================
+  sl.registerLazySingleton<ChatbotRemoteDatasource>(
+    () => ChatbotRemoteDatasourceImpl(api: sl(), prefs: sl()),
+  );
+  sl.registerLazySingleton<ChatbotRepository>(
+    () => ChatbotRepoImpl(remoteDatasource: sl()),
+  );
+
+  // UseCases
+  sl.registerLazySingleton(() => SendMessageUsecase(sl()));
+  sl.registerLazySingleton(() => GetChatHistoryUsecase(sl()));
+
+  // Cubit
+  sl.registerFactory(
+    () => ChatCubit(sendMessageUsecase: sl(), getChatHistoryUsecase: sl()),
+  );
+
   // ==========================================================================
   // CORE / GLOBAL
   // ==========================================================================

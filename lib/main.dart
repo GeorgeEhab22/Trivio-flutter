@@ -148,7 +148,7 @@ Future<void> _setupDevMode() async {
   final prefs = await SharedPreferences.getInstance();
 
   // 1. Paste your long JWT string here
-const String devToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YTc4ODg1M2VmODE5ZGI0MDY0YThlZCIsInVzZXJuYW1lIjoibWVubmEiLCJlbWFpbCI6Im1lbm5hdHVsbGFoODg4QGdtYWlsLmNvbSIsImlhdCI6MTc3MzAxOTgxNH0.-g4fS6umsQQBjT2ah93Six_Q_dnJp8qihBmHISbK0Cc";
+const String devToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YzMwNjg3MDIwOTg0MWVjOGUyYTliMSIsInVzZXJuYW1lIjoiZ2VvIiwiZW1haWwiOiJnZW9yZ2VlaGFiLmNzQGdtYWlsLmNvbSIsImlhdCI6MTc3NDM5NTAxOH0.FKii1aEy9pI-GPaS1Tomvd0b4cxgHpgYScoT_9le5Bk";
   await prefs.setString('auth_token', devToken);
   print("🛠️ DEV MODE: Token injected. App will start as logged in.");
 }

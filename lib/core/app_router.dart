@@ -1,7 +1,7 @@
-import 'package:auth/core/custom_bottom_navigation_bar.dart';
 import 'package:auth/domain/entities/post.dart';
 import 'package:auth/domain/usecases/sign_in/verify_otp.dart';
 import 'package:auth/presentation/authentication/signIn/forget_password_otp_view.dart';
+import 'package:auth/presentation/chatbot/chatbot_view.dart';
 import 'package:auth/presentation/chats/chat_info_button/chat_info_view.dart';
 import 'package:auth/presentation/chats/chat_screen/chat_view.dart';
 import 'package:auth/presentation/chats/messages_screen/messages_view.dart';
@@ -112,8 +112,8 @@ CustomTransitionPage buildAnimatedPage({
 GoRouter createRouter(bool isLoggedIn) {
   return GoRouter(
     // initialLocation: AppRoutes.selectTeams,
-    // initialLocation: isLoggedIn ? AppRoutes.home : AppRoutes.signIn,
-    initialLocation: AppRoutes.signIn,
+    initialLocation: isLoggedIn ? AppRoutes.home : AppRoutes.signIn,
+    // initialLocation: AppRoutes.signIn,
     routes: [
       GoRoute(
         path: AppRoutes.signIn,
