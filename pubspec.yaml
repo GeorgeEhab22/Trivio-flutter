@@ -63,6 +63,7 @@ dependencies:
   flutter_slidable: ^4.0.3
   hive_flutter: 
   animated_theme_switcher: ^2.0.9
+  mocktail: 
   flutter_localizations:
     sdk: flutter
 dev_dependencies:

@@ -28,7 +28,4 @@ class RegularTime {
 			away: away ?? this.away,
 		);
 	}
-
-	@override
-	int get hashCode => home.hashCode ^ away.hashCode;
 }

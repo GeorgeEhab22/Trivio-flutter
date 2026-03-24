@@ -25,7 +25,7 @@ class ApiService {
     final res = await _dio.get(
       endPoint,
       queryParameters: query,
-      options: options, // Pass it to Dio
+      options: options, 
     );
     return res.data;
   }

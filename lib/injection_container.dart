@@ -3,17 +3,20 @@ import 'dart:io';
 import 'package:auth/common/api_service.dart';
 import 'package:auth/common/functions/handle_dio_error.dart';
 import 'package:auth/data/datasource/auth_remote_datasource.dart';
+import 'package:auth/data/datasource/chatbot_remote_datasource.dart';
 import 'package:auth/data/datasource/comments_remote_datasource.dart';
 import 'package:auth/data/datasource/groups_remote_datasource.dart';
 import 'package:auth/data/datasource/posts_remote_datasource.dart';
 import 'package:auth/data/datasource/stats_local_datasource.dart';
 import 'package:auth/data/datasource/stats_remote_datasource.dart';
 import 'package:auth/data/repositories/auth_repo_impl.dart';
+import 'package:auth/data/repositories/chatbot_repo_impl.dart';
 import 'package:auth/data/repositories/comment_repo_impl.dart';
 import 'package:auth/data/repositories/group_repo_impl.dart';
 import 'package:auth/data/repositories/post_repo_impl.dart';
 import 'package:auth/data/repositories/stats_repo_impl.dart';
 import 'package:auth/domain/repositories/auth_repo.dart';
+import 'package:auth/domain/repositories/chatbot_repo.dart';
 import 'package:auth/domain/repositories/comment_repo.dart';
 import 'package:auth/domain/repositories/group_repo.dart';
 import 'package:auth/domain/repositories/post_repo.dart';
@@ -24,6 +27,8 @@ import 'package:auth/data/repositories/follow_repo_impl.dart';
 import 'package:auth/data/repositories/profile_repo_impl.dart';
 import 'package:auth/domain/repositories/follow_repo.dart';
 import 'package:auth/domain/repositories/user_profile_repo.dart';
+import 'package:auth/domain/usecases/chatbot/get_chat_history_usecase.dart';
+import 'package:auth/domain/usecases/chatbot/send_message_usecase.dart';
 import 'package:auth/domain/usecases/comment/add_comment_usecase.dart';
 import 'package:auth/domain/usecases/comment/delete_comment_usecase.dart';
 import 'package:auth/domain/usecases/comment/edit_comment_usecase.dart';
@@ -87,6 +92,7 @@ import 'package:auth/domain/usecases/sign_in/request_otp.dart';
 import 'package:auth/domain/usecases/sign_in/signin_usecase.dart';
 import 'package:auth/domain/usecases/sign_in/verify_otp.dart';
 import 'package:auth/domain/usecases/stats/stats_usecase.dart';
+import 'package:auth/presentation/manager/chatbot_cubit/chatbot_cubit.dart';
 import 'package:auth/presentation/manager/comment_cubit/comment_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/ban_member/ban_member_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/create_group/create_group_cubit.dart';
@@ -215,9 +221,13 @@ Future<void> init() async {
   sl.registerLazySingleton(() => SharePostUseCase(sl()));
   sl.registerLazySingleton(() => FollowUserUseCase(sl()));
   sl.registerLazySingleton(() => SavePostUseCase(sl()));
-sl.registerLazySingleton(() => CommentOnPostUseCase(sl()));
+  sl.registerLazySingleton(() => CommentOnPostUseCase(sl()));
   sl.registerFactory(
-    () => PostCubit(getPostsUseCase: sl(), deletePostUseCase: sl(),editPostUseCase: sl()),
+    () => PostCubit(
+      getPostsUseCase: sl(),
+      deletePostUseCase: sl(),
+      editPostUseCase: sl(),
+    ),
   );
 
   sl.registerFactory(
@@ -273,7 +283,6 @@ sl.registerLazySingleton(() => CommentOnPostUseCase(sl()));
         CreatePostCubit(createPostUseCase: sl(), createGroupPostUseCase: sl()),
   );
   sl.registerFactory(() => GetPostCubit(getPostUseCase: sl()));
-
 
   // groups
   sl.registerLazySingleton<GroupRemoteDataSource>(
@@ -363,13 +372,38 @@ sl.registerLazySingleton(() => CommentOnPostUseCase(sl()));
   sl.registerLazySingleton(() => CreateGroupPostUseCase(sl()));
 
   // get group posts
-  sl.registerFactory(() => GroupPostsCubit(getGroupPostsUseCase: sl(),deleteGroupPostUseCase: sl(),));
+  sl.registerFactory(
+    () => GroupPostsCubit(
+      getGroupPostsUseCase: sl(),
+      deleteGroupPostUseCase: sl(),
+    ),
+  );
   sl.registerLazySingleton(() => GetGroupPostsUseCase(sl()));
   sl.registerLazySingleton(() => DeleteGroupPostUseCase(sl()));
 
   // get groups posts feed
-    sl.registerFactory(() => GetGroupsPostsFeedCubit(getGroupsPostsFeedUseCase: sl()));
+  sl.registerFactory(
+    () => GetGroupsPostsFeedCubit(getGroupsPostsFeedUseCase: sl()),
+  );
   sl.registerLazySingleton(() => GetGroupsPostsFeedUseCase(sl()));
+  // ==========================================================================
+  // FEATURE: Chatbot
+  // ==========================================================================
+  sl.registerLazySingleton<ChatbotRemoteDatasource>(
+    () => ChatbotRemoteDatasourceImpl(api: sl(), prefs: sl()),
+  );
+  sl.registerLazySingleton<ChatbotRepository>(
+    () => ChatbotRepoImpl(remoteDatasource: sl()),
+  );
+
+  // UseCases
+  sl.registerLazySingleton(() => SendMessageUsecase(sl()));
+  sl.registerLazySingleton(() => GetChatHistoryUsecase(sl()));
+
+  // Cubit
+  sl.registerFactory(
+    () => ChatCubit(sendMessageUsecase: sl(), getChatHistoryUsecase: sl()),
+  );
   // ==========================================================================
   // CORE / GLOBAL
   // ==========================================================================
@@ -389,9 +423,7 @@ sl.registerLazySingleton(() => CommentOnPostUseCase(sl()));
   sl.registerLazySingleton<FollowRemoteDataSource>(
     () => FollowRemoteDataSourceImpl(api: sl(), errorHandler: sl()),
   );
-  sl.registerLazySingleton<FollowRepo>(
-    () => FollowRepoImpl(remote: sl()),
-  );
+  sl.registerLazySingleton<FollowRepo>(() => FollowRepoImpl(remote: sl()));
 
   sl.registerLazySingleton(() => FollowUser(sl()));
   sl.registerLazySingleton(() => UnfollowUser(sl()));

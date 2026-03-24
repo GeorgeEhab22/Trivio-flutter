@@ -74,20 +74,20 @@ class _GlassmorphismNavState extends State<GlassmorphismNav>
   @override
   Widget build(BuildContext context) {
     final isReel = widget.currentIndex == 1;
+    final isChatbot=widget.currentIndex == 2;
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
-    // Define colors based on theme
     final backgroundColor = isDarkMode
-        ? const Color(0xFF1a1d21).withOpacity(0.8) // Dark glass background
+        ? const Color(0xFF1a1d21).withOpacity(0.8) 
         : Theme.of(context).scaffoldBackgroundColor.withOpacity(0.8);
 
     final borderColor = isDarkMode
-        ? Colors.white.withOpacity(0.1) // Subtle border in dark mode
+        ? Colors.white.withOpacity(0.1)
         : Colors.white.withOpacity(0.3);
 
     final gradientColors = isDarkMode
         ? [
-            Colors.white.withOpacity(0.05), // Very subtle gradient in dark
+            Colors.white.withOpacity(0.05), 
             Colors.white.withOpacity(0.02),
           ]
         : [
@@ -96,7 +96,7 @@ class _GlassmorphismNavState extends State<GlassmorphismNav>
           ];
 
     final shadowColor = isDarkMode
-        ? Colors.black.withOpacity(0.4) // Stronger shadow in dark mode
+        ? Colors.black.withOpacity(0.4) 
         : Colors.black.withOpacity(0.1);
 
     return AnimatedContainer(
@@ -105,7 +105,7 @@ class _GlassmorphismNavState extends State<GlassmorphismNav>
       margin: const EdgeInsets.all(20),
       height: 70,
       decoration: BoxDecoration(
-        color: isReel ? const Color(0xFF18191a) : backgroundColor,
+        color: isReel || isChatbot ? const Color(0xFF18191a) : backgroundColor,
         borderRadius: BorderRadius.circular(35),
         border: Border.all(color: borderColor, width: 1.5),
         boxShadow: [
@@ -152,9 +152,8 @@ class _GlassmorphismNavState extends State<GlassmorphismNav>
   Widget _buildGlassNavItem(IconData icon, int index, bool isDarkMode) {
     final isSelected = widget.currentIndex == index;
 
-    // Theme-aware colors
     final selectedBgColor = isDarkMode
-        ? Colors.white.withOpacity(0.15) // Brighter selection in dark mode
+        ? Colors.white.withOpacity(0.15) 
         : Colors.white.withOpacity(0.3);
 
     final selectedBorderColor = isDarkMode
@@ -162,11 +161,11 @@ class _GlassmorphismNavState extends State<GlassmorphismNav>
         : Colors.white.withOpacity(0.5);
 
     final selectedIconColor = isDarkMode
-        ? Colors.green[400] // Brighter green in dark mode
+        ? Colors.green[400] 
         : Colors.green[700];
 
     final unselectedIconColor = isDarkMode
-        ? Colors.grey[400] // Lighter gray in dark mode
+        ? Colors.grey[400] 
         : Colors.grey[700];
 
     return GestureDetector(
@@ -181,7 +180,6 @@ class _GlassmorphismNavState extends State<GlassmorphismNav>
           border: isSelected
               ? Border.all(color: selectedBorderColor, width: 2)
               : null,
-          // Add subtle glow effect for selected item in dark mode
           boxShadow: isSelected && isDarkMode
               ? [
                   BoxShadow(
@@ -201,20 +199,6 @@ class _GlassmorphismNavState extends State<GlassmorphismNav>
             size: isSelected ? 28 : 24,
           ),
         ),
-      ),
-    );
-  }
-}
-
-class ChatBotPage extends StatelessWidget {
-  const ChatBotPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: Theme.of(context).scaffoldBackgroundColor,
-      child: const Center(
-        child: Text("🤖 ChatBot Page", style: TextStyle(fontSize: 24)),
       ),
     );
   }

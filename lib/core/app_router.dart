@@ -1,6 +1,6 @@
-import 'package:auth/core/custom_bottom_navigation_bar.dart';
 import 'package:auth/domain/usecases/sign_in/verify_otp.dart';
 import 'package:auth/presentation/authentication/signIn/forget_password_otp_view.dart';
+import 'package:auth/presentation/chatbot/chatbot_view.dart';
 import 'package:auth/presentation/chats/chat_info_button/chat_info_view.dart';
 import 'package:auth/presentation/chats/chat_screen/chat_view.dart';
 import 'package:auth/presentation/chats/messages_screen/messages_view.dart';
@@ -159,7 +159,11 @@ GoRouter createRouter(bool isLoggedIn) {
       GoRoute(path: '/theme', builder: (context, state) => const ThemeView()),
       GoRoute(
         path: '/app',
-        builder: (context, state) => const SizedBox.shrink(),
+
+        redirect: (context, state) {
+          if (state.uri.toString() == '/app') return '/app/home';
+          return null;
+        },
         routes: [
           StatefulShellRoute.indexedStack(
             builder: (context, state, navigationShell) {

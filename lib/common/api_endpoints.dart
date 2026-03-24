@@ -74,6 +74,9 @@ class ApiEndpoints {
   static const String myFollowers = '/api/v1/users/me/followers';
 
   static const String myFollowing = '/api/v1/users/me/following';
+  //chatbot
+  static const String chatbotHistory = 'users/chatbot/get-history';
+  static const String chatbotSendMessage = 'users/chatbot/send-message';
 
   //profile
   static const String myProfile = '/api/v1/users/me';

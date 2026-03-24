@@ -95,6 +95,7 @@ class AuthShell extends StatelessWidget {
     }
 
     final isReel = currentIndex == 1;
+    final isChatbot = currentIndex == 2;
     
     // swipe detection thresholds
     const velocityThreshold = 500.0;
@@ -106,7 +107,7 @@ class AuthShell extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: 
-      isReel
+      isReel||isChatbot
           ? const Color(0xFF18191a)
           : Theme.of(context).scaffoldBackgroundColor,
       body: RawGestureDetector(
