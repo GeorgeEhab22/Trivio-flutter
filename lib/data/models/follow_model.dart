@@ -20,7 +20,7 @@ class FollowModel extends Follow {
     return FollowModel(
       id: (json['_id'] ?? json['id'] ?? '').toString(),
       user: UserReference.fromJson(json['userId'] ?? json['user']),
-      follower: UserReference.fromJson(json['followerId'] ?? json['follower']),
+      follower: UserReference.fromJson(json['follwerId'] ?? json['follower']),
       status: (json['status'] ?? 'pending').toString(),
       createdAt: json['createdAt'] != null
           ? DateTime.tryParse(json['createdAt'].toString())

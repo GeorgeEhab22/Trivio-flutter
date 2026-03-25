@@ -28,19 +28,21 @@ class UserReference {
   if (json is String) {
     return UserReference._(id: json);
   } else if (json is Map) { 
+    final String extractedId = (json['_id'] ?? json['id'] ?? '').toString();
+    
     return UserReference._(
-      id: (json['_id'] ?? json['id'] ?? '').toString(),
+      id: extractedId,
       preview: UserProfilePreview(
-        id: (json['_id'] ?? json['id'] ?? '').toString(),
-        name: (json['username'] ?? json['name'] ?? 'Unknown').toString(),
-        avatarUrl: json['avatar'] ?? json['profilePicture'],
+        id: extractedId,
+        // Match backend keys: 'name' and 'avatar'
+        name: (json['name'] ?? json['username'] ?? 'Unknown User').toString(),
+        avatarUrl: (json['avatar'] ?? json['profilePicture'])?.toString(),
       ),
     );
   } else {
     return UserReference._(id: json.toString());
   }
 }
-
   dynamic toJson() {
     return preview != null
         ? {'_id': id, 'name': preview!.name, 'avatar': preview!.avatarUrl}
