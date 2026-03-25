@@ -4,6 +4,7 @@ import 'package:auth/common/api_service.dart';
 import 'package:auth/common/functions/handle_dio_error.dart';
 import 'package:auth/data/datasource/auth_remote_datasource.dart';
 import 'package:auth/data/datasource/comments_remote_datasource.dart';
+import 'package:auth/data/datasource/face_recognition_remote_datasource.dart';
 import 'package:auth/data/datasource/groups_remote_datasource.dart';
 import 'package:auth/data/datasource/interests_local_datasource.dart';
 import 'package:auth/data/datasource/interests_remote_datasource.dart';
@@ -13,6 +14,7 @@ import 'package:auth/data/datasource/stats_local_datasource.dart';
 import 'package:auth/data/datasource/stats_remote_datasource.dart';
 import 'package:auth/data/repositories/auth_repo_impl.dart';
 import 'package:auth/data/repositories/comment_repo_impl.dart';
+import 'package:auth/data/repositories/face_recognition_repo_impl.dart';
 import 'package:auth/data/repositories/group_repo_impl.dart';
 import 'package:auth/data/repositories/interests_repo_impl.dart';
 import 'package:auth/data/repositories/notification_repo_impl.dart';
@@ -20,6 +22,7 @@ import 'package:auth/data/repositories/post_repo_impl.dart';
 import 'package:auth/data/repositories/stats_repo_impl.dart';
 import 'package:auth/domain/repositories/auth_repo.dart';
 import 'package:auth/domain/repositories/comment_repo.dart';
+import 'package:auth/domain/repositories/face_recognition_repo.dart';
 import 'package:auth/domain/repositories/group_repo.dart';
 import 'package:auth/domain/repositories/interests_repo.dart';
 import 'package:auth/domain/repositories/notification_repo.dart';
@@ -41,6 +44,7 @@ import 'package:auth/domain/usecases/comment/get_replies_usecase.dart';
 import 'package:auth/domain/usecases/comment/mention_users_in_comment_usecase.dart';
 import 'package:auth/domain/usecases/comment/react_to_comment_usecase.dart';
 import 'package:auth/domain/usecases/comment/remove_reaction_from_comment_usecase.dart';
+import 'package:auth/domain/usecases/face-recognition/auto_tagging_use_case.dart';
 import 'package:auth/domain/usecases/group/accept_join_request_use_case.dart';
 import 'package:auth/domain/usecases/group/cancel_request_use_case.dart';
 import 'package:auth/domain/usecases/group/decline_join_request_use_case.dart';
@@ -317,7 +321,7 @@ Future<void> init() async {
 
   sl.registerFactory(
     () =>
-        CreatePostCubit(createPostUseCase: sl(), createGroupPostUseCase: sl()),
+        CreatePostCubit(createPostUseCase: sl(), createGroupPostUseCase: sl(), autoTaggingUseCase: sl()),
   );
   sl.registerFactory(() => GetPostCubit(getPostUseCase: sl()));
 
@@ -528,4 +532,18 @@ sl.registerFactory<GroupPostsCubit>(
   sl.registerFactory(()=> NotificationCubit(getNotificationsUseCase: sl(), openNotificationUseCase: sl()));
   sl.registerLazySingleton(() => GetNotificationsUseCase(sl()));
   sl.registerLazySingleton(() => OpenNotificationUseCase(sl()));
+
+  //auto-tagging
+  sl.registerLazySingleton<FaceRecognitionRemoteDataSource>(
+    () => FaceRecognitionRemoteDataSourceImpl(dio: sl(), errorHandler: sl()),
+  );
+  sl.registerLazySingleton<FaceRecognitionRepo>(
+    () => FaceRecognitionRepoImpl(
+      remoteDatasource: sl(),
+    ),
+  );
+  sl.registerLazySingleton(
+    () => AutoTaggingUseCase(sl()),
+  );
+
 }
