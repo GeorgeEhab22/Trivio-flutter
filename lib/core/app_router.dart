@@ -41,6 +41,7 @@ import 'package:auth/presentation/manager/group_cubit/leave_group/leave_group_cu
 import 'package:auth/presentation/manager/group_cubit/get_members_by_roles/members_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/unban_member/unban_member_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/update_group/update_group_cubit.dart';
+import 'package:auth/presentation/manager/notifications_cubit/notifications_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/interests/select_interests_cubit.dart';
 import 'package:auth/presentation/manager/sigin_in_cubit/forget_password_otp_cubit.dart';
 import 'package:auth/presentation/home/widgets/edit_page.dart';
@@ -51,6 +52,7 @@ import 'package:auth/presentation/manager/profile_cubit/profile_liked_posts_cubi
 import 'package:auth/presentation/manager/profile_cubit/profile_social_info_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_state.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_update_cubit.dart';
+import 'package:auth/presentation/notifcations/notifications_view.dart';
 import 'package:auth/presentation/reels/add_reel/reels_publish_view.dart';
 import 'package:auth/presentation/reels/reels_view.dart';
 import 'package:auth/presentation/settings/settings_view.dart';
@@ -113,9 +115,9 @@ CustomTransitionPage buildAnimatedPage({
 
 GoRouter createRouter(bool isLoggedIn) {
   return GoRouter(
-    // initialLocation: AppRoutes.selectTeams,
-    // initialLocation: isLoggedIn ? AppRoutes.reels : AppRoutes.signIn,
-    initialLocation: AppRoutes.signIn,
+    // initialLocation: AppRoutes.home,
+    initialLocation: isLoggedIn ? AppRoutes.notifications : AppRoutes.signIn,
+    // initialLocation: AppRoutes.signIn,
     routes: [
       GoRoute(
         path: AppRoutes.signIn,
@@ -384,6 +386,13 @@ GoRouter createRouter(bool isLoggedIn) {
             ],
           ),
         ],
+      ),
+      GoRoute(
+        path: '/notifications',
+        builder: (context, state) => BlocProvider(
+          create: (context) => di.sl<NotificationCubit>(),
+          child: const NotificationsView(),
+        ),
       ),
       GoRoute(
         path: '/settings',

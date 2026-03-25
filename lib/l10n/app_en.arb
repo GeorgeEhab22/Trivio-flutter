@@ -452,6 +452,18 @@
   "passwordUpdated": "Password Updated!",
   "saveNewPassword": "Save New Password",
 
-  "noUsersDefault": "User"
+  "noUsersDefault": "User",
+  
+  "all": "All",
+  "matches": "Matches",
+  "social": "social",
+  "noNotificationsYet": "No notifications yet.",
+  "today": "Today",
+  "yesterday": "Yesterday",
+  "earlier": "Earlier",
+  "startedFollowingYou": "started following you",
+  "followBack": "Follow back",
+  "commented": "commented:",
+  "reactedToYourPost": "reacted to your post"
 }
 

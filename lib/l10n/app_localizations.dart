@@ -1901,7 +1901,7 @@ abstract class AppLocalizations {
   /// No description provided for @matches.
   ///
   /// In en, this message translates to:
-  /// **'matches'**
+  /// **'Matches'**
   String get matches;
 
   /// No description provided for @noMatchesFound.
@@ -2461,6 +2461,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'User'**
   String get noUsersDefault;
+
+  /// No description provided for @all.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get all;
+
+  /// No description provided for @social.
+  ///
+  /// In en, this message translates to:
+  /// **'social'**
+  String get social;
+
+  /// No description provided for @noNotificationsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No notifications yet.'**
+  String get noNotificationsYet;
+
+  /// No description provided for @today.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get today;
+
+  /// No description provided for @yesterday.
+  ///
+  /// In en, this message translates to:
+  /// **'Yesterday'**
+  String get yesterday;
+
+  /// No description provided for @earlier.
+  ///
+  /// In en, this message translates to:
+  /// **'Earlier'**
+  String get earlier;
+
+  /// No description provided for @startedFollowingYou.
+  ///
+  /// In en, this message translates to:
+  /// **'started following you'**
+  String get startedFollowingYou;
+
+  /// No description provided for @followBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow back'**
+  String get followBack;
+
+  /// No description provided for @commented.
+  ///
+  /// In en, this message translates to:
+  /// **'commented:'**
+  String get commented;
+
+  /// No description provided for @reactedToYourPost.
+  ///
+  /// In en, this message translates to:
+  /// **'reacted to your post'**
+  String get reactedToYourPost;
 }
 
 class _AppLocalizationsDelegate

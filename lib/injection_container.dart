@@ -7,6 +7,7 @@ import 'package:auth/data/datasource/comments_remote_datasource.dart';
 import 'package:auth/data/datasource/groups_remote_datasource.dart';
 import 'package:auth/data/datasource/interests_local_datasource.dart';
 import 'package:auth/data/datasource/interests_remote_datasource.dart';
+import 'package:auth/data/datasource/notifications_remote_datasource.dart';
 import 'package:auth/data/datasource/posts_remote_datasource.dart';
 import 'package:auth/data/datasource/stats_local_datasource.dart';
 import 'package:auth/data/datasource/stats_remote_datasource.dart';
@@ -14,12 +15,14 @@ import 'package:auth/data/repositories/auth_repo_impl.dart';
 import 'package:auth/data/repositories/comment_repo_impl.dart';
 import 'package:auth/data/repositories/group_repo_impl.dart';
 import 'package:auth/data/repositories/interests_repo_impl.dart';
+import 'package:auth/data/repositories/notification_repo_impl.dart';
 import 'package:auth/data/repositories/post_repo_impl.dart';
 import 'package:auth/data/repositories/stats_repo_impl.dart';
 import 'package:auth/domain/repositories/auth_repo.dart';
 import 'package:auth/domain/repositories/comment_repo.dart';
 import 'package:auth/domain/repositories/group_repo.dart';
 import 'package:auth/domain/repositories/interests_repo.dart';
+import 'package:auth/domain/repositories/notification_repo.dart';
 import 'package:auth/domain/repositories/post_repo.dart';
 import 'package:auth/domain/repositories/stats_repo.dart';
 import 'package:auth/data/datasource/follow_remote_datasource.dart';
@@ -76,6 +79,8 @@ import 'package:auth/domain/usecases/follow/unfollow_user.dart';
 import 'package:auth/domain/usecases/interests/get_all_players_use_case.dart';
 import 'package:auth/domain/usecases/interests/get_all_teams_use_case.dart';
 import 'package:auth/domain/usecases/interests/search_players_use_case.dart';
+import 'package:auth/domain/usecases/notfication/get_notifications_use_case.dart';
+import 'package:auth/domain/usecases/notfication/open_notification_use_case.dart';
 import 'package:auth/domain/usecases/post/comment_on_post_usecase.dart';
 import 'package:auth/domain/usecases/post/create_post_usecase.dart';
 import 'package:auth/domain/usecases/post/delete_post_usecase.dart';
@@ -133,6 +138,7 @@ import 'package:auth/presentation/manager/locale_cubit/locale_cubit.dart';
 import 'package:auth/domain/usecases/user_profile/get_my_profile.dart';
 import 'package:auth/presentation/manager/follow_cubit/follow_cubit.dart';
 import 'package:auth/presentation/manager/follow_cubit/get_follow_info_cubit.dart';
+import 'package:auth/presentation/manager/notifications_cubit/notifications_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/create_post_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/get_post/get_post_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
@@ -511,4 +517,15 @@ sl.registerFactory<GroupPostsCubit>(
   sl.registerFactory(() => LikedPostsCubit(getLikedPostsUseCase: sl()));
   sl.registerLazySingleton(() => GetLikedPostsIds(sl()));
   sl.registerFactory(() => ChangePasswordCubit(changePasswordUseCase: sl()));
+  
+  //notifications
+   sl.registerLazySingleton<NotificationRemoteDataSource>(
+    () => NotificationRemoteDataSourceImpl(api: sl(), prefs: sl(), errorHandler: sl(),),
+  );
+  sl.registerLazySingleton<NotificationRepo>(
+    () => NotificationRepoImpl(remoteDataSource: sl()),
+  );
+  sl.registerFactory(()=> NotificationCubit(getNotificationsUseCase: sl(), openNotificationUseCase: sl()));
+  sl.registerLazySingleton(() => GetNotificationsUseCase(sl()));
+  sl.registerLazySingleton(() => OpenNotificationUseCase(sl()));
 }

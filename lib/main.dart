@@ -24,6 +24,7 @@ void main() async {
   await dotenv.load(fileName: ".env");
   // await _setupDevMode();
   
+  
   final prefs = await SharedPreferences.getInstance();
   //await prefs.remove('auth_token');
   final token = prefs.getString('auth_token');

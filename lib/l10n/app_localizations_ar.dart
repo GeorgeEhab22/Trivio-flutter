@@ -1229,4 +1229,34 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get noUsersDefault => 'مستخدم';
+
+  @override
+  String get all => 'الكل';
+
+  @override
+  String get social => 'اجتماعي';
+
+  @override
+  String get noNotificationsYet => 'لا توجد إشعارات حتى الآن.';
+
+  @override
+  String get today => 'اليوم';
+
+  @override
+  String get yesterday => 'الأمس';
+
+  @override
+  String get earlier => 'سابقاً';
+
+  @override
+  String get startedFollowingYou => 'بدأ بمتابعتك';
+
+  @override
+  String get followBack => 'رد المتابعة';
+
+  @override
+  String get commented => 'علق:';
+
+  @override
+  String get reactedToYourPost => 'تفاعل مع منشورك';
 }
