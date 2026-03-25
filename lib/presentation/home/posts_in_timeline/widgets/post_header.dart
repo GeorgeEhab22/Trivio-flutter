@@ -34,7 +34,7 @@ class PostHeader extends StatelessWidget {
         : Colors.black.withValues(alpha: 0.08);
   
     //TODO: change with actual users when backend return the name and the image of author
-    String authorName = "Not Me";
+    String authorName = post.authorName ??"Not Me";
     String? authorImage;
 
     final profileState = context.read<ProfileCubit>().state;

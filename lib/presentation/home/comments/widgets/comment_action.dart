@@ -16,6 +16,8 @@ class CommentAction extends StatelessWidget {
   final List<ReactionType> topReactions;
   final String postId;
   final String currentUserId;
+  final bool isReelView;
+final VoidCallback? onReelsCommentTap;
 
   const CommentAction({
     super.key,
@@ -25,15 +27,24 @@ class CommentAction extends StatelessWidget {
     this.sharesCount = 0,
     this.reactionsCount = 0,
     this.topReactions = const <ReactionType>[],
+    this.isReelView = false,
+    this.onReelsCommentTap,
   });
 
   @override
   Widget build(BuildContext context) {
+    final iconColor = isReelView ? Colors.white : Theme.of(context).iconTheme.color;
+    final iconSize = isReelView ? 28.0 : 22.0;
     return PostActionItem(
-      icon: const FaIcon(FontAwesomeIcons.comment, size: 22),
+      icon:  FaIcon(FontAwesomeIcons.comment, size: iconSize,color: iconColor,),
       count: commentsCount,
-      color: Theme.of(context).iconTheme.color,
+      color: iconColor,
+      isVertical: isReelView,
       onTap: () {
+        if (isReelView && onReelsCommentTap != null) {
+          onReelsCommentTap!();
+          return;
+        }
         final postCubit = context.read<PostCubit>();
         showModalBottomSheet(
           context: context,
@@ -60,6 +71,7 @@ class CommentAction extends StatelessWidget {
                 sharesCount: sharesCount,
                 reactionsCount: reactionsCount,
                 topReactions: topReactions,
+                isReelView: isReelView,
               ),
             ),
           ),

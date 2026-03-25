@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:auth/common/api_service.dart';
 import 'package:auth/constants/colors.dart';
 import 'package:auth/core/app_router.dart';
 import 'package:auth/core/theme_reveal_animation.dart';
@@ -21,13 +22,15 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await di.init();
   await dotenv.load(fileName: ".env");
-  await _setupDevMode();
+  // await _setupDevMode();
   
   final prefs = await SharedPreferences.getInstance();
   //await prefs.remove('auth_token');
   final token = prefs.getString('auth_token');
   final bool isLoggedIn = token != null && token.isNotEmpty;
-  
+  if (isLoggedIn) {
+    di.sl<ApiService>().dio.options.headers['Authorization'] = 'Bearer $token';
+  }
   final bool isDesktop = !kIsWeb && (Platform.isWindows || Platform.isMacOS || Platform.isLinux);
   final bool enableDevicePreview = !kReleaseMode && (isDesktop || kIsWeb);
   

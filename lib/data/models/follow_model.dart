@@ -14,17 +14,19 @@ class FollowModel extends Follow {
     this.updatedAt,
   });
 
-  factory FollowModel.fromJson(Map<String, dynamic> json) {
+  factory FollowModel.fromJson(Map<String, dynamic>? json) {
+    if (json == null) throw Exception("Follow data is null");
+
     return FollowModel(
-      id: json['_id'],
-      user: UserReference.fromJson(json['userId']),
-      follower: UserReference.fromJson(json['followerId']),
-      status: json['status'],
+      id: (json['_id'] ?? json['id'] ?? '').toString(),
+      user: UserReference.fromJson(json['userId'] ?? json['user']),
+      follower: UserReference.fromJson(json['followerId'] ?? json['follower']),
+      status: (json['status'] ?? 'pending').toString(),
       createdAt: json['createdAt'] != null
-          ? DateTime.tryParse(json['createdAt'])
+          ? DateTime.tryParse(json['createdAt'].toString())
           : null,
       updatedAt: json['updatedAt'] != null
-          ? DateTime.tryParse(json['updatedAt'])
+          ? DateTime.tryParse(json['updatedAt'].toString())
           : null,
     );
   }

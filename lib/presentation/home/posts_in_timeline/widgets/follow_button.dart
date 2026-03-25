@@ -1,9 +1,10 @@
 import 'package:auth/injection_container.dart' as di;
 import 'package:auth/presentation/authentication/widgets/show_custom_snackbar.dart';
+import 'package:auth/presentation/manager/follow_cubit/follow_cubit.dart';
+import 'package:auth/presentation/manager/follow_cubit/follow_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:auth/core/styels.dart';
-import 'package:auth/presentation/manager/post_cubit/post_interaction_cubit.dart';
 import 'package:auth/l10n/app_localizations.dart';
 
 class FollowButton extends StatelessWidget {
@@ -23,40 +24,40 @@ class FollowButton extends StatelessWidget {
     if (currentUserId == authorId) return const SizedBox.shrink();
 
     return BlocProvider(
-      create: (context) => di.sl<PostInteractionCubit>(),
-      child: BlocConsumer<PostInteractionCubit, PostInteractionState>(
+      create: (context) => di.sl<FollowCubit>(),
+      child: BlocConsumer<FollowCubit, FollowState>(
         listener: (context, state) {
-          if (state is FollowUserError) {
+          if (state is FollowFailure) {
             showCustomSnackBar(context, state.message, false);
           }
         },
         buildWhen: (previous, current) {
-          return current is PostFollowUpdated ||
-              current is FollowUserSuccess ||
-              current is FollowUserError;
+          return current is FollowSuccess || current is FollowLoading || current is FollowFailure;
         },
         builder: (context, state) {
           final l10n = AppLocalizations.of(context)!;
+          
           bool isFollowing = initialFollowStatus;
+          
+          if (state is FollowSuccess) {
 
-          if (state is PostFollowUpdated) {
-            isFollowing = state.isFollowing;
-          } else if (state is FollowUserSuccess) {
-            isFollowing = state.isFollowing;
-          } else if (state is FollowUserError) {
-            isFollowing = state.oldStatus;
+            isFollowing = state.follow != null; 
           }
+
+          final isLoading = state is FollowLoading;
 
           return SizedBox(
             height: 30,
             child: TextButton(
-              onPressed: () {
-                context.read<PostInteractionCubit>().toggleFollowUser(
-                      followerId: currentUserId,
-                      followeeId: authorId,
-                      currentFollowStatus: isFollowing,
-                    );
-              },
+              onPressed: isLoading
+                  ? null
+                  : () {
+                      if (isFollowing) {
+                        context.read<FollowCubit>().unfollowUser(authorId);
+                      } else {
+                        context.read<FollowCubit>().followUser(authorId);
+                      }
+                    },
               style: TextButton.styleFrom(
                 backgroundColor: isFollowing
                     ? Colors.transparent
@@ -71,16 +72,21 @@ class FollowButton extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              child: Text(
-                // Localized labels
-                isFollowing ? l10n.following : l10n.follow,
-                style: Styles.textStyle14.copyWith(
-                  color: isFollowing
-                      ? Theme.of(context).iconTheme.color
-                      : Theme.of(context).textTheme.bodyMedium?.color,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
+              child: isLoading 
+                ? const SizedBox(
+                    width: 14, 
+                    height: 14, 
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ) 
+                : Text(
+                    isFollowing ? l10n.following : l10n.follow,
+                    style: Styles.textStyle14.copyWith(
+                      color: isFollowing
+                          ? Theme.of(context).iconTheme.color
+                          : Theme.of(context).textTheme.bodyMedium?.color,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
             ),
           );
         },

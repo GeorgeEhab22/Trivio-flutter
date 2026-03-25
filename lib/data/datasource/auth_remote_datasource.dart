@@ -74,6 +74,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
       if (token != null) {
         await _storeToken(token);
+        api.dio.options.headers['Authorization'] = 'Bearer $token';
         print ('Token stored: $token');
       } else {
         throw AuthException('Token not found in response');
@@ -240,6 +241,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
       if (jtwToken != null) {
         await _storeToken(jtwToken);
+        api.dio.options.headers['Authorization'] = 'Bearer $jtwToken';
       }
 
       return UserModel.empty();

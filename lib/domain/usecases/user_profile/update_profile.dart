@@ -1,8 +1,8 @@
-import 'dart:io';
 import 'package:auth/core/errors/failure.dart';
 import 'package:auth/domain/entities/user_profile.dart';
 import 'package:auth/domain/repositories/user_profile_repo.dart';
 import 'package:dartz/dartz.dart';
+import 'package:image_picker/image_picker.dart';
 
 class UpdateProfile {
   final UserProfileRepo repository;
@@ -11,7 +11,7 @@ class UpdateProfile {
   Future<Either<Failure, UserProfile>> call({
     String? username,
     String? bio,
-    File? avatarFile,
+    XFile? avatarFile,
   }) async {
     return await repository.updateProfile(
       username: username,

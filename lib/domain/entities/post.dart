@@ -5,6 +5,8 @@ import 'package:equatable/equatable.dart';
 
 class Post extends Equatable {
   final String authorId;
+  final String? authorName; 
+  final String? authorImage;
   final String postID;
   final String? caption;
   final String type;
@@ -24,6 +26,8 @@ class Post extends Equatable {
 
   const Post({
     required this.authorId,
+    this.authorName,
+    this.authorImage,
     required this.type,
     required this.postID,
     this.caption,
@@ -43,6 +47,8 @@ class Post extends Equatable {
   });
   Post copyWith({
     String? authorId,
+    String? authorName,
+    String? authorImage,
     String? postID,
     String? caption,
     String? type,
@@ -62,6 +68,8 @@ class Post extends Equatable {
   }) {
     return Post(
       authorId: authorId ?? this.authorId,
+      authorName: authorName ?? this.authorName,
+      authorImage: authorImage ?? this.authorImage,
       postID: postID ?? this.postID,
       caption: caption ?? this.caption,
       type: type ?? this.type,
@@ -87,6 +95,8 @@ class Post extends Equatable {
   @override
   List<Object?> get props => [
     authorId,
+    authorName,
+    authorImage,
     caption,
     type,
     mentions,

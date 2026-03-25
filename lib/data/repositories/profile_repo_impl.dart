@@ -6,6 +6,7 @@ import 'package:auth/domain/entities/user_profile.dart';
 import 'package:auth/domain/entities/user_profile_preview.dart';
 import 'package:auth/domain/repositories/user_profile_repo.dart';
 import 'package:dartz/dartz.dart';
+import 'package:image_picker/image_picker.dart';
 
 class UserProfileRepositoryImpl implements UserProfileRepo {
   final ProfileRemoteDataSource remoteDataSource;
@@ -36,7 +37,7 @@ class UserProfileRepositoryImpl implements UserProfileRepo {
   Future<Either<Failure, UserProfile>> updateProfile({
     String? username,
     String? bio,
-    dynamic avatarFile,
+    XFile? avatarFile,
   }) async {
     try {
       final model = await remoteDataSource.updateProfile(

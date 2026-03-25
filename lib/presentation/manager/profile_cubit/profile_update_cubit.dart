@@ -1,7 +1,7 @@
-import 'dart:io';
 import 'package:auth/domain/usecases/user_profile/change_password.dart';
 import 'package:auth/domain/usecases/user_profile/update_profile.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 import 'profile_update_state.dart';
 
 class ProfileUpdateCubit extends Cubit<ProfileUpdateState> {
@@ -43,7 +43,7 @@ class ProfileUpdateCubit extends Cubit<ProfileUpdateState> {
     );
   }
 
-  void onInfoChanged({String? name, String? bio, File? image}) {
+  void onInfoChanged({String? name, String? bio, XFile? image}) {
     final currentState = state;
     if (currentState is ProfileUpdateInitialState) {
       emit(currentState.copyWith(
@@ -54,5 +54,5 @@ class ProfileUpdateCubit extends Cubit<ProfileUpdateState> {
     }
   }
 
-  void updateImage(File imageFile) => onInfoChanged(image: imageFile);
+  void updateImage(XFile imageFile) => onInfoChanged(image: imageFile);
 }
