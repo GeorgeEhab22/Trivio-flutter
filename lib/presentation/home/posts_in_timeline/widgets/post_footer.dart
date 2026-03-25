@@ -112,25 +112,25 @@ class PostFooter extends StatelessWidget {
   }
 
   ReactionType _resolveCurrentUserReaction() {
-    if (currentReaction != null && currentReaction != ReactionType.none) {
-      return currentReaction!;
-    }
-    if (post.userReaction != ReactionType.none) {
-      return post.userReaction;
-    }
-
-    final List<Reaction>? reactions = post.reactions;
-    if (reactions == null || reactions.isEmpty) {
-      return ReactionType.none;
-    }
-
-    for (final reaction in reactions.reversed) {
-      if (reaction.userId == currentUserId) {
-        return reaction.type;
-      }
-    }
-    return ReactionType.none;
+  if (currentReaction != null && currentReaction != ReactionType.none) {
+    return currentReaction!;
   }
+
+  if (post.userReaction != ReactionType.none) {
+    return post.userReaction;
+  }
+
+  final reactions = post.reactions;
+  if (reactions != null && reactions.isNotEmpty) {
+    final myReaction = reactions.firstWhere(
+      (r) => r.userId == currentUserId,
+      orElse: () => const Reaction(id: '', userId: '', type: ReactionType.none, postId: ''),
+    );
+    return myReaction.type;
+  }
+
+  return ReactionType.none;
+}
 
   String? _resolveCurrentUserReactionId() {
     final List<Reaction>? reactions = post.reactions;
