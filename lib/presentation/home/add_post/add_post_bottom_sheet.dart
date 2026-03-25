@@ -1,5 +1,6 @@
 import 'package:auth/common/functions/bottom_sheet_manager.dart';
 import 'package:auth/presentation/authentication/widgets/show_custom_snackbar.dart';
+import 'package:auth/presentation/auto-tagging/suggested_hashtags_button.dart';
 import 'package:auth/presentation/home/add_post/add_post_header.dart';
 import 'package:auth/presentation/home/add_post/media_buttons_row.dart';
 import 'package:auth/presentation/home/add_post/post_input_field.dart';
@@ -25,6 +26,7 @@ class AddPostBottomSheet extends StatefulWidget {
 
 class _AddPostBottomSheetState extends State<AddPostBottomSheet> {
   final TextEditingController _postController = TextEditingController();
+  List<bool> _isProcessing = [];
 
   @override
   void dispose() {
@@ -70,6 +72,13 @@ class _AddPostBottomSheetState extends State<AddPostBottomSheet> {
             isButtonEnabled = state.isPostButtonEnabled;
           }
 
+          if (_isProcessing.length != currentMedia.length) {
+            _isProcessing = List.generate(
+              currentMedia.length,
+              (index) => false,
+            );
+          }
+
           return Padding(
             padding: EdgeInsets.only(bottom: keyboardHeight),
             child: Container(
@@ -104,12 +113,17 @@ class _AddPostBottomSheetState extends State<AddPostBottomSheet> {
                             controller: _postController,
                             onChanged: (text) => cubit.updateText(text),
                           ),
+                          SuggestHashtagsButton(onTap: () {}),
                           if (currentMedia.isNotEmpty)
                             SelectedMediaPreview(
                               files: currentMedia,
                               onRemove: (index) {
                                 cubit.removeMedia(index);
+                                if (index < _isProcessing.length) {
+                                  _isProcessing.removeAt(index);
+                                }
                               },
+                              isProcessing: _isProcessing,
                             ),
                           MediaButtonsRow(
                             onPickImage: () =>
