@@ -1,3 +1,5 @@
+import 'package:auth/presentation/manager/profile_cubit/profile_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/profile_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:auth/presentation/manager/comment_cubit/comment_cubit.dart';
@@ -44,7 +46,21 @@ class InputFieldBlocBuilder extends StatelessWidget {
           },
 
           onSubmitted: (text) {
-            cubit.addOrUpdateComment(postId, text);
+            final profileState = context.read<ProfileCubit>().state;
+            String? currentName;
+            String? currentAvatar;
+
+            if (profileState is ProfileLoaded) {
+              currentName = profileState.user.name;
+              currentAvatar = profileState.user.avatar;
+            }
+
+            cubit.addOrUpdateComment(
+              postId,
+              text,
+              authorName: currentName,
+              authorImage: currentAvatar,
+            );
             controller.clear();
             focusNode.unfocus();
           },

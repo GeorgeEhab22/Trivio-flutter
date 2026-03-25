@@ -114,7 +114,7 @@ CustomTransitionPage buildAnimatedPage({
 GoRouter createRouter(bool isLoggedIn) {
   return GoRouter(
     // initialLocation: AppRoutes.selectTeams,
-    // initialLocation: isLoggedIn ? AppRoutes.reels : AppRoutes.signIn,
+    //initialLocation: isLoggedIn ? AppRoutes.home : AppRoutes.signIn,
     initialLocation: AppRoutes.signIn,
     routes: [
       GoRoute(
