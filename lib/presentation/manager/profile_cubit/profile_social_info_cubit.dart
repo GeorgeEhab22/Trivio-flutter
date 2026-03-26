@@ -96,17 +96,14 @@ class ProfileSocialInfoCubit extends Cubit<ProfileSocialInfoState> {
 
         if (state is SocialInfoLoaded) {
           final loadedState = state as SocialInfoLoaded;
-          // Use current state's following list
-          List<Follow> previousItems = loadMore ? loadedState.following : [];
-          
           emit(loadedState.copyWith(
-            following: [...previousItems, ...newItems],
-            hasReachedMaxFollowing: isMax,
+            following: List.from(newItems),
+            hasReachedMaxFollowing: newItems.length < _limit,
           ));
         } else {
           // If this is the first data to arrive, create the state
           emit(SocialInfoLoaded(
-            following: newItems,
+            following: List.from(newItems),
             hasReachedMaxFollowing: isMax,
           ));
         }

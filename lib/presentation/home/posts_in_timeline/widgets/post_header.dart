@@ -13,13 +13,11 @@ import 'package:auth/presentation/manager/post_cubit/post_interaction_cubit.dart
 class PostHeader extends StatelessWidget {
   final Post post;
   final String currentUserId;
-  final bool isFollowing;
 
   const PostHeader({
     super.key,
     required this.post,
     required this.currentUserId,
-    required this.isFollowing,
   });
 
   @override
@@ -69,7 +67,6 @@ class PostHeader extends StatelessWidget {
                   FollowButton(
                     currentUserId: currentUserId,
                     authorId: post.authorId,
-                    initialFollowStatus: isFollowing,
                   ),
               ],
               SizedBox(width: 8),

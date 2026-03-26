@@ -230,8 +230,17 @@ GoRouter createRouter(bool isLoggedIn) {
                 routes: [
                   GoRoute(
                     path: 'home',
-                    pageBuilder: (context, state) =>
-                        NoTransitionPage(child: const HomePage()),
+                    pageBuilder: (context, state) => NoTransitionPage(
+                      child: MultiBlocProvider(
+                        providers: [
+                          BlocProvider<FollowCubit>(
+                            create: (context) => di.sl<FollowCubit>(),
+                          ),
+                          BlocProvider(create: (context) => di.sl<ProfileSocialInfoCubit>()),
+                        ],
+                        child: const HomePage(),
+                      ),
+                    ),
                     routes: [
                       GoRoute(
                         path: 'edit',

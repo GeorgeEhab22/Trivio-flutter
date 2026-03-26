@@ -13,12 +13,21 @@ class FollowInitial extends FollowState {}
 class FollowLoading extends FollowState {}
 
 class FollowSuccess extends FollowState {
-  final Follow? follow; // null when unfollow
+  final Follow? follow;
 
   const FollowSuccess({this.follow});
 
   @override
   List<Object?> get props => [follow];
+}
+
+class UnfollowSuccess extends FollowState {
+  final String unfollowedUserId;
+
+  const UnfollowSuccess(this.unfollowedUserId);
+
+  @override
+  List<Object?> get props => [unfollowedUserId];
 }
 
 class FollowFailure extends FollowState {

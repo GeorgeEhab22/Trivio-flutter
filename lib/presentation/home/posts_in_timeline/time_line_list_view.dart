@@ -4,26 +4,27 @@ import 'package:auth/presentation/groups/widgets/dummy_for_skeletonizer.dart';
 import 'package:auth/presentation/home/posts_in_timeline/widgets/post_card.dart';
 import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/profile_social_info_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class TimelineListView extends StatelessWidget {
-
   const TimelineListView({super.key});
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final profileState = context.read<ProfileCubit>().state;
-    String myUserId = '';
 
-    if (profileState is ProfileLoaded) {
-      myUserId = profileState.user.id;
-    }
     return BlocConsumer<PostCubit, PostState>(
       listener: (context, state) {
+        if (state is PostsLoadingMoreError) {
+          showCustomSnackBar(context, state.message, false);
+        }
+        if (state is PostLoaded) {
+          context.read<ProfileSocialInfoCubit>().fetchFollowing();
+        }
         if (state is PostsLoadingMoreError) {
           showCustomSnackBar(context, state.message, false);
         }
@@ -93,7 +94,6 @@ class TimelineListView extends StatelessWidget {
               return PostCard(
                 post: displayPosts[index],
                 currentUserId: currentUserId,
-                isFollowing: false,
               );
             }, childCount: displayPosts.length + (isLoadingMore ? 1 : 0)),
           ),

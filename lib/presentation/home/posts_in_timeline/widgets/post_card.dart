@@ -17,13 +17,11 @@ class PostCard extends StatelessWidget {
   final Post post;
   final String currentUserId;
   final ReactionType? currentReaction;
-  final bool isFollowing;
 
   const PostCard({
     super.key,
     required this.post,
     required this.currentUserId,
-    required this.isFollowing,
     this.currentReaction,
   });
 
@@ -146,7 +144,6 @@ class PostCard extends StatelessWidget {
                             PostHeader(
                               post: post,
                               currentUserId: currentUserId,
-                              isFollowing: isFollowing,
                             ),
                             PostContent(post: post),
                             if (hasMetrics || isGroupPost) ...[
