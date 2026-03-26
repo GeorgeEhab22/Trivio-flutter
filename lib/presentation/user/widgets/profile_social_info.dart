@@ -5,6 +5,9 @@ import 'package:auth/constants/colors.dart';
 import 'package:go_router/go_router.dart';
 import 'stat_item.dart';
 
+// Simple notification to bubble up the scroll request to the parent
+class ScrollToPostsNotification extends Notification {}
+
 class ProfileSocialInfo extends StatelessWidget {
   final int numberOfFollowers;
   final int numberOfFollowing;
@@ -44,7 +47,14 @@ class ProfileSocialInfo extends StatelessWidget {
             label: l10n.posts,
             count: numberOfPosts,
             onTap: () {
-              // TODO: Scroll to posts or show post info
+              final state = GoRouterState.of(context);
+              // Check if we are already on the profile page
+              if (state.uri.path == AppRoutes.profile) {
+                ScrollToPostsNotification().dispatch(context);
+              } else {
+                // Navigate back with a query parameter
+                context.go('${AppRoutes.profile}?scrollTo=posts');
+              }
             },
           ),
         ],

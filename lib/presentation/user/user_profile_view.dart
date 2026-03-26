@@ -8,130 +8,159 @@ import 'package:auth/presentation/manager/profile_cubit/profile_posts_state.dart
 import 'package:auth/presentation/manager/profile_cubit/profile_state.dart';
 import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/user/widgets/profile_info_box.dart';
+import 'package:auth/presentation/user/widgets/profile_social_info.dart';
 import 'package:flutter/material.dart';
 import 'package:auth/constants/colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-class UserProfileView extends StatelessWidget {
+class UserProfileView extends StatefulWidget {
   const UserProfileView({super.key});
+
+  @override
+  State<UserProfileView> createState() => _UserProfileViewState();
+}
+
+class _UserProfileViewState extends State<UserProfileView> {
+  final GlobalKey _postsHeaderKey = GlobalKey();
+
+  // Centralized scroll logic with a safety delay
+  void _scrollToPosts() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      
+      final scrollContext = _postsHeaderKey.currentContext;
+      if (scrollContext != null) {
+        Scrollable.ensureVisible(
+          scrollContext,
+          duration: const Duration(milliseconds: 600),
+          curve: Curves.easeInOut,
+        );
+      }
+    });
+  }
+
+  // Check if the URL tells us to scroll
+  void _checkUrlAndScroll() {
+    final state = GoRouterState.of(context);
+    if (state.uri.queryParameters['scrollTo'] == 'posts') {
+      _scrollToPosts();
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // Case 1: If the widget is created and data is already there (or coming)
+    WidgetsBinding.instance.addPostFrameCallback((_) => _checkUrlAndScroll());
+  }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
-    return BlocBuilder<ProfileCubit, ProfileState>(
+    return BlocConsumer<ProfileCubit, ProfileState>(
+      listener: (context, state) {
+        // Case 2: When navigating from Settings, wait for the data to load
+        if (state is ProfileLoaded) {
+          _checkUrlAndScroll();
+        }
+      },
       builder: (context, profileState) {
         if (profileState is ProfileInitial || profileState is ProfileLoading) {
           return const Scaffold(
-            body: Center(
-              child: CircularProgressIndicator(color: AppColors.primary),
-            ),
+            body: Center(child: CircularProgressIndicator(color: AppColors.primary)),
           );
         }
 
         if (profileState is ProfileLoaded) {
           final user = profileState.user;
-          return BlocBuilder<ProfilePostsCubit, ProfilePostsState>(
-            builder: (context, postsState) {
-              return Scaffold(
-                appBar: AppBar(
-                  title: Row(
-                    children: [
-                      const HomeAppBarLogoAndSearchBox(),
-                      const Spacer(),
-                      IconButton(
-                        onPressed: () {},
-                        icon: const Icon(Icons.share),
-                        tooltip: l10n.shareProfile,
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          GoRouter.of(context).push(AppRoutes.profileSettings);
-                        },
-                        icon: const Icon(Icons.menu),
-                        tooltip: l10n.profileSettings,
-                      ),
-                    ],
-                  ),
-                  shape: const Border(
-                    bottom: BorderSide(color: AppColors.lightGrey, width: 2),
-                  ),
-                ),
-                body: RefreshIndicator(
-                  onRefresh: () async {
-                    await context
-                        .read<ProfilePostsCubit>()
-                        .fetchAllProfileData();
-                  },
-                  child: CustomScrollView(
-                  
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    slivers: [
-                      SliverToBoxAdapter(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            ProfileInfoBox(user: user),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 8,
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    user.name,
-                                    style: Styles.textStyle20.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  if (user.bio?.isNotEmpty ?? false)
-                                    Text(
-                                      user.bio!,
-                                      style: Styles.textStyle16.copyWith(
-                                        color: Colors.grey[800],
-                                      ),
-                                    ),
-                                  const SizedBox(height: 10),
-                                  const Divider(color: AppColors.lightGrey),
-                                  Text(l10n.posts, style: Styles.textStyle30),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
 
-
-                      if (postsState is ProfilePostsLoaded)
-                        postsState.myPosts.isEmpty
-                            ? SliverFillRemaining(
-                                hasScrollBody: false,
-                                child: Center(child: Text(l10n.noPostsYet)),
-                              )
-                            : SliverList(
-                                delegate: SliverChildBuilderDelegate((
-                                  context,
-                                  index,
-                                ) {
-                                  return PostCard(
-                                    post: postsState.myPosts[index],
-                                    currentUserId: user.id,
-                                  );
-                                }, childCount: postsState.myPosts.length),
-                              )
-                      else
-                        const SliverToBoxAdapter(child: SizedBox.shrink()),
-                    ],
-                  ),
-                ),
-              );
+          return NotificationListener<ScrollToPostsNotification>(
+            onNotification: (_) {
+              // Case 3: Clicked while ALREADY on the profile page
+              _scrollToPosts();
+              return true;
             },
+            child: BlocBuilder<ProfilePostsCubit, ProfilePostsState>(
+              builder: (context, postsState) {
+                return Scaffold(
+                  appBar: AppBar(
+                    title: Row(
+                      children: [
+                        const HomeAppBarLogoAndSearchBox(),
+                        const Spacer(),
+                        IconButton(onPressed: () {}, icon: const Icon(Icons.share)),
+                        IconButton(
+                          onPressed: () => GoRouter.of(context).push(AppRoutes.profileSettings),
+                          icon: const Icon(Icons.menu),
+                        ),
+                      ],
+                    ),
+                    shape: const Border(bottom: BorderSide(color: AppColors.lightGrey, width: 2)),
+                  ),
+                  body: RefreshIndicator(
+                    onRefresh: () async => context.read<ProfilePostsCubit>().fetchAllProfileData(),
+                    child: CustomScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      slivers: [
+                        SliverToBoxAdapter(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              ProfileInfoBox(user: user),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      user.name,
+                                      style: Styles.textStyle20.copyWith(fontWeight: FontWeight.bold),
+                                    ),
+                                    if (user.bio?.isNotEmpty ?? false)
+                                      Text(
+                                        user.bio!,
+                                        style: Styles.textStyle16.copyWith(color: Colors.grey[800]),
+                                      ),
+                                    const SizedBox(height: 10),
+                                    const Divider(color: AppColors.lightGrey),
+                                    Text(
+                                      l10n.posts, 
+                                      key: _postsHeaderKey, // Target Key
+                                      style: Styles.textStyle30,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        if (postsState is ProfilePostsLoaded)
+                          postsState.myPosts.isEmpty
+                              ? SliverFillRemaining(
+                                  hasScrollBody: false,
+                                  child: Center(child: Text(l10n.noPostsYet)),
+                                )
+                              : SliverList(
+                                  delegate: SliverChildBuilderDelegate(
+                                    (context, index) => PostCard(
+                                      post: postsState.myPosts[index],
+                                      currentUserId: user.id,
+                                    ),
+                                    childCount: postsState.myPosts.length,
+                                  ),
+                                )
+                        else
+                          const SliverToBoxAdapter(child: SizedBox.shrink()),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
           );
         }
-
         return const Scaffold(body: SizedBox.shrink());
       },
     );
