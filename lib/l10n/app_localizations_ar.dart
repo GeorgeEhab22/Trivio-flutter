@@ -1186,7 +1186,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get noPendingRequestsSimple => 'لا توجد طلبات معلقة';
 
   @override
-  String get noLikedPostsYet => 'لا توجد منشورات معجب بها بعد.';
+  String get noLikedPostsYet => 'لا يوجد منشورات مفضله';
 
   @override
   String get editProfileTitle => 'تعديل الملف الشخصي';
@@ -1229,4 +1229,10 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get noUsersDefault => 'مستخدم';
+
+  @override
+  String get unfollow => 'الغاء المتايعه';
+
+  @override
+  String get noPostsYet => 'لا يوجد منشورات';
 }

@@ -16,4 +16,6 @@ abstract class UserProfileRepo {
   Future<Either<Failure, Unit>> changePassword(String currentPassword, String newPassword);
   Future<Either<Failure, List<UserProfilePreview>>> getSuggestions();
   Future<Either<Failure, List<Post>>> getLikedPostsIds();
+  Future<Either<Failure, List<Post>>> getLikedPosts();
+  Future<Either<Failure, List<Post>>> getMyPosts();
 }

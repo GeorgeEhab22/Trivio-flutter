@@ -76,5 +76,26 @@ class UserProfileRepositoryImpl implements UserProfileRepo {
     }
   }
 
- 
+  @override
+  Future<Either<Failure, List<Post>>> getLikedPosts() async {
+    try {
+      final likedPosts = await remoteDataSource.getLikedPosts();
+      return Right(likedPosts);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    }
+  }
+
+  @override
+Future<Either<Failure, List<Post>>> getMyPosts() async {
+  try {
+    final posts = await remoteDataSource.getMyPosts();
+    return Right(posts);
+  } on ServerException catch (e) {
+    return Left(ServerFailure(e.message));
+  } catch (e) {
+    return Left(ServerFailure('Unexpected error loading posts: $e'));
+  }
+}
+
 }

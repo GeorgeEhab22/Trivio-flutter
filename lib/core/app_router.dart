@@ -42,6 +42,7 @@ import 'package:auth/presentation/manager/group_cubit/get_members_by_roles/membe
 import 'package:auth/presentation/manager/group_cubit/unban_member/unban_member_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/update_group/update_group_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/interests/select_interests_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/profile_posts_cubit.dart';
 import 'package:auth/presentation/manager/sigin_in_cubit/forget_password_otp_cubit.dart';
 import 'package:auth/presentation/home/widgets/edit_page.dart';
 import 'package:auth/presentation/manager/follow_cubit/follow_cubit.dart';
@@ -236,7 +237,10 @@ GoRouter createRouter(bool isLoggedIn) {
                           BlocProvider<FollowCubit>(
                             create: (context) => di.sl<FollowCubit>(),
                           ),
-                          BlocProvider(create: (context) => di.sl<ProfileSocialInfoCubit>()),
+                          BlocProvider(
+                            create: (context) =>
+                                di.sl<ProfileSocialInfoCubit>(),
+                          ),
                         ],
                         child: const HomePage(),
                       ),
@@ -299,8 +303,18 @@ GoRouter createRouter(bool isLoggedIn) {
                   GoRoute(
                     path: 'profile',
                     pageBuilder: (context, state) => NoTransitionPage(
-                      child: BlocProvider<FollowCubit>(
-                        create: (context) => di.sl<FollowCubit>(),
+                      child: MultiBlocProvider(
+                        providers: [
+                          BlocProvider<FollowCubit>(
+                            create: (context) => di.sl<FollowCubit>(),
+                          ),
+                          BlocProvider(
+                            create: (context) => di.sl<ProfilePostsCubit>()..fetchAllProfileData(),
+                          ),
+                          BlocProvider<ProfileSocialInfoCubit>(
+                            create: (context) => di.sl<ProfileSocialInfoCubit>(),
+                          ),
+                        ],
                         child: UserProfileView(),
                       ),
                     ),
@@ -312,7 +326,8 @@ GoRouter createRouter(bool isLoggedIn) {
                               state.uri.queryParameters['tab'];
                           final int index = int.tryParse(tabString ?? '0') ?? 0;
                           return BlocProvider(
-                            create: (context) => di.sl<ProfileSocialInfoCubit>(),
+                            create: (context) =>
+                                di.sl<ProfileSocialInfoCubit>(),
                             child: SocialInfoScreen(initialTabIndex: index),
                           );
                         },
@@ -353,7 +368,7 @@ GoRouter createRouter(bool isLoggedIn) {
                           GoRoute(
                             path: 'liked_posts',
                             builder: (context, state) => BlocProvider(
-                              create: (context) => di.sl<LikedPostsCubit>(),
+                              create: (context) => di.sl<LikedPostsCubit>()..fetchLikedPosts(),
                               child: const LikedPostsScreen(),
                             ),
                           ),

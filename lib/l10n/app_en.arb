@@ -452,6 +452,9 @@
   "passwordUpdated": "Password Updated!",
   "saveNewPassword": "Save New Password",
 
-  "noUsersDefault": "User"
+  "noUsersDefault": "User",
+  "unfollow": "Unfollow",
+  "noPostsYet": "No posts yet",
+  "noLikedPostsYet": "No liked posts yet"
 }
 

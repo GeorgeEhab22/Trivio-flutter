@@ -106,6 +106,8 @@ import 'package:auth/domain/usecases/interests/get_selected_fav_teams_use_case.d
 import 'package:auth/domain/usecases/interests/remove_fav_players_use_case.dart';
 import 'package:auth/domain/usecases/interests/remove_fav_teams_use_case.dart';
 import 'package:auth/domain/usecases/interests/select_interests.dart';
+import 'package:auth/domain/usecases/user_profile/get_liked_posts.dart';
+import 'package:auth/domain/usecases/user_profile/get_my_posts.dart';
 import 'package:auth/domain/usecases/user_profile/get_suggestions.dart';
 import 'package:auth/domain/usecases/user_profile/update_profile.dart';
 import 'package:auth/presentation/manager/comment_cubit/comment_cubit.dart';
@@ -141,6 +143,7 @@ import 'package:auth/presentation/manager/profile_cubit/interests/select_interes
 import 'package:auth/presentation/manager/profile_cubit/change_password_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_liked_posts_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/profile_posts_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_social_info_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_update_cubit.dart';
 import 'package:auth/presentation/manager/register_cubit/register_cubit.dart';
@@ -175,9 +178,14 @@ Future<void> init() async {
 
   sl.registerLazySingleton(() => Dio());
   sl.registerLazySingleton(() => prefs);
-  sl.registerLazySingleton(() => ApiService(baseUrl: baseUrl, getToken: () async {
-    return await sl<AuthRemoteDataSource>().getToken();
-  }));
+  sl.registerLazySingleton(
+    () => ApiService(
+      baseUrl: baseUrl,
+      getToken: () async {
+        return await sl<AuthRemoteDataSource>().getToken();
+      },
+    ),
+  );
   sl.registerLazySingleton(() => ErrorHandler());
   sl.registerFactory(() => LocaleCubit());
 
@@ -403,14 +411,14 @@ Future<void> init() async {
   sl.registerLazySingleton(() => CreateGroupPostUseCase(sl()));
 
   // get group posts
-sl.registerFactory<GroupPostsCubit>(
-  () => GroupPostsCubit(
-    getGroupPostsUseCase: sl(),
-    getGroupsPostsFeedUseCase: sl(),
-    deleteGroupPostUseCase: sl(),
-    editGroupPostUseCase: sl(),
-  ),
-);
+  sl.registerFactory<GroupPostsCubit>(
+    () => GroupPostsCubit(
+      getGroupPostsUseCase: sl(),
+      getGroupsPostsFeedUseCase: sl(),
+      deleteGroupPostUseCase: sl(),
+      editGroupPostUseCase: sl(),
+    ),
+  );
   sl.registerLazySingleton(() => GetGroupPostsUseCase(sl()));
   sl.registerLazySingleton(() => DeleteGroupPostUseCase(sl()));
   sl.registerLazySingleton(() => EditGroupPostUseCase(sl()));
@@ -422,6 +430,10 @@ sl.registerFactory<GroupPostsCubit>(
   // ==========================================================================
   sl.registerFactory(() => ThemeCubit(prefs));
 
+  
+  // ==========================================================================
+  // PROFILE
+  // ==========================================================================
   sl.registerLazySingleton<ProfileRemoteDataSource>(
     () =>
         ProfileRemoteDataSourceImpl(api: sl(), prefs: sl(), errorHandler: sl()),
@@ -433,12 +445,14 @@ sl.registerFactory<GroupPostsCubit>(
   sl.registerLazySingleton(() => GetMyProfile(sl()));
   sl.registerLazySingleton(() => UpdateProfile(sl()));
   sl.registerLazySingleton(() => ChangePassword(sl()));
+  sl.registerLazySingleton(() => GetMyPostsUseCase(sl()));
+  sl.registerLazySingleton(() => GetLikedPostsUseCase(sl()));
   sl.registerFactory(
-  () => ProfileUpdateCubit(
-    updateProfileUseCase: sl(),
-    changePasswordUseCase: sl(),
-  ),
-);
+    () => ProfileUpdateCubit(
+      updateProfileUseCase: sl(),
+      changePasswordUseCase: sl(),
+    ),
+  );
 
   sl.registerFactory(
     () => ProfileSocialInfoCubit(
@@ -449,8 +463,13 @@ sl.registerFactory<GroupPostsCubit>(
       getMyFollowRequestsUseCase: sl(),
       acceptFollowRequest: sl(),
       declineFollowRequest: sl(),
-      getSuggestionsUseCase: sl()
+      getSuggestionsUseCase: sl(),
     ),
+  );
+
+  sl.registerFactory(
+    () =>
+        ProfilePostsCubit(getMyPostsUseCase: sl(), getLikedPostsUseCase: sl()),
   );
   //follow
   sl.registerLazySingleton<FollowRemoteDataSource>(
@@ -479,10 +498,17 @@ sl.registerFactory<GroupPostsCubit>(
   );
 
   // select interest
-   sl.registerLazySingleton<InterestsLocalDataSource>(() => InterestsLocalDataSource());
+  sl.registerLazySingleton<InterestsLocalDataSource>(
+    () => InterestsLocalDataSource(),
+  );
 
   sl.registerLazySingleton<InterestsRemoteDataSource>(
-    () => InterestsRemoteDataSourceImpl(api: sl(), prefs: sl(), errorHandler: sl(), dio: sl()),
+    () => InterestsRemoteDataSourceImpl(
+      api: sl(),
+      prefs: sl(),
+      errorHandler: sl(),
+      dio: sl(),
+    ),
   );
   sl.registerLazySingleton<InterestsRepo>(
     () => InterestsRepoImpl(remoteDatasource: sl(), localDatasource: sl()),

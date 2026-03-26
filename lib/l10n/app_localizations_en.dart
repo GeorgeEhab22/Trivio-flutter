@@ -1200,7 +1200,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noPendingRequestsSimple => 'No pending requests';
 
   @override
-  String get noLikedPostsYet => 'No liked posts yet.';
+  String get noLikedPostsYet => 'No liked posts yet';
 
   @override
   String get editProfileTitle => 'Edit Profile';
@@ -1243,4 +1243,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noUsersDefault => 'User';
+
+  @override
+  String get unfollow => 'Unfollow';
+
+  @override
+  String get noPostsYet => 'No posts yet';
 }

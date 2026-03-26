@@ -2375,7 +2375,7 @@ abstract class AppLocalizations {
   /// No description provided for @noLikedPostsYet.
   ///
   /// In en, this message translates to:
-  /// **'No liked posts yet.'**
+  /// **'No liked posts yet'**
   String get noLikedPostsYet;
 
   /// No description provided for @editProfileTitle.
@@ -2461,6 +2461,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'User'**
   String get noUsersDefault;
+
+  /// No description provided for @unfollow.
+  ///
+  /// In en, this message translates to:
+  /// **'Unfollow'**
+  String get unfollow;
+
+  /// No description provided for @noPostsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No posts yet'**
+  String get noPostsYet;
 }
 
 class _AppLocalizationsDelegate

@@ -1,6 +1,7 @@
 import 'package:auth/common/api_endpoints.dart';
 import 'package:auth/common/functions/handle_dio_error.dart';
 import 'package:auth/data/core/error/exceptions.dart';
+import 'package:auth/data/models/post_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -20,6 +21,8 @@ abstract class ProfileRemoteDataSource {
   Future<void> changePassword(String currentPassword, String newPassword);
   Future<List<UserProfilePreview>> getSuggestions();
   Future<List<Post>> getLikedPostsIds();
+  Future<List<Post>> getLikedPosts();
+  Future<List<Post>> getMyPosts();
 }
 
 class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
@@ -134,4 +137,47 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
     errorHandler.handleDioError(e);
     return ServerException(e.message ?? 'An unknown error occurred');
   }
+
+@override
+Future<List<PostModel>> getMyPosts() async {
+  try {
+    final response = await api.get(ApiEndpoints.getUserPosts);
+    
+    if (response['data'] == null || response['data']['posts'] == null) {
+      return [];
+    }
+    final List postsJson = response['data']['posts'];
+    return postsJson.map((json) => PostModel.fromJson(json)).toList();
+  } on DioException catch (e) {
+    throw ServerException(e.response?.data['message'] ?? 'Server Error');
+  } catch (e) {
+    throw ServerException('Mapping Error: $e');
+  }
+}
+
+@override
+Future<List<PostModel>> getLikedPosts() async {
+  try {
+    final responseIds = await api.get(ApiEndpoints.likedPostsIds);
+    
+    final List<dynamic> rawIds = responseIds['data']['likedPosts'] ?? [];
+    
+    if (rawIds.isEmpty) return [];
+
+    final List<String> postIds = rawIds.map((item) {
+      return item is Map ? item['_id'].toString() : item.toString();
+    }).toList();
+
+    final response = await api.post(
+      ApiEndpoints.likedPosts, 
+      data: {'postIds': postIds},
+    );
+
+    final List postsJson = response['data']['posts'] ?? [];
+    return postsJson.map((json) => PostModel.fromJson(json)).toList();
+  } catch (e) {
+    errorHandler.handleDioError(e);
+    rethrow;
+  }
+}
 }
