@@ -32,17 +32,8 @@ class LikedPostsScreen extends StatelessWidget {
               itemBuilder: (context, index) {
                 return GestureDetector(
                   onTap: () {
-                    // Navigate to individual post view
+                    // TODO: Navigate to individual post view
                   },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: AppColors.lightGrey,
-                      image: DecorationImage(
-                        image: NetworkImage("https://via.placeholder.com/150"),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
                 );
               },
             );

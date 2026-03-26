@@ -312,11 +312,7 @@ GoRouter createRouter(bool isLoggedIn) {
                               state.uri.queryParameters['tab'];
                           final int index = int.tryParse(tabString ?? '0') ?? 0;
                           return BlocProvider(
-                            create: (context) => di.sl<ProfileSocialInfoCubit>()
-                              ..fetchFollowers(userId: null)
-                              ..fetchFollowing(userId: null)
-                              ..fetchRequests()
-                              ..fetchSuggestions(),
+                            create: (context) => di.sl<ProfileSocialInfoCubit>(),
                             child: SocialInfoScreen(initialTabIndex: index),
                           );
                         },

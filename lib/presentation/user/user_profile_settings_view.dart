@@ -28,7 +28,6 @@ class UserProfileSettings extends StatelessWidget {
       ),
       body: BlocBuilder<ProfileCubit, ProfileState>(
         builder: (context, state) {
-          // 1. Handle Loading/Error states for the settings page
           if (state is ProfileLoading) {
             return const Center(
               child: CircularProgressIndicator(color: AppColors.primary),
@@ -69,43 +68,6 @@ class UserProfileSettings extends StatelessWidget {
                         shrinkWrap: true,
                         children: [
                           SettingsRow(
-                            title: l10n.accountSettings,
-                            subtitle: l10n.accountSettingsSub,
-                            onpressed: () {},
-                          ),
-                          const Divider(color: AppColors.lightGrey),
-                          SettingsRow(
-                            title: l10n.likedPosts,
-                            subtitle: l10n.likedPostsSub,
-                            onpressed: () => context.push(AppRoutes.likedPosts),
-                          ),
-                          const Divider(color: AppColors.lightGrey),
-                          SettingsRow(
-                            title: l10n.privacySettings,
-                            subtitle: l10n.privacySettingsSub,
-                            onpressed: () {},
-                          ),
-                          const Divider(color: AppColors.lightGrey),
-                          SettingsRow(
-                            title: l10n.changePassword,
-                            subtitle: l10n.changePasswordSub,
-                            onpressed: () =>
-                                context.push(AppRoutes.changePassword),
-                          ),
-                          const Divider(color: AppColors.lightGrey),
-                          SettingsRow(
-                            title: l10n.notificationPrefs,
-                            subtitle: l10n.notificationPrefsSub,
-                            onpressed: () {},
-                          ),
-                          const Divider(color: AppColors.lightGrey),
-                          SettingsRow(
-                            title: l10n.appPrefs,
-                            subtitle: l10n.appPrefsSub,
-                            onpressed: () {},
-                          ),
-                          Divider(color: AppColors.lightGrey, height: 1),
-                          SettingsRow(
                             title: l10n.settingsFavTeamsTitle,
                             subtitle: l10n.settingsFavTeamsSub,
                             onpressed: () {
@@ -125,18 +87,31 @@ class UserProfileSettings extends StatelessWidget {
                           ),
                           const Divider(color: AppColors.lightGrey),
                           SettingsRow(
-                            title: l10n.requireFollowRequests,
-                            subtitle: l10n.requireFollowRequestsSub,
-                            onpressed: null,
-                            isToggle: true,
+                            title: l10n.likedPosts,
+                            subtitle: l10n.likedPostsSub,
+                            onpressed: () => context.push(AppRoutes.likedPosts),
                           ),
                           const Divider(color: AppColors.lightGrey),
                           SettingsRow(
-                            title: l10n.searchableProfile,
-                            subtitle: l10n.searchableProfileSub,
-                            onpressed: null,
-                            isToggle: true,
+                            title: l10n.notificationPrefs,
+                            subtitle: l10n.notificationPrefsSub,
+                            onpressed: () {},
                           ),
+                          const Divider(color: AppColors.lightGrey),
+                          SettingsRow(
+                            title: l10n.changePassword,
+                            subtitle: l10n.changePasswordSub,
+                            onpressed: () =>
+                                context.push(AppRoutes.changePassword),
+                          ),
+                          //TODO: follow requests?
+                          // const Divider(color: AppColors.lightGrey),
+                          // SettingsRow(
+                          //   title: l10n.requireFollowRequests,
+                          //   subtitle: l10n.requireFollowRequestsSub,
+                          //   onpressed: null,
+                          //   isToggle: true,
+                          // ),
                         ],
                       ),
                     ),

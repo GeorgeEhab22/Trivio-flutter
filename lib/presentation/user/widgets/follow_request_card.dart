@@ -21,7 +21,6 @@ class FollowRequestCard extends StatelessWidget {
       elevation: 0,
       color: Colors.transparent,
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      // Outer border removed by removing the 'side' property
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: const EdgeInsets.all(12.0),
@@ -46,8 +45,6 @@ class FollowRequestCard extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
               ),
             ),
-
-            // Minimal Action Buttons
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -62,7 +59,6 @@ class FollowRequestCard extends StatelessWidget {
     );
   }
 
-  // Updated helper for a cleaner, borderless look
   Widget _buildMinimalButton({
     required IconData icon,
     required VoidCallback onTap,

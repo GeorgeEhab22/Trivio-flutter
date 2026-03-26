@@ -21,13 +21,11 @@ class EditProfileScreen extends StatelessWidget {
 
     return BlocBuilder<ProfileUpdateCubit, ProfileUpdateState>(
       builder: (context, state) {
-        // Default fallback values
         String name = "";
         String bio = "";
         XFile? localImage;
         String originalAvatar = "";
 
-        // Extract data only if we are in the initial/editing state
         if (state is ProfileUpdateInitialState) {
           name = state.name;
           bio = state.bio;
@@ -56,7 +54,6 @@ class EditProfileScreen extends StatelessWidget {
               padding: const EdgeInsets.all(20),
               child: Column(
                 children: [
-                  // --- Avatar Section ---
                   GestureDetector(
                     onTap: () async {
                       final file = await ImagePicker().pickImage(
@@ -73,8 +70,7 @@ class EditProfileScreen extends StatelessWidget {
                           height: 120,
                           decoration: const BoxDecoration(
                             shape: BoxShape.circle,
-                            color: AppColors
-                                .lightGrey, // This is your "Gray" background
+                            color: AppColors.lightGrey,
                           ),
                           child: ClipOval(
                             child: _buildAvatarContent(
@@ -114,11 +110,10 @@ class EditProfileScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 30),
 
-                  // --- Username Field ---
                   TextFormField(
                     key: const Key(
                       'name_field',
-                    ), // Using keys prevents text reset bugs
+                    ),
                     initialValue: name,
                     cursorColor: AppColors.primary,
                     decoration: _buildInputDecoration(
@@ -131,7 +126,6 @@ class EditProfileScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 20),
 
-                  // --- Bio Field ---
                   TextFormField(
                     key: const Key('bio_field'),
                     initialValue: bio,
@@ -148,7 +142,6 @@ class EditProfileScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 40),
 
-                  // --- Save Button ---
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary,
@@ -204,7 +197,6 @@ class EditProfileScreen extends StatelessWidget {
   }
 
   Widget _buildAvatarContent(XFile? localImage, String originalAvatar) {
-    // 1. Show newly picked local image immediately
     if (localImage != null) {
       return kIsWeb
           ? Image.network(
@@ -221,17 +213,14 @@ class EditProfileScreen extends StatelessWidget {
             );
     }
 
-    // 2. Show network image if URL exists
     if (originalAvatar.isNotEmpty && originalAvatar.startsWith('http')) {
       return Image.network(
         originalAvatar,
         fit: BoxFit.cover,
         width: 120,
         height: 120,
-        // If the URL is broken or 404s, show the icon
         errorBuilder: (context, error, stackTrace) =>
             const Icon(Icons.person, size: 60, color: Colors.grey),
-        // Optional: Show a tiny spinner while it's downloading
         loadingBuilder: (context, child, loadingProgress) {
           if (loadingProgress == null) return child;
           return const Center(child: CircularProgressIndicator(strokeWidth: 2));
@@ -239,7 +228,6 @@ class EditProfileScreen extends StatelessWidget {
       );
     }
 
-    // 3. Fallback for empty/invalid URLs
     return const Icon(Icons.person, size: 60, color: Colors.grey);
   }
 }

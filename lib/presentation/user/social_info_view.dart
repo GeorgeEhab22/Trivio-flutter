@@ -2,8 +2,6 @@ import 'package:auth/constants/colors.dart';
 import 'package:auth/core/styels.dart';
 import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/authentication/widgets/show_custom_snackbar.dart';
-import 'package:auth/presentation/manager/profile_cubit/profile_cubit.dart'; // Assuming this is your ProfileCubit path
-import 'package:auth/presentation/manager/profile_cubit/profile_state.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_social_info_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_social_info_state.dart';
 import 'package:auth/presentation/user/widgets/follow_info_list.dart';
@@ -11,55 +9,23 @@ import 'package:auth/presentation/user/widgets/follow_request_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class SocialInfoScreen extends StatefulWidget {
+class SocialInfoScreen extends StatelessWidget {
   final String? userId; // If null, we are looking at "My Profile"
   final int initialTabIndex;
 
   const SocialInfoScreen({super.key, this.userId, this.initialTabIndex = 0});
 
   @override
-  State<SocialInfoScreen> createState() => _SocialInfoScreenState();
-}
-
-class _SocialInfoScreenState extends State<SocialInfoScreen> {
-  late String? effectiveUserId;
-
-  @override
-  void initState() {
-    super.initState();
-    effectiveUserId = widget.userId;
-    
-    // 1. Resolve User ID from ProfileCubit if viewing own profile
-    final profileState = context.read<ProfileCubit>().state;
-    if (effectiveUserId == null && profileState is ProfileLoaded) {
-      effectiveUserId = profileState.user.id;
-    }
-
-    // 2. Trigger Initial Data Fetching
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final cubit = context.read<ProfileSocialInfoCubit>();
-      
-      // Fetch both lists immediately
-      cubit.fetchFollowers(userId: widget.userId);
-      cubit.fetchFollowing(userId: widget.userId);
-      
-      // If it's my profile, fetch requests and suggestions too
-      if (widget.userId == null) {
-        cubit.fetchRequests();
-        cubit.fetchSuggestions();
-      }
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final bool isMyProfile = widget.userId == null;
+    final bool isMyProfile = userId == null;
     final int tabCount = isMyProfile ? 4 : 2;
     final l10n = AppLocalizations.of(context)!;
 
+    _onWidgetBuilt(context);
+
     return DefaultTabController(
       length: tabCount,
-      initialIndex: widget.initialTabIndex,
+      initialIndex: initialTabIndex,
       child: Scaffold(
         appBar: AppBar(
           title: Text("Social", style: Styles.textStyle30),
@@ -100,31 +66,30 @@ class _SocialInfoScreenState extends State<SocialInfoScreen> {
               if (state is SocialInfoLoaded) {
                 return TabBarView(
                   children: [
-                    // 1️⃣ Followers List (Crucial: isFollowingList is FALSE)
+                    // Followers List
                     FollowInfoList(
                       data: state.followers,
-                      isFollowingList: false, 
+                      isFollowingList: false,
                       hasReachedMax: state.hasReachedMaxFollowers,
                       onLoadMore: () => context
                           .read<ProfileSocialInfoCubit>()
-                          .fetchFollowers(userId: widget.userId, loadMore: true),
+                          .fetchFollowers(userId: userId, loadMore: true),
                     ),
 
-                    // 2️⃣ Following List (Crucial: isFollowingList is TRUE)
+                    // Following List
                     FollowInfoList(
                       data: state.following,
                       isFollowingList: true,
                       hasReachedMax: state.hasReachedMaxFollowing,
                       onLoadMore: () => context
                           .read<ProfileSocialInfoCubit>()
-                          .fetchFollowing(userId: widget.userId, loadMore: true),
+                          .fetchFollowing(userId: userId, loadMore: true),
                     ),
 
-                    // 3️⃣ Requests List
-                    if (isMyProfile)
-                      _buildRequestsList(context, state.requests),
+                    // Requests List
+                    if (isMyProfile) _buildRequestsList(context, state.requests),
 
-                    // 4️⃣ Suggestions List
+                    // Suggestions List
                     if (isMyProfile)
                       FollowInfoList(
                         data: state.suggestions,
@@ -139,6 +104,21 @@ class _SocialInfoScreenState extends State<SocialInfoScreen> {
         ),
       ),
     );
+  }
+
+  void _onWidgetBuilt(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final cubit = context.read<ProfileSocialInfoCubit>();
+      
+
+      cubit.fetchFollowers(userId: userId);
+      cubit.fetchFollowing(userId: userId);
+
+      if (userId == null) {
+        cubit.fetchRequests();
+        cubit.fetchSuggestions();
+      }
+    });
   }
 
   Widget _buildRequestsList(BuildContext context, List requests) {
@@ -160,12 +140,8 @@ class _SocialInfoScreenState extends State<SocialInfoScreen> {
         return FollowRequestCard(
           key: ValueKey(request.id),
           follower: request.follower,
-          onAccept: () {
-            context.read<ProfileSocialInfoCubit>().acceptRequest(request.id);
-          },
-          onDecline: () {
-            context.read<ProfileSocialInfoCubit>().declineRequest(request.id);
-          },
+          onAccept: () => context.read<ProfileSocialInfoCubit>().acceptRequest(request.id),
+          onDecline: () => context.read<ProfileSocialInfoCubit>().declineRequest(request.id),
         );
       },
     );

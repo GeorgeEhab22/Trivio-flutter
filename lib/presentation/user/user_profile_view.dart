@@ -13,8 +13,6 @@ import 'package:go_router/go_router.dart';
 class UserProfileView extends StatelessWidget {
   UserProfileView({super.key});
 
-  //final ValueNotifier<bool> followNotifier = ValueNotifier(false);
-
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -47,7 +45,6 @@ class UserProfileView extends StatelessWidget {
       ),
       body: BlocBuilder<ProfileCubit, ProfileState>(
         builder: (context, state) {
-          // 🛡️ Handles the "Initial" state (the white screen fix) and Loading
           if (state is ProfileInitial || state is ProfileLoading) {
             return const Center(
               child: CircularProgressIndicator(color: AppColors.primary),
@@ -58,7 +55,6 @@ class UserProfileView extends StatelessWidget {
             final user = state.user;
             return ListView(
               children: [
-                // 🔹 Pass the dynamic user from the Cubit to the widget
                 ProfileInfoBox(user: user),
                 
                 Padding(
@@ -66,13 +62,11 @@ class UserProfileView extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Dynamic Name
                       Text(
                         user.name, 
                         style: Styles.textStyle20.copyWith(fontWeight: FontWeight.bold)
                       ),
                       const SizedBox(height: 4),
-                      // Dynamic Bio with Null Safety
                       if (user.bio != null && user.bio!.isNotEmpty)
                         Text(
                           user.bio!, 

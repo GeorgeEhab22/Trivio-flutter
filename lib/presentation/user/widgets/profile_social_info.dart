@@ -44,7 +44,7 @@ class ProfileSocialInfo extends StatelessWidget {
             label: l10n.posts,
             count: numberOfPosts,
             onTap: () {
-              // Scroll to posts or show post info
+              // TODO: Scroll to posts or show post info
             },
           ),
         ],

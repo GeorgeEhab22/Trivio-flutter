@@ -73,7 +73,7 @@ class FollowInfoList extends StatelessWidget {
           subtitle: Text("@${id.length > 8 ? id.substring(0, 8) : id}", style: const TextStyle(color: Colors.grey)),
           trailing: const Icon(Icons.chevron_right, color: AppColors.primary),
           onTap: () {
-            // Navigate to profile using 'id'
+            //TODO: Navigate to profile using userid
           },
         );
       },

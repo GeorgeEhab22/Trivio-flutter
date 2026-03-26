@@ -33,30 +33,6 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
     required this.errorHandler,
   });
 
-  // @override
-  // Future<List<UserProfilePreview>> getSuggestions() async {
-  //   // Simulate network delay
-  //   await Future.delayed(const Duration(milliseconds: 500));
-
-  //   return [
-  //     UserProfilePreview(
-  //       id: 'sug_1',
-  //       name: 'Dr. Ahmed Elsayed',
-  //       avatarUrl: 'https://i.pravatar.cc/150?u=a',
-  //     ),
-  //     UserProfilePreview(
-  //       id: 'sug_2',
-  //       name: 'Sara Kamel',
-  //       avatarUrl: 'https://i.pravatar.cc/150?u=s',
-  //     ),
-  //     UserProfilePreview(
-  //       id: 'sug_3',
-  //       name: 'Layla Mahmoud',
-  //       avatarUrl: 'https://i.pravatar.cc/150?u=l',
-  //     ),
-  //   ];
-  // }
-
   @override
   Future<UserProfileModel> getMyProfile() async {
     try {
@@ -85,7 +61,6 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
     XFile? avatarFile,
   }) async {
     try {
-      // Create a plain Map first
       final Map<String, dynamic> data = {};
       
       if (username != null && username.isNotEmpty) data["username"] = username;
@@ -93,7 +68,6 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
         data["bio"] = bio;
       }
       
-      // ONLY add the avatar if a NEW file was actually picked
     if (avatarFile != null) {
         if (kIsWeb) {
           final bytes = await avatarFile.readAsBytes();
@@ -108,18 +82,12 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
           );
         }
       }
-
-      //print("🚀 URL: ${api.baseUrl}${ApiEndpoints.updateProfile}");
       final response = await api.patch(
         ApiEndpoints.updateProfile, 
         data: FormData.fromMap(data),
       );
-      //print("Server Response Data: ${response['data']['user']}");
       return UserProfileModel.fromJson(response['data']['user']);
     } catch (e) {
-    //  if (e is DioException) {
-    //   print("SERVER SAYS: ${e.response?.data}"); 
-    // }
       throw _handleError(e);
     }
   }
@@ -135,9 +103,6 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
         data: {"currentPassword": currentPassword, "newPassword": newPassword},
       );
     } catch (e) {
-        // if (e is DioException) {
-        //   print("SERVER SAYS: ${e.response?.data}"); 
-        // }
       throw _handleError(e);
     }
   }

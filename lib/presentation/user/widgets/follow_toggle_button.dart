@@ -20,13 +20,12 @@ class FollowToggleButton extends StatelessWidget {
       builder: (context, state) {
         final bool isLoading = state is FollowLoading;
         
-        // 💡 Better Logic: Check if state explicitly tells us we are following
         bool isFollowing = false;
         if (state is FollowSuccess) {
           isFollowing = state.follow != null;
         }
 
-        return GestureDetector( // Using GestureDetector for better hit testing
+        return GestureDetector(
           onTap: isLoading
               ? null
               : () {
