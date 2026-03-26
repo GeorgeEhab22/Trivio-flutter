@@ -1,6 +1,7 @@
 import 'package:auth/presentation/authentication/widgets/show_custom_snackbar.dart';
 import 'package:auth/presentation/manager/follow_cubit/follow_cubit.dart';
 import 'package:auth/presentation/manager/follow_cubit/follow_state.dart';
+import 'package:auth/presentation/manager/profile_cubit/profile_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_social_info_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_social_info_state.dart';
 import 'package:flutter/material.dart';
@@ -26,6 +27,11 @@ class FollowButton extends StatelessWidget {
         }
         if (state is FollowSuccess || state is UnfollowSuccess) {
           context.read<ProfileSocialInfoCubit>().fetchFollowing();
+          try {
+            context.read<ProfileCubit>().loadProfile(isRefresh: true);
+          } catch (e) {
+            debugPrint("ProfileCubit not found in this context, skipping count refresh.");
+          }
         }
       },
       builder: (context, followState) {
