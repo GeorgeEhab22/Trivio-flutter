@@ -252,12 +252,14 @@ class _SelectedMediaPreviewState extends State<SelectedMediaPreview>
   }
 
   Widget _buildShimmerEffect() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Stack(
       alignment: Alignment.center,
       children: [
         Shimmer.fromColors(
-          baseColor: Colors.grey[300]!,
-          highlightColor: Colors.grey[100]!,
+          baseColor: isDark ? Colors.grey[800]! : Colors.grey[300]!,
+          highlightColor: isDark ? Colors.grey[700]! : Colors.grey[100]!,
           child: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
@@ -274,7 +276,7 @@ class _SelectedMediaPreviewState extends State<SelectedMediaPreview>
               offset: Offset(0, (sin(_animationController.value * 2 * pi) * 5)),
               child: const Icon(
                 Icons.auto_awesome,
-                color: Colors.deepPurple,
+                color: Color(0xFF42C83C),
                 size: 40,
               ),
             );
