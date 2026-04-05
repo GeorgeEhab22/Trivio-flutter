@@ -1278,4 +1278,13 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get smartTags => 'هاشتاجات ذكية';
+
+  @override
+  String get accountPreferences => 'تفضيلات الحساب';
+
+  @override
+  String get securityAndAlerts => 'الأمان والتنبيهات';
+
+  @override
+  String get logoutAccount => 'تسجيل الخروج';
 }

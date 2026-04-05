@@ -2557,6 +2557,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Smart Tags'**
   String get smartTags;
+
+  /// No description provided for @accountPreferences.
+  ///
+  /// In en, this message translates to:
+  /// **'Account Preferences'**
+  String get accountPreferences;
+
+  /// No description provided for @securityAndAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'Security & Alerts'**
+  String get securityAndAlerts;
+
+  /// No description provided for @logoutAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Logout Account'**
+  String get logoutAccount;
 }
 
 class _AppLocalizationsDelegate

@@ -472,5 +472,8 @@
   "addDescription": "إضافة وصف",
   "removeDescription": "إزالة الوصف",
   "removeDescriptionConfirm": "هل أنت متأكد من رغبتك في حذف وصف المجموعة؟",
-  "smartTags": "هاشتاجات ذكية"
+  "smartTags": "هاشتاجات ذكية",
+  "accountPreferences": "تفضيلات الحساب",
+  "securityAndAlerts": "الأمان والتنبيهات",
+  "logoutAccount": "تسجيل الخروج"
 }

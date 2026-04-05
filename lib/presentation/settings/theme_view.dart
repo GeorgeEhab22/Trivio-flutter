@@ -49,9 +49,14 @@ class _ThemeViewState extends State<ThemeView>
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
             leading: IconButton(
-              // Adaptive back icon automatically flips for RTL
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () => context.pop(),
+              onPressed: () {
+                context.pop();
+              },
+              icon: Icon(
+                Icons.arrow_back_ios_new_rounded,
+                color: Theme.of(context).iconTheme.color,
+                size: 25,
+              ),
             ),
           ),
           body: AnimatedOpacity(

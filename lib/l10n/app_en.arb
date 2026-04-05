@@ -471,6 +471,9 @@
   "addDescription": "Add description",
   "removeDescription": "Remove description",
   "removeDescriptionConfirm": "Are you sure you want to delete your group description?",
-  "smartTags" : "Smart Tags"
+  "smartTags" : "Smart Tags",
+  "accountPreferences": "Account Preferences",
+  "securityAndAlerts": "Security & Alerts",
+  "logoutAccount": "Logout Account"
 }
 

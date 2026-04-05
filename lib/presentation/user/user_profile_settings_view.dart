@@ -4,12 +4,10 @@ import 'package:auth/core/styels.dart';
 import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_state.dart';
-import 'package:auth/presentation/user/widgets/custom_profile_filled_button.dart';
-import 'package:auth/presentation/user/widgets/profile_info_box.dart';
+// import 'package:auth/presentation/user/widgets/profile_info_box.dart';
 import 'package:auth/presentation/user/widgets/settings_row.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 
 class UserProfileSettings extends StatelessWidget {
@@ -18,12 +16,29 @@ class UserProfileSettings extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        title: Text(l10n.profileSettings, style: Styles.textStyle30),
-        shape: const Border(
-          bottom: BorderSide(color: AppColors.lightGrey, width: 2),
+        title: Text(
+          l10n.profileSettings,
+          style: Styles.textStyle20.copyWith(fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+        scrolledUnderElevation: 0,
+        iconTheme: Theme.of(context).iconTheme,
+        leading: IconButton(
+          onPressed: () {
+              context.pop();
+          },
+          icon: Icon(
+            Icons.arrow_back_ios_new_rounded,
+            color: Theme.of(context).iconTheme.color,
+            size: 25,
+          ),
         ),
       ),
       body: BlocBuilder<ProfileCubit, ProfileState>(
@@ -33,88 +48,97 @@ class UserProfileSettings extends StatelessWidget {
               child: CircularProgressIndicator(color: AppColors.primary),
             );
           } else if (state is ProfileLoaded) {
-            final user = state.user;
+            // final user = state.user;
 
-            return Padding(
-              padding: EdgeInsets.all(MediaQuery.sizeOf(context).width * 0.005),
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
+            return SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 10,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    ProfileInfoBox(user: user),
-
-                    CustomProfileFilledButton(
+                    // ProfileInfoBox(user: user),
+                    // const SizedBox(height: 25),
+                    _buildSectionHeader(l10n.accountPreferences, context),
+                    SettingsRow(
+                      title: l10n.settingsFavTeamsTitle,
+                      subtitle: l10n.settingsFavTeamsSub,
+                      leadingIcon: Icons.people_alt_rounded,
                       onpressed: () {
-                        GoRouter.of(context).push(AppRoutes.editProfile);
+                        context.push(AppRoutes.selectTeams, extra: true);
                       },
-                      displayText: l10n.editProfile,
-                      icon: FontAwesomeIcons.userPen,
-                      color: AppColors.primary,
                     ),
-                    const SizedBox(height: 10),
+                    SettingsRow(
+                      title: l10n.settingsFavPlayersTitle,
+                      subtitle: l10n.settingsFavPlayersSub,
+                      leadingIcon: Icons.sports_soccer_rounded,
+                      onpressed: () {
+                        context.push(AppRoutes.selectPlayers, extra: true);
+                      },
+                    ),
+                    SettingsRow(
+                      title: l10n.likedPosts,
+                      subtitle: l10n.likedPostsSub,
+                      leadingIcon: Icons.favorite_rounded,
+                      onpressed: () => context.push(AppRoutes.likedPosts),
+                    ),
 
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 15),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: AppColors.lightGrey,
-                          width: 2,
+                    const SizedBox(height: 20),
+
+                    _buildSectionHeader(l10n.securityAndAlerts, context),
+                    SettingsRow(
+                      title: l10n.notificationPrefs,
+                      subtitle: l10n.notificationPrefsSub,
+                      leadingIcon: Icons.notifications_active_rounded,
+                      onpressed: () {},
+                    ),
+                    SettingsRow(
+                      title: l10n.changePassword,
+                      subtitle: l10n.changePasswordSub,
+                      leadingIcon: Icons.lock_rounded,
+                      onpressed: () => context.push(AppRoutes.changePassword),
+                    ),
+
+                    const SizedBox(height: 30),
+
+                    InkWell(
+                      onTap: () {
+                        // TODO: Implement Logout Logic
+                      },
+                      borderRadius: BorderRadius.circular(16),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        decoration: BoxDecoration(
+                          color: isDark
+                              ? Colors.red.withValues(alpha: 0.15)
+                              : const Color(0xFFFFF0F0),
+                          borderRadius: BorderRadius.circular(16),
                         ),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: ListView(
-                        physics: const NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        children: [
-                          SettingsRow(
-                            title: l10n.settingsFavTeamsTitle,
-                            subtitle: l10n.settingsFavTeamsSub,
-                            onpressed: () {
-                              context.push(AppRoutes.selectTeams, extra: true);
-                            },
-                          ),
-                          Divider(color: AppColors.lightGrey, height: 1),
-                          SettingsRow(
-                            title: l10n.settingsFavPlayersTitle,
-                            subtitle: l10n.settingsFavPlayersSub,
-                            onpressed: () {
-                              context.push(
-                                AppRoutes.selectPlayers,
-                                extra: true,
-                              );
-                            },
-                          ),
-                          const Divider(color: AppColors.lightGrey),
-                          SettingsRow(
-                            title: l10n.likedPosts,
-                            subtitle: l10n.likedPostsSub,
-                            onpressed: () => context.push(AppRoutes.likedPosts),
-                          ),
-                          const Divider(color: AppColors.lightGrey),
-                          SettingsRow(
-                            title: l10n.notificationPrefs,
-                            subtitle: l10n.notificationPrefsSub,
-                            onpressed: () {},
-                          ),
-                          const Divider(color: AppColors.lightGrey),
-                          SettingsRow(
-                            title: l10n.changePassword,
-                            subtitle: l10n.changePasswordSub,
-                            onpressed: () =>
-                                context.push(AppRoutes.changePassword),
-                          ),
-                          //TODO: follow requests?
-                          // const Divider(color: AppColors.lightGrey),
-                          // SettingsRow(
-                          //   title: l10n.requireFollowRequests,
-                          //   subtitle: l10n.requireFollowRequestsSub,
-                          //   onpressed: null,
-                          //   isToggle: true,
-                          // ),
-                        ],
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(
+                              Icons.logout_rounded,
+                              color: Colors.redAccent,
+                              size: 22,
+                            ),
+                            const SizedBox(width: 10),
+                            Text(
+                              l10n.logoutAccount,
+                              style: Styles.textStyle16.copyWith(
+                                color: Colors.redAccent,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 1.0,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
+                    const SizedBox(height: 40),
                   ],
                 ),
               ),
@@ -124,6 +148,22 @@ class UserProfileSettings extends StatelessWidget {
           }
           return const SizedBox();
         },
+      ),
+    );
+  }
+
+  Widget _buildSectionHeader(String title, BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12, left: 4, right: 4),
+      child: Text(
+        title,
+        style: Styles.textStyle14.copyWith(
+          fontWeight: FontWeight.w900,
+          color: isDark ? Colors.grey[400] : Colors.grey[600],
+          letterSpacing: 1.5,
+        ),
       ),
     );
   }

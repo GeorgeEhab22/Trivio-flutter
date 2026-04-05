@@ -440,6 +440,13 @@ GoRouter createRouter(bool isLoggedIn) {
                   BlocProvider(
                     create: (context) => di.sl<CancelRequestGroupCubit>(),
                   ),
+                  BlocProvider<FollowCubit>(
+                    create: (context) => di.sl<FollowCubit>(),
+                  ),
+                  BlocProvider(
+                    create: (context) =>
+                        di.sl<ProfileSocialInfoCubit>(),
+                  ),
                 ],
                 child: child,
               );

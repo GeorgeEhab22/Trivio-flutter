@@ -71,7 +71,7 @@ class ProfileInfoBox extends StatelessWidget {
                 user.bio!,
                 textAlign: TextAlign.center,
                 style: Styles.textStyle16.copyWith(
-                  color: Colors.grey[700],
+                  color: isDark ? Colors.grey[400] : Colors.grey[600],
                   height: 1.4,
                 ),
               ),

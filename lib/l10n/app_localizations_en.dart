@@ -1292,4 +1292,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get smartTags => 'Smart Tags';
+
+  @override
+  String get accountPreferences => 'Account Preferences';
+
+  @override
+  String get securityAndAlerts => 'Security & Alerts';
+
+  @override
+  String get logoutAccount => 'Logout Account';
 }
