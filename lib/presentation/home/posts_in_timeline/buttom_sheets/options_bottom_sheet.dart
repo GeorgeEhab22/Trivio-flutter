@@ -105,7 +105,11 @@ class OptionsBottomSheet extends StatelessWidget {
                       icon: Icons.link_outlined,
                       backgroundColor: Theme.of(context).cardColor,
                       onTap: () {
-                        copyToClipboard(context, post.caption ?? l10n.noLink);
+                            final String postUrl = (post.location == 'group' && post.groupID != null)
+                            ? "https://trivio.app/group/${post.groupID}/post/${post.postID}"
+                            : "https://trivio.app/post/${post.postID}";
+                            copyToClipboard(context, postUrl);
+                        context.pop();
                       },
                     ),
                   ),

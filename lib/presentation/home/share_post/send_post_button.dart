@@ -1,16 +1,18 @@
 import 'package:auth/constants/colors.dart';
 import 'package:auth/constants/paths.dart';
+import 'package:auth/domain/entities/post.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:share_plus/share_plus.dart';
 
 class SendPostButton extends StatelessWidget {
-  final String postId;
+  final Post post;
   final bool compact;
   final Color? iconColor;
 
   const SendPostButton({
     super.key,
-    required this.postId,
+    required this.post,
     this.compact = false,
     this.iconColor,
   });
@@ -37,7 +39,7 @@ class SendPostButton extends StatelessWidget {
 
         boxShadow: [
           BoxShadow(
-            color:  AppColors.primary.withValues(alpha: 0.3),
+            color: AppColors.primary.withValues(alpha: 0.3),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -56,7 +58,13 @@ class SendPostButton extends StatelessWidget {
           colorFilter: ColorFilter.mode(resolvedIconColor, BlendMode.srcIn),
         ),
         onPressed: () {
-          //TODO: Implement send post functionality here
+          final String postUrl =
+              (post.location == 'group' && post.groupID != null)
+              ? "https://trivio.app/group/${post.groupID}/post/${post.postID}"
+              : "https://trivio.app/post/${post.postID}";
+          SharePlus.instance.share(
+            ShareParams(text: 'Check out this post on Trivio!\n$postUrl'),
+          );
         },
       ),
     );

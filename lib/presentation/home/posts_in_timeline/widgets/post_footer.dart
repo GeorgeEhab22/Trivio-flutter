@@ -76,7 +76,7 @@ class PostFooter extends StatelessWidget {
                   _ActionDivider(color: dividerColor),
                   const SizedBox(width: 10),
                   SendPostButton(
-                    postId: post.postID,
+                    post: post,
                     compact: true,
                     iconColor: Colors.white,
                   ),

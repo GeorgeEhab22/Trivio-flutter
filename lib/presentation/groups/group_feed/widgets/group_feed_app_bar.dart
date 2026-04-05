@@ -1,3 +1,4 @@
+import 'package:auth/common/functions/copy_to_clipboard.dart';
 import 'package:auth/common/functions/custom_list_tile.dart';
 import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/groups/group_feed/widgets/leave_group_button.dart';
@@ -44,7 +45,8 @@ class GroupFeedAppBar extends StatelessWidget implements PreferredSizeWidget {
                   text: l10n.copyLink,
                   onTap: () {
                     context.pop();
-                    //TODO: copy link
+                      final String groupUrl = "https://trivio.app/group/$groupId";
+                      copyToClipboard(context, groupUrl);
                   },
                 ),
                 BlocProvider.value(

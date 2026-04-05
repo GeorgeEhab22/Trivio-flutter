@@ -10,6 +10,7 @@ import 'package:auth/presentation/manager/group_cubit/get_my_groups/get_my_group
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:share_plus/share_plus.dart';
 
 class ManageGroupView extends StatelessWidget {
   final String groupId;
@@ -38,7 +39,9 @@ class ManageGroupView extends StatelessWidget {
           elevation: 0,
           leading: IconButton(
             onPressed: () => context.pop(),
-            icon: Icon(isArabic ? Icons.arrow_back_ios_rounded : Icons.arrow_back),
+            icon: Icon(
+              isArabic ? Icons.arrow_back_ios_rounded : Icons.arrow_back,
+            ),
           ),
           title: Text(l10n.manageGroup, style: Styles.textStyleBold18),
           centerTitle: true,
@@ -48,90 +51,71 @@ class ManageGroupView extends StatelessWidget {
           children: [
             const SizedBox(height: 8),
             _buildSectionHeader(l10n.review),
-            _buildSettingsContainer(
-              context,
-              [
-                CustomListTile(
-                  icon: Icons.person_add_outlined,
-                  text: l10n.membersRequests,
-                  onTap: () => context.push(AppRoutes.groupMembersRequests(groupId)),
-                ),
-                CustomListTile(
-                  icon: Icons.post_add_outlined,
-                  text: l10n.pendingPosts,
-                  onTap: () => context.push(AppRoutes.groupPendingPosts(groupId)),
-                ),
-                CustomListTile(
-                  icon: Icons.report_gmailerrorred_outlined,
-                  text: l10n.reportedPosts,
-                  onTap: () => context.push(AppRoutes.groupReportedPosts(groupId)),
-                ),
-              ],
-            ),
+            _buildSettingsContainer(context, [
+              CustomListTile(
+                icon: Icons.person_add_outlined,
+                text: l10n.membersRequests,
+                onTap: () =>
+                    context.push(AppRoutes.groupMembersRequests(groupId)),
+              ),
+              CustomListTile(
+                icon: Icons.post_add_outlined,
+                text: l10n.pendingPosts,
+                onTap: () => context.push(AppRoutes.groupPendingPosts(groupId)),
+              ),
+              CustomListTile(
+                icon: Icons.report_gmailerrorred_outlined,
+                text: l10n.reportedPosts,
+                onTap: () =>
+                    context.push(AppRoutes.groupReportedPosts(groupId)),
+              ),
+            ]),
             const SizedBox(height: 16),
             _buildSectionHeader(l10n.communityAndPeople),
-            _buildSettingsContainer(
-              context,
-              [
-                CustomListTile(
-                  icon: Icons.group_outlined,
-                  text: l10n.people,
-                  onTap: () => context.push(AppRoutes.groupMembers(groupId)),
-                ),
-                CustomListTile(
-                  icon: Icons.person_off_outlined,
-                  text: l10n.bannedMembers,
-                  onTap: () => context.push(AppRoutes.bannedMembers(groupId)),
-                ),
-              ],
-            ),
+            _buildSettingsContainer(context, [
+              CustomListTile(
+                icon: Icons.group_outlined,
+                text: l10n.people,
+                onTap: () => context.push(AppRoutes.groupMembers(groupId)),
+              ),
+              CustomListTile(
+                icon: Icons.person_off_outlined,
+                text: l10n.bannedMembers,
+                onTap: () => context.push(AppRoutes.bannedMembers(groupId)),
+              ),
+            ]),
             const SizedBox(height: 16),
             _buildSectionHeader(l10n.manage),
-            _buildSettingsContainer(
-              context,
-              [
-                CustomListTile(
-                  icon: Icons.share,
-                  text: l10n.shareGroup,
-                  onTap: () {
-                    //TODO : copy actual Link
-                    showCustomSnackBar(context, l10n.linkCopied, true);
-                  },
-                ),
-                CustomListTile(
-                  icon: Icons.logout_rounded,
-                  text: l10n.leaveGroup,
-                  onTap: () {
-                    showCustomDialog(
-                      context: context,
-                      title: l10n.leaveGroupTitle,
-                      confirmText: l10n.leave,
-                      confirmTextColor: Colors.red,
-                      onConfirm: () {
-                        //TODO: add leave group logic
-                      },
-                      content: l10n.leaveGroupContent,
-                    );
-                  },
-                ),
-                CustomListTile(
-                  icon: Icons.delete_outlined,
-                  text: l10n.deleteGroup,
-                  onTap: () {
-                    showCustomDialog(
-                      context: context,
-                      title: l10n.deleteGroupTitle,
-                      confirmText: l10n.delete,
-                      confirmTextColor: Colors.red,
-                      onConfirm: () {
-                        context.read<DeleteGroupCubit>().deleteGroup(groupId);
-                      },
-                      content: l10n.deleteGroupContent,
-                    );
-                  },
-                ),
-              ],
-            ),
+            _buildSettingsContainer(context, [
+              CustomListTile(
+                icon: Icons.share,
+                text: l10n.shareGroup,
+                onTap: () {
+                  final String groupUrl = "https://trivio.app/group/$groupId";
+                  SharePlus.instance.share(
+                    ShareParams(
+                      text: 'Check out this group on Trivio!\n$groupUrl',
+                    ),
+                  );
+                },
+              ),
+              CustomListTile(
+                icon: Icons.delete_outlined,
+                text: l10n.deleteGroup,
+                onTap: () {
+                  showCustomDialog(
+                    context: context,
+                    title: l10n.deleteGroupTitle,
+                    confirmText: l10n.delete,
+                    confirmTextColor: Colors.red,
+                    onConfirm: () {
+                      context.read<DeleteGroupCubit>().deleteGroup(groupId);
+                    },
+                    content: l10n.deleteGroupContent,
+                  );
+                },
+              ),
+            ]),
             const SizedBox(height: 16),
           ],
         ),

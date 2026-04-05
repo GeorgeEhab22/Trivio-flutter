@@ -31,7 +31,6 @@ class PostHeader extends StatelessWidget {
         ? Colors.white.withValues(alpha: 0.12)
         : Colors.black.withValues(alpha: 0.08);
   
-    //TODO: change with actual users when backend return the name and the image of author
     String authorName = post.authorName ??"Not Me";
     String? authorImage;
 

@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:auth/presentation/user/widgets/follow_toggle_button.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:share_plus/share_plus.dart';
 
 class ProfileInfoBox extends StatelessWidget {
   final UserProfile user;
@@ -110,7 +111,15 @@ class ProfileInfoBox extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    final String profileUrl =
+                        "https://trivio.app/profile/${user.name}";
+                    SharePlus.instance.share(
+                      ShareParams(
+                        text: 'Check out this profile on Trivio!\n$profileUrl',
+                      ),
+                    );
+                  },
                   icon: Icon(
                     Icons.share,
                     color: Theme.of(context).iconTheme.color,
