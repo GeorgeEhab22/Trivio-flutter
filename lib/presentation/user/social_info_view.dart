@@ -9,10 +9,8 @@ import 'package:auth/presentation/user/widgets/follow_request_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-// ... (Your imports remain the same)
-
 class SocialInfoScreen extends StatelessWidget {
-  final String? userId;
+  final String? userId; // If null, we are looking at "My Profile"
   final int initialTabIndex;
 
   const SocialInfoScreen({super.key, this.userId, this.initialTabIndex = 0});
@@ -23,12 +21,14 @@ class SocialInfoScreen extends StatelessWidget {
     final int tabCount = isMyProfile ? 4 : 2;
     final l10n = AppLocalizations.of(context)!;
 
+    _onWidgetBuilt(context);
+
     return DefaultTabController(
       length: tabCount,
       initialIndex: initialTabIndex,
       child: Scaffold(
         appBar: AppBar(
-          title: Text("Follow Info", style: Styles.textStyle30),
+          title: Text("Social", style: Styles.textStyle30),
           centerTitle: true,
           shape: const Border(
             bottom: BorderSide(color: AppColors.lightGrey, width: 2),
@@ -66,31 +66,35 @@ class SocialInfoScreen extends StatelessWidget {
               if (state is SocialInfoLoaded) {
                 return TabBarView(
                   children: [
-                    // 1️⃣ Followers List
+                    // Followers List
                     FollowInfoList(
                       data: state.followers,
                       isFollowingList: false,
                       hasReachedMax: state.hasReachedMaxFollowers,
-                      onLoadMore: () =>
-                          context.read<ProfileSocialInfoCubit>().fetchFollowers(userId: userId, loadMore: true),
+                      onLoadMore: () => context
+                          .read<ProfileSocialInfoCubit>()
+                          .fetchFollowers(userId: userId, loadMore: true),
                     ),
 
-                    // 2️⃣ Following List
+                    // Following List
                     FollowInfoList(
                       data: state.following,
                       isFollowingList: true,
                       hasReachedMax: state.hasReachedMaxFollowing,
-                      onLoadMore: () =>
-                          context.read<ProfileSocialInfoCubit>().fetchFollowing(userId: userId, loadMore: true),
+                      onLoadMore: () => context
+                          .read<ProfileSocialInfoCubit>()
+                          .fetchFollowing(userId: userId, loadMore: true),
                     ),
 
-                    // 3️⃣ Requests List (Only if it's "My" profile)
+                    // Requests List
+                    if (isMyProfile) _buildRequestsList(context, state.requests),
+
+                    // Suggestions List
                     if (isMyProfile)
-                      _buildRequestsList(context, state.requests),
-                    FollowInfoList(
-                      data: state.suggestions,
-                      hasReachedMax: true,
-                    ),
+                      FollowInfoList(
+                        data: state.suggestions,
+                        hasReachedMax: true,
+                      ),
                   ],
                 );
               }
@@ -102,7 +106,21 @@ class SocialInfoScreen extends StatelessWidget {
     );
   }
 
-  // Implementation of the Requests tab
+  void _onWidgetBuilt(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final cubit = context.read<ProfileSocialInfoCubit>();
+      
+
+      cubit.fetchFollowers(userId: userId);
+      cubit.fetchFollowing(userId: userId);
+
+      if (userId == null) {
+        cubit.fetchRequests();
+        cubit.fetchSuggestions();
+      }
+    });
+  }
+
   Widget _buildRequestsList(BuildContext context, List requests) {
     final l10n = AppLocalizations.of(context)!;
     if (requests.isEmpty) {
@@ -122,12 +140,8 @@ class SocialInfoScreen extends StatelessWidget {
         return FollowRequestCard(
           key: ValueKey(request.id),
           follower: request.follower,
-          onAccept: () {
-            context.read<ProfileSocialInfoCubit>().acceptRequest(request.id);
-          },
-          onDecline: () {
-            context.read<ProfileSocialInfoCubit>().declineRequest(request.id);
-          },
+          onAccept: () => context.read<ProfileSocialInfoCubit>().acceptRequest(request.id),
+          onDecline: () => context.read<ProfileSocialInfoCubit>().declineRequest(request.id),
         );
       },
     );

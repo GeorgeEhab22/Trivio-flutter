@@ -81,7 +81,7 @@ class MyGroupView extends StatelessWidget {
                                   groupName: group.groupName,
                                   groupId: groupId,
                                   description: group.groupDescription,
-                                  membersCount:group.totalMembers,
+                                  membersCount:group.membersCount ?? 0,
                                 ),
                                 const SizedBox(height: 20),
                                 CustomSquareButton(

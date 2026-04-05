@@ -1901,7 +1901,7 @@ abstract class AppLocalizations {
   /// No description provided for @matches.
   ///
   /// In en, this message translates to:
-  /// **'matches'**
+  /// **'Matches'**
   String get matches;
 
   /// No description provided for @noMatchesFound.
@@ -2375,7 +2375,7 @@ abstract class AppLocalizations {
   /// No description provided for @noLikedPostsYet.
   ///
   /// In en, this message translates to:
-  /// **'No liked posts yet.'**
+  /// **'No liked posts yet'**
   String get noLikedPostsYet;
 
   /// No description provided for @editProfileTitle.
@@ -2461,6 +2461,101 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'User'**
   String get noUsersDefault;
+
+  /// No description provided for @unfollow.
+  ///
+  /// In en, this message translates to:
+  /// **'Unfollow'**
+  String get unfollow;
+
+  /// No description provided for @noPostsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No posts yet'**
+  String get noPostsYet;
+  /// No description provided for @all.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get all;
+
+  /// No description provided for @social.
+  ///
+  /// In en, this message translates to:
+  /// **'social'**
+  String get social;
+
+  /// No description provided for @noNotificationsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No notifications yet.'**
+  String get noNotificationsYet;
+
+  /// No description provided for @today.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get today;
+
+  /// No description provided for @yesterday.
+  ///
+  /// In en, this message translates to:
+  /// **'Yesterday'**
+  String get yesterday;
+
+  /// No description provided for @earlier.
+  ///
+  /// In en, this message translates to:
+  /// **'Earlier'**
+  String get earlier;
+
+  /// No description provided for @startedFollowingYou.
+  ///
+  /// In en, this message translates to:
+  /// **'started following you'**
+  String get startedFollowingYou;
+
+  /// No description provided for @followBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow back'**
+  String get followBack;
+
+  /// No description provided for @commented.
+  ///
+  /// In en, this message translates to:
+  /// **'commented:'**
+  String get commented;
+
+  /// No description provided for @reactedToYourPost.
+  ///
+  /// In en, this message translates to:
+  /// **'reacted to your post'**
+  String get reactedToYourPost;
+
+  /// No description provided for @addDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Add description'**
+  String get addDescription;
+
+  /// No description provided for @removeDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove description'**
+  String get removeDescription;
+
+  /// No description provided for @removeDescriptionConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete your group description?'**
+  String get removeDescriptionConfirm;
+
+  /// No description provided for @smartTags.
+  ///
+  /// In en, this message translates to:
+  /// **'Smart Tags'**
+  String get smartTags;
 }
 
 class _AppLocalizationsDelegate

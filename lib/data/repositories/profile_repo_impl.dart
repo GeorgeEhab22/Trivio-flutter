@@ -6,6 +6,7 @@ import 'package:auth/domain/entities/user_profile.dart';
 import 'package:auth/domain/entities/user_profile_preview.dart';
 import 'package:auth/domain/repositories/user_profile_repo.dart';
 import 'package:dartz/dartz.dart';
+import 'package:image_picker/image_picker.dart';
 
 class UserProfileRepositoryImpl implements UserProfileRepo {
   final ProfileRemoteDataSource remoteDataSource;
@@ -17,15 +18,6 @@ class UserProfileRepositoryImpl implements UserProfileRepo {
     try {
       final model = await remoteDataSource.getMyProfile();
       final entity = model.toEntity();
-      // final dummyProfile = UserProfile(
-      //   id: "65f1a2b3c4d5e6f7890abc12",
-      //   name: "John Doe",
-      //   email: "john.doe@example.com",
-      //   avatar: "https://example.com/avatar.jpg",
-      //   followersCount: 42,
-      //   followingCount: 15,
-      //   postsCount: 10,
-      // );
       return Right(entity);
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));
@@ -36,7 +28,7 @@ class UserProfileRepositoryImpl implements UserProfileRepo {
   Future<Either<Failure, UserProfile>> updateProfile({
     String? username,
     String? bio,
-    dynamic avatarFile,
+    XFile? avatarFile,
   }) async {
     try {
       final model = await remoteDataSource.updateProfile(
@@ -84,5 +76,26 @@ class UserProfileRepositoryImpl implements UserProfileRepo {
     }
   }
 
- 
+  @override
+  Future<Either<Failure, List<Post>>> getLikedPosts() async {
+    try {
+      final likedPosts = await remoteDataSource.getLikedPosts();
+      return Right(likedPosts);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    }
+  }
+
+  @override
+Future<Either<Failure, List<Post>>> getMyPosts() async {
+  try {
+    final posts = await remoteDataSource.getMyPosts();
+    return Right(posts);
+  } on ServerException catch (e) {
+    return Left(ServerFailure(e.message));
+  } catch (e) {
+    return Left(ServerFailure('Unexpected error loading posts: $e'));
+  }
+}
+
 }

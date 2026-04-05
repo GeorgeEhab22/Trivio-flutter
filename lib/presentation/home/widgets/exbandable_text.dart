@@ -1,3 +1,4 @@
+import 'package:auth/presentation/auto-tagging/widgets/hashing_text_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:auth/l10n/app_localizations.dart';
 
@@ -44,8 +45,8 @@ class _ExpandableTextState extends State<ExpandableText> {
     }
 
     final tp = TextPainter(
-      text: TextSpan(text: text, style: style),
-      maxLines: widget.previewLines,
+    text: buildHashtagSpan(text, style),
+    maxLines: widget.previewLines,
       // Detect the actual app direction for accurate overflow calculation
       textDirection: Directionality.of(context),
     )..layout(maxWidth: maxWidth);
@@ -75,9 +76,8 @@ class _ExpandableTextState extends State<ExpandableText> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              widget.text,
-              style: effectiveStyle,
+           Text.rich(
+              buildHashtagSpan(widget.text, effectiveStyle),
               maxLines: _expanded ? null : widget.previewLines,
               overflow: _expanded
                   ? TextOverflow.visible

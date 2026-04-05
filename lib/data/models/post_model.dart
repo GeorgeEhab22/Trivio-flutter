@@ -16,6 +16,8 @@ class PostModel extends Post {
     required this.reactionCounts,
     required super.media,
     required super.authorId,
+    required super.authorName,
+    required super.authorImage,
     required super.type,
     super.caption,
     super.location,
@@ -30,7 +32,7 @@ class PostModel extends Post {
     super.reactionsCount = 0,
     super.userReaction = ReactionType.none,
     super.reactionCountsByType = const <ReactionType, int>{},
-    required super.createdAt, 
+    required super.createdAt,
   });
 
   factory PostModel.fromJson(Map<String, dynamic> json) {
@@ -57,7 +59,23 @@ class PostModel extends Post {
     //TODO : remove when backend is fixed to add mobile ip
     // and change to your ip
     if (gCover != null && gCover.contains('localhost')) {
-      gCover = gCover.replaceAll('localhost', '192.168.1.5');
+      gCover = gCover.replaceAll('localhost', '192.168.1.28');
+    }
+    final dynamic authorData = raw['authorID'] ?? raw['authorId'];
+    String aId = '';
+    String? aName;
+    String? aImage;
+
+    if (authorData is String) {
+      aId = authorData;
+    } else if (authorData is Map<String, dynamic>) {
+      aId = authorData['_id'] ?? '';
+      aName = authorData['username'] ?? authorData['name'];
+      aImage = authorData['avatar'] ?? authorData['profilePicture'];
+
+      if (aImage != null && aImage.contains('localhost')) {
+        aImage = aImage.replaceAll('localhost', '192.168.1.28');
+      }
     }
 
     final userReaction = JsonParser.parseReactionType(
@@ -79,16 +97,26 @@ class PostModel extends Post {
     //TODO: remove when backend is fixed to add mobile ip and change to your ip and un comment the above code
     final mediaList = (raw['media'] as List<dynamic>? ?? []).map((m) {
       String url = m as String;
-      if (url.contains('localhost')) {
-        return url.replaceAll('localhost', '192.168.1.5');
-      }
+
+      // if (url.contains('localhost') || url.contains('192.168.1.5')) {
+      //   if (url.toLowerCase().endsWith('.mp4') ||
+      //       url.toLowerCase().endsWith('.mov') ||
+      //       url.toLowerCase().endsWith('.webm')) {
+      //     return 'https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4';
+      //   }
+
+      //   return url.replaceAll('localhost', '192.168.1.5');
+      // }
+
       return url;
     }).toList();
 
     return PostModel(
       postID: JsonParser.parseString(raw['_id']),
       updateCount: JsonParser.parseInt(raw['__v']),
-      authorId: JsonParser.parseString(raw['authorID'] ?? raw['authorId']),
+      authorId: aId,
+      authorName: aName,
+      authorImage: aImage,
       type: JsonParser.parseString(raw['type'], fallback: 'public'),
       caption: JsonParser.parseString(raw['caption']),
       location: JsonParser.parseString(raw['location']),
@@ -182,13 +210,15 @@ class PostModel extends Post {
       'groupName': groupName,
       'groupCoverImage': groupCoverImage,
       'commentsCount': commentsCount,
-      'createdAt': createdAt.toIso8601String(), 
+      'createdAt': createdAt.toIso8601String(),
     };
   }
 
   Post toEntity() {
     return Post(
       authorId: authorId,
+      authorName: authorName,
+      authorImage: authorImage,
       type: type,
       caption: caption,
       mentions: mentions,
@@ -206,7 +236,7 @@ class PostModel extends Post {
       reactionCountsByType: JsonParser.mapReactionCounts(
         toJson()['reactionCounts'],
       ),
-      createdAt: createdAt, 
+      createdAt: createdAt,
     );
   }
 
@@ -215,6 +245,8 @@ class PostModel extends Post {
       postID: post.postID,
       updateCount: 0,
       authorId: post.authorId,
+      authorName: post.authorName,
+      authorImage: post.authorImage,
       type: post.type,
       caption: post.caption,
       mentions: post.mentions,

@@ -1186,7 +1186,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get noPendingRequestsSimple => 'لا توجد طلبات معلقة';
 
   @override
-  String get noLikedPostsYet => 'لا توجد منشورات معجب بها بعد.';
+  String get noLikedPostsYet => 'لا يوجد منشورات مفضله';
 
   @override
   String get editProfileTitle => 'تعديل الملف الشخصي';
@@ -1229,4 +1229,51 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get noUsersDefault => 'مستخدم';
+
+  @override
+  String get unfollow => 'الغاء المتايعه';
+
+  @override
+  String get noPostsYet => 'لا يوجد منشورات';
+  String get all => 'الكل';
+
+  @override
+  String get social => 'اجتماعي';
+
+  @override
+  String get noNotificationsYet => 'لا توجد إشعارات حتى الآن.';
+
+  @override
+  String get today => 'اليوم';
+
+  @override
+  String get yesterday => 'الأمس';
+
+  @override
+  String get earlier => 'سابقاً';
+
+  @override
+  String get startedFollowingYou => 'بدأ بمتابعتك';
+
+  @override
+  String get followBack => 'رد المتابعة';
+
+  @override
+  String get commented => 'علق:';
+
+  @override
+  String get reactedToYourPost => 'تفاعل مع منشورك';
+
+  @override
+  String get addDescription => 'إضافة وصف';
+
+  @override
+  String get removeDescription => 'إزالة الوصف';
+
+  @override
+  String get removeDescriptionConfirm =>
+      'هل أنت متأكد من رغبتك في حذف وصف المجموعة؟';
+
+  @override
+  String get smartTags => 'هاشتاجات ذكية';
 }

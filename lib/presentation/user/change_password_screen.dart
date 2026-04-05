@@ -76,7 +76,6 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
             key: _formKey,
             child: Column(
               children: [
-                // 1. Current Password (Simple, no restrictions needed usually)
                 PasswordField(
                   controller: _currentPasswordController,
                   isPasswordVisible: _isCurrentVisible,
@@ -85,11 +84,10 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                   onSubmit: _handleSubmit,
                   label: l10n.currentPassword,
                   hint: l10n.enterCurrentPassword,
-                  isLogin: true, // login mode hides complex requirements
+                  isLogin: true,
                 ),
                 const SizedBox(height: 25),
 
-                // 2. New Password (With complex vanishing requirements)
                 PasswordField(
                   controller: _newPasswordController,
                   isPasswordVisible: _isNewVisible,
@@ -101,7 +99,6 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                 ),
                 const SizedBox(height: 25),
 
-                // 3. Confirm New Password (Matches original)
                 PasswordField(
                   controller: _confirmPasswordController,
                   originalController: _newPasswordController,
@@ -116,7 +113,6 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
 
                 const SizedBox(height: 50),
 
-                // 4. Action Button
                 BlocBuilder<ChangePasswordCubit, ChangePasswordState>(
                   builder: (context, state) {
                     return ElevatedButton(

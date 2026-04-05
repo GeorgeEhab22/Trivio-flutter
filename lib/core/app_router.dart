@@ -41,7 +41,9 @@ import 'package:auth/presentation/manager/group_cubit/leave_group/leave_group_cu
 import 'package:auth/presentation/manager/group_cubit/get_members_by_roles/members_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/unban_member/unban_member_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/update_group/update_group_cubit.dart';
+import 'package:auth/presentation/manager/notifications_cubit/notifications_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/interests/select_interests_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/profile_posts_cubit.dart';
 import 'package:auth/presentation/manager/sigin_in_cubit/forget_password_otp_cubit.dart';
 import 'package:auth/presentation/home/widgets/edit_page.dart';
 import 'package:auth/presentation/manager/follow_cubit/follow_cubit.dart';
@@ -51,7 +53,9 @@ import 'package:auth/presentation/manager/profile_cubit/profile_liked_posts_cubi
 import 'package:auth/presentation/manager/profile_cubit/profile_social_info_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_state.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_update_cubit.dart';
-import 'package:auth/presentation/reels/reels_page.dart';
+import 'package:auth/presentation/notifcations/notifications_view.dart';
+import 'package:auth/presentation/reels/add_reel/reels_publish_view.dart';
+import 'package:auth/presentation/reels/reels_view.dart';
 import 'package:auth/presentation/settings/settings_view.dart';
 import 'package:auth/presentation/settings/theme_view.dart';
 import 'package:auth/presentation/user/change_password_screen.dart';
@@ -77,6 +81,7 @@ import 'package:auth/domain/usecases/sign_in/request_otp.dart';
 import 'package:auth/core/app_routes.dart';
 import 'package:auth/core/auth_shell.dart';
 import 'package:auth/injection_container.dart' as di;
+import 'package:image_picker/image_picker.dart';
 
 int previousTabIndex = 0;
 final GlobalKey<NavigatorState> _interestsShellKey = GlobalKey<NavigatorState>(
@@ -113,7 +118,7 @@ GoRouter createRouter(bool isLoggedIn) {
   return GoRouter(
     // initialLocation: AppRoutes.selectTeams,
     initialLocation: isLoggedIn ? AppRoutes.home : AppRoutes.signIn,
-    // initialLocation: AppRoutes.signIn,
+    //initialLocation: AppRoutes.signIn,
     routes: [
       GoRoute(
         path: AppRoutes.signIn,
@@ -228,8 +233,20 @@ GoRouter createRouter(bool isLoggedIn) {
                 routes: [
                   GoRoute(
                     path: 'home',
-                    pageBuilder: (context, state) =>
-                        NoTransitionPage(child: const HomePage()),
+                    pageBuilder: (context, state) => NoTransitionPage(
+                      child: MultiBlocProvider(
+                        providers: [
+                          BlocProvider<FollowCubit>(
+                            create: (context) => di.sl<FollowCubit>(),
+                          ),
+                          BlocProvider(
+                            create: (context) =>
+                                di.sl<ProfileSocialInfoCubit>(),
+                          ),
+                        ],
+                        child: const HomePage(),
+                      ),
+                    ),
                     routes: [
                       GoRoute(
                         path: 'edit',
@@ -252,7 +269,16 @@ GoRouter createRouter(bool isLoggedIn) {
                   GoRoute(
                     path: 'reels',
                     pageBuilder: (context, state) =>
-                        NoTransitionPage(child: const ReelsPage()),
+                        const NoTransitionPage(child: ReelsView()),
+                    routes: [
+                      GoRoute(
+                        path: 'publish',
+                        builder: (context, state) {
+                          final videoFile = state.extra as XFile;
+                          return ReelsPublishView(videoFile: videoFile);
+                        },
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -279,8 +305,18 @@ GoRouter createRouter(bool isLoggedIn) {
                   GoRoute(
                     path: 'profile',
                     pageBuilder: (context, state) => NoTransitionPage(
-                      child: BlocProvider<FollowCubit>(
-                        create: (context) => di.sl<FollowCubit>(),
+                      child: MultiBlocProvider(
+                        providers: [
+                          BlocProvider<FollowCubit>(
+                            create: (context) => di.sl<FollowCubit>(),
+                          ),
+                          BlocProvider(
+                            create: (context) => di.sl<ProfilePostsCubit>()..fetchAllProfileData(),
+                          ),
+                          BlocProvider<ProfileSocialInfoCubit>(
+                            create: (context) => di.sl<ProfileSocialInfoCubit>(),
+                          ),
+                        ],
                         child: UserProfileView(),
                       ),
                     ),
@@ -292,11 +328,8 @@ GoRouter createRouter(bool isLoggedIn) {
                               state.uri.queryParameters['tab'];
                           final int index = int.tryParse(tabString ?? '0') ?? 0;
                           return BlocProvider(
-                            create: (context) => di.sl<ProfileSocialInfoCubit>()
-                              ..fetchFollowers(userId: null)
-                              ..fetchFollowing(userId: null)
-                              ..fetchRequests()
-                              ..fetchSuggestions(),
+                            create: (context) =>
+                                di.sl<ProfileSocialInfoCubit>(),
                             child: SocialInfoScreen(initialTabIndex: index),
                           );
                         },
@@ -337,7 +370,7 @@ GoRouter createRouter(bool isLoggedIn) {
                           GoRoute(
                             path: 'liked_posts',
                             builder: (context, state) => BlocProvider(
-                              create: (context) => di.sl<LikedPostsCubit>(),
+                              create: (context) => di.sl<LikedPostsCubit>()..fetchLikedPosts(),
                               child: const LikedPostsScreen(),
                             ),
                           ),
@@ -373,6 +406,13 @@ GoRouter createRouter(bool isLoggedIn) {
             ],
           ),
         ],
+      ),
+      GoRoute(
+        path: '/notifications',
+        builder: (context, state) => BlocProvider(
+          create: (context) => di.sl<NotificationCubit>(),
+          child: const NotificationsView(),
+        ),
       ),
       GoRoute(
         path: '/settings',

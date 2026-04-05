@@ -45,7 +45,7 @@ class PostContent extends StatelessWidget {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
                         gradient: LinearGradient(
-                          colors: [Color(0xFF42C83C), AppColors.darkGreen],
+                          colors: [AppColors.primary, AppColors.darkGreen],
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
                         ),

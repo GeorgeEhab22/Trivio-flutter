@@ -8,7 +8,8 @@ class PostActionItem extends StatelessWidget {
   final int count;
   final Color? color;
   final VoidCallback? onTap;
-  final String? tooltip; 
+  final String? tooltip;
+  final bool isVertical;
 
   const PostActionItem({
     super.key,
@@ -17,34 +18,48 @@ class PostActionItem extends StatelessWidget {
     this.color = AppColors.iconsColor,
     this.onTap,
     this.tooltip,
+    this.isVertical = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    final content = Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        SizedBox(
-          width: 20,
-          child: Center(child: icon),
-        ),
-        const SizedBox(width: 5),
-        SizedBox(
-          width: 18,
-          child: Align(
-            alignment: AlignmentDirectional.centerStart,
-            child: Text(
-              count.toString().localizeDigits(context),
-              style: Styles.textStyle14.copyWith(
-                fontWeight: FontWeight.w500,
-                color: color,
-              ),
-              textDirection: TextDirection.ltr,
-            ),
-          ),
-        ),
-      ],
+    final textWidget = Text(
+      count.toString().localizeDigits(context),
+      style: Styles.textStyle14.copyWith(
+        fontWeight: FontWeight.w500,
+        color: color,
+        shadows: isVertical
+            ? [const Shadow(blurRadius: 4, color: Colors.black)]
+            : null,
+      ),
+      textDirection: TextDirection.ltr,
     );
+    final content = isVertical
+        ? Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [icon, const SizedBox(height: 4), textWidget],
+          )
+        : Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(width: 20, child: Center(child: icon)),
+              const SizedBox(width: 5),
+              SizedBox(
+                width: 18,
+                child: Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: Text(
+                    count.toString().localizeDigits(context),
+                    style: Styles.textStyle14.copyWith(
+                      fontWeight: FontWeight.w500,
+                      color: color,
+                    ),
+                    textDirection: TextDirection.ltr,
+                  ),
+                ),
+              ),
+            ],
+          );
 
     return Material(
       color: Colors.transparent,

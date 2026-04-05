@@ -1,4 +1,5 @@
 import 'package:auth/common/functions/custom_list_tile.dart';
+import 'package:auth/common/functions/show_custom_dialog.dart';
 import 'package:auth/core/styels.dart';
 import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/authentication/widgets/show_custom_snackbar.dart';
@@ -48,7 +49,10 @@ class _MyGroupDescriptionState extends State<MyGroupDescription> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!; 
+    final l10n = AppLocalizations.of(context)!;
+    final bool isDescriptionEmpty =
+        widget.groupDescription == null ||
+        widget.groupDescription!.trim().isEmpty;
     return BlocConsumer<UpdateGroupCubit, UpdateGroupState>(
       listener: (context, state) {
         if (state is UpdateGroupSuccess) {
@@ -79,14 +83,40 @@ class _MyGroupDescriptionState extends State<MyGroupDescription> {
                         context: context,
                         actions: [
                           CustomListTile(
-                            icon: Icons.edit,
-                            text: l10n.editDescription,
+                            icon: Icons.edit_rounded,
+                            text: isDescriptionEmpty
+                                ? l10n.addDescription
+                                : l10n.editDescription,
                             onTap: () {
                               context.pop();
                               setState(() => isEditingDesc = true);
                               descFocusNode.requestFocus();
                             },
                           ),
+                          if (!isDescriptionEmpty)
+                            CustomListTile(
+                              icon: Icons.delete,
+                              text: l10n.removeDescription,
+                              color: Colors.redAccent,
+                              onTap: () {
+                                context.pop();
+                                showCustomDialog(
+                                  context: context,
+                                  title: l10n.removeDescription,
+                                  content: l10n.removeDescriptionConfirm,
+                                  confirmText: l10n.remove,
+                                  confirmTextColor: Colors.redAccent,
+                                  onConfirm: () {
+                                    context
+                                        .read<UpdateGroupCubit>()
+                                        .updateDescription("");
+                                    context
+                                        .read<UpdateGroupCubit>()
+                                        .updateGroup(groupId: widget.groupId);
+                                  },
+                                );
+                              },
+                            ),
                         ],
                       );
                     },
@@ -94,8 +124,10 @@ class _MyGroupDescriptionState extends State<MyGroupDescription> {
                   ),
               ],
             ),
-            const SizedBox(height: 8),
-            isEditingDesc ? _buildTextField() : _buildExpandableText(),
+            if (!isDescriptionEmpty || isEditingDesc) ...[
+              const SizedBox(height: 8),
+              isEditingDesc ? _buildTextField() : _buildExpandableText(),
+            ],
           ],
         );
       },
@@ -112,7 +144,7 @@ class _MyGroupDescriptionState extends State<MyGroupDescription> {
                   setState(() => isEditingDesc = false);
                   descController.text = widget.groupDescription ?? "";
                 },
-          icon: const Icon(Icons.close,),
+          icon: const Icon(Icons.close),
         ),
         isLoading
             ? const SizedBox(
@@ -129,7 +161,7 @@ class _MyGroupDescriptionState extends State<MyGroupDescription> {
                     groupId: widget.groupId,
                   );
                 },
-                icon: const Icon(Icons.check,),
+                icon: const Icon(Icons.check),
               ),
       ],
     );

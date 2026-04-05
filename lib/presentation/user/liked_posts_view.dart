@@ -13,13 +13,13 @@ class LikedPostsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.likedPosts, style: Styles.textStyle20),
-      ),
+      appBar: AppBar(title: Text(l10n.likedPosts, style: Styles.textStyle20)),
       body: BlocBuilder<LikedPostsCubit, LikedPostsState>(
         builder: (context, state) {
           if (state is LikedPostsLoading) {
-            return const Center(child: CircularProgressIndicator(color: AppColors.primary));
+            return const Center(
+              child: CircularProgressIndicator(color: AppColors.primary),
+            );
           } else if (state is LikedPostsLoaded) {
             return GridView.builder(
               padding: const EdgeInsets.all(8),
@@ -30,18 +30,31 @@ class LikedPostsScreen extends StatelessWidget {
               ),
               itemCount: state.posts.length,
               itemBuilder: (context, index) {
+                final post = state.posts[index];
+                final hasMedia = post.media != null && post.media!.isNotEmpty;
+
                 return GestureDetector(
                   onTap: () {
-                    // Navigate to individual post view
+                    // TODO: Go to individual post view
                   },
                   child: Container(
                     decoration: BoxDecoration(
-                      color: AppColors.lightGrey,
-                      image: DecorationImage(
-                        image: NetworkImage("https://via.placeholder.com/150"),
-                        fit: BoxFit.cover,
-                      ),
+                      color: Colors.grey[200],
+                      borderRadius: BorderRadius.circular(4),
                     ),
+                    child: hasMedia
+                        ? Image.network(
+                            post.media!.first,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) =>
+                                const Icon(
+                                  Icons.broken_image,
+                                  color: Colors.grey,
+                                ),
+                          )
+                        : const Center(
+                            child: Icon(Icons.text_snippet, color: Colors.grey),
+                          ),
                   ),
                 );
               },

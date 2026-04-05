@@ -27,17 +27,17 @@ class SendPostButton extends StatelessWidget {
         shape: BoxShape.circle,
         gradient: isDark
             ? LinearGradient(
-                colors: [Color(0xFF42C83C).withAlpha(950), AppColors.darkGreen],
+                colors: [AppColors.primary.withAlpha(950), AppColors.darkGreen],
               )
             : LinearGradient(
-                colors: [Color(0xFF42C83C), AppColors.darkGreen],
+                colors: [AppColors.primary, AppColors.darkGreen],
 
                 end: Alignment.bottomRight,
               ),
 
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF42C83C).withValues(alpha: 0.3),
+            color:  AppColors.primary.withValues(alpha: 0.3),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),

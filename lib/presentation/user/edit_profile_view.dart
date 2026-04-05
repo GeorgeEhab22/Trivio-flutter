@@ -5,6 +5,7 @@ import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_update_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_update_state.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -20,13 +21,11 @@ class EditProfileScreen extends StatelessWidget {
 
     return BlocBuilder<ProfileUpdateCubit, ProfileUpdateState>(
       builder: (context, state) {
-        // Default fallback values
         String name = "";
         String bio = "";
-        File? localImage;
+        XFile? localImage;
         String originalAvatar = "";
 
-        // Extract data only if we are in the initial/editing state
         if (state is ProfileUpdateInitialState) {
           name = state.name;
           bio = state.bio;
@@ -55,37 +54,43 @@ class EditProfileScreen extends StatelessWidget {
               padding: const EdgeInsets.all(20),
               child: Column(
                 children: [
-                  // --- Avatar Section ---
                   GestureDetector(
                     onTap: () async {
                       final file = await ImagePicker().pickImage(
                         source: ImageSource.gallery,
                       );
                       if (file != null) {
-                        context.read<ProfileUpdateCubit>().updateImage(
-                          File(file.path),
-                        );
+                        context.read<ProfileUpdateCubit>().updateImage(file);
                       }
                     },
                     child: Stack(
                       children: [
-                        CircleAvatar(
-                          radius: 60,
-                          backgroundColor: AppColors.lightGrey,
-                          // Logic: New Local Image > Original Image > Null
-                          backgroundImage: localImage != null
-                              ? FileImage(localImage)
-                              : (originalAvatar
-                                    .isNotEmpty) // This check is crucial
-                              ? _getProfileImage(originalAvatar)
-                              : null,
-                          child: (localImage == null && originalAvatar.isEmpty)
-                              ? const Icon(
-                                  Icons.person,
-                                  size: 60,
-                                  color: Colors.grey,
-                                )
-                              : null,
+                        Container(
+                          width: 120,
+                          height: 120,
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: AppColors.lightGrey,
+                          ),
+                          child: ClipOval(
+                            child: _buildAvatarContent(
+                              localImage,
+                              originalAvatar,
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          bottom: 0,
+                          right: 0,
+                          child: CircleAvatar(
+                            radius: 18,
+                            backgroundColor: AppColors.primary,
+                            child: const Icon(
+                              Icons.camera_alt,
+                              color: Colors.white,
+                              size: 18,
+                            ),
+                          ),
                         ),
                         Positioned(
                           bottom: 0,
@@ -105,11 +110,10 @@ class EditProfileScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 30),
 
-                  // --- Username Field ---
                   TextFormField(
                     key: const Key(
                       'name_field',
-                    ), // Using keys prevents text reset bugs
+                    ),
                     initialValue: name,
                     cursorColor: AppColors.primary,
                     decoration: _buildInputDecoration(
@@ -122,12 +126,12 @@ class EditProfileScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 20),
 
-                  // --- Bio Field ---
                   TextFormField(
                     key: const Key('bio_field'),
                     initialValue: bio,
                     cursorColor: AppColors.primary,
                     maxLines: 3,
+                    maxLength: 120,
                     decoration: _buildInputDecoration(
                       l10n.bioLabel,
                       Icons.description_outlined,
@@ -138,7 +142,6 @@ class EditProfileScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 40),
 
-                  // --- Save Button ---
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary,
@@ -193,11 +196,38 @@ class EditProfileScreen extends StatelessWidget {
     );
   }
 
-  ImageProvider _getProfileImage(String path) {
-  if (path.isEmpty) return const AssetImage('assets/images/default_avatar.png'); // Fallback
-  if (path.startsWith('http')) {
-    return NetworkImage(path);
+  Widget _buildAvatarContent(XFile? localImage, String originalAvatar) {
+    if (localImage != null) {
+      return kIsWeb
+          ? Image.network(
+              localImage.path,
+              fit: BoxFit.cover,
+              width: 120,
+              height: 120,
+            )
+          : Image.file(
+              File(localImage.path),
+              fit: BoxFit.cover,
+              width: 120,
+              height: 120,
+            );
+    }
+
+    if (originalAvatar.isNotEmpty && originalAvatar.startsWith('http')) {
+      return Image.network(
+        originalAvatar,
+        fit: BoxFit.cover,
+        width: 120,
+        height: 120,
+        errorBuilder: (context, error, stackTrace) =>
+            const Icon(Icons.person, size: 60, color: Colors.grey),
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
+          return const Center(child: CircularProgressIndicator(strokeWidth: 2));
+        },
+      );
+    }
+
+    return const Icon(Icons.person, size: 60, color: Colors.grey);
   }
-  return FileImage(File(path));
-}
 }

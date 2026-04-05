@@ -19,8 +19,7 @@ class ProfileInfoBox extends StatelessWidget {
     bool _isCurrentUser(BuildContext context) {
       final state = context.read<ProfileCubit>().state;
       if (state is ProfileLoaded) {
-        // Compare the ID of the profile being displayed (widget.user.id)
-        // with the ID of the logged-in user (state.user.id)
+        // TODO: Compare the ID of the profile being displayed (widget.user.id) with the ID of the logged-in user (state.user.id)
         return state.user.id == user.id;
       }
       return false;

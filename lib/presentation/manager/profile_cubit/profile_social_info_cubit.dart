@@ -44,7 +44,6 @@ class ProfileSocialInfoCubit extends Cubit<ProfileSocialInfoState> {
     }
     if (!loadMore) {
       _followersPage = 1;
-      // Only emit loading if we don't have existing data to prevent flickering
       if (currentState is! SocialInfoLoaded) emit(SocialInfoLoading());
     }
 
@@ -56,8 +55,6 @@ class ProfileSocialInfoCubit extends Cubit<ProfileSocialInfoState> {
       (failure) => emit(SocialInfoFailure(failure.message)), 
       (newItems) {
         final isMax = newItems.length < _limit;
-
-        // CRITICAL: Check 'state' here, not 'currentState'
         if (state is SocialInfoLoaded) {
           final loadedState = state as SocialInfoLoaded;
           List<Follow> previousItems = loadMore ? loadedState.followers : [];
@@ -70,7 +67,7 @@ class ProfileSocialInfoCubit extends Cubit<ProfileSocialInfoState> {
           emit(SocialInfoLoaded(
             followers: newItems,
             hasReachedMaxFollowers: isMax,
-            following: const [], // Initialize empty to avoid nulls
+            following: const [],
             requests: const [],
           ));
         }
@@ -96,17 +93,13 @@ class ProfileSocialInfoCubit extends Cubit<ProfileSocialInfoState> {
 
         if (state is SocialInfoLoaded) {
           final loadedState = state as SocialInfoLoaded;
-          // Use current state's following list
-          List<Follow> previousItems = loadMore ? loadedState.following : [];
-          
           emit(loadedState.copyWith(
-            following: [...previousItems, ...newItems],
-            hasReachedMaxFollowing: isMax,
+            following: List.from(newItems),
+            hasReachedMaxFollowing: newItems.length < _limit,
           ));
         } else {
-          // If this is the first data to arrive, create the state
           emit(SocialInfoLoaded(
-            following: newItems,
+            following: List.from(newItems),
             hasReachedMaxFollowing: isMax,
           ));
         }
@@ -116,7 +109,6 @@ class ProfileSocialInfoCubit extends Cubit<ProfileSocialInfoState> {
   }
 
   Future<void> fetchRequests() async {
-    // Only show full-screen loading if we have absolutely nothing
     if (state is! SocialInfoLoaded) emit(SocialInfoLoading());
 
     final result = await getMyFollowRequestsUseCase.call();
@@ -125,7 +117,6 @@ class ProfileSocialInfoCubit extends Cubit<ProfileSocialInfoState> {
       (failure) => emit(SocialInfoFailure(failure.message)), 
       (requests) {
         if (state is SocialInfoLoaded) {
-          // Keep followers and following, just update requests
           emit((state as SocialInfoLoaded).copyWith(requests: requests));
         } else {
           emit(SocialInfoLoaded(requests: requests));
@@ -134,58 +125,23 @@ class ProfileSocialInfoCubit extends Cubit<ProfileSocialInfoState> {
     );
   }
 
-// /// 🔹 Accept Follow Request (Mocked)
-//  Future<void> acceptRequest(String requestId) async {
-//     final result = await acceptFollowRequest.call(requestId: requestId);
-
-//     result.fold((failure) {
-//       // PRINT THIS FOR YOUR BACKEND TEAM
-//       print("🚨 BACKEND AUTH ERROR:");
-//       print("Endpoint: PATCH /api/v1/follow-requests/$requestId/accept");
-//       print("Failure Message: ${failure.message}");
-      
-//       emit(SocialInfoFailure(failure.message));
-//     }, (_) {
-//       emit(const SocialActionSuccess("Request accepted"));
-//       fetchRequests();
-//     });
-//   }
-//   /// 🔹 Decline Follow Request (Mocked)
-//   Future<void> declineRequest(String requestId) async {
-//     if (state is SocialInfoLoaded) {
-//       final currentState = state as SocialInfoLoaded;
-
-//       emit(const SocialActionSuccess("Request declined"));
-
-//       // Manually remove the declined request
-//       final updatedRequests = currentState.requests
-//           .where((req) => req.id != requestId)
-//           .toList();
-
-//       emit(currentState.copyWith(requests: updatedRequests));
-//     }
-//   }
-/// 🔹 Accept Follow Request (Temporary Local Fix)
+  //TODO: requests if we'll do them - this is loval
   Future<void> acceptRequest(String requestId) async {
     if (state is SocialInfoLoaded) {
       final currentState = state as SocialInfoLoaded;
 
-      // 1. Show the success snackbar immediately
       emit(const SocialActionSuccess("Request accepted (Local)"));
 
-      // 2. Filter out the ID locally so it vanishes from the screen
       final updatedRequests = currentState.requests
           .where((req) => req.id != requestId)
           .toList();
 
-      // 3. Emit the updated state WITHOUT calling the backend
       emit(currentState.copyWith(requests: updatedRequests));
       
       print("✅ Mocked Accept for ID: $requestId. No API call made.");
     }
   }
 
-  /// 🔹 Decline Follow Request (Temporary Local Fix)
   Future<void> declineRequest(String requestId) async {
     if (state is SocialInfoLoaded) {
       final currentState = state as SocialInfoLoaded;
@@ -201,7 +157,6 @@ class ProfileSocialInfoCubit extends Cubit<ProfileSocialInfoState> {
   }
   
 Future<void> fetchSuggestions() async {
-    // 1. Only show loading if we have absolutely no data yet
     if (state is! SocialInfoLoaded) emit(SocialInfoLoading());
 
     final result = await getSuggestionsUseCase.call();
@@ -209,12 +164,10 @@ Future<void> fetchSuggestions() async {
     result.fold(
       (failure) => emit(SocialInfoFailure(failure.message)),
       (suggestions) {
-        // 2. Check the LATEST state to avoid overwriting
         if (state is SocialInfoLoaded) {
           final loadedState = state as SocialInfoLoaded;
           emit(loadedState.copyWith(suggestions: suggestions));
         } else {
-          // 3. If this is the first list to arrive, create the bucket
           emit(SocialInfoLoaded(
             suggestions: suggestions,
             followers: const [],
@@ -225,4 +178,25 @@ Future<void> fetchSuggestions() async {
       },
     );
   }
+void toggleFollowOptimistically(String targetId, bool currentlyFollowing) {
+  if (state is SocialInfoLoaded) {
+    final currentState = state as SocialInfoLoaded;
+    List<Follow> updatedList = List.from(currentState.following);
+
+    if (currentlyFollowing) {
+      // Remove immediately
+      updatedList.removeWhere((f) => f.user.id == targetId);
+    } else {
+      // Add a dummy entry immediately
+      updatedList.add(Follow(
+        id: 'temp_${DateTime.now().millisecondsSinceEpoch}',
+        user: UserReference.fromJson(targetId),
+        follower: UserReference.fromJson('me'),
+        status: 'following',
+      ));
+    }
+
+    emit(currentState.copyWith(following: updatedList));
+  }
+}
 }

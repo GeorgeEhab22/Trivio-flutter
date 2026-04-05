@@ -452,6 +452,25 @@
   "passwordUpdated": "Password Updated!",
   "saveNewPassword": "Save New Password",
 
-  "noUsersDefault": "User"
+  "noUsersDefault": "User",
+  "unfollow": "Unfollow",
+  "noPostsYet": "No posts yet",
+  "noLikedPostsYet": "No liked posts yet"
+  
+  "all": "All",
+  "matches": "Matches",
+  "social": "social",
+  "noNotificationsYet": "No notifications yet.",
+  "today": "Today",
+  "yesterday": "Yesterday",
+  "earlier": "Earlier",
+  "startedFollowingYou": "started following you",
+  "followBack": "Follow back",
+  "commented": "commented:",
+  "reactedToYourPost": "reacted to your post",
+  "addDescription": "Add description",
+  "removeDescription": "Remove description",
+  "removeDescriptionConfirm": "Are you sure you want to delete your group description?",
+  "smartTags" : "Smart Tags"
 }
 

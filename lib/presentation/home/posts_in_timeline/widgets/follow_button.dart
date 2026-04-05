@@ -1,90 +1,117 @@
-import 'package:auth/injection_container.dart' as di;
+import 'package:auth/constants/colors.dart'; 
 import 'package:auth/presentation/authentication/widgets/show_custom_snackbar.dart';
+import 'package:auth/presentation/manager/follow_cubit/follow_cubit.dart';
+import 'package:auth/presentation/manager/follow_cubit/follow_state.dart';
+import 'package:auth/presentation/manager/profile_cubit/profile_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/profile_social_info_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/profile_social_info_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:auth/core/styels.dart';
-import 'package:auth/presentation/manager/post_cubit/post_interaction_cubit.dart';
 import 'package:auth/l10n/app_localizations.dart';
 
 class FollowButton extends StatelessWidget {
   final String currentUserId;
   final String authorId;
   final bool initialFollowStatus;
+  final bool isReel;
 
   const FollowButton({
     super.key,
     required this.currentUserId,
     required this.authorId,
     required this.initialFollowStatus,
+    this.isReel = false,
   });
 
   @override
   Widget build(BuildContext context) {
     if (currentUserId == authorId) return const SizedBox.shrink();
 
-    return BlocProvider(
-      create: (context) => di.sl<PostInteractionCubit>(),
-      child: BlocConsumer<PostInteractionCubit, PostInteractionState>(
-        listener: (context, state) {
-          if (state is FollowUserError) {
-            showCustomSnackBar(context, state.message, false);
+    return BlocConsumer<FollowCubit, FollowState>(
+      listener: (context, state) {
+        if (state is FollowFailure) {
+          showCustomSnackBar(context, state.message, false);
+          context.read<ProfileSocialInfoCubit>().fetchFollowing();
+        }
+        if (state is FollowSuccess || state is UnfollowSuccess) {
+          context.read<ProfileSocialInfoCubit>().fetchFollowing();
+          try {
+            context.read<ProfileCubit>().loadProfile(isRefresh: true);
+          } catch (e) {
+            debugPrint("ProfileCubit not found, skipping count refresh.");
           }
-        },
-        buildWhen: (previous, current) {
-          return current is PostFollowUpdated ||
-              current is FollowUserSuccess ||
-              current is FollowUserError;
-        },
-        builder: (context, state) {
-          final l10n = AppLocalizations.of(context)!;
-          bool isFollowing = initialFollowStatus;
+        }
+      },
+      builder: (context, followState) {
+        final bool isProcessing = followState is FollowLoading;
 
-          if (state is PostFollowUpdated) {
-            isFollowing = state.isFollowing;
-          } else if (state is FollowUserSuccess) {
-            isFollowing = state.isFollowing;
-          } else if (state is FollowUserError) {
-            isFollowing = state.oldStatus;
-          }
+        return BlocBuilder<ProfileSocialInfoCubit, ProfileSocialInfoState>(
+          buildWhen: (previous, current) {
+            if (previous is SocialInfoLoaded && current is SocialInfoLoaded) {
+              return previous.following.length != current.following.length;
+            }
+            return true;
+          },
+          builder: (context, socialState) {
+            bool isFollowing = false;
+            if (socialState is SocialInfoLoaded) {
+              isFollowing = socialState.following.any(
+                (f) => f.user.id.toString().trim() == authorId.toString().trim()
+              );
+            }
 
-          return SizedBox(
-            height: 30,
-            child: TextButton(
-              onPressed: () {
-                context.read<PostInteractionCubit>().toggleFollowUser(
-                      followerId: currentUserId,
-                      followeeId: authorId,
-                      currentFollowStatus: isFollowing,
-                    );
-              },
-              style: TextButton.styleFrom(
-                backgroundColor: isFollowing
-                    ? Colors.transparent
-                    : Theme.of(context).cardColor,
-                side: isFollowing
-                    ? BorderSide(color: Theme.of(context).iconTheme.color!)
-                    : BorderSide.none,
-                padding: EdgeInsets.symmetric(
-                  horizontal: isFollowing ? 18 : 14,
+            final l10n = AppLocalizations.of(context)!;
+
+            return SizedBox(
+              height: 30,
+              child: TextButton(
+                onPressed: isProcessing ? null : () {
+                  context.read<ProfileSocialInfoCubit>().toggleFollowOptimistically(
+                    authorId, 
+                    isFollowing,
+                  );
+                  
+                  if (isFollowing) {
+                    context.read<FollowCubit>().unfollowUser(authorId);
+                  } else {
+                    context.read<FollowCubit>().followUser(authorId);
+                  }
+                },
+                style: TextButton.styleFrom(
+                  backgroundColor: isReel 
+                      ? Colors.transparent 
+                      : (isFollowing ? Colors.transparent : Theme.of(context).cardColor),
+                  side: isReel 
+                      ? BorderSide(color: AppColors.primary, width: 1.2)
+                      : (isFollowing 
+                          ? BorderSide(color: Theme.of(context).iconTheme.color!) 
+                          : BorderSide.none),
+                  padding: EdgeInsets.symmetric(horizontal: isFollowing ? 18 : 14),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                 ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
+                child: isProcessing 
+                  ? const SizedBox(
+                      width: 14, 
+                      height: 14, 
+                      child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                    )
+                  : Text(
+                      isFollowing ? l10n.following : l10n.follow,
+                      style: Styles.textStyle14.copyWith(
+                        color: isReel 
+                            ? Colors.white 
+                            : (isFollowing 
+                                ? Theme.of(context).iconTheme.color 
+                                : Theme.of(context).textTheme.bodyMedium?.color),
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
               ),
-              child: Text(
-                // Localized labels
-                isFollowing ? l10n.following : l10n.follow,
-                style: Styles.textStyle14.copyWith(
-                  color: isFollowing
-                      ? Theme.of(context).iconTheme.color
-                      : Theme.of(context).textTheme.bodyMedium?.color,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-          );
-        },
-      ),
+            );
+          },
+        );
+      },
     );
   }
 }

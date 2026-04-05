@@ -1,3 +1,4 @@
+import 'package:auth/common/functions/reels_buttons_green_effect.dart';
 import 'package:auth/injection_container.dart' as di;
 import 'package:auth/domain/entities/reaction_type.dart';
 import 'package:auth/presentation/home/comments/comments_view.dart';
@@ -16,6 +17,8 @@ class CommentAction extends StatelessWidget {
   final List<ReactionType> topReactions;
   final String postId;
   final String currentUserId;
+  final bool isReelView;
+  final VoidCallback? onReelsCommentTap;
 
   const CommentAction({
     super.key,
@@ -25,15 +28,37 @@ class CommentAction extends StatelessWidget {
     this.sharesCount = 0,
     this.reactionsCount = 0,
     this.topReactions = const <ReactionType>[],
+    this.isReelView = false,
+    this.onReelsCommentTap,
   });
 
   @override
   Widget build(BuildContext context) {
+    final iconColor = isReelView
+        ? Colors.white
+        : Theme.of(context).iconTheme.color;
+    final iconSize = isReelView ? 24.0 : 22.0;
+
+    Widget iconWidget = FaIcon(
+      FontAwesomeIcons.comment,
+      size: iconSize,
+      color: iconColor,
+    );
+
+    if (isReelView) {
+      iconWidget = ReelsButtonsGreenEffect(child: iconWidget);
+    }
+
     return PostActionItem(
-      icon: const FaIcon(FontAwesomeIcons.comment, size: 22),
+      icon: iconWidget,
       count: commentsCount,
-      color: Theme.of(context).iconTheme.color,
+      color: iconColor,
+      isVertical: isReelView,
       onTap: () {
+        if (isReelView && onReelsCommentTap != null) {
+          onReelsCommentTap!();
+          return;
+        }
         final postCubit = context.read<PostCubit>();
         showModalBottomSheet(
           context: context,
@@ -60,6 +85,7 @@ class CommentAction extends StatelessWidget {
                 sharesCount: sharesCount,
                 reactionsCount: reactionsCount,
                 topReactions: topReactions,
+                isReelView: isReelView,
               ),
             ),
           ),

@@ -951,7 +951,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Failed to load football data. Please check your connection.';
 
   @override
-  String get matches => 'matches';
+  String get matches => 'Matches';
 
   @override
   String get noMatchesFound => 'No Matches Found';
@@ -1200,7 +1200,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noPendingRequestsSimple => 'No pending requests';
 
   @override
-  String get noLikedPostsYet => 'No liked posts yet.';
+  String get noLikedPostsYet => 'No liked posts yet';
 
   @override
   String get editProfileTitle => 'Edit Profile';
@@ -1243,4 +1243,51 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noUsersDefault => 'User';
+
+  @override
+  String get unfollow => 'Unfollow';
+
+  @override
+  String get noPostsYet => 'No posts yet';
+  String get all => 'All';
+
+  @override
+  String get social => 'social';
+
+  @override
+  String get noNotificationsYet => 'No notifications yet.';
+
+  @override
+  String get today => 'Today';
+
+  @override
+  String get yesterday => 'Yesterday';
+
+  @override
+  String get earlier => 'Earlier';
+
+  @override
+  String get startedFollowingYou => 'started following you';
+
+  @override
+  String get followBack => 'Follow back';
+
+  @override
+  String get commented => 'commented:';
+
+  @override
+  String get reactedToYourPost => 'reacted to your post';
+
+  @override
+  String get addDescription => 'Add description';
+
+  @override
+  String get removeDescription => 'Remove description';
+
+  @override
+  String get removeDescriptionConfirm =>
+      'Are you sure you want to delete your group description?';
+
+  @override
+  String get smartTags => 'Smart Tags';
 }

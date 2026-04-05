@@ -1,6 +1,8 @@
 import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/domain/entities/comment.dart';
 import 'package:auth/presentation/authentication/widgets/show_custom_snackbar.dart';
+import 'package:auth/presentation/manager/profile_cubit/profile_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/profile_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:auth/presentation/manager/comment_cubit/comment_cubit.dart';
@@ -35,59 +37,101 @@ class CommentsBlocConsumer extends StatelessWidget {
             current is CommentLoading ||
             current is CommentError;
       },
-      builder: (context, state) {
-        if (state is CommentLoading) {
-          final commentsForSkeleton = state.comments.isNotEmpty
-              ? state.comments
-              : _dummyComments;
-          return Skeletonizer(
-            child: CommentsList(
-              comments: commentsForSkeleton,
-              currentUserId: currentUserId,
-              onReplyTap: (_) {},
-            ),
-          );
-        } else if (state is CommentError) {
-          return Center(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Text(
-                _mapErrorToMessage(state.message, l10n),
-                style: TextStyle(color: Colors.grey[600]),
-                textAlign: TextAlign.center,
-              ),
-            ),
-          );
-        } else if (state is CommentLoaded) {
-          if (state.comments.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.chat_bubble_outline_rounded,
-                    size: 34,
-                    color: Colors.grey[500],
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    l10n.noCommentsYet,
+      builder: (context, commentState) {
+        // 1. Listen to ProfileCubit to get the "My Info"
+        return BlocBuilder<ProfileCubit, ProfileState>(
+          builder: (context, profileState) {
+            
+            // 2. Helper function to patch comments
+            List<Comment> patchComments(List<Comment> originalList) {
+              if (profileState is! ProfileLoaded) return originalList;
+
+              final myName = profileState.user.name;
+              final myAvatar = profileState.user.avatar;
+
+              return originalList.map((comment) {
+                // Check if this comment belongs to the current user
+                if (comment.authorId == currentUserId) {
+                  // Only patch if info is actually missing or generic
+                  bool needsPatch = comment.authorName == 'Unknown User' || 
+                                   comment.authorName.isEmpty || 
+                                   comment.authorImage == null;
+                  
+                  if (needsPatch) {
+                    return comment.copyWith(
+                      authorName: (comment.authorName == 'Unknown User' || comment.authorName.isEmpty) 
+                          ? myName 
+                          : comment.authorName,
+                      authorImage: comment.authorImage ?? myAvatar,
+                    );
+                  }
+                }
+                return comment;
+              }).toList();
+            }
+
+            // 3. Handle States with Patched Data
+            if (commentState is CommentLoading) {
+              final commentsForSkeleton = patchComments(
+                commentState.comments.isNotEmpty ? commentState.comments : _dummyComments
+              );
+              return Skeletonizer(
+                child: CommentsList(
+                  comments: commentsForSkeleton,
+                  currentUserId: currentUserId,
+                  onReplyTap: (_) {},
+                ),
+              );
+            } 
+            
+            else if (commentState is CommentError) {
+              return Center(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Text(
+                    _mapErrorToMessage(commentState.message, l10n),
                     style: TextStyle(color: Colors.grey[600]),
+                    textAlign: TextAlign.center,
                   ),
-                ],
-              ),
-            );
-          }
-          return CommentsList(
-            comments: state.comments,
-            currentUserId: currentUserId,
-            onReplyTap: (comment) {
-              context.read<CommentCubit>().triggerReply(comment);
-            },
-          );
-        }
-        return const SizedBox.shrink();
+                ),
+              );
+            } 
+            
+            else if (commentState is CommentLoaded) {
+              if (commentState.comments.isEmpty) {
+                return _buildEmptyState(l10n);
+              }
+
+              // Patch the loaded comments before passing to the list
+              final finalComments = patchComments(commentState.comments);
+
+              return CommentsList(
+                comments: finalComments,
+                currentUserId: currentUserId,
+                onReplyTap: (comment) {
+                  context.read<CommentCubit>().triggerReply(comment);
+                },
+              );
+            }
+            
+            return const SizedBox.shrink();
+          },
+        );
       },
+    );
+  }
+
+  // Extracted empty state for cleaner code
+  Widget _buildEmptyState(AppLocalizations l10n) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.chat_bubble_outline_rounded, size: 34, color: Colors.grey[500]),
+          const SizedBox(height: 8),
+          Text(l10n.noCommentsYet, style: TextStyle(color: Colors.grey[600])),
+        ],
+      ),
     );
   }
 

@@ -7,15 +7,20 @@ class AppRoutes {
   static const String changeEmailVerification = '/change_email_verification';
   static const String changeEmailOTP = '/change_email_otp';
   static const String forgetPasswordOtp = '/forget-password-otp';
-  // App routes
+  // home routes
   static const String home = '/app/home';
+
+  // reals routes
   static const String reels = '/app/reels';
+    static const String reelsPublish = '/app/reels/publish';
+
+// chatbot and stats and profile
   static const String chatbot = '/app/chatbot';
   static const String stats = '/app/stats';
   static const String profile = '/app/profile';
 
   static const String settings = '/settings';
-  static const String notifications = '/settings/notifications';
+  static const String notifications = '/notifications';
   static const String theme = '/settings/theme';
   static const String blocked = '/settings/blocked';
   static const String activeStates = '/settings/active_states';

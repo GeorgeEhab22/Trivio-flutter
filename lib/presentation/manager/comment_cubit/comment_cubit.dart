@@ -234,16 +234,21 @@ class CommentCubit extends Cubit<CommentState> {
     );
   }
 
-  Future<void> addOrUpdateComment(String postId, String text) async {
+  Future<void> addOrUpdateComment(
+    String postId, 
+    String text, {
+    String? authorName,
+    String? authorImage,
+  }) async {
     if (text.trim().isEmpty) return;
     if (_editingComment != null) {
       await _submitEditComment(text);
     } else {
-      await _submitNewComment(postId, text);
+      await _submitNewComment(postId, text, authorName: authorName, authorImage: authorImage);
     }
   }
 
-  Future<void> _submitNewComment(String postId, String text) async {
+  Future<void> _submitNewComment(String postId, String text, {String? authorName, String? authorImage}) async {
     final previousComments = List<Comment>.from(_allComments);
     final result = await addCommentUseCase(
       postId: postId,
@@ -262,7 +267,11 @@ class CommentCubit extends Cubit<CommentState> {
         _emitLoaded();
       },
       (newComment) {
-        _upsertComment(newComment);
+        final hydratedComment = newComment.copyWith(
+        authorName: authorName ?? newComment.authorName,
+        authorImage: authorImage ?? newComment.authorImage,
+      );
+        _upsertComment(hydratedComment);
         if (newComment.parentCommentId != null) {
           _expandedReplyParentIds.add(newComment.parentCommentId!);
           final parentIdx = _allComments.indexWhere(

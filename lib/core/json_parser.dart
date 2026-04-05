@@ -1,3 +1,5 @@
+import 'package:auth/domain/entities/notification_type.dart';
+
 import '../../domain/entities/reaction_type.dart';
 
 class JsonParser {
@@ -63,5 +65,14 @@ class JsonParser {
       }
     }
     return counts;
+  }
+  
+  static NotificationType parseNotificationType(dynamic value) {
+    final raw = value?.toString().toLowerCase().trim() ?? '';
+    
+    return NotificationType.values.firstWhere(
+      (e) => e.name.toLowerCase() == raw, 
+      orElse: () => NotificationType.none,
+    );
   }
 }

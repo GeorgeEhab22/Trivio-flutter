@@ -90,7 +90,6 @@ class GroupPostCard extends StatelessWidget {
                         PostHeader(
                           post: post,
                           currentUserId: currentUserId,
-                          isFollowing: isFollowing,
                         ),
                         PostContent(post: post),
                         const SizedBox(height: 8),

@@ -1,30 +1,41 @@
 import 'dart:io';
+import 'dart:math';
+import 'package:auth/constants/colors.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:video_player/video_player.dart';
 
 class SelectedMediaPreview extends StatefulWidget {
   final List<XFile> files;
   final Function(int) onRemove;
+  final List<bool> isProcessing;
 
   const SelectedMediaPreview({
     super.key,
     required this.files,
     required this.onRemove,
+    required this.isProcessing,
   });
 
   @override
   State<SelectedMediaPreview> createState() => _SelectedMediaPreviewState();
 }
 
-class _SelectedMediaPreviewState extends State<SelectedMediaPreview> {
+class _SelectedMediaPreviewState extends State<SelectedMediaPreview>
+    with SingleTickerProviderStateMixin {
   final Map<String, VideoPlayerController> _controllers = {};
+  late AnimationController _animationController;
 
   @override
   void initState() {
     super.initState();
     _initVideoControllersFor(widget.files);
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 1),
+    )..repeat();
   }
 
   @override
@@ -42,8 +53,9 @@ class _SelectedMediaPreviewState extends State<SelectedMediaPreview> {
 
     final added = newPaths.difference(oldPaths);
     if (added.isNotEmpty) {
-      final addedFiles =
-          widget.files.where((f) => added.contains(f.path)).toList();
+      final addedFiles = widget.files
+          .where((f) => added.contains(f.path))
+          .toList();
       _initVideoControllersFor(addedFiles);
     }
   }
@@ -56,6 +68,8 @@ class _SelectedMediaPreviewState extends State<SelectedMediaPreview> {
       } catch (_) {}
     }
     _controllers.clear();
+    _animationController.dispose();
+
     super.dispose();
   }
 
@@ -69,11 +83,10 @@ class _SelectedMediaPreviewState extends State<SelectedMediaPreview> {
         ext.endsWith('.webm');
   }
 
-
   void _initVideoControllersFor(List<XFile> files) {
     for (var file in files) {
       if (!_isVideo(file)) continue;
-      if (_controllers.containsKey(file.path)) continue; 
+      if (_controllers.containsKey(file.path)) continue;
 
       late final VideoPlayerController controller;
       if (kIsWeb) {
@@ -87,28 +100,30 @@ class _SelectedMediaPreviewState extends State<SelectedMediaPreview> {
 
       final initializeFuture = controller.initialize();
 
-      initializeFuture.then((_) {
-        if (!mounted) {
-          try {
-            controller.dispose();
-          } catch (_) {}
-          return;
-        }
-        final existing = _controllers[file.path];
-        if (existing != null && existing != controller) {
-          try {
-            controller.dispose();
-          } catch (_) {}
-          return;
-        }
+      initializeFuture
+          .then((_) {
+            if (!mounted) {
+              try {
+                controller.dispose();
+              } catch (_) {}
+              return;
+            }
+            final existing = _controllers[file.path];
+            if (existing != null && existing != controller) {
+              try {
+                controller.dispose();
+              } catch (_) {}
+              return;
+            }
 
-        _controllers[file.path] = controller;
-        if (mounted) setState(() {});
-      }).catchError((err) {
-        try {
-          controller.dispose();
-        } catch (_) {}
-      });
+            _controllers[file.path] = controller;
+            if (mounted) setState(() {});
+          })
+          .catchError((err) {
+            try {
+              controller.dispose();
+            } catch (_) {}
+          });
     }
   }
 
@@ -167,13 +182,15 @@ class _SelectedMediaPreviewState extends State<SelectedMediaPreview> {
                       aspectRatio: controller.value.aspectRatio,
                       child: VideoPlayer(controller),
                     ),
-                    const Icon(Icons.play_circle_fill,
-                        color: Colors.white70, size: 32),
+                    const Icon(
+                      Icons.play_circle_fill,
+                      color: Colors.white70,
+                      size: 32,
+                    ),
                   ],
                 ),
               );
             } else {
-              // Placeholder while video controller initializes
               mediaWidget = Container(
                 width: 100,
                 height: 100,
@@ -185,10 +202,18 @@ class _SelectedMediaPreviewState extends State<SelectedMediaPreview> {
             }
           } else {
             mediaWidget = kIsWeb
-                ? Image.network(file.path,
-                    width: 100, height: 100, fit: BoxFit.cover)
-                : Image.file(File(file.path),
-                    width: 100, height: 100, fit: BoxFit.cover);
+                ? Image.network(
+                    file.path,
+                    width: 100,
+                    height: 100,
+                    fit: BoxFit.cover,
+                  )
+                : Image.file(
+                    File(file.path),
+                    width: 100,
+                    height: 100,
+                    fit: BoxFit.cover,
+                  );
           }
 
           return Stack(
@@ -200,6 +225,7 @@ class _SelectedMediaPreviewState extends State<SelectedMediaPreview> {
                   child: SizedBox(width: 100, height: 100, child: mediaWidget),
                 ),
               ),
+              if (widget.isProcessing[index]) _buildShimmerEffect(),
               Positioned(
                 top: 4,
                 right: 4,
@@ -211,8 +237,11 @@ class _SelectedMediaPreviewState extends State<SelectedMediaPreview> {
                       color: Colors.black54,
                     ),
                     padding: const EdgeInsets.all(4),
-                    child:
-                        const Icon(Icons.close, color: Colors.white, size: 16),
+                    child: const Icon(
+                      Icons.close,
+                      color: Colors.white,
+                      size: 16,
+                    ),
                   ),
                 ),
               ),
@@ -222,8 +251,42 @@ class _SelectedMediaPreviewState extends State<SelectedMediaPreview> {
       ),
     );
   }
-}
 
+  Widget _buildShimmerEffect() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        Shimmer.fromColors(
+          baseColor: isDark ? Colors.grey[800]! : Colors.grey[300]!,
+          highlightColor: isDark ? Colors.grey[700]! : Colors.grey[100]!,
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: Colors.white,
+            ),
+            width: 100,
+            height: 100,
+          ),
+        ),
+        AnimatedBuilder(
+          animation: _animationController,
+          builder: (context, child) {
+            return Transform.translate(
+              offset: Offset(0, (sin(_animationController.value * 2 * pi) * 5)),
+              child:  Icon(
+                Icons.auto_awesome,
+                color:AppColors.primary,
+                size: 40,
+              ),
+            );
+          },
+        ),
+      ],
+    );
+  }
+}
 
 class _VideoPreviewDialog extends StatefulWidget {
   final VideoPlayerController controller;

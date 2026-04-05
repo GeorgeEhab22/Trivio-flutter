@@ -454,5 +454,23 @@
   "passwordUpdated": "تم تحديث كلمة المرور!",
   "saveNewPassword": "حفظ كلمة المرور الجديدة",
 
-  "noUsersDefault": "مستخدم"
+  "noUsersDefault": "مستخدم",
+  "unfollow": "الغاء المتايعه",
+  "noPostsYet": "لا يوجد منشورات",
+  "noLikedPostsYet": "لا يوجد منشورات مفضله"
+  "all": "الكل",
+  "matches": "المباريات",
+  "social": "اجتماعي",
+  "noNotificationsYet": "لا توجد إشعارات حتى الآن.",
+  "today": "اليوم",
+  "yesterday": "الأمس",
+  "earlier": "سابقاً",
+  "startedFollowingYou": "بدأ بمتابعتك",
+  "followBack": "رد المتابعة",
+  "commented": "علق:",
+  "reactedToYourPost": "تفاعل مع منشورك",
+  "addDescription": "إضافة وصف",
+  "removeDescription": "إزالة الوصف",
+  "removeDescriptionConfirm": "هل أنت متأكد من رغبتك في حذف وصف المجموعة؟",
+  "smartTags": "هاشتاجات ذكية"
 }

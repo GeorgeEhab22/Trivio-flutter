@@ -17,13 +17,11 @@ class PostCard extends StatelessWidget {
   final Post post;
   final String currentUserId;
   final ReactionType? currentReaction;
-  final bool isFollowing;
 
   const PostCard({
     super.key,
     required this.post,
     required this.currentUserId,
-    required this.isFollowing,
     this.currentReaction,
   });
 
@@ -131,13 +129,13 @@ class PostCard extends StatelessWidget {
                                 gradient: isDark
                                     ? LinearGradient(
                                         colors: [
-                                          Color(0xFF42C83C).withAlpha(900),
+                                          AppColors.primary.withAlpha(900),
                                           AppColors.darkGreen,
                                         ],
                                       )
                                     : LinearGradient(
                                         colors: [
-                                          Color(0xFF42C83C),
+                                          AppColors.primary,
                                           AppColors.darkGreen,
                                         ],
                                       ),
@@ -146,7 +144,6 @@ class PostCard extends StatelessWidget {
                             PostHeader(
                               post: post,
                               currentUserId: currentUserId,
-                              isFollowing: isFollowing,
                             ),
                             PostContent(post: post),
                             if (hasMetrics || isGroupPost) ...[

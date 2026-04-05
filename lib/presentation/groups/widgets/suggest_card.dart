@@ -144,6 +144,7 @@ class SuggestCard extends StatelessWidget {
                 leadingIcon: Icons.security_outlined,
                 backgroundColor: AppColors.primary,
                 textColor: Colors.white,
+                iconColor: Colors.white,
                 height: 10,
                 textStyle: Styles.textStyle14,
               )

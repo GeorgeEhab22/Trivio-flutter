@@ -90,7 +90,9 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
               ),
               const SizedBox(width: 8),
               IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  context.push(AppRoutes.notifications);
+                },
                 icon: FaIcon(
                   FontAwesomeIcons.bell,
                   color: Theme.of(context).iconTheme.color,

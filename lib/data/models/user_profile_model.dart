@@ -25,7 +25,7 @@ class UserProfileModel extends UserProfile {
       followersCount: int.tryParse(json['followers']?.toString() ?? '0') ?? 0,
       followingCount: int.tryParse(json['following']?.toString() ?? '0') ?? 0,
       postsCount: int.tryParse(json['posts']?.toString() ?? '0') ?? 0,
-
+      bio: json['bio']?.toString(),
       favTeams: List<String>.from(json['favTeams'] ?? []),
       favPlayers: List<String>.from(json['favPlayers'] ?? []),
     );
@@ -40,7 +40,7 @@ class UserProfileModel extends UserProfile {
       followersCount: followersCount,
       followingCount: followingCount,
       postsCount: postsCount,
-
+      bio: bio,
       favTeams: favTeams,
       favPlayers: favPlayers,
     );

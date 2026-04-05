@@ -31,7 +31,7 @@ class FollowCubit extends Cubit<FollowState> {
 
     result.fold(
       (failure) => emit(FollowFailure(failure.message)),
-      (_) => emit(const FollowSuccess()),
+      (_) => emit(UnfollowSuccess(userId)),
     );
   }
 

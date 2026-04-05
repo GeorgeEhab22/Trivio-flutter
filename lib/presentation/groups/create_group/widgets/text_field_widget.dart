@@ -1,3 +1,4 @@
+import 'package:auth/constants/colors.dart';
 import 'package:flutter/material.dart';
 
 Widget textFieldWidget({
@@ -11,7 +12,6 @@ Widget textFieldWidget({
     child: Builder(
       builder: (context) {
         final bool isFocused = Focus.of(context).hasFocus;
-        const Color primaryColor = Color(0xff42C83C);
         const Color errorColor = Colors.redAccent;
         final bool hasError = errorText != null;
         return Column(
@@ -22,7 +22,7 @@ Widget textFieldWidget({
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
                   color: isFocused
-                      ? primaryColor
+                      ? AppColors.primary
                       : (hasError
                           ? errorColor
                           : Colors.grey.withValues(alpha: 0.5)),
@@ -39,7 +39,7 @@ Widget textFieldWidget({
                     labelText: hint,
                     errorStyle: const TextStyle(height: 0),
                     labelStyle: const TextStyle(color: Colors.grey),
-                    floatingLabelStyle: const TextStyle(color: primaryColor),
+                    floatingLabelStyle: const TextStyle(color: AppColors.primary),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: const BorderSide(color: Colors.transparent),
