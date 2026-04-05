@@ -117,8 +117,8 @@ CustomTransitionPage buildAnimatedPage({
 GoRouter createRouter(bool isLoggedIn) {
   return GoRouter(
     // initialLocation: AppRoutes.selectTeams,
-    initialLocation: isLoggedIn ? AppRoutes.home : AppRoutes.signIn,
-    //initialLocation: AppRoutes.signIn,
+    // initialLocation: isLoggedIn ? AppRoutes.home : AppRoutes.signIn,
+    initialLocation: AppRoutes.signIn,
     routes: [
       GoRoute(
         path: AppRoutes.signIn,
@@ -268,8 +268,20 @@ GoRouter createRouter(bool isLoggedIn) {
                 routes: [
                   GoRoute(
                     path: 'reels',
-                    pageBuilder: (context, state) =>
-                        const NoTransitionPage(child: ReelsView()),
+                    pageBuilder: (context, state) =>  NoTransitionPage(
+                      child: MultiBlocProvider(
+                        providers: [
+                          BlocProvider<FollowCubit>(
+                            create: (context) => di.sl<FollowCubit>(),
+                          ),
+                          BlocProvider(
+                            create: (context) =>
+                                di.sl<ProfileSocialInfoCubit>(),
+                          ),
+                        ],
+                        child: ReelsView(),
+                      ),
+                    ),
                     routes: [
                       GoRoute(
                         path: 'publish',
@@ -311,10 +323,13 @@ GoRouter createRouter(bool isLoggedIn) {
                             create: (context) => di.sl<FollowCubit>(),
                           ),
                           BlocProvider(
-                            create: (context) => di.sl<ProfilePostsCubit>()..fetchAllProfileData(),
+                            create: (context) =>
+                                di.sl<ProfilePostsCubit>()
+                                  ..fetchAllProfileData(),
                           ),
                           BlocProvider<ProfileSocialInfoCubit>(
-                            create: (context) => di.sl<ProfileSocialInfoCubit>(),
+                            create: (context) =>
+                                di.sl<ProfileSocialInfoCubit>(),
                           ),
                         ],
                         child: UserProfileView(),
@@ -370,7 +385,8 @@ GoRouter createRouter(bool isLoggedIn) {
                           GoRoute(
                             path: 'liked_posts',
                             builder: (context, state) => BlocProvider(
-                              create: (context) => di.sl<LikedPostsCubit>()..fetchLikedPosts(),
+                              create: (context) =>
+                                  di.sl<LikedPostsCubit>()..fetchLikedPosts(),
                               child: const LikedPostsScreen(),
                             ),
                           ),
@@ -444,8 +460,7 @@ GoRouter createRouter(bool isLoggedIn) {
                     create: (context) => di.sl<FollowCubit>(),
                   ),
                   BlocProvider(
-                    create: (context) =>
-                        di.sl<ProfileSocialInfoCubit>(),
+                    create: (context) => di.sl<ProfileSocialInfoCubit>(),
                   ),
                 ],
                 child: child,

@@ -36,10 +36,11 @@ class PostModel extends Post {
   });
 
   factory PostModel.fromJson(Map<String, dynamic> json) {
-    final Map<String, dynamic> raw =
-        (json['data'] != null && json['data']['post'] != null)
-        ? json['data']['post'] as Map<String, dynamic>
-        : json;
+    final Map<String, dynamic> raw = json.containsKey('post') && json['post'] is Map
+        ? json['post'] as Map<String, dynamic>
+        : (json['data'] != null && json['data']['post'] != null)
+            ? json['data']['post'] as Map<String, dynamic>
+            : json;
 
     final dummyReactions = _parseReactionCounter(raw['reactionCounts']);
 
@@ -79,7 +80,7 @@ class PostModel extends Post {
     }
 
     final userReaction = JsonParser.parseReactionType(
-      raw['userReaction'] ?? raw['myReaction'] ?? raw['currentUserReaction'],
+      json['userReact'] ?? raw['userReaction'] ?? raw['myReaction'] ?? raw['currentUserReaction'],
     );
 
     final mentionsJson = raw['mentions'] as List<dynamic>? ?? [];
