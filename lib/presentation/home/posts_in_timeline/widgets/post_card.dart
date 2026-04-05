@@ -131,13 +131,13 @@ class PostCard extends StatelessWidget {
                                 gradient: isDark
                                     ? LinearGradient(
                                         colors: [
-                                          Color(0xFF42C83C).withAlpha(900),
+                                          AppColors.primary.withAlpha(900),
                                           AppColors.darkGreen,
                                         ],
                                       )
                                     : LinearGradient(
                                         colors: [
-                                          Color(0xFF42C83C),
+                                          AppColors.primary,
                                           AppColors.darkGreen,
                                         ],
                                       ),

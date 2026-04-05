@@ -90,7 +90,7 @@ class GroupFeedView extends StatelessWidget {
                                   child: Padding(
                                     padding: const EdgeInsets.all(4.0),
                                     child: NumberOfMembersRow(
-                                      numOfMembers: group.totalMembers,
+                                      numOfMembers: group.membersCount ?? 0,
                                     ),
                                   ),
                                 ),

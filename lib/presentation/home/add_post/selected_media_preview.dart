@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:math';
+import 'package:auth/constants/colors.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -274,9 +275,9 @@ class _SelectedMediaPreviewState extends State<SelectedMediaPreview>
           builder: (context, child) {
             return Transform.translate(
               offset: Offset(0, (sin(_animationController.value * 2 * pi) * 5)),
-              child: const Icon(
+              child:  Icon(
                 Icons.auto_awesome,
-                color: Color(0xFF42C83C),
+                color:AppColors.primary,
                 size: 40,
               ),
             );

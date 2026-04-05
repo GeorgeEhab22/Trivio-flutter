@@ -1259,4 +1259,17 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get reactedToYourPost => 'تفاعل مع منشورك';
+
+  @override
+  String get addDescription => 'إضافة وصف';
+
+  @override
+  String get removeDescription => 'إزالة الوصف';
+
+  @override
+  String get removeDescriptionConfirm =>
+      'هل أنت متأكد من رغبتك في حذف وصف المجموعة؟';
+
+  @override
+  String get smartTags => 'هاشتاجات ذكية';
 }

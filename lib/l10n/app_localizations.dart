@@ -2521,6 +2521,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'reacted to your post'**
   String get reactedToYourPost;
+
+  /// No description provided for @addDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Add description'**
+  String get addDescription;
+
+  /// No description provided for @removeDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove description'**
+  String get removeDescription;
+
+  /// No description provided for @removeDescriptionConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete your group description?'**
+  String get removeDescriptionConfirm;
+
+  /// No description provided for @smartTags.
+  ///
+  /// In en, this message translates to:
+  /// **'Smart Tags'**
+  String get smartTags;
 }
 
 class _AppLocalizationsDelegate

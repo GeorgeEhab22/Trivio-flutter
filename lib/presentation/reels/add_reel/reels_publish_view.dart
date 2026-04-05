@@ -48,10 +48,6 @@ class _ReelsPublishViewState extends State<ReelsPublishView> {
         .then((_) {
           if (!mounted) return;
 
-          _controller.addListener(() {
-            if (mounted) setState(() {});
-          });
-
           setState(() {
             _isInitialized = true;
           });

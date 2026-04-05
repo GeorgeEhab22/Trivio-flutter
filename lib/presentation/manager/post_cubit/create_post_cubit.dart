@@ -125,7 +125,7 @@ class CreatePostCubit extends Cubit<CreatePostState> {
             groupId: groupId,
             caption: caption,
             media: _media,
-            type: "private",
+            type: "public",
           )
         : await createPostUseCase(caption: caption, media: _media, type: type);
     if (isClosed) return;

@@ -464,6 +464,10 @@
   "startedFollowingYou": "started following you",
   "followBack": "Follow back",
   "commented": "commented:",
-  "reactedToYourPost": "reacted to your post"
+  "reactedToYourPost": "reacted to your post",
+  "addDescription": "Add description",
+  "removeDescription": "Remove description",
+  "removeDescriptionConfirm": "Are you sure you want to delete your group description?",
+  "smartTags" : "Smart Tags"
 }
 

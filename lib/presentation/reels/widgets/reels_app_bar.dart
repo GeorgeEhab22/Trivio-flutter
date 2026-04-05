@@ -1,3 +1,4 @@
+import 'package:auth/constants/colors.dart';
 import 'package:auth/core/app_routes.dart';
 import 'package:auth/presentation/reels/buttons/reels_add_button.dart';
 import 'package:flutter/material.dart';
@@ -12,63 +13,91 @@ class ReelsAppBar extends StatelessWidget {
       top: 0,
       left: 0,
       right: 0,
-      child: SafeArea(
-        child: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Colors.black54, Colors.transparent],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
+      child: Container(
+        color: Colors.black,
+        padding: EdgeInsets.only(
+          top: MediaQuery.of(context).padding.top + 10,
+          bottom: 12,
+          left: 16,
+          right: 16,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            IconButton(
+              onPressed: () => context.go(AppRoutes.home),
+              icon: const Icon(
+                Icons.arrow_back_ios_new_rounded,
+                color: Colors.white,
+                size: 22,
+              ),
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(),
             ),
-          ),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              IconButton(
-                onPressed: () => context.go(AppRoutes.home),
-                icon: const Icon(
-                  Icons.arrow_back_ios_new_rounded,
-                  color: Colors.white,
-                  size: 22,
+
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _buildTabButton(
+                  "For You",
+                  isActive: true,
+                  onTap: () {
+                    //TODO: add logic to change tab in cubit later
+                  },
                 ),
-              ),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _buildTabButton("Reels", isActive: true),
-                  const Icon(
-                    Icons.keyboard_arrow_down,
-                    color: Colors.white,
-                    size: 18,
-                  ),
-                  const SizedBox(width: 15),
-                  _buildTabButton("Friends", isActive: false),
-                ],
-              ),
-              ReelsAddButton(),
-            ],
-          ),
+                const SizedBox(width: 24),
+
+                _buildTabButton(
+                  "Following",
+                  isActive: false,
+                  onTap: () {
+                    // TODO: add logic to change tab in cubit later
+                  },
+                ),
+              ],
+            ),
+
+            const ReelsAddButton(),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildTabButton(String label, {required bool isActive}) {
+  Widget _buildTabButton(
+    String label, {
+    required bool isActive,
+    required VoidCallback onTap,
+  }) {
     return GestureDetector(
-      onTap: () {},
-      child: Text(
-        label,
-        style: TextStyle(
-          color: isActive ? Colors.white : Colors.white.withValues(alpha: 153),
-          fontSize: 18,
-          fontWeight: isActive ? FontWeight.bold : FontWeight.w500,
-          shadows: const [
-            Shadow(
-              offset: Offset(0, 1),
-              blurRadius: 3.0,
-              color: Colors.black45,
+      onTap: onTap,
+      child: IntrinsicWidth(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              label,
+              style: TextStyle(
+                color: isActive
+                    ? AppColors.primary
+                    : Colors.white.withValues(alpha: 0.6),
+                fontSize: 15,
+                fontWeight: isActive ? FontWeight.bold : FontWeight.w600,
+                letterSpacing: 0.5,
+              ),
             ),
+            const SizedBox(height: 6),
+            if (isActive)
+              Container(
+                width: double.infinity,
+                height: 2.5,
+                decoration: BoxDecoration(
+                  color: AppColors.primary,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              )
+            else
+              const SizedBox(height: 2.5),
           ],
         ),
       ),

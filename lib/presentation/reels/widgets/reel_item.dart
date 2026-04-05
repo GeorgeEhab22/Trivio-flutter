@@ -1,3 +1,4 @@
+import 'package:auth/constants/colors.dart';
 import 'package:auth/injection_container.dart' as di;
 import 'package:auth/domain/entities/post.dart';
 import 'package:auth/presentation/home/comments/comments_view.dart';
@@ -105,7 +106,7 @@ class _ReelItemState extends State<ReelItem> {
                         ),
                         
                         Positioned(
-                          right: 16,
+                          right: 1,
                           bottom: 50,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.end,
@@ -137,6 +138,7 @@ class _ReelItemState extends State<ReelItem> {
                   ),
                 ),
 
+                // Progress indicator at the bottom, only when comments are closed and video is initialized
                 if (widget.cachedPlayer != null &&
                     widget.cachedPlayer!.isInitialized &&
                     !_isCommentsOpen)
@@ -149,7 +151,7 @@ class _ReelItemState extends State<ReelItem> {
                       allowScrubbing: true,
                       padding: const EdgeInsets.symmetric(vertical: 2),
                       colors: const VideoProgressColors(
-                        playedColor: Colors.white,
+                        playedColor:AppColors.primary,
                         bufferedColor: Colors.transparent,
                         backgroundColor: Colors.transparent,
                       ),

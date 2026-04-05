@@ -1273,4 +1273,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get reactedToYourPost => 'reacted to your post';
+
+  @override
+  String get addDescription => 'Add description';
+
+  @override
+  String get removeDescription => 'Remove description';
+
+  @override
+  String get removeDescriptionConfirm =>
+      'Are you sure you want to delete your group description?';
+
+  @override
+  String get smartTags => 'Smart Tags';
 }

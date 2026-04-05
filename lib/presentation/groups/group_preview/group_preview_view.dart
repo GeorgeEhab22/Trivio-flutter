@@ -47,7 +47,7 @@ class GroupPreviewView extends StatelessWidget {
                       children: [
                         Text(group.groupName, style: Styles.textStyleBold20),
                         const SizedBox(height: 8),
-                        NumberOfMembersRow(numOfMembers: group.totalMembers),
+                        NumberOfMembersRow(numOfMembers: group.membersCount ?? 0),
                         const SizedBox(height: 20),
                         JoinGroupButton(groupId: group.groupId),
                         const SizedBox(height: 20),

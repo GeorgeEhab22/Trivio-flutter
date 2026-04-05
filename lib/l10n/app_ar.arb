@@ -465,5 +465,9 @@
   "startedFollowingYou": "بدأ بمتابعتك",
   "followBack": "رد المتابعة",
   "commented": "علق:",
-  "reactedToYourPost": "تفاعل مع منشورك"
+  "reactedToYourPost": "تفاعل مع منشورك",
+  "addDescription": "إضافة وصف",
+  "removeDescription": "إزالة الوصف",
+  "removeDescriptionConfirm": "هل أنت متأكد من رغبتك في حذف وصف المجموعة؟",
+  "smartTags": "هاشتاجات ذكية"
 }

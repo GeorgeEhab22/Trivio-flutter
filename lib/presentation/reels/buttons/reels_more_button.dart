@@ -1,3 +1,4 @@
+import 'package:auth/common/functions/reels_buttons_green_effect.dart';
 import 'package:auth/domain/entities/post.dart';
 import 'package:auth/presentation/home/posts_in_timeline/buttom_sheets/options_bottom_sheet.dart';
 import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
@@ -19,8 +20,8 @@ class ReelsMoreButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
-      child: IconButton(
-        onPressed: () {
+      child: GestureDetector(
+        onTap: () {
           final postInteractionCubit = context.read<PostInteractionCubit>();
           final postCubit = context.read<PostCubit>();
 
@@ -43,9 +44,9 @@ class ReelsMoreButton extends StatelessWidget {
             ),
           );
         },
-        icon: const Icon(Icons.more_vert, color: Colors.white, size: 26),
-        padding: EdgeInsets.zero,
-        constraints: const BoxConstraints(),
+        child: ReelsButtonsGreenEffect(
+          child: Icon(Icons.more_vert, color: Colors.white, size: 26),
+        ),
       ),
     );
   }
