@@ -2473,6 +2473,7 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No posts yet'**
   String get noPostsYet;
+
   /// No description provided for @all.
   ///
   /// In en, this message translates to:

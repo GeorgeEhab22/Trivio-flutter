@@ -66,7 +66,7 @@ class PostHeader extends StatelessWidget {
                 if (post.authorId != currentUserId)
                   FollowButton(
                     currentUserId: currentUserId,
-                    authorId: post.authorId,
+                    authorId: post.authorId, initialFollowStatus: false,
                   ),
               ],
               SizedBox(width: 8),

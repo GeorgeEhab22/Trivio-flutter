@@ -1249,6 +1249,8 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noPostsYet => 'No posts yet';
+
+  @override
   String get all => 'All';
 
   @override

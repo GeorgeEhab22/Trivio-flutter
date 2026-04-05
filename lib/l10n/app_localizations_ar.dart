@@ -1235,6 +1235,8 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get noPostsYet => 'لا يوجد منشورات';
+
+  @override
   String get all => 'الكل';
 
   @override
