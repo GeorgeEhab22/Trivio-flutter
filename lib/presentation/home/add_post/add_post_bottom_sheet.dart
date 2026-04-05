@@ -1,5 +1,7 @@
 import 'package:auth/common/functions/bottom_sheet_manager.dart';
+import 'package:auth/presentation/auto-tagging/widgets/hashing_text_controller.dart';
 import 'package:auth/presentation/authentication/widgets/show_custom_snackbar.dart';
+import 'package:auth/presentation/auto-tagging/suggested_hashtags_button.dart';
 import 'package:auth/presentation/home/add_post/add_post_header.dart';
 import 'package:auth/presentation/home/add_post/media_buttons_row.dart';
 import 'package:auth/presentation/home/add_post/post_input_field.dart';
@@ -24,8 +26,7 @@ class AddPostBottomSheet extends StatefulWidget {
 }
 
 class _AddPostBottomSheetState extends State<AddPostBottomSheet> {
-  final TextEditingController _postController = TextEditingController();
-
+final HashtagTextController _postController = HashtagTextController();
   @override
   void dispose() {
     _postController.dispose();
@@ -36,10 +37,10 @@ class _AddPostBottomSheetState extends State<AddPostBottomSheet> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final mediaQuery = MediaQuery.of(context);
-    
+
     // Handle keyboard overlap
     final keyboardHeight = mediaQuery.viewInsets.bottom;
-    final maxHeight = mediaQuery.size.height * 0.9; 
+    final maxHeight = mediaQuery.size.height * 0.9;
 
     return BlocProvider(
       create: (context) => di.sl<CreatePostCubit>(),
@@ -62,12 +63,21 @@ class _AddPostBottomSheetState extends State<AddPostBottomSheet> {
           List<XFile> currentMedia = cubit.currentMedia;
           String currentPrivacy = cubit.currentPrivacy;
           bool isButtonEnabled = false;
+          List<bool> isProcessingList = [];
 
           // Update values if state is Editing
           if (state is CreatePostEditing) {
             currentMedia = state.selectedMedia;
             currentPrivacy = state.privacy;
             isButtonEnabled = state.isPostButtonEnabled;
+            isProcessingList = state.isProcessing;
+          }
+
+          if (isProcessingList.length != currentMedia.length) {
+            isProcessingList = List.generate(
+              currentMedia.length,
+              (index) => false,
+            );
           }
 
           return Padding(
@@ -76,7 +86,9 @@ class _AddPostBottomSheetState extends State<AddPostBottomSheet> {
               constraints: BoxConstraints(maxHeight: maxHeight),
               decoration: BoxDecoration(
                 color: Theme.of(context).scaffoldBackgroundColor,
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(16),
+                ),
               ),
               child: cubit.isLoading
                   ? const SizedBox(
@@ -97,20 +109,49 @@ class _AddPostBottomSheetState extends State<AddPostBottomSheet> {
                               if (state is ProfileLoaded) {
                                 userId = state.user.id;
                               }
-                              cubit.submitPost(userId: userId, groupId: widget.groupId);
+                              cubit.submitPost(
+                                userId: userId,
+                                groupId: widget.groupId,
+                              );
                             },
                           ),
                           PostInputField(
                             controller: _postController,
                             onChanged: (text) => cubit.updateText(text),
                           ),
+                          SuggestHashtagsButton(
+                            onTap: () {
+                              cubit.triggerHashtagsEffect(() {
+                                String currentText = _postController.text;
+
+                                String newText = cubit.buildFinalPostText(
+                                  currentText,
+                                );
+
+                                if (newText != currentText) {
+                                  _postController.text = newText;
+
+                                  _postController.selection =
+                                      TextSelection.fromPosition(
+                                        TextPosition(
+                                          offset: _postController.text.length,
+                                        ),
+                                      );
+
+                                  cubit.updateText(newText);
+                                }
+                              });
+                            },
+                          ),
                           if (currentMedia.isNotEmpty)
-                            SelectedMediaPreview(
-                              files: currentMedia,
-                              onRemove: (index) {
-                                cubit.removeMedia(index);
-                              },
-                            ),
+                            if (currentMedia.isNotEmpty)
+                              SelectedMediaPreview(
+                                files: currentMedia,
+                                onRemove: (index) {
+                                  cubit.removeMedia(index);
+                                },
+                                isProcessing: isProcessingList,
+                              ),
                           MediaButtonsRow(
                             onPickImage: () =>
                                 BottomSheetManager.showMediaSourceSheet(
@@ -129,11 +170,11 @@ class _AddPostBottomSheetState extends State<AddPostBottomSheet> {
                                   },
                                 ),
                           ),
-                          if(widget.groupId == null)
-                          PrivacySelector(
-                            privacy: currentPrivacy,
-                            onChange: (value) => cubit.updatePrivacy(value),
-                          ),
+                          if (widget.groupId == null)
+                            PrivacySelector(
+                              privacy: currentPrivacy,
+                              onChange: (value) => cubit.updatePrivacy(value),
+                            ),
                           const SizedBox(height: 20),
                         ],
                       ),

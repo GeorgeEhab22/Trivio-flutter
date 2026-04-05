@@ -65,6 +65,7 @@ dependencies:
   cached_video_player_plus: ^4.1.0
   hive_flutter: 
   animated_theme_switcher: ^2.0.9
+  shimmer: ^2.0.0
   flutter_localizations:
     sdk: flutter
 dev_dependencies:

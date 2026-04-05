@@ -3,6 +3,7 @@ import 'package:auth/presentation/home/posts_in_timeline/widgets/follow_button.d
 import 'package:auth/presentation/home/widgets/exbandable_text.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_state.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -40,12 +41,20 @@ class ReelsBottomInfo extends StatelessWidget {
               CircleAvatar(
                 radius: 18,
                 backgroundColor: Colors.white24,
-                backgroundImage:authorImage != null
-                    ? NetworkImage(authorImage)
-                    : null,
-                child: reel.authorImage == null
-                    ? const Icon(Icons.person, color: Colors.white, size: 20)
-                    : null,
+                child: ClipOval(
+                  child: authorImage != null
+                      ? CachedNetworkImage(
+                          imageUrl: authorImage,
+                          fit: BoxFit.cover,
+                          width: 36,
+                          height: 36,
+                          placeholder: (context, url) =>
+                              const CircularProgressIndicator(strokeWidth: 1),
+                          errorWidget: (context, url, error) =>
+                              const Icon(Icons.person, color: Colors.white),
+                        )
+                      : const Icon(Icons.person, color: Colors.white, size: 20),
+                ),
               ),
               const SizedBox(width: 10),
 
@@ -69,6 +78,8 @@ class ReelsBottomInfo extends StatelessWidget {
                 FollowButton(
                   currentUserId: currentUserId,
                   authorId: reel.authorId,
+                  initialFollowStatus: false,
+                  isReel: true,
                 ),
             ],
           ),

@@ -1,7 +1,8 @@
 import 'package:cached_video_player_plus/cached_video_player_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:preload_page_view/preload_page_view.dart' hide PageScrollPhysics;
+import 'package:preload_page_view/preload_page_view.dart'
+    hide PageScrollPhysics;
 import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_state.dart';
@@ -19,11 +20,14 @@ class _ReelsViewState extends State<ReelsView> with WidgetsBindingObserver {
   final PreloadPageController _pageController = PreloadPageController();
   final VideoControllerPool _pool = VideoControllerPool();
   int _currentIndex = 0;
-
+  bool _wasPlayingBeforeAppPaused = true;
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    _pool.onNotify = () {
+      if (mounted) setState(() {});
+    };
   }
 
   @override
@@ -36,11 +40,16 @@ class _ReelsViewState extends State<ReelsView> with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
+    final currentPlayer = _pool.getPlayer(_currentIndex);
     if (state == AppLifecycleState.paused ||
         state == AppLifecycleState.inactive) {
+      _wasPlayingBeforeAppPaused =
+          currentPlayer?.controller.value.isPlaying ?? false;
       _pool.pauseAll();
     } else if (state == AppLifecycleState.resumed) {
-      _pool.playIndex(_currentIndex);
+      if (_wasPlayingBeforeAppPaused) {
+        _pool.playIndex(_currentIndex);
+      }
     }
   }
 
@@ -91,6 +100,7 @@ class _ReelsViewState extends State<ReelsView> with WidgetsBindingObserver {
                   itemCount: reels.length,
                   onPageChanged: (index) {
                     _currentIndex = index;
+                    _wasPlayingBeforeAppPaused = true;
                     _pool.preloadAround(index, reels);
                     _pool.playIndex(index);
                     setState(() {}); // update overlays if needed
@@ -127,7 +137,7 @@ class _ReelsViewState extends State<ReelsView> with WidgetsBindingObserver {
 class VideoControllerPool {
   final Map<int, CachedVideoPlayerPlus> _map = {};
   final Set<int> _creating = {};
-
+  VoidCallback? onNotify;
   bool get isEmpty => _map.isEmpty;
 
   CachedVideoPlayerPlus? getPlayer(int idx) => _map[idx];
@@ -136,11 +146,18 @@ class VideoControllerPool {
     final keep = <int>{center - 1, center, center + 1, center + 2};
 
     for (final idx in keep) {
-      if (idx >= 0 && idx < items.length && !_map.containsKey(idx) && !_creating.contains(idx)) {
+      if (idx >= 0 &&
+          idx < items.length &&
+          !_map.containsKey(idx) &&
+          !_creating.contains(idx)) {
         _creating.add(idx);
         _createPlayer(items[idx].media!.first).then((p) {
           if (p != null) {
             _map[idx] = p;
+            if (idx == center) {
+              p.controller.play();
+              onNotify?.call();
+            }
           }
           _creating.remove(idx);
         });
@@ -150,7 +167,7 @@ class VideoControllerPool {
     final toRemove = _map.keys.where((k) => !keep.contains(k)).toList();
     for (final k in toRemove) {
       _map[k]?.controller.pause();
-      _map[k]?.dispose(); 
+      _map[k]?.dispose();
       _map.remove(k);
     }
   }
@@ -211,8 +228,8 @@ class ReelsScrollPhysics extends PageScrollPhysics {
 
   @override
   SpringDescription get spring => SpringDescription.withDampingRatio(
-        mass: 0.5,
-        stiffness: 2000,
-        ratio: 1.0,
-      );
+    mass: 0.5,
+    stiffness: 2000,
+    ratio: 1.0,
+  );
 }

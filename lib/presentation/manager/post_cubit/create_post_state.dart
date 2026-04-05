@@ -16,16 +16,18 @@ final class CreatePostEditing extends CreatePostState {
   final String privacy;
   final bool isPostButtonEnabled;
   final String lastUpdated; 
+  final List<bool> isProcessing;
 
   const CreatePostEditing({
     this.selectedMedia = const [],
     this.privacy = "Public",
     this.isPostButtonEnabled = false,
     required this.lastUpdated,
+    this.isProcessing = const [],
   });
 
   @override
-  List<Object> get props => [selectedMedia, privacy, isPostButtonEnabled, lastUpdated];
+  List<Object> get props => [selectedMedia, privacy, isPostButtonEnabled, lastUpdated, isProcessing];
 }
 
 final class CreatePostLoading extends CreatePostState {

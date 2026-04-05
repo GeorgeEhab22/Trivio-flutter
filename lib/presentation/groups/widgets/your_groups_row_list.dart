@@ -46,7 +46,7 @@ class YourGroupsRowList extends StatelessWidget {
                 enabled: isInitialLoading || group.groupId.isEmpty,
                 child: GroupItem(
                   groupId: group.groupId,
-                  numOfMembers:group.totalMembers,
+                  numOfMembers:group.membersCount ?? 0,
                   title: group.groupName,
                   imageUrl: group.groupCoverImage,
                   creatorId: group.creatorId,

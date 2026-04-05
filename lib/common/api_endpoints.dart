@@ -88,4 +88,7 @@ class ApiEndpoints {
   static const String favPlayers = 'users/me/favPlayers';
   static const String removeFavTeams = 'users/me/removeFavTeam';
   static const String removeFavPlayers = 'users/me/removeFavPlayer';
+  
+  //notifications
+  static const String notifications = 'notifications';
 }

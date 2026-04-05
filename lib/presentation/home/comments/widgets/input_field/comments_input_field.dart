@@ -1,3 +1,4 @@
+import 'package:auth/constants/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:auth/l10n/app_localizations.dart';
 
@@ -141,8 +142,8 @@ class CommentInputField extends StatelessWidget {
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             gradient: isNotEmpty
-                                ? const LinearGradient(
-                                    colors: [Color(0xFF42C83C), Color(0xFF7BDC5B)],
+                                ?  LinearGradient(
+                                    colors: [AppColors.primary, Color(0xFF7BDC5B)],
                                     begin: Alignment.topLeft,
                                     end: Alignment.bottomRight,
                                   )

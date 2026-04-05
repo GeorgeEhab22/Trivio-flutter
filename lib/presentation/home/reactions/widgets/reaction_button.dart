@@ -1,3 +1,4 @@
+import 'package:auth/common/functions/reels_buttons_green_effect.dart';
 import 'package:auth/domain/entities/reaction_type.dart';
 import 'package:auth/presentation/home/widgets/post_action_item.dart';
 import 'package:flutter/material.dart';
@@ -29,19 +30,23 @@ class ReactionButton extends StatelessWidget {
   }
 
   Widget _buildLeading(BuildContext context, ReactionType type, Color color) {
-    final double iconSize = isVertical ? 28 : 20;
+    final double iconSize = isVertical ? 24 : 20;
+    Widget iconWidget;
+
     if (type == ReactionType.none) {
-      return Icon(
-        Icons.thumb_up_alt_outlined,
-        size: iconSize,
-        color: color,
+      iconWidget = Icon(Icons.thumb_up_alt_outlined, size: iconSize, color: color);
+    } else {
+      iconWidget = Text(
+        _getEmoji(type),
+        style: TextStyle(fontSize: iconSize, height: 1, color: isVertical ? Colors.white : null),
       );
     }
 
-    return Text(
-      _getEmoji(type),
-      style: TextStyle(fontSize: iconSize, height: 1),
-    );
+    if (isVertical) {
+      return ReelsButtonsGreenEffect(child: iconWidget);
+    }
+
+    return iconWidget;
   }
 
   Color _neutralActionColor(BuildContext context) {

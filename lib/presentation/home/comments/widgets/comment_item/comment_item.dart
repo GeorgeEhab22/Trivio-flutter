@@ -232,10 +232,10 @@ class _CommentItemState extends State<CommentItem> {
                       decoration:  BoxDecoration(
                         gradient: isDark
                             ? LinearGradient(
-                                colors: [Color(0xFF42C83C).withAlpha(950), AppColors.darkGreen],
+                                colors: [AppColors.primary.withAlpha(950), AppColors.darkGreen],
                               )
                             : LinearGradient(
-                                colors: [Color(0xFF42C83C), AppColors.darkGreen],
+                                colors: [AppColors.primary, AppColors.darkGreen],
                               ),
                       ),
                     ),

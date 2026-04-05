@@ -20,7 +20,7 @@ class AppRoutes {
   static const String profile = '/app/profile';
 
   static const String settings = '/settings';
-  static const String notifications = '/settings/notifications';
+  static const String notifications = '/notifications';
   static const String theme = '/settings/theme';
   static const String blocked = '/settings/blocked';
   static const String activeStates = '/settings/active_states';

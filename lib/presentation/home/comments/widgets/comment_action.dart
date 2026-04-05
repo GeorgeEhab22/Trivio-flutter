@@ -1,3 +1,4 @@
+import 'package:auth/common/functions/reels_buttons_green_effect.dart';
 import 'package:auth/injection_container.dart' as di;
 import 'package:auth/domain/entities/reaction_type.dart';
 import 'package:auth/presentation/home/comments/comments_view.dart';
@@ -17,7 +18,7 @@ class CommentAction extends StatelessWidget {
   final String postId;
   final String currentUserId;
   final bool isReelView;
-final VoidCallback? onReelsCommentTap;
+  final VoidCallback? onReelsCommentTap;
 
   const CommentAction({
     super.key,
@@ -33,10 +34,23 @@ final VoidCallback? onReelsCommentTap;
 
   @override
   Widget build(BuildContext context) {
-    final iconColor = isReelView ? Colors.white : Theme.of(context).iconTheme.color;
-    final iconSize = isReelView ? 28.0 : 22.0;
+    final iconColor = isReelView
+        ? Colors.white
+        : Theme.of(context).iconTheme.color;
+    final iconSize = isReelView ? 24.0 : 22.0;
+
+    Widget iconWidget = FaIcon(
+      FontAwesomeIcons.comment,
+      size: iconSize,
+      color: iconColor,
+    );
+
+    if (isReelView) {
+      iconWidget = ReelsButtonsGreenEffect(child: iconWidget);
+    }
+
     return PostActionItem(
-      icon:  FaIcon(FontAwesomeIcons.comment, size: iconSize,color: iconColor,),
+      icon: iconWidget,
       count: commentsCount,
       color: iconColor,
       isVertical: isReelView,

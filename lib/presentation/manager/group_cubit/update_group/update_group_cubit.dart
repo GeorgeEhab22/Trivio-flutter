@@ -30,18 +30,11 @@ class UpdateGroupCubit extends Cubit<UpdateGroupState> {
   Future<void> updateGroup({required String groupId}) async {
     emit(const UpdateGroupLoading());
 
-    ////////////////////////////
-    //TODO: untill the issue is fixed with backend
-    String? finalDesc = description?.trim();
-    if (finalDesc != null && finalDesc.isEmpty) {
-      finalDesc = " not empty ";
-    }
-    ////////////////////////////
-    
+
     final result = await _updateGroupUseCase(
       groupId: groupId,
       name: name?.trim(),
-      description: finalDesc,
+      description: description?.trim(),
       coverImage: groupCoverImage,
     );
     result.fold(
