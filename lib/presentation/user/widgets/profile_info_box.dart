@@ -1,13 +1,17 @@
 import 'dart:io';
-
+import 'package:auth/common/functions/custom_square_button.dart';
 import 'package:auth/constants/colors.dart';
+import 'package:auth/core/app_routes.dart';
+import 'package:auth/core/styels.dart';
 import 'package:auth/domain/entities/user_profile.dart';
+import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_state.dart';
 import 'package:auth/presentation/user/widgets/profile_social_info.dart';
 import 'package:flutter/material.dart';
 import 'package:auth/presentation/user/widgets/follow_toggle_button.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class ProfileInfoBox extends StatelessWidget {
   final UserProfile user;
@@ -16,52 +20,113 @@ class ProfileInfoBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool _isCurrentUser(BuildContext context) {
-      final state = context.read<ProfileCubit>().state;
-      if (state is ProfileLoaded) {
-        // TODO: Compare the ID of the profile being displayed (widget.user.id) with the ID of the logged-in user (state.user.id)
-        return state.user.id == user.id;
-      }
-      return false;
+    final l10n = AppLocalizations.of(context)!;
+    bool isCurrentUser = false;
+    final state = context.read<ProfileCubit>().state;
+    if (state is ProfileLoaded) {
+      isCurrentUser = state.user.id == user.id;
     }
-
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
-      padding: const EdgeInsets.all(10.0),
+      padding: const EdgeInsets.symmetric(vertical: 20.0),
       child: Column(
         children: [
-          Row(
+          Stack(
+            alignment: Alignment.center,
             children: [
-              Stack(
-                children: [
-                  CircleAvatar(
-                    radius: 40,
-                    backgroundColor: AppColors.lightGrey,
-                    backgroundImage: user.avatar.startsWith('http')
-                        ? NetworkImage(user.avatar)
-                        : (user.avatar.isNotEmpty)
-                        ? FileImage(File(user.avatar))
-                        : null,
-                    child: user.avatar.isEmpty
-                        ? const Icon(Icons.person, size: 40, color: Colors.grey)
-                        : null,
-                  ),
-                  if (!_isCurrentUser(context))
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: FollowToggleButton(targetUserId: user.id),
-                    ),
-                ],
+              CircleAvatar(
+                radius: 50,
+                backgroundColor: AppColors.lightGrey,
+                backgroundImage: user.avatar.startsWith('http')
+                    ? NetworkImage(user.avatar)
+                    : (user.avatar.isNotEmpty)
+                    ? FileImage(File(user.avatar)) as ImageProvider
+                    : null,
+                child: user.avatar.isEmpty
+                    ? const Icon(Icons.person, size: 50, color: Colors.grey)
+                    : null,
               ),
-              const SizedBox(width: 20),
-              Expanded(
-                child: ProfileSocialInfo(
-                  numberOfFollowers: user.followersCount,
-                  numberOfFollowing: user.followingCount,
-                  numberOfPosts: user.postsCount,
+              if (!isCurrentUser)
+                Positioned(
+                  top: 0,
+                  right: 0,
+                  child: FollowToggleButton(targetUserId: user.id),
+                ),
+            ],
+          ),
+          const SizedBox(height: 16),
+
+          Text(
+            user.name,
+            style: Styles.textStyle23.copyWith(
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).textTheme.bodyMedium?.color,
+            ),
+          ),
+          const SizedBox(height: 8),
+          if (user.bio?.isNotEmpty ?? false)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 30),
+              child: Text(
+                user.bio!,
+                textAlign: TextAlign.center,
+                style: Styles.textStyle16.copyWith(
+                  color: Colors.grey[700],
+                  height: 1.4,
+                ),
+              ),
+            ),
+
+          const SizedBox(height: 20),
+
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              if (isCurrentUser)
+                SizedBox(
+                  width: 180,
+                  child: CustomSquareButton(
+                    label: l10n.editProfile,
+                    backgroundColor: AppColors.primary,
+                    textColor: Colors.white,
+                    textStyle: const TextStyle(
+                      fontWeight: FontWeight.w900,
+                      fontSize: 13,
+                    ),
+                    borderRadius: 10,
+                    height: 10,
+                    row: true,
+                    leadingIcon: Icons.edit,
+                    iconColor: Colors.white,
+                    onTap: () {
+                      GoRouter.of(context).push(AppRoutes.editProfile);
+                    },
+                  ),
+                ),
+              const SizedBox(width: 12),
+              Container(
+                decoration: BoxDecoration(
+                  color: isDark ? Colors.grey[800] : Colors.grey[200],
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: IconButton(
+                  onPressed: () {},
+                  icon: Icon(
+                    Icons.share,
+                    color: Theme.of(context).iconTheme.color,
+                    size: 20,
+                  ),
                 ),
               ),
             ],
+          ),
+
+          const SizedBox(height: 10),
+
+          ProfileSocialInfo(
+            numberOfFollowers: user.followersCount,
+            numberOfFollowing: user.followingCount,
+            numberOfPosts: user.postsCount,
           ),
         ],
       ),

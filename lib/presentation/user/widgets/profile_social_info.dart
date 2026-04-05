@@ -1,11 +1,10 @@
+import 'package:auth/constants/colors.dart';
 import 'package:auth/core/app_routes.dart';
 import 'package:auth/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
-import 'package:auth/constants/colors.dart';
 import 'package:go_router/go_router.dart';
 import 'stat_item.dart';
 
-// Simple notification to bubble up the scroll request to the parent
 class ScrollToPostsNotification extends Notification {}
 
 class ProfileSocialInfo extends StatelessWidget {
@@ -25,37 +24,61 @@ class ProfileSocialInfo extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
 
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 5),
+      margin: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
       decoration: BoxDecoration(
-        border: Border.all(color: AppColors.customGrey, width: 1.5),
-        borderRadius: BorderRadius.circular(15),
+        color: Theme.of(context).scaffoldBackgroundColor,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: AppColors.primary.withValues(alpha: 0.3),
+          width: 1.0,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color:  Colors.black.withValues(alpha: 0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           StatItem(
-            label: l10n.followers,
-            count: numberOfFollowers,
-            onTap: () => context.go('${AppRoutes.followerInfo}?tab=0'),
-          ),
-          StatItem(
-            label: l10n.following,
-            count: numberOfFollowing,
-            onTap: () => context.go('${AppRoutes.followerInfo}?tab=1'),
-          ),
-          StatItem(
             label: l10n.posts,
             count: numberOfPosts,
             onTap: () {
               final state = GoRouterState.of(context);
-              // Check if we are already on the profile page
               if (state.uri.path == AppRoutes.profile) {
                 ScrollToPostsNotification().dispatch(context);
               } else {
-                // Navigate back with a query parameter
                 context.go('${AppRoutes.profile}?scrollTo=posts');
               }
             },
+          ),
+
+          Container(
+            height: 30,
+            width: 1,
+            color: AppColors.primary.withValues(alpha: 0.15),
+          ),
+
+          StatItem(
+            label: l10n.followers,
+            count: numberOfFollowers,
+            onTap: () => context.go('${AppRoutes.followerInfo}?tab=0'),
+          ),
+
+          Container(
+            height: 30,
+            width: 1,
+            color: AppColors.primary.withValues(alpha: 0.15),
+          ),
+
+          StatItem(
+            label: l10n.following,
+            count: numberOfFollowing,
+            onTap: () => context.go('${AppRoutes.followerInfo}?tab=1'),
           ),
         ],
       ),

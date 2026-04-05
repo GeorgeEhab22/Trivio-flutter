@@ -1,5 +1,5 @@
+import 'package:auth/constants/colors.dart';
 import 'package:auth/core/app_routes.dart';
-import 'package:auth/core/home_appbar_logo_and_searchbox.dart';
 import 'package:auth/core/styels.dart';
 import 'package:auth/presentation/home/posts_in_timeline/widgets/post_card.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_cubit.dart';
@@ -8,12 +8,12 @@ import 'package:auth/presentation/manager/profile_cubit/profile_posts_state.dart
 import 'package:auth/presentation/manager/profile_cubit/profile_state.dart';
 import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/user/widgets/profile_info_box.dart';
-import 'package:auth/presentation/user/widgets/profile_social_info.dart';
 import 'package:flutter/material.dart';
-import 'package:auth/constants/colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:visibility_detector/visibility_detector.dart';
+
+class ScrollToPostsNotification extends Notification {}
 
 class UserProfileView extends StatefulWidget {
   const UserProfileView({super.key});
@@ -25,11 +25,9 @@ class UserProfileView extends StatefulWidget {
 class _UserProfileViewState extends State<UserProfileView> {
   final GlobalKey _postsHeaderKey = GlobalKey();
 
-  // Centralized scroll logic with a safety delay
   void _scrollToPosts() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-
       final scrollContext = _postsHeaderKey.currentContext;
       if (scrollContext != null) {
         Scrollable.ensureVisible(
@@ -41,7 +39,6 @@ class _UserProfileViewState extends State<UserProfileView> {
     });
   }
 
-  // Check if the URL tells us to scroll
   void _checkUrlAndScroll() {
     final state = GoRouterState.of(context);
     if (state.uri.queryParameters['scrollTo'] == 'posts') {
@@ -70,17 +67,13 @@ class _UserProfileViewState extends State<UserProfileView> {
       },
       child: BlocConsumer<ProfileCubit, ProfileState>(
         listener: (context, state) {
-          if (state is ProfileLoaded) {
-            _checkUrlAndScroll();
-          }
+          if (state is ProfileLoaded) _checkUrlAndScroll();
         },
         builder: (context, profileState) {
           if (profileState is ProfileInitial ||
               profileState is ProfileLoading) {
-            return const Scaffold(
-              body: Center(
-                child: CircularProgressIndicator(color: AppColors.primary),
-              ),
+            return Scaffold(
+              body: Center(child: CircularProgressIndicator(color: AppColors.primary)),
             );
           }
 
@@ -95,31 +88,36 @@ class _UserProfileViewState extends State<UserProfileView> {
               child: BlocBuilder<ProfilePostsCubit, ProfilePostsState>(
                 builder: (context, postsState) {
                   return Scaffold(
+                    backgroundColor:Theme.of(context).scaffoldBackgroundColor,
                     appBar: AppBar(
-                      title: Row(
-                        children: [
-                          const HomeAppBarLogoAndSearchBox(),
-                          const Spacer(),
-                          IconButton(
-                            onPressed: () {},
-                            icon: const Icon(Icons.share),
-                          ),
-                          IconButton(
-                            onPressed: () => GoRouter.of(
-                              context,
-                            ).push(AppRoutes.profileSettings),
-                            icon: const Icon(Icons.menu),
-                          ),
-                        ],
-                      ),
-                      shape: const Border(
-                        bottom: BorderSide(
-                          color: AppColors.lightGrey,
-                          width: 2,
+                      backgroundColor:Theme.of(context).appBarTheme.backgroundColor,
+                      elevation: 0,
+                      scrolledUnderElevation: 0,
+                      centerTitle: false,
+                      surfaceTintColor: Colors.transparent,
+                      title: Text(
+                        'Trivio',
+                        style: TextStyle(
+                          color: Theme.of(context).textTheme.bodyMedium?.color,
+                          fontWeight: FontWeight.w800,
+                          fontSize: 25,
                         ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      actions: [
+                        IconButton(
+                          onPressed: () =>
+                              context.push(AppRoutes.profileSettings),
+                          icon:  Icon(Icons.settings,color: Theme.of(context).iconTheme.color,),
+                        ),
+                      ],
+                      bottom: PreferredSize(
+                        preferredSize: const Size.fromHeight(1),
+                        child: Divider(height: 1, color:Theme.of(context).cardColor),
                       ),
                     ),
                     body: RefreshIndicator(
+                      color: AppColors.primary,
                       onRefresh: () async => context
                           .read<ProfilePostsCubit>()
                           .fetchAllProfileData(),
@@ -131,36 +129,18 @@ class _UserProfileViewState extends State<UserProfileView> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 ProfileInfoBox(user: user),
+
                                 Padding(
                                   padding: const EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                    vertical: 8,
+                                    horizontal: 20,
+                                    vertical: 10,
                                   ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        user.name,
-                                        style: Styles.textStyle20.copyWith(
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      if (user.bio?.isNotEmpty ?? false)
-                                        Text(
-                                          user.bio!,
-                                          style: Styles.textStyle16.copyWith(
-                                            color: Colors.grey[800],
-                                          ),
-                                        ),
-                                      const SizedBox(height: 10),
-                                      const Divider(color: AppColors.lightGrey),
-                                      Text(
-                                        l10n.posts,
-                                        key: _postsHeaderKey,
-                                        style: Styles.textStyle30,
-                                      ),
-                                    ],
+                                  child: Text(
+                                    l10n.posts,
+                                    key: _postsHeaderKey,
+                                    style: Styles.textStyle25.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ),
                               ],
