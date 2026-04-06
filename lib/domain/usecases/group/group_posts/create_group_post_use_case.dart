@@ -13,6 +13,8 @@ class CreateGroupPostUseCase {
     String? caption,
     List<XFile>? media,
     required String type,
+    List<String>? tags,
+    bool? shownTags,
   }) async {
     final trimmedCaption = caption?.trim() ?? '';
     final hasMedia = media != null && media.isNotEmpty;
@@ -28,6 +30,8 @@ class CreateGroupPostUseCase {
       caption: trimmedCaption,
       media: media,
       type: type,
+      tags: tags,
+      shownTags: shownTags,
     );
   }
 }

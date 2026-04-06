@@ -10,6 +10,8 @@ abstract class PostRepo {
     String? caption,
     List<XFile>? media,
     required String type,
+    List<String>? tags,
+    bool? shownTags,
   });
 
   Future<Either<Failure, Post>> getPost(String postId);

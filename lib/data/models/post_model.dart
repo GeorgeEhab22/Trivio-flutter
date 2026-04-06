@@ -33,6 +33,8 @@ class PostModel extends Post {
     super.userReaction = ReactionType.none,
     super.reactionCountsByType = const <ReactionType, int>{},
     required super.createdAt,
+    super.tags = const [],
+    super.shownTags = false,
   });
 
   factory PostModel.fromJson(Map<String, dynamic> json) {
@@ -145,6 +147,9 @@ class PostModel extends Post {
       createdAt: raw['createdAt'] != null
           ? DateTime.parse(raw['createdAt'] as String)
           : DateTime.now(),
+
+      tags: (raw['tags'] as List<dynamic>? ?? []).map((e) => e.toString()).toList(),
+      shownTags: raw['shownTags'] ?? false,
     );
   }
 
@@ -212,6 +217,8 @@ class PostModel extends Post {
       'groupCoverImage': groupCoverImage,
       'commentsCount': commentsCount,
       'createdAt': createdAt.toIso8601String(),
+      'tags': tags,
+      'shownTags': shownTags,
     };
   }
 
@@ -238,6 +245,8 @@ class PostModel extends Post {
         toJson()['reactionCounts'],
       ),
       createdAt: createdAt,
+      tags: tags,
+      shownTags: shownTags,
     );
   }
 
@@ -274,6 +283,8 @@ class PostModel extends Post {
       groupCoverImage: post.groupCoverImage,
       reactionCountsByType: post.reactionCountsByType,
       createdAt: post.createdAt,
+      tags: post.tags,
+      shownTags: post.shownTags,
     );
   }
 }

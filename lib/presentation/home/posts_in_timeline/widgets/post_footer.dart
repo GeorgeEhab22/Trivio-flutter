@@ -115,21 +115,19 @@ class PostFooter extends StatelessWidget {
   if (currentReaction != null && currentReaction != ReactionType.none) {
     return currentReaction!;
   }
-
-  if (post.userReaction != ReactionType.none) {
-    return post.userReaction;
-  }
-
-  final reactions = post.reactions;
-  if (reactions != null && reactions.isNotEmpty) {
-    final myReaction = reactions.firstWhere(
-      (r) => r.userId == currentUserId,
-      orElse: () => const Reaction(id: '', userId: '', type: ReactionType.none, postId: ''),
-    );
-    return myReaction.type;
-  }
-
-  return ReactionType.none;
+  // if (post.userReaction != ReactionType.none) {
+  //   return post.userReaction;
+  // }
+  // final reactions = post.reactions;
+  // if (reactions != null && reactions.isNotEmpty) {
+  //   final myReaction = reactions.firstWhere(
+  //     (r) => r.userId == currentUserId,
+  //     orElse: () => const Reaction(id: '', userId: '', type: ReactionType.none, postId: ''),
+  //   );
+  //   return myReaction.type;
+  // }
+  // return ReactionType.none;
+  return post.userReaction;
 }
 
   String? _resolveCurrentUserReactionId() {

@@ -98,6 +98,8 @@ abstract class GroupRemoteDataSource {
     String? caption,
     List<XFile>? media,
     required String type,
+    List<String>? tags,
+    bool? shownTags,
   });
   // 21-delete group post
   Future<void> deleteGroupPost({
@@ -446,12 +448,15 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
     String? caption,
     List<XFile>? media,
     required String type,
+    List<String>? tags,
+    bool? shownTags,
   }) async {
     try {
     
       final formData = FormData.fromMap({
         'caption': caption ?? '',
         'type': type,
+        'shownTags': (shownTags ?? false).toString(),
       });
       if (media != null) {
         for (var file in media) {
@@ -471,6 +476,11 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
               ),
             );
           }
+        }
+      }
+      if (tags != null && tags.isNotEmpty) {
+        for (var i = 0; i < tags.length; i++) {
+          formData.fields.add(MapEntry('tags[$i]', tags[i])); 
         }
       }
       final response = await api.post(
