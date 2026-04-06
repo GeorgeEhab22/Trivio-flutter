@@ -18,6 +18,8 @@ class PostRepositoryImpl implements PostRepo {
     String? caption,
     List<XFile>? media, // Updated parameter
     required String type,
+    List<String>? tags,
+    bool? shownTags,
   }) async {
     try {
       // Pass the list of paths to the data source
@@ -26,6 +28,8 @@ class PostRepositoryImpl implements PostRepo {
         caption: caption,
         media: media ?? [], // Pass empty list if null
         type: type,
+        tags: tags,
+        shownTags: shownTags,
       );
 
       return Right(model.toEntity());

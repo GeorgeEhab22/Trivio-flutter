@@ -46,7 +46,9 @@ class CreatePostCubit extends Cubit<CreatePostState> {
   void addMedia(List<XFile> files) {
     for (var file in files) {
       _media.add(file);
-      _isProcessing.add(false);
+      _isProcessing.add(true);
+
+      final int currentIndex = _media.length - 1;
 
       final task = autoTaggingUseCase
           .call(file)
@@ -55,16 +57,24 @@ class CreatePostCubit extends Cubit<CreatePostState> {
 
             result.fold(
               (failure) {
+                _isProcessing[currentIndex] = false;
+                _emitEditingState();
               },
               (tags) {
                 if (tags.isNotEmpty) {
                   _readyTags.addAll(tags);
                   _readyTags = _readyTags.toSet().toList();
                 }
+                _isProcessing[currentIndex] = false;
+                _emitEditingState();
               },
             );
           })
           .catchError((error) {
+            if (!isClosed) {
+              _isProcessing[currentIndex] = false;
+              _emitEditingState();
+            }
           });
 
       _backgroundTasks.add(task);
@@ -85,9 +95,10 @@ class CreatePostCubit extends Cubit<CreatePostState> {
   }
 
   void _emitEditingState() {
-    // Enable button if there is text OR media
-    final bool isEnabled = caption.trim().isNotEmpty || _media.isNotEmpty;
-
+    final bool isAnyImageProcessing = _isProcessing.contains(true);
+    final bool isEnabled =
+        (caption.trim().isNotEmpty || _media.isNotEmpty) &&
+        !isAnyImageProcessing;
     emit(
       CreatePostEditing(
         selectedMedia: List.from(_media),
@@ -120,14 +131,46 @@ class CreatePostCubit extends Cubit<CreatePostState> {
 
     emit(const CreatePostLoading());
 
+    List<String> tagsToBackend = [];
+    for (var tag in _readyTags) {
+      if (tag.enName.isNotEmpty) tagsToBackend.add(tag.enName);
+      if (tag.arName.isNotEmpty) tagsToBackend.add(tag.arName);
+    }
+    tagsToBackend = tagsToBackend.toSet().toList();
+
+    bool shownTags = false;
+    for (var tag in _readyTags) {
+      String uiEnTag = tag.enName.isNotEmpty
+          ? '#${tag.enName.replaceAll(' ', '_')}'
+          : '';
+      String uiArTag = tag.arName.isNotEmpty
+          ? '#${tag.arName.replaceAll(' ', '_')}'
+          : '';
+
+      if ((uiEnTag.isNotEmpty && caption.contains(uiEnTag)) ||
+          (uiArTag.isNotEmpty && caption.contains(uiArTag))) {
+        shownTags = true;
+        break;
+      }
+    }
+
     final result = (groupId != null)
         ? await createGroupPostUseCase(
             groupId: groupId,
             caption: caption,
             media: _media,
             type: "public",
+            tags: tagsToBackend,
+            shownTags: shownTags,
           )
-        : await createPostUseCase(caption: caption, media: _media, type: type);
+        : await createPostUseCase(
+            caption: caption,
+            media: _media,
+            type: type,
+            tags: tagsToBackend,
+            shownTags: shownTags,
+          );
+
     if (isClosed) return;
     result.fold((failure) => emit(_mapFailureToState(failure)), (createdPost) {
       emit(CreatePostSuccess(createdPost: createdPost));
@@ -145,7 +188,7 @@ class CreatePostCubit extends Cubit<CreatePostState> {
     }
   }
 
-    void triggerHashtagsEffect(void Function() onEffectFinished) {
+  void triggerHashtagsEffect(void Function() onEffectFinished) {
     if (_media.isEmpty) {
       onEffectFinished();
       return;
@@ -217,7 +260,8 @@ class CreatePostCubit extends Cubit<CreatePostState> {
     }
     
     if (arabicTags.isNotEmpty) {
-      formattedTags += (formattedTags.isNotEmpty ? '\n' : '') + arabicTags.join(' ');
+      formattedTags +=
+          (formattedTags.isNotEmpty ? '\n' : '') + arabicTags.join(' ');
     }
 
     if (cleanedText.isEmpty) {
@@ -225,4 +269,5 @@ class CreatePostCubit extends Cubit<CreatePostState> {
     } else {
       return "$cleanedText\n\n$formattedTags";
     }
-  }}
+  }
+}

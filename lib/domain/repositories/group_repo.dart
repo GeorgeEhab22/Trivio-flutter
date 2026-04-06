@@ -110,6 +110,8 @@ abstract class GroupRepo {
     String? caption,
     List<XFile>? media,
     required String type,
+    List<String>? tags,
+    bool? shownTags,
   });
 
   // 21 delete group post

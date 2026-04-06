@@ -6,6 +6,7 @@ import 'package:auth/data/core/error/exceptions.dart';
 import 'package:auth/data/models/post_model.dart';
 import 'package:auth/data/models/reaction_model.dart';
 import 'package:auth/domain/entities/reaction.dart';
+import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../common/api_service.dart';
@@ -15,6 +16,8 @@ abstract class PostsRemoteDataSource {
     String? caption,
     List<XFile>? media,
     required String type,
+    List<String>? tags,
+    bool? shownTags,
   });
   Future<List<PostModel>> fetchPosts({int page = 1, int limit = 20});
   Future<PostModel> fetchSinglePost(String postId);
@@ -84,7 +87,7 @@ class PostsRemoteDataSourceImpl implements PostsRemoteDataSource {
         "${ApiEndpoints.fetchPosts}?page=$page&limit=$limit",
         options: _getAuthOptions(),
       );
-
+      print("Fetch Posts Response: $response");
       final List? postsRaw =
           response['data']?['posts'] ?? response['data']?['data'];
       if (postsRaw == null) return [];
@@ -118,22 +121,40 @@ class PostsRemoteDataSourceImpl implements PostsRemoteDataSource {
     String? caption,
     List<XFile>? media,
     required String type,
+    List<String>? tags,
+    bool? shownTags,
   }) async {
     try {
       final formData = FormData.fromMap({
         'caption': caption ?? '',
         'type': type.toLowerCase(),
+        'shownTags': (shownTags ?? false).toString(),
       });
 
       if (media != null && media.isNotEmpty) {
         for (var file in media) {
-          final bytes = await file.readAsBytes();
-          formData.files.add(
-            MapEntry(
-              'media',
-              MultipartFile.fromBytes(bytes, filename: file.name),
-            ),
-          );
+          if (kIsWeb) {
+            final bytes = await file.readAsBytes();
+            formData.files.add(
+              MapEntry(
+                'media',
+                MultipartFile.fromBytes(bytes, filename: file.name),
+              ),
+            );
+          } else {
+            formData.files.add(
+              MapEntry(
+                'media',
+                await MultipartFile.fromFile(file.path, filename: file.name),
+              ),
+            );
+          }
+        }
+      }
+
+      if (tags != null && tags.isNotEmpty) {
+        for (var i = 0; i < tags.length; i++) {
+          formData.fields.add(MapEntry('tags[$i]', tags[i])); 
         }
       }
 
@@ -142,14 +163,13 @@ class PostsRemoteDataSourceImpl implements PostsRemoteDataSource {
         data: formData,
         options: _getAuthOptions(),
       );
-
+      print("Create Post Response: $response");
       return PostModel.fromJson(response);
     } catch (e) {
       errorHandler.handleDioError(e);
       rethrow;
     }
   }
-
   @override
   Future<String?> reactToPost({
     required String postId,

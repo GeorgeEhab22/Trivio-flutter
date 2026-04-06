@@ -23,6 +23,8 @@ class Post extends Equatable {
   final ReactionType userReaction;
   final Map<ReactionType, int> reactionCountsByType;
   final DateTime createdAt;
+  final List<String> tags;
+  final bool shownTags;
 
   const Post({
     required this.authorId,
@@ -44,6 +46,8 @@ class Post extends Equatable {
     this.userReaction = ReactionType.none,
     this.reactionCountsByType = const <ReactionType, int>{},
     required this.createdAt,
+    this.tags = const [],
+    this.shownTags = false,
   });
   Post copyWith({
     String? authorId,
@@ -65,6 +69,8 @@ class Post extends Equatable {
     ReactionType? userReaction,
     Map<ReactionType, int>? reactionCountsByType,
     DateTime? createdAt,
+    List<String>? tags,
+    bool? shownTags,
   }) {
     return Post(
       authorId: authorId ?? this.authorId,
@@ -86,6 +92,8 @@ class Post extends Equatable {
       userReaction: userReaction ?? this.userReaction,
       reactionCountsByType: reactionCountsByType ?? this.reactionCountsByType,
       createdAt: createdAt ?? this.createdAt,
+      tags: tags ?? this.tags,
+      shownTags: shownTags ?? this.shownTags,
     );
   }
 
@@ -107,5 +115,7 @@ class Post extends Equatable {
     userReaction,
     reactionCountsByType,
     createdAt,
+    tags,
+    shownTags,
   ];
 }

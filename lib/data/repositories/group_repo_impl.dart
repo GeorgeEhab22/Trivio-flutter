@@ -395,6 +395,8 @@ class GroupRepoImpl implements GroupRepo {
     String? caption,
     List<XFile>? media,
     required String type,
+    List<String>? tags,
+    bool? shownTags,
   }) async {
     try {
       final model = await remoteDataSource.createGroupPost(
@@ -402,6 +404,8 @@ class GroupRepoImpl implements GroupRepo {
         caption: caption,
         media: media,
         type: type,
+        tags: tags,
+        shownTags: shownTags,
       );
       return Right(model.toEntity());
     } on ServerException catch (e) {
