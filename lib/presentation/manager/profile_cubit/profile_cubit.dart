@@ -1,3 +1,4 @@
+import 'package:auth/domain/entities/user_profile.dart';
 import 'package:auth/domain/usecases/user_profile/get_my_profile.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'profile_state.dart';
@@ -6,6 +7,13 @@ class ProfileCubit extends Cubit<ProfileState> {
   final GetMyProfile getMyProfile;
 
   ProfileCubit({required this.getMyProfile}) : super(ProfileInitial());
+  
+  UserProfile? get user {
+    if (state is ProfileLoaded) {
+      return (state as ProfileLoaded).user;
+    }
+    return null;
+  }
 
   Future<void> loadProfile({bool isRefresh = false}) async {
     if (!isRefresh || state is! ProfileLoaded) {
@@ -19,4 +27,5 @@ class ProfileCubit extends Cubit<ProfileState> {
       (user) => emit(ProfileLoaded(user)),
     );
   }
+  
 }

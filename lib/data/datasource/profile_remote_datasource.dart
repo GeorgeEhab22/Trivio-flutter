@@ -13,6 +13,7 @@ import '../models/user_profile_model.dart';
 
 abstract class ProfileRemoteDataSource {
   Future<UserProfileModel> getMyProfile();
+  Future<UserProfileModel> getUserProfileById(String userId);
   Future<UserProfileModel> updateProfile({
     String? username,
     String? bio,
@@ -56,7 +57,26 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       rethrow;
     }
   }
+@override
+  Future<UserProfileModel> getUserProfileById(String userId) async {
+    try {
+      final response = await api.get(ApiEndpoints.getProfileById(userId));
 
+      if (response["status"] == "success") {
+        final userData = response['data']?['user'];
+        if (userData != null) {
+          return UserProfileModel.fromJson(userData);
+        } else {
+          throw ServerException('User data not found in response');
+        }
+      } else {
+        throw ServerException('Failed to fetch user profile');
+      }
+    } catch (e) {
+      errorHandler.handleDioError(e);
+      rethrow;
+    }
+  }
   @override
   Future<UserProfileModel> updateProfile({
     String? username,

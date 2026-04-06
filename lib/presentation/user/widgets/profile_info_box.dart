@@ -9,7 +9,6 @@ import 'package:auth/presentation/manager/profile_cubit/profile_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_state.dart';
 import 'package:auth/presentation/user/widgets/profile_social_info.dart';
 import 'package:flutter/material.dart';
-import 'package:auth/presentation/user/widgets/follow_toggle_button.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:share_plus/share_plus.dart';
@@ -47,12 +46,6 @@ class ProfileInfoBox extends StatelessWidget {
                     ? const Icon(Icons.person, size: 50, color: Colors.grey)
                     : null,
               ),
-              if (!isCurrentUser)
-                Positioned(
-                  top: 0,
-                  right: 0,
-                  child: FollowToggleButton(targetUserId: user.id),
-                ),
             ],
           ),
           const SizedBox(height: 16),
@@ -104,7 +97,9 @@ class ProfileInfoBox extends StatelessWidget {
                     },
                   ),
                 ),
-              const SizedBox(width: 12),
+              
+                //TODO : add foloow button
+                const SizedBox(width: 12),
               Container(
                 decoration: BoxDecoration(
                   color: isDark ? Colors.grey[800] : Colors.grey[200],
@@ -136,6 +131,7 @@ class ProfileInfoBox extends StatelessWidget {
             numberOfFollowers: user.followersCount,
             numberOfFollowing: user.followingCount,
             numberOfPosts: user.postsCount,
+            userId: isCurrentUser ? null : user.id,
           ),
         ],
       ),

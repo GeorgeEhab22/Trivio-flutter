@@ -57,6 +57,8 @@ class AppRoutes {
   static const String chatInfo = '/app/messages/chat/chat_info';
 
   //profile
+  static const String userProfilebyId = 'user_profile/:userId'; 
+  static String userProfileByIdPath(String id) => '/app/profile/user_profile/$id'; 
   static const String profileSettings = '/app/profile/settings';
   static const String requests = '/app/profile/settings/requests';
   static const String followerInfo = '/app/profile/follow_info';

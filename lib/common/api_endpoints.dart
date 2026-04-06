@@ -82,6 +82,7 @@ class ApiEndpoints {
   static const String likedPostsIds = 'users/me/likedPostsIds';
   static const String likedPosts = 'users/me/likedPosts';
   static const String getUserPosts = 'users/me/posts';
+  static String getProfileById(String userId) => 'users/$userId';
 
   //interests
   static const String favTeams = 'users/me/favTeams';

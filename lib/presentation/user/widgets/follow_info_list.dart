@@ -1,9 +1,11 @@
 import 'package:auth/constants/colors.dart';
+import 'package:auth/core/app_routes.dart';
 import 'package:auth/core/styels.dart';
 import 'package:auth/domain/entities/follow.dart';
 import 'package:auth/domain/entities/user_profile_preview.dart';
 import 'package:auth/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class FollowInfoList extends StatelessWidget {
   final List<dynamic> data;
@@ -56,7 +58,7 @@ class FollowInfoList extends StatelessWidget {
         } else {
           return const SizedBox.shrink();
         }
-
+// TODO : add follow button
         return ListTile(
           contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
           leading: CircleAvatar(
@@ -69,11 +71,10 @@ class FollowInfoList extends StatelessWidget {
                 ? const Icon(Icons.person, color: Colors.grey) 
                 : null,
           ),
-          title: Text(name, style: Styles.textStyle20),
-          subtitle: Text("@${id.length > 8 ? id.substring(0, 8) : id}", style: const TextStyle(color: Colors.grey)),
+          title: Text(name, style: Styles.textStyle18),
           trailing: const Icon(Icons.chevron_right, color: AppColors.primary),
           onTap: () {
-            //TODO: Navigate to profile using userid
+            context.push(AppRoutes.userProfileByIdPath(id));
           },
         );
       },

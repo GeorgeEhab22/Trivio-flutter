@@ -123,6 +123,7 @@ import 'package:auth/domain/usecases/interests/select_interests.dart';
 import 'package:auth/domain/usecases/user_profile/get_liked_posts.dart';
 import 'package:auth/domain/usecases/user_profile/get_my_posts.dart';
 import 'package:auth/domain/usecases/user_profile/get_suggestions.dart';
+import 'package:auth/domain/usecases/user_profile/get_user_profile_by_id.dart';
 import 'package:auth/domain/usecases/user_profile/update_profile.dart';
 import 'package:auth/presentation/manager/chatbot_cubit/chatbot_cubit.dart';
 import 'package:auth/presentation/manager/comment_cubit/comment_cubit.dart';
@@ -155,6 +156,7 @@ import 'package:auth/presentation/manager/post_cubit/create_post_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/get_post/get_post_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/post_interaction_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/get_user_profile_by_id_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/interests/select_interests_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/change_password_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_cubit.dart';
@@ -334,8 +336,11 @@ Future<void> init() async {
   );
 
   sl.registerFactory(
-    () =>
-        CreatePostCubit(createPostUseCase: sl(), createGroupPostUseCase: sl(), autoTaggingUseCase: sl()),
+    () => CreatePostCubit(
+      createPostUseCase: sl(),
+      createGroupPostUseCase: sl(),
+      autoTaggingUseCase: sl(),
+    ),
   );
   sl.registerFactory(() => GetPostCubit(getPostUseCase: sl()));
 
@@ -465,7 +470,6 @@ Future<void> init() async {
   // ==========================================================================
   sl.registerFactory(() => ThemeCubit(prefs));
 
-  
   // ==========================================================================
   // PROFILE
   // ==========================================================================
@@ -478,6 +482,10 @@ Future<void> init() async {
   );
   sl.registerFactory(() => ProfileCubit(getMyProfile: sl()));
   sl.registerLazySingleton(() => GetMyProfile(sl()));
+  sl.registerFactory(
+    () => GetUserProfileByIdCubit(getUserProfileByIdUseCase: sl()),
+  );
+  sl.registerLazySingleton(() => GetUserProfileByIdUseCase(sl()));
   sl.registerLazySingleton(() => UpdateProfile(sl()));
   sl.registerLazySingleton(() => ChangePassword(sl()));
   sl.registerLazySingleton(() => GetMyPostsUseCase(sl()));
@@ -572,15 +580,24 @@ Future<void> init() async {
   sl.registerFactory(() => LikedPostsCubit(getLikedPostsUseCase: sl()));
   sl.registerLazySingleton(() => GetLikedPostsIds(sl()));
   sl.registerFactory(() => ChangePasswordCubit(changePasswordUseCase: sl()));
-  
+
   //notifications
-   sl.registerLazySingleton<NotificationRemoteDataSource>(
-    () => NotificationRemoteDataSourceImpl(api: sl(), prefs: sl(), errorHandler: sl(),),
+  sl.registerLazySingleton<NotificationRemoteDataSource>(
+    () => NotificationRemoteDataSourceImpl(
+      api: sl(),
+      prefs: sl(),
+      errorHandler: sl(),
+    ),
   );
   sl.registerLazySingleton<NotificationRepo>(
     () => NotificationRepoImpl(remoteDataSource: sl()),
   );
-  sl.registerFactory(()=> NotificationCubit(getNotificationsUseCase: sl(), openNotificationUseCase: sl()));
+  sl.registerFactory(
+    () => NotificationCubit(
+      getNotificationsUseCase: sl(),
+      openNotificationUseCase: sl(),
+    ),
+  );
   sl.registerLazySingleton(() => GetNotificationsUseCase(sl()));
   sl.registerLazySingleton(() => OpenNotificationUseCase(sl()));
 
@@ -589,12 +606,7 @@ Future<void> init() async {
     () => FaceRecognitionRemoteDataSourceImpl(dio: sl(), errorHandler: sl()),
   );
   sl.registerLazySingleton<FaceRecognitionRepo>(
-    () => FaceRecognitionRepoImpl(
-      remoteDatasource: sl(),
-    ),
+    () => FaceRecognitionRepoImpl(remoteDatasource: sl()),
   );
-  sl.registerLazySingleton(
-    () => AutoTaggingUseCase(sl()),
-  );
-
+  sl.registerLazySingleton(() => AutoTaggingUseCase(sl()));
 }

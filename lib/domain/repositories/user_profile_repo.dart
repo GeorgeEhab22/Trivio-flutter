@@ -7,7 +7,7 @@ import 'package:image_picker/image_picker.dart';
 
 abstract class UserProfileRepo {
   Future<Either<Failure, UserProfile>> getMyProfile();
-
+  Future<Either<Failure, UserProfile>> getUserProfileById(String userId);
   Future<Either<Failure, UserProfile>> updateProfile({
     String? username,
     String? bio,

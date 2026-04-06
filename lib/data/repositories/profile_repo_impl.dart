@@ -23,7 +23,18 @@ class UserProfileRepositoryImpl implements UserProfileRepo {
       return Left(ServerFailure(e.message));
     }
   }
-
+@override
+  Future<Either<Failure, UserProfile>> getUserProfileById(String userId) async {
+    try {
+      final model = await remoteDataSource.getUserProfileById(userId);
+      final entity = model.toEntity();
+      return Right(entity);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } catch (e) {
+      return Left(ServerFailure('Unexpected error: $e'));
+    }
+  }
   @override
   Future<Either<Failure, UserProfile>> updateProfile({
     String? username,

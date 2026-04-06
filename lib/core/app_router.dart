@@ -42,6 +42,7 @@ import 'package:auth/presentation/manager/group_cubit/get_members_by_roles/membe
 import 'package:auth/presentation/manager/group_cubit/unban_member/unban_member_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/update_group/update_group_cubit.dart';
 import 'package:auth/presentation/manager/notifications_cubit/notifications_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/get_user_profile_by_id_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/interests/select_interests_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_posts_cubit.dart';
 import 'package:auth/presentation/manager/sigin_in_cubit/forget_password_otp_cubit.dart';
@@ -268,7 +269,7 @@ GoRouter createRouter(bool isLoggedIn) {
                 routes: [
                   GoRoute(
                     path: 'reels',
-                    pageBuilder: (context, state) =>  NoTransitionPage(
+                    pageBuilder: (context, state) => NoTransitionPage(
                       child: MultiBlocProvider(
                         providers: [
                           BlocProvider<FollowCubit>(
@@ -337,15 +338,42 @@ GoRouter createRouter(bool isLoggedIn) {
                     ),
                     routes: [
                       GoRoute(
+                        path: AppRoutes.userProfilebyId,
+                        builder: (context, state) {
+                          final userId = state.pathParameters['userId']!;
+                          return MultiBlocProvider(
+                            providers: [
+                              BlocProvider(
+                                create: (context) =>
+                                    di.sl<GetUserProfileByIdCubit>()
+                                      ..loadUserProfileById(userId),
+                              ),
+                              BlocProvider(
+                                create: (context) => di.sl<ProfilePostsCubit>(),
+                              ),
+                              BlocProvider(
+                                create: (context) => di.sl<FollowCubit>(),
+                              ),
+                            ],
+                            child: UserProfileView(userId: userId),
+                          );
+                        },
+                      ),
+                      GoRoute(
                         path: 'follow_info',
                         builder: (context, state) {
                           final String? tabString =
                               state.uri.queryParameters['tab'];
+                          final String? targetUserId =
+                              state.uri.queryParameters['userId'];
                           final int index = int.tryParse(tabString ?? '0') ?? 0;
                           return BlocProvider(
                             create: (context) =>
                                 di.sl<ProfileSocialInfoCubit>(),
-                            child: SocialInfoScreen(initialTabIndex: index),
+                            child: SocialInfoScreen(
+                              initialTabIndex: index,
+                              userId: targetUserId,
+                            ),
                           );
                         },
                       ),

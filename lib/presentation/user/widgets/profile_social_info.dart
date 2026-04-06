@@ -11,18 +11,20 @@ class ProfileSocialInfo extends StatelessWidget {
   final int numberOfFollowers;
   final int numberOfFollowing;
   final int numberOfPosts;
+  final String? userId;
 
   const ProfileSocialInfo({
     super.key,
     this.numberOfFollowers = 0,
     this.numberOfFollowing = 0,
     this.numberOfPosts = 0,
+    this.userId,
   });
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-
+final String queryParam = userId != null ? '&userId=$userId' : '';
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
       padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
@@ -48,12 +50,12 @@ class ProfileSocialInfo extends StatelessWidget {
             label: l10n.posts,
             count: numberOfPosts,
             onTap: () {
-              final state = GoRouterState.of(context);
-              if (state.uri.path == AppRoutes.profile) {
+              // final state = GoRouterState.of(context);
+              // if (state.uri.path == AppRoutes.profile) {
                 ScrollToPostsNotification().dispatch(context);
-              } else {
-                context.go('${AppRoutes.profile}?scrollTo=posts');
-              }
+              // } else {
+              //   context.go('${AppRoutes.profile}?scrollTo=posts');
+              // }
             },
           ),
 
@@ -66,7 +68,7 @@ class ProfileSocialInfo extends StatelessWidget {
           StatItem(
             label: l10n.followers,
             count: numberOfFollowers,
-            onTap: () => context.go('${AppRoutes.followerInfo}?tab=0'),
+            onTap: () => context.push('${AppRoutes.followerInfo}?tab=0$queryParam'),
           ),
 
           Container(
@@ -78,7 +80,7 @@ class ProfileSocialInfo extends StatelessWidget {
           StatItem(
             label: l10n.following,
             count: numberOfFollowing,
-            onTap: () => context.go('${AppRoutes.followerInfo}?tab=1'),
+            onTap: () => context.push('${AppRoutes.followerInfo}?tab=1$queryParam'),
           ),
         ],
       ),

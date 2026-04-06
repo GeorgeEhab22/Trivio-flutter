@@ -10,6 +10,7 @@ class UserProfileModel extends UserProfile {
     super.bio,
     super.followersCount = 0,
     super.followingCount = 0,
+    super.privacy = false,
     super.postsCount = 0,
 
      super.favTeams,
@@ -24,6 +25,7 @@ class UserProfileModel extends UserProfile {
       avatar: json['avatar']?.toString() ?? '',
       followersCount: int.tryParse(json['followers']?.toString() ?? '0') ?? 0,
       followingCount: int.tryParse(json['following']?.toString() ?? '0') ?? 0,
+      privacy: json['privacy'] == 'private',
       postsCount: int.tryParse(json['posts']?.toString() ?? '0') ?? 0,
       bio: json['bio']?.toString(),
       favTeams: List<String>.from(json['favTeams'] ?? []),
@@ -39,6 +41,7 @@ class UserProfileModel extends UserProfile {
       avatar: avatar,
       followersCount: followersCount,
       followingCount: followingCount,
+        privacy: privacy,
       postsCount: postsCount,
       bio: bio,
       favTeams: favTeams,

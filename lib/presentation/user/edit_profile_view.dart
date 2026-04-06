@@ -38,6 +38,16 @@ class EditProfileScreen extends StatelessWidget {
             title: Text(l10n.editProfile),
             centerTitle: true,
             titleTextStyle: Styles.textStyle20.copyWith(color: Colors.black),
+            leading: IconButton(
+                onPressed: () {
+                  context.pop();
+                },
+                icon: Icon(
+                  Icons.arrow_back_ios_new_rounded,
+                  color: Theme.of(context).iconTheme.color,
+                  size: 25,
+                ),
+              ),
           ),
           body: BlocListener<ProfileUpdateCubit, ProfileUpdateState>(
             listener: (context, state) {

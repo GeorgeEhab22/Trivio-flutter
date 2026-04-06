@@ -6,10 +6,11 @@ class UserProfile {
   final String? bio;
   final int followersCount;
   final int followingCount;
+  final bool privacy;
 
   final List<String> favTeams;
   final List<String> favPlayers;
-  
+
   final int postsCount;
 
   const UserProfile({
@@ -20,6 +21,7 @@ class UserProfile {
     this.bio,
     this.followersCount = 0,
     this.followingCount = 0,
+    this.privacy = false,
     this.favTeams = const [],
     this.favPlayers = const [],
     this.postsCount = 0,
