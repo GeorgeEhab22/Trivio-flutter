@@ -35,6 +35,7 @@ class PostModel extends Post {
     required super.createdAt,
     super.tags = const [],
     super.shownTags = false,
+    super.isAuthorFollowed = false,
   });
 
   factory PostModel.fromJson(Map<String, dynamic> json) {
@@ -43,6 +44,9 @@ class PostModel extends Post {
         : (json['data'] != null && json['data']['post'] != null)
             ? json['data']['post'] as Map<String, dynamic>
             : json;
+
+    final bool isFollowed = json['isFollowed'] ?? 
+                            (json['data'] != null ? json['data']['isFollowed'] ?? false : false);
 
     final dummyReactions = _parseReactionCounter(raw['reactionCounts']);
 
@@ -58,7 +62,7 @@ class PostModel extends Post {
       gName = groupData['name'];
       gCover = groupData['coverImage'] ?? groupData['logo'];
     }
-
+    
     //TODO : remove when backend is fixed to add mobile ip
     // and change to your ip
     if (gCover != null && gCover.contains('localhost')) {
@@ -150,6 +154,7 @@ class PostModel extends Post {
 
       tags: (raw['tags'] as List<dynamic>? ?? []).map((e) => e.toString()).toList(),
       shownTags: raw['shownTags'] ?? false,
+      isAuthorFollowed: isFollowed,
     );
   }
 
@@ -247,6 +252,7 @@ class PostModel extends Post {
       createdAt: createdAt,
       tags: tags,
       shownTags: shownTags,
+      isAuthorFollowed: isAuthorFollowed,
     );
   }
 

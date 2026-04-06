@@ -65,7 +65,8 @@ print("Author Image URL for post ${post.postID}: $authorImage ");
                 if (post.authorId != currentUserId)
                   FollowButton(
                     currentUserId: currentUserId,
-                    authorId: post.authorId, initialFollowStatus: false,
+                    authorId: post.authorId, 
+                    isFollowing: post.isAuthorFollowed,
                   ),
               ],
               SizedBox(width: 8),

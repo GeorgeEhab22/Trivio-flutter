@@ -78,7 +78,7 @@ class ReelsBottomInfo extends StatelessWidget {
                 FollowButton(
                   currentUserId: currentUserId,
                   authorId: reel.authorId,
-                  initialFollowStatus: false,
+                  isFollowing: false,
                   isReel: true,
                 ),
             ],
