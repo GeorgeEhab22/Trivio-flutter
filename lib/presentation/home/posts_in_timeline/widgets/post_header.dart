@@ -32,8 +32,7 @@ class PostHeader extends StatelessWidget {
         : Colors.black.withValues(alpha: 0.08);
   
     String authorName = post.authorName ??"Not Me";
-    String? authorImage;
-print("Author Image URL for post ${post.postID}: $authorImage ");
+    String? authorImage = post.authorImage;
     final profileState = context.read<ProfileCubit>().state;
 
     if (profileState is ProfileLoaded &&

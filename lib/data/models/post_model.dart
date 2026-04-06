@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:auth/core/json_parser.dart';
 import 'package:auth/data/models/reaction_model.dart';
 import 'package:auth/domain/entities/mentions.dart';
@@ -66,7 +68,9 @@ class PostModel extends Post {
     //TODO : remove when backend is fixed to add mobile ip
     // and change to your ip
     if (gCover != null && gCover.contains('localhost')) {
+      if (Platform.isAndroid || Platform.isIOS) {
       gCover = gCover.replaceAll('localhost', '192.168.1.28');
+      }
     }
     final dynamic authorData = raw['authorID'] ?? raw['authorId'];
     String aId = '';
@@ -81,8 +85,11 @@ class PostModel extends Post {
       aImage = authorData['avatar'] ?? authorData['profilePicture'];
 
       if (aImage != null && aImage.contains('localhost')) {
+      // Only replace if running on Android or iOS
+      if (Platform.isAndroid || Platform.isIOS) {
         aImage = aImage.replaceAll('localhost', '192.168.1.28');
       }
+    }
     }
 
     final userReaction = JsonParser.parseReactionType(
