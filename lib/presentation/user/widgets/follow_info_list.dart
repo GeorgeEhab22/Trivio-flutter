@@ -4,7 +4,11 @@ import 'package:auth/core/styels.dart';
 import 'package:auth/domain/entities/follow.dart';
 import 'package:auth/domain/entities/user_profile_preview.dart';
 import 'package:auth/l10n/app_localizations.dart';
+import 'package:auth/presentation/home/posts_in_timeline/widgets/follow_button.dart';
+import 'package:auth/presentation/manager/profile_cubit/profile_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/profile_state.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class FollowInfoList extends StatelessWidget {
@@ -24,6 +28,11 @@ class FollowInfoList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final profileState = context.read<ProfileCubit>().state;
+    String? currentUserId;
+    if (profileState is ProfileLoaded) {
+      currentUserId = profileState.user.id;
+    }
     if (data.isEmpty) {
       return Center(child: Text(l10n.noUsersFound, style: Styles.textStyle20));
     }
@@ -33,14 +42,16 @@ class FollowInfoList extends StatelessWidget {
       itemBuilder: (context, index) {
         if (index >= data.length) {
           onLoadMore?.call();
-          return const Center(child: Padding(
-            padding: EdgeInsets.all(8.0),
-            child: CircularProgressIndicator(),
-          ));
+          return const Center(
+            child: Padding(
+              padding: EdgeInsets.all(8.0),
+              child: CircularProgressIndicator(),
+            ),
+          );
         }
 
         final item = data[index];
-        
+
         // --- Mapping both types to the same UI variables ---
         String name;
         String? avatar;
@@ -58,21 +69,38 @@ class FollowInfoList extends StatelessWidget {
         } else {
           return const SizedBox.shrink();
         }
-// TODO : add follow button
         return ListTile(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 4,
+          ),
           leading: CircleAvatar(
             radius: 25,
             backgroundColor: AppColors.lightGrey,
-            backgroundImage: (avatar != null && avatar.isNotEmpty) 
-                ? NetworkImage(avatar) 
+            backgroundImage: (avatar != null && avatar.isNotEmpty)
+                ? NetworkImage(avatar)
                 : null,
-            child: (avatar == null || avatar.isEmpty) 
-                ? const Icon(Icons.person, color: Colors.grey) 
+            child: (avatar == null || avatar.isEmpty)
+                ? const Icon(Icons.person, color: Colors.grey)
                 : null,
           ),
           title: Text(name, style: Styles.textStyle18),
-          trailing: const Icon(Icons.chevron_right, color: AppColors.primary),
+          trailing: IntrinsicWidth(
+            child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (currentUserId != null)
+                FollowButton(
+                  currentUserId: currentUserId,
+                  authorId: id,
+                  isFollowing: false, //TODO: pass the actual following state when available
+                  showUnfollowText: isFollowingList,
+                ),
+              const SizedBox(width: 8),
+              const Icon(Icons.chevron_right, color: AppColors.primary),
+            ],
+                    ),
+          ),
           onTap: () {
             context.push(AppRoutes.userProfileByIdPath(id));
           },

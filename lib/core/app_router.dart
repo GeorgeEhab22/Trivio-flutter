@@ -354,6 +354,10 @@ GoRouter createRouter(bool isLoggedIn) {
                               BlocProvider(
                                 create: (context) => di.sl<FollowCubit>(),
                               ),
+                              BlocProvider<ProfileSocialInfoCubit>(
+                                create: (context) =>
+                                    di.sl<ProfileSocialInfoCubit>(),
+                              ),
                             ],
                             child: UserProfileView(userId: userId),
                           );
@@ -367,9 +371,16 @@ GoRouter createRouter(bool isLoggedIn) {
                           final String? targetUserId =
                               state.uri.queryParameters['userId'];
                           final int index = int.tryParse(tabString ?? '0') ?? 0;
-                          return BlocProvider(
-                            create: (context) =>
-                                di.sl<ProfileSocialInfoCubit>(),
+                          return MultiBlocProvider(
+                            providers: [
+                              BlocProvider(
+                                create: (context) =>
+                                    di.sl<ProfileSocialInfoCubit>(),
+                              ),
+                              BlocProvider(
+                                create: (context) => di.sl<FollowCubit>(),
+                              ),
+                            ],
                             child: SocialInfoScreen(
                               initialTabIndex: index,
                               userId: targetUserId,

@@ -14,6 +14,7 @@ class FollowButton extends StatelessWidget {
   final String authorId;
   final bool isFollowing;
   final bool isReel;
+  final bool showUnfollowText;
 
   const FollowButton({
     super.key,
@@ -21,6 +22,7 @@ class FollowButton extends StatelessWidget {
     required this.authorId,
     required this.isFollowing,
     this.isReel = false,
+    this.showUnfollowText = false,
   });
 
   @override
@@ -49,6 +51,12 @@ class FollowButton extends StatelessWidget {
           final bool isProcessing =
               context.watch<FollowCubit>().state is FollowLoading;
           final l10n = AppLocalizations.of(context)!;
+          String buttonText;
+          if (effectiveFollowing) {
+            buttonText = showUnfollowText ? l10n.unfollow : l10n.following;
+          } else {
+            buttonText = l10n.follow;
+          }
 
           return SizedBox(
             height: 30,
@@ -99,7 +107,7 @@ class FollowButton extends StatelessWidget {
                       ),
                     )
                   : Text(
-                      effectiveFollowing ? l10n.following : l10n.follow,
+                      buttonText,
                       style: Styles.textStyle14.copyWith(
                         color: isReel
                             ? Colors.white
