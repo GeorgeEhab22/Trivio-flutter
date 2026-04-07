@@ -2575,6 +2575,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Logout Account'**
   String get logoutAccount;
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// No description provided for @logoutAccountConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to log out? You\'ll need to sign in again to access your data.'**
+  String get logoutAccountConfirm;
 }
 
 class _AppLocalizationsDelegate

@@ -475,5 +475,7 @@
   "smartTags": "هاشتاجات ذكية",
   "accountPreferences": "تفضيلات الحساب",
   "securityAndAlerts": "الأمان والتنبيهات",
-  "logoutAccount": "تسجيل الخروج"
+  "logoutAccount": "تسجيل الخروج",
+  "cancel": "إلغاء",
+  "logoutAccountConfirm": "هل أنت متأكد أنك تريد تسجيل الخروج؟ ستحتاج إلى تسجيل الدخول مرة أخرى للوصول إلى بياناتك."
 }

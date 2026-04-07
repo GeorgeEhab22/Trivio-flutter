@@ -1287,4 +1287,11 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get logoutAccount => 'تسجيل الخروج';
+
+  @override
+  String get cancel => 'إلغاء';
+
+  @override
+  String get logoutAccountConfirm =>
+      'هل أنت متأكد أنك تريد تسجيل الخروج؟ ستحتاج إلى تسجيل الدخول مرة أخرى للوصول إلى بياناتك.';
 }

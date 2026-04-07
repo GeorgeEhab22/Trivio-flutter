@@ -1301,4 +1301,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get logoutAccount => 'Logout Account';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get logoutAccountConfirm =>
+      'Are you sure you want to log out? You\'ll need to sign in again to access your data.';
 }

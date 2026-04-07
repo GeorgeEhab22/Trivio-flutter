@@ -474,6 +474,7 @@
   "smartTags" : "Smart Tags",
   "accountPreferences": "Account Preferences",
   "securityAndAlerts": "Security & Alerts",
-  "logoutAccount": "Logout Account"
+  "logoutAccount": "Logout Account",
+  "cancel": "Cancel",
+  "logoutAccountConfirm": "Are you sure you want to log out? You'll need to sign in again to access your data."
 }
-
