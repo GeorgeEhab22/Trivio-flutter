@@ -5,6 +5,7 @@ import 'package:auth/presentation/home/comments/comments_view.dart';
 import 'package:auth/presentation/manager/comment_cubit/comment_cubit.dart';
 import 'package:auth/presentation/manager/comment_cubit/comment_state.dart';
 import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/get_user_profile_by_id_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -66,8 +67,11 @@ class CommentAction extends StatelessWidget {
           useRootNavigator: true,
           backgroundColor: Colors.transparent,
           barrierColor: Colors.black38,
-          builder: (ctx) => BlocProvider(
-            create: (context) => di.sl<CommentCubit>(),
+          builder: (ctx) => MultiBlocProvider(
+            providers: [
+              BlocProvider(create: (context) => di.sl<CommentCubit>()),
+              BlocProvider(create: (context) => di.sl<GetUserProfileByIdCubit>()),
+            ],
             child: BlocListener<CommentCubit, CommentState>(
               listener: (_, state) {
                 if (state is CommentActionSuccess) {
