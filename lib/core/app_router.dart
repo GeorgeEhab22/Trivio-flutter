@@ -379,8 +379,8 @@ GoRouter createRouter(bool isLoggedIn) {
                       ),
                       GoRoute(
                         path: 'settings',
-                        builder: (context, state) => BlocProvider<FollowCubit>(
-                          create: (context) => di.sl<FollowCubit>(),
+                        builder: (context, state) => BlocProvider<SignInCubit>(
+                          create: (context) => di.sl<SignInCubit>(),
                           child: const UserProfileSettings(),
                         ),
                         routes: [

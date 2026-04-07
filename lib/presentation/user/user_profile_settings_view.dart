@@ -4,6 +4,7 @@ import 'package:auth/core/styels.dart';
 import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_state.dart';
+import 'package:auth/presentation/manager/sigin_in_cubit/sign_in_cubit.dart';
 // import 'package:auth/presentation/user/widgets/profile_info_box.dart';
 import 'package:auth/presentation/user/widgets/settings_row.dart';
 import 'package:flutter/material.dart';
@@ -32,7 +33,7 @@ class UserProfileSettings extends StatelessWidget {
         iconTheme: Theme.of(context).iconTheme,
         leading: IconButton(
           onPressed: () {
-              context.pop();
+            context.pop();
           },
           icon: Icon(
             Icons.arrow_back_ios_new_rounded,
@@ -105,8 +106,12 @@ class UserProfileSettings extends StatelessWidget {
                     const SizedBox(height: 30),
 
                     InkWell(
-                      onTap: () {
-                        // TODO: Implement Logout Logic
+                      onTap: () async {
+                        await context.read<SignInCubit>().logout();
+                        context.read<ProfileCubit>().clearProfile();
+                        if (context.mounted) {
+                          context.go(AppRoutes.signIn);
+                        }
                       },
                       borderRadius: BorderRadius.circular(16),
                       child: Container(
