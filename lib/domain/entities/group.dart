@@ -11,6 +11,7 @@ class Group extends Equatable {
   final String? role;
   final String? privacy;
   final String? creatorId;
+  final String? membershipStatus;
 
   const Group({
     required this.groupId,
@@ -23,9 +24,26 @@ class Group extends Equatable {
     this.role,
     this.privacy,
     this.creatorId,
+    this.membershipStatus,
   });
 
-
+  Group copyWith({
+    String? membershipStatus,
+  }) {
+    return Group(
+      groupId: groupId,
+      groupName: groupName,
+      groupCoverImage: groupCoverImage,
+      groupDescription: groupDescription,
+      membersCount: membersCount,
+      adminsCount: adminsCount,
+      moderatorsCount: moderatorsCount,
+      role: role,
+      privacy: privacy,
+      creatorId: creatorId,
+      membershipStatus: membershipStatus ?? membershipStatus,
+    );
+  }
   @override
   List<Object?> get props => [
     groupId,
@@ -38,5 +56,6 @@ class Group extends Equatable {
     role,
     privacy,
     creatorId,
+    membershipStatus,
   ];
 }

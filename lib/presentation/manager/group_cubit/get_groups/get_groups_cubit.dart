@@ -107,4 +107,17 @@ class GetAllGroupsCubit extends Cubit<GetAllGroupsState> {
       );
     }
   }
+  void changeMembershipStatusLocally(String groupId, String newStatus) {
+    final index = items.indexWhere((group) => group.groupId == groupId);
+    if (index != -1) {
+      items[index] = items[index].copyWith(membershipStatus: newStatus);
+      
+      emit(
+        GetAllGroupsLoaded(
+          groups: List.from(items),
+          hasReachedMax: hasReachedMax,
+        ),
+      );
+    }
+  }
 }

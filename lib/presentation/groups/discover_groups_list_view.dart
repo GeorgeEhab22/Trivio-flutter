@@ -88,6 +88,7 @@ class DiscoverGroupsListView extends StatelessWidget {
                         description: group.groupDescription,
                         isRow: false,
                         isMyGroup:isMyGroup ,
+                        membershipStatus: group.membershipStatus,
                        onCardTap: isInitialLoading
                             ? null
                             : () => context.push(

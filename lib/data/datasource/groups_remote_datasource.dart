@@ -267,7 +267,7 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
     final query = search != null
         ? "?page=$page&keyword=$search"
         : "?page=$page";
-    final list = await _fetchPaginatedData("${ApiEndpoints.groups}$query");
+    final list = await _fetchPaginatedData("${ApiEndpoints.groups}$query",customKey: 'groups');
     return list.map((e) => GroupModel.fromJson(e)).toList();
   }
 
@@ -651,15 +651,26 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
     }
   }
 
-  Future<List<dynamic>> _fetchPaginatedData(String url, {String? customKey}) async {
+ Future<List<dynamic>> _fetchPaginatedData(String url, {String? customKey}) async {
     try {
       final response = await api.get(url, options: _getAuthOptions());
+      final mainData = response['data'];
       
-      if (customKey != null && response['data'] != null && response['data'][customKey] != null) {
-        return response['data'][customKey] as List;
+      if (mainData == null) return [];
+
+      if (customKey != null && mainData[customKey] != null) {
+        final target = mainData[customKey];
+        if (target is List) return target;
+        if (target is Map && target['data'] is List) return target['data'] as List;
       }
 
-      return response['data']['data'] as List;
+      if (mainData is List) return mainData;
+      if (mainData['data'] is List) return mainData['data'] as List;
+      if (mainData['data'] is Map && mainData['data']['data'] is List) {
+        return mainData['data']['data'] as List;
+      }
+
+      return [];
     } catch (e) {
       if (e is DioException && e.response?.statusCode == 404) {
         final message = e.response?.data['message'];

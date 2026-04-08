@@ -525,7 +525,9 @@ GoRouter createRouter(bool isLoggedIn) {
                       GoRoute(
                         path: 'group_preview/:groupId',
                         builder: (context, state) {
-                          return const GroupPreviewView();
+                          final String groupId =
+                              state.pathParameters['groupId']!;
+                          return GroupPreviewView(groupId: groupId);
                         },
                       ),
                       GoRoute(

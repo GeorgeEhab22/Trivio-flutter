@@ -13,6 +13,7 @@ class SuggestCard extends StatelessWidget {
   final String groupName;
   final String? description;
   final String? imageUrl;
+  final String? membershipStatus;
   final VoidCallback? onCardTap;
   final VoidCallback? onRemoveSuggestion;
   final bool isRow;
@@ -24,6 +25,7 @@ class SuggestCard extends StatelessWidget {
     required this.groupName,
     this.description,
     this.imageUrl,
+    this.membershipStatus,
     this.onCardTap,
     this.onRemoveSuggestion,
     this.isRow = true,
@@ -116,7 +118,7 @@ class SuggestCard extends StatelessWidget {
                   backgroundColor: AppColors.primary,
                   textColor: Colors.white,
                 )
-              : JoinGroupButton(groupId: groupId, isExpanded: true),
+              : JoinGroupButton(groupId: groupId, isExpanded: true,membershipStatus: membershipStatus,),
         ),
         const SizedBox(width: 8),
         Expanded(
@@ -153,6 +155,7 @@ class SuggestCard extends StatelessWidget {
                 isExpanded: true,
                 height: 10,
                 textStyle: Styles.textStyle14,
+                membershipStatus: membershipStatus,
               ),
         const SizedBox(height: 8),
         CustomSquareButton(

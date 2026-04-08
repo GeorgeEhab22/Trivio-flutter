@@ -51,6 +51,7 @@ class SuggestedGroupsRowList extends StatelessWidget {
                   description: group.groupDescription,
                   imageUrl: group.groupCoverImage,
                   isMyGroup: isMyGroup,
+                  membershipStatus: group.membershipStatus,
                   onCardTap: isInitialLoading
                       ? null
                       : () => context.push(

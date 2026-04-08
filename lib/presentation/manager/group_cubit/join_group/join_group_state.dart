@@ -1,44 +1,46 @@
 import 'package:equatable/equatable.dart';
 
 abstract class JoinGroupState extends Equatable {
-  final Map<String, String> serverConfirmedRequests;
+  final String? groupId; 
 
-  const JoinGroupState({required this.serverConfirmedRequests});
+  const JoinGroupState({this.groupId});
 
   @override
-  List<Object?> get props => [serverConfirmedRequests];
+  List<Object?> get props => [groupId];
 }
 
 class JoinGroupInitial extends JoinGroupState {
-  const JoinGroupInitial({required super.serverConfirmedRequests});
+  const JoinGroupInitial();
 }
 
 class JoinGroupLoading extends JoinGroupState {
-  final String loadingGroupId;
-
-  const JoinGroupLoading({
-    required this.loadingGroupId,
-    required super.serverConfirmedRequests,
-  });
-
-  @override
-  List<Object?> get props => [loadingGroupId, serverConfirmedRequests];
+  const JoinGroupLoading({super.groupId});
 }
 
 class JoinGroupSuccess extends JoinGroupState {
-  const JoinGroupSuccess({required super.serverConfirmedRequests});
+  const JoinGroupSuccess({super.groupId});
+}
+
+class JoinRequestRemovedLocally extends JoinGroupState {
+  const JoinRequestRemovedLocally({required super.groupId});
+  @override
+  List<Object?> get props => [groupId];
 }
 
 class JoinGroupFailure extends JoinGroupState {
   final String message;
-  final String errorType;
+  final String? errorType;
 
   const JoinGroupFailure({
     required this.message,
-    required this.errorType,
-    required super.serverConfirmedRequests,
+    this.errorType,
+    super.groupId, 
   });
 
   @override
-  List<Object?> get props => [message, errorType, serverConfirmedRequests];
+  List<Object?> get props => [message, errorType, groupId];
+
+  bool get isValidationError => errorType == 'validation';
+  bool get isNetworkError => errorType == 'network';
+  bool get isServerError => errorType == 'server';
 }

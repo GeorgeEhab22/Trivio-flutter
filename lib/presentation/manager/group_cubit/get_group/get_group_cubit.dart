@@ -16,4 +16,11 @@ class GetGroupCubit extends Cubit<GetGroupState> {
       (group) => emit(GetGroupSuccess(group: group)),
     );
   }
+  void changeMembershipStatusLocally(String newStatus) {
+    if (state is GetGroupSuccess) {
+      final currentGroup = (state as GetGroupSuccess).group;
+      final updatedGroup = currentGroup.copyWith(membershipStatus: newStatus);
+      emit(GetGroupSuccess(group: updatedGroup));
+    }
+  }
 }

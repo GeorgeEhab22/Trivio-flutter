@@ -69,6 +69,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   share_plus: ^12.0.2
+  audioplayers: ^6.6.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -97,6 +98,7 @@ flutter:
   assets:
    - assets/images/
    - .env
+   - assets/sounds/
   fonts:
       - family: NotoEmoji
         fonts:

@@ -12,6 +12,7 @@ class GroupModel extends Group {
     super.role,
     super.privacy,
     super.creatorId,
+    super.membershipStatus,
   });
 
   factory GroupModel.fromJson(Map<String, dynamic> json) {
@@ -37,6 +38,7 @@ class GroupModel extends Group {
       creatorId: data['creatorId'] is Map
           ? data['creatorId']['_id']
           : data['creatorId'] as String?,
+      membershipStatus: data['membershipStatus'] as String?,
     );
   }
 

@@ -14,7 +14,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class GroupPreviewView extends StatelessWidget {
-  const GroupPreviewView({super.key});
+  final String groupId;
+  const GroupPreviewView({super.key, required this.groupId});
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +50,7 @@ class GroupPreviewView extends StatelessWidget {
                         const SizedBox(height: 8),
                         NumberOfMembersRow(numOfMembers: group.membersCount ?? 0),
                         const SizedBox(height: 20),
-                        JoinGroupButton(groupId: group.groupId),
+                        JoinGroupButton(groupId: groupId, membershipStatus: group.membershipStatus),
                         const SizedBox(height: 20),
 
                         Text(l10n.about, style: Styles.textStyleBold18),

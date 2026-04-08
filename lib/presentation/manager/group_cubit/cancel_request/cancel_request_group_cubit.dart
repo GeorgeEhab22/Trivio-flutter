@@ -12,20 +12,21 @@ class CancelRequestGroupCubit extends Cubit<CancelRequestGroupState> {
         super(const CancelRequestGroupInitial());
 
   Future<void> cancelRequestGroup({required String groupId}) async {
-    emit(const CancelRequestGroupLoading());
+    emit( CancelRequestGroupLoading(groupId: groupId));
 
     final result = await _cancelRequestUseCase(groupId: groupId);
 
     result.fold(
-      (failure) => emit(_mapFailureToState(failure)),
-      (_) => emit(const CancelRequestGroupSuccess()),
+      (failure) => emit(_mapFailureToState(failure, groupId)),
+      (_) => emit( CancelRequestGroupSuccess(groupId: groupId)),
     );
   }
 
-  CancelRequestGroupFailure _mapFailureToState(Failure failure) {
+  CancelRequestGroupFailure _mapFailureToState(Failure failure,String groupId) {
 
     return CancelRequestGroupFailure(
       message: failure.message,
+      groupId: groupId,
       errorType: failure is NetworkFailure 
           ? 'network' 
           : (failure is ValidationFailure ? 'validation' : 'server'),

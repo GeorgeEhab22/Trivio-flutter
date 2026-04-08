@@ -1,10 +1,11 @@
 import 'package:equatable/equatable.dart';
 
 abstract class CancelRequestGroupState extends Equatable {
-  const CancelRequestGroupState();
+  final String? groupId;
+  const CancelRequestGroupState({this.groupId});
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [groupId];
 }
 
 class CancelRequestGroupInitial extends CancelRequestGroupState {
@@ -12,21 +13,24 @@ class CancelRequestGroupInitial extends CancelRequestGroupState {
 }
 
 class CancelRequestGroupLoading extends CancelRequestGroupState {
-  const CancelRequestGroupLoading();
+  const CancelRequestGroupLoading({super.groupId});
 }
 
 class CancelRequestGroupSuccess extends CancelRequestGroupState {
-  const CancelRequestGroupSuccess();
+  const CancelRequestGroupSuccess({super.groupId});
 }
 
 class CancelRequestGroupFailure extends CancelRequestGroupState {
   final String message;
   final String? errorType;
 
-  const CancelRequestGroupFailure({required this.message, this.errorType});
-
+  const CancelRequestGroupFailure({
+    required this.message,
+    this.errorType,
+    super.groupId,
+  });
   @override
-  List<Object?> get props => [message, errorType];
+  List<Object?> get props => [message, errorType, groupId];
 
   bool get isValidationError => errorType == 'validation';
   bool get isNetworkError => errorType == 'network';
