@@ -106,15 +106,7 @@ class MembersListView extends StatelessWidget {
                       (state.hasReachedMaxMembers ? 1 : 0),
                   itemBuilder: (context, index) {
                     if (index == displayMembers.length) {
-                      return Padding(
-                        padding: EdgeInsets.symmetric(vertical: 24.0),
-                        child: Center(
-                          child: Text(
-                            l10n.noMoreMembers,
-                            style: TextStyle(color: Colors.grey),
-                          ),
-                        ),
-                      );
+                      return const SizedBox(height: 80);
                     }
 
                     final member = displayMembers[index];

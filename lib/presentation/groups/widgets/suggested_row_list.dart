@@ -1,4 +1,5 @@
 import 'package:auth/core/app_routes.dart';
+import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/groups/widgets/dummy_for_skeletonizer.dart';
 import 'package:auth/presentation/groups/widgets/suggest_card.dart';
 import 'package:auth/presentation/manager/group_cubit/get_groups/get_groups_cubit.dart';
@@ -15,6 +16,7 @@ class SuggestedGroupsRowList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final profileState = context.read<ProfileCubit>().state;
     String myUserId = '';
 
@@ -26,7 +28,25 @@ class SuggestedGroupsRowList extends StatelessWidget {
         final cubit = context.read<GetAllGroupsCubit>();
         final bool isInitialLoading =
             state is GetAllGroupsLoading && cubit.items.isEmpty;
-
+            if (state is GetAllGroupsError && cubit.items.isEmpty) {
+          return SizedBox(
+            height: 320,
+            child: Center(
+              child: Text(state.message, style: const TextStyle(color: Colors.red)),
+            ),
+          );
+        }
+        if (!isInitialLoading && cubit.items.isEmpty) {
+          return SizedBox(
+            height: 320,
+            child: Center(
+              child: Text(
+                l10n.noSuggestedGroups,
+                style: const TextStyle(color: Colors.grey, fontSize: 14),
+              ),
+            ),
+          );
+        }
         final groups = isInitialLoading ? DummyData.dummyGroups : cubit.items;
 
         if (state is GetAllGroupsError && cubit.items.isEmpty) {
@@ -38,7 +58,9 @@ class SuggestedGroupsRowList extends StatelessWidget {
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 8),
-            itemCount: isInitialLoading ? 2 : (groups.length > 6 ? 5 : groups.length),
+            itemCount: isInitialLoading
+                ? 2
+                : (groups.length > 6 ? 5 : groups.length),
             physics: const BouncingScrollPhysics(),
             itemBuilder: (context, index) {
               final group = groups[index];

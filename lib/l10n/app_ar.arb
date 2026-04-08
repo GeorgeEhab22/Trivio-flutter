@@ -240,7 +240,7 @@
   "pendingPosts": "منشورات في انتظار المراجعة",
   "approve": "موافقة",
   "decline": "رفض",
-  "noModeratorsFound": "لم يتم العثور على مشرفين",
+  "noModeratorsFound": "لا يوجد مشرفين حتي الآن",
   "moderator": "مشرف",
   "membersRequests": "طلبات الأعضاء",
   "requestAcceptedSuccess": "تم قبول الطلب بنجاح",
@@ -257,7 +257,7 @@
   },
   "declineRequestTitle": "رفض الطلب؟",
   "declineRequestContent": "هل أنت متأكد أنك تريد رفض هذا الطلب؟",
-  "noMembersFound": "لم يتم العثور على أعضاء",
+  "noMembersFound": "لا يوجد أعضاء حتي الآن",
   "member": "عضو",
   "manageGroup": "إدارة المجموعة",
   "groupDeletedSuccess": "تم حذف المجموعة بنجاح",
@@ -475,5 +475,8 @@
   "smartTags": "هاشتاجات ذكية",
   "accountPreferences": "تفضيلات الحساب",
   "securityAndAlerts": "الأمان والتنبيهات",
-  "logoutAccount": "تسجيل الخروج"
+  "logoutAccount": "تسجيل الخروج",
+  "noSuggestedGroups": "لا توجد مجموعات مقترحة في الوقت الحالي.",
+  "noGroupsToDiscover": "لا توجد مجموعات لاكتشافها حالياً.",
+  "noMyGroupsYet": "لم تقم بإنشاء أي مجموعات حتى الآن."
 }

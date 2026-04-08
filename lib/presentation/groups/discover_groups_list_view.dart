@@ -69,6 +69,17 @@ class DiscoverGroupsListView extends StatelessWidget {
                     ),
                   ),
                 ),
+                if (!isInitialLoading && cubit.items.isEmpty)
+                  SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: Center(
+                      child: Text(
+                        l10n.noGroupsToDiscover,
+                        style: const TextStyle(color: Colors.grey, fontSize: 16),
+                      ),
+                    ),
+                  )
+                else
                 SliverGrid(
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,

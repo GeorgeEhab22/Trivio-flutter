@@ -39,7 +39,7 @@ class JoinedGroupsListView extends StatelessWidget {
         final bool isInitialLoading =
             state is GetJoinedGroupsLoading && cubit.items.isEmpty;
         final bool isLoadingMore = state is GetJoinedGroupsLoadingMore;
-
+        final bool isEmptyState = !isInitialLoading && cubit.items.isEmpty;
         final List<Group> displayGroups = isInitialLoading
             ? DummyData.dummyGroups
             : [...cubit.items, if (isLoadingMore) DummyData.dummyGroup];
@@ -50,13 +50,15 @@ class JoinedGroupsListView extends StatelessWidget {
                 (scrollInfo.scrollDelta ?? 0) > 0 &&
                 scrollInfo.metrics.pixels >=
                     scrollInfo.metrics.maxScrollExtent * 0.8) {
-               cubit.loadData();
+              cubit.loadData();
             }
             return false;
           },
           child: ListView.builder(
             padding: EdgeInsets.zero,
-            itemCount: displayGroups.length + 1 + (cubit.hasReachedMax ? 1 : 0),
+            itemCount: isEmptyState
+                ? 2
+                : displayGroups.length + 1 + (cubit.hasReachedMax ? 1 : 0),
             itemBuilder: (context, index) {
               if (index == 0) {
                 return Padding(
@@ -69,13 +71,40 @@ class JoinedGroupsListView extends StatelessWidget {
                   ),
                 );
               }
-              if (index == displayGroups.length + 1) {
+              if (state is GetJoinedGroupsError &&
+                  cubit.items.isEmpty &&
+                  index == 1) {
+                return Padding(
+                  padding: const EdgeInsets.only(top: 40.0),
+                  child: Center(
+                    child: Text(
+                      state.message,
+                      style: const TextStyle(color: Colors.red),
+                    ),
+                  ),
+                );
+              }
+
+              if (isEmptyState && index == 1) {
+                return Padding(
+                  padding: const EdgeInsets.only(top: 40.0),
+                  child: Center(
+                    child: Text(
+                      l10n.noJoinedGroupsYet,
+                      style: const TextStyle(color: Colors.grey, fontSize: 16),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                );
+              }
+
+              if (!isEmptyState && index == displayGroups.length + 1) {
                 return Padding(
                   padding: const EdgeInsets.symmetric(vertical: 24.0),
                   child: Center(
                     child: Text(
                       l10n.noMoreGroups,
-                      style: TextStyle(color: Colors.grey),
+                      style: const TextStyle(color: Colors.grey),
                     ),
                   ),
                 );

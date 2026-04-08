@@ -27,14 +27,12 @@ class MyGroupsListView extends StatelessWidget {
         final bool isInitialLoading =
             state is GetMyGroupsLoading && cubit.items.isEmpty;
         final bool isLoadingMore = state is GetMyGroupsLoadingMore;
-
+        final bool isEmptyState = !isInitialLoading && cubit.items.isEmpty;
         final List<Group> displayGroups = isInitialLoading
             ? DummyData.dummyGroups
             : [...cubit.items, if (isLoadingMore) DummyData.dummyGroup];
 
-        if (state is GetMyGroupsLoaded && cubit.items.isEmpty) {
-          return Center(child: Text(l10n.noPostsInGroups));
-        }
+       
 
         return NotificationListener<ScrollNotification>(
           onNotification: (ScrollNotification scrollInfo) {
@@ -48,7 +46,9 @@ class MyGroupsListView extends StatelessWidget {
           },
           child: ListView.builder(
             padding: EdgeInsets.zero,
-            itemCount: displayGroups.length + 1 + (cubit.hasReachedMax ? 1 : 0),
+            itemCount: isEmptyState
+                ? 2
+                : displayGroups.length + 1 + (cubit.hasReachedMax ? 1 : 0),
             itemBuilder: (context, index) {
               if (index == 0) {
                 return Padding(
@@ -62,13 +62,23 @@ class MyGroupsListView extends StatelessWidget {
                 );
               }
 
-              if (index == displayGroups.length + 1) {
+              if (state is GetMyGroupsError && cubit.items.isEmpty && index == 1) {
                 return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 24.0),
+                  padding: const EdgeInsets.only(top: 40.0),
+                  child: Center(
+                    child: Text(state.message, style: const TextStyle(color: Colors.red)),
+                  ),
+                );
+              }
+
+              if (isEmptyState && index == 1) {
+                return Padding(
+                  padding: const EdgeInsets.only(top: 40.0),
                   child: Center(
                     child: Text(
-                      l10n.noMoreGroups,
-                      style: TextStyle(color: Colors.grey),
+                      l10n.noMyGroupsYet,
+                      style: const TextStyle(color: Colors.grey, fontSize: 16),
+                      textAlign: TextAlign.center,
                     ),
                   ),
                 );
@@ -80,7 +90,7 @@ class MyGroupsListView extends StatelessWidget {
                 enabled: isInitialLoading || group.groupId.isEmpty,
                 child: GroupItem(
                   groupId: group.groupId,
-                  numOfMembers:group.membersCount ?? 0,
+                  numOfMembers: group.membersCount ?? 0,
                   title: group.groupName,
                   imageUrl: group.groupCoverImage,
                   isHorizontal: true,

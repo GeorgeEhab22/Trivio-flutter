@@ -705,7 +705,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get decline => 'Decline';
 
   @override
-  String get noModeratorsFound => 'No Moderators found';
+  String get noModeratorsFound => 'there is no moderators until now';
 
   @override
   String get moderator => 'Moderator';
@@ -744,7 +744,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Are you sure you want to decline this request?';
 
   @override
-  String get noMembersFound => 'No members found';
+  String get noMembersFound => 'there is no members until now';
 
   @override
   String get member => 'Member';
@@ -1301,4 +1301,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get logoutAccount => 'Logout Account';
+
+  @override
+  String get noSuggestedGroups => 'No suggested groups at the moment.';
+
+  @override
+  String get noGroupsToDiscover => 'No groups to discover right now.';
+
+  @override
+  String get noMyGroupsYet => 'You haven\'t created any groups yet.';
 }

@@ -31,7 +31,17 @@ class YourGroupsRowList extends StatelessWidget {
             ),
           );
         }
-
+if (!isInitialLoading && cubit.items.isEmpty) {
+          return SizedBox(
+            height: 110,
+            child: Center(
+              child: Text(
+                l10n.noJoinedGroupsYet,
+                style: const TextStyle(color: Colors.grey, fontSize: 14),
+              ),
+            ),
+          );
+        }
         final groups = isInitialLoading ? DummyData.dummyGroups : cubit.items;
 
         return SizedBox(

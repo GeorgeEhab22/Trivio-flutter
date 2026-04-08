@@ -3,6 +3,7 @@ import 'package:auth/common/functions/show_custom_dialog.dart';
 import 'package:auth/core/styels.dart';
 import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/groups/manage_group/widgets/member_rule_row.dart';
+import 'package:auth/presentation/groups/manage_group/widgets/user_avatar_widget.dart';
 import 'package:auth/presentation/groups/widgets/common_group_buttom_sheet.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_state.dart';
@@ -64,10 +65,8 @@ class MemberRow extends StatelessWidget {
     bool showMoreOptions = canKick || canBan;
 
     return ListTile(
-      leading: CircleAvatar(
-        radius: 26,
-        backgroundImage: NetworkImage(image ?? 'https://picsum.photos/500'),
-      ),
+      leading: UserAvatarWidget(userId: targetUserId ?? ''),
+
       title: Padding(
         // Use directional padding for RTL support
         padding: const EdgeInsets.symmetric(horizontal: 2.0),

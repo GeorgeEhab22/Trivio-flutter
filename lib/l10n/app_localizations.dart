@@ -1451,7 +1451,7 @@ abstract class AppLocalizations {
   /// No description provided for @noModeratorsFound.
   ///
   /// In en, this message translates to:
-  /// **'No Moderators found'**
+  /// **'there is no moderators until now'**
   String get noModeratorsFound;
 
   /// No description provided for @moderator.
@@ -1523,7 +1523,7 @@ abstract class AppLocalizations {
   /// No description provided for @noMembersFound.
   ///
   /// In en, this message translates to:
-  /// **'No members found'**
+  /// **'there is no members until now'**
   String get noMembersFound;
 
   /// No description provided for @member.
@@ -2575,6 +2575,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Logout Account'**
   String get logoutAccount;
+
+  /// No description provided for @noSuggestedGroups.
+  ///
+  /// In en, this message translates to:
+  /// **'No suggested groups at the moment.'**
+  String get noSuggestedGroups;
+
+  /// No description provided for @noGroupsToDiscover.
+  ///
+  /// In en, this message translates to:
+  /// **'No groups to discover right now.'**
+  String get noGroupsToDiscover;
+
+  /// No description provided for @noMyGroupsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'You haven\'t created any groups yet.'**
+  String get noMyGroupsYet;
 }
 
 class _AppLocalizationsDelegate

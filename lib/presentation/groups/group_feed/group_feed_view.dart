@@ -14,6 +14,7 @@ import 'package:auth/presentation/groups/widgets/dummy_for_skeletonizer.dart';
 import 'package:auth/presentation/groups/widgets/number_of_members_row.dart';
 import 'package:auth/presentation/manager/group_cubit/get_group/get_group_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/get_group/get_group_state.dart';
+import 'package:auth/presentation/manager/group_cubit/get_groups/get_groups_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/get_joined_groups/get_joined_groups_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/leave_group/leave_group_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/leave_group/leave_group_state.dart';
@@ -34,6 +35,15 @@ class GroupFeedView extends StatelessWidget {
       listener: (context, state) {
         if (state is LeaveGroupSuccess) {
           context.read<GetJoinedGroupsCubit>().removeGroupLocally(groupId);
+          try {
+            context.read<GetAllGroupsCubit>().changeMembershipStatusLocally(
+                  groupId,
+                  'None',
+                );
+          } catch (_) {}
+          try {
+            context.read<GetGroupCubit>().changeMembershipStatusLocally('None');
+          } catch (_) {}
           context.go(AppRoutes.groupPreview(groupId));
         }
         if (state is LeaveGroupFailure) {

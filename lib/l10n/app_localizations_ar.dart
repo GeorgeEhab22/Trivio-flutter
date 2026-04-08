@@ -702,7 +702,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get decline => 'رفض';
 
   @override
-  String get noModeratorsFound => 'لم يتم العثور على مشرفين';
+  String get noModeratorsFound => 'لا يوجد مشرفين حتي الآن';
 
   @override
   String get moderator => 'مشرف';
@@ -740,7 +740,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get declineRequestContent => 'هل أنت متأكد أنك تريد رفض هذا الطلب؟';
 
   @override
-  String get noMembersFound => 'لم يتم العثور على أعضاء';
+  String get noMembersFound => 'لا يوجد أعضاء حتي الآن';
 
   @override
   String get member => 'عضو';
@@ -1287,4 +1287,13 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get logoutAccount => 'تسجيل الخروج';
+
+  @override
+  String get noSuggestedGroups => 'لا توجد مجموعات مقترحة في الوقت الحالي.';
+
+  @override
+  String get noGroupsToDiscover => 'لا توجد مجموعات لاكتشافها حالياً.';
+
+  @override
+  String get noMyGroupsYet => 'لم تقم بإنشاء أي مجموعات حتى الآن.';
 }

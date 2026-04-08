@@ -240,7 +240,7 @@
   "pendingPosts": "Pending Posts",
   "approve": "Approve",
   "decline": "Decline",
-  "noModeratorsFound": "No Moderators found",
+  "noModeratorsFound": "there is no moderators until now",
   "moderator": "Moderator",
   "membersRequests": "Members Requests",
   "requestAcceptedSuccess": "Request accepted successfully",
@@ -257,7 +257,7 @@
   },
   "declineRequestTitle": "Decline request?",
   "declineRequestContent": "Are you sure you want to decline this request?",
-  "noMembersFound": "No members found",
+  "noMembersFound": "there is no members until now",
   "member": "Member",
   "manageGroup": "Manage group",
   "groupDeletedSuccess": "Group deleted successfully",
@@ -474,6 +474,9 @@
   "smartTags" : "Smart Tags",
   "accountPreferences": "Account Preferences",
   "securityAndAlerts": "Security & Alerts",
-  "logoutAccount": "Logout Account"
+  "logoutAccount": "Logout Account",
+  "noSuggestedGroups": "No suggested groups at the moment.",
+  "noGroupsToDiscover": "No groups to discover right now.",
+  "noMyGroupsYet": "You haven't created any groups yet."
 }
 
