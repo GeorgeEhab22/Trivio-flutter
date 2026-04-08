@@ -35,7 +35,7 @@ class MatchAlertCard extends StatelessWidget {
         text: notification.senderName,
         boldColor: Theme.of(context).textTheme.bodyMedium?.color,
       ),
-      subtitle: notification.content,
+      subtitle: notification.message,
       time: timeText,
       isTimeHighlighted: true,
     );

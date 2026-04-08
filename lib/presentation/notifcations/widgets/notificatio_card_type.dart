@@ -1,9 +1,11 @@
 import 'package:auth/common/functions/format_time.dart';
 import 'package:auth/common/functions/number_extensions.dart';
+import 'package:auth/core/app_routes.dart';
 import 'package:auth/domain/entities/notification.dart';
 import 'package:auth/presentation/manager/notifications_cubit/notifications_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import '../../../domain/entities/notification_type.dart';
 import '../cards/match_alert_card.dart';
 import '../cards/post_react_card.dart';
@@ -15,8 +17,9 @@ class NotificationCardType extends StatelessWidget {
 
   const NotificationCardType({super.key, required this.notification});
 
-  void _onNotificationTapped(BuildContext context) {
+  void _onNotificationTapped(BuildContext context, String routePath) {
     context.read<NotificationCubit>().markAsRead(notification.id);
+    GoRouter.of(context).push(routePath);
   }
 
   @override
@@ -32,35 +35,38 @@ class NotificationCardType extends StatelessWidget {
           notification: notification,
           timeText: timeText,
           onTap: () {
-            _onNotificationTapped(context);
-            // TODO: go to ex. news screen
+            _onNotificationTapped(context, AppRoutes.stats);
           },
         );
-      case NotificationType.postReact:
+      case NotificationType.react:
         return PostReactCard(
           notification: notification,
           timeText: timeText,
           onTap: () {
-            _onNotificationTapped(context);
-            // TODO: go to post
+            final path = AppRoutes.singlePostPath(notification.entityId);
+            _onNotificationTapped(context, path);
           },
         );
-      case NotificationType.postComment:
+      case NotificationType.comment:
         return PostCommentCard(
           notification: notification,
           timeText: timeText,
           onTap: () {
-            _onNotificationTapped(context);
-            // TODO: go to post
+            //TODO:wait backend to return  post id and comment id  together not comment id only
+
+            // final path = AppRoutes.singlePostPath(notification.entityId);
+            // _onNotificationTapped(context, path);
           },
         );
-      case NotificationType.followUser:
+      case NotificationType.follow:
         return FollowUserCard(
           notification: notification,
           timeText: timeText,
           onTap: () {
-            _onNotificationTapped(context);
-            // TODO: go to follower profile
+            final profilePath = AppRoutes.userProfileByIdPath(
+              notification.senderId,
+            );
+            _onNotificationTapped(context, profilePath);
           },
         );
       case NotificationType.none:

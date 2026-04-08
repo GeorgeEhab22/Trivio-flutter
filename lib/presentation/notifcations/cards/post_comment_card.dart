@@ -26,10 +26,7 @@ class PostCommentCard extends StatelessWidget {
       isRead: notification.isRead,
       leadingWidget: NotificationAvatar(imageUrl: notification.senderAvatar),
       titleWidget: NotificationTitle(text: '${notification.senderName} ${l10n.commented} '),
-      subtitle: notification.content != null
-          ? '"${notification.content}"'
-          : null,
-
+      subtitle: notification.message,
       time: timeText,
     );
   }

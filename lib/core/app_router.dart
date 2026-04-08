@@ -19,6 +19,7 @@ import 'package:auth/presentation/groups/manage_group/people_view/people_view.da
 import 'package:auth/presentation/groups/manage_group/reported_posts_view.dart';
 import 'package:auth/presentation/groups/my_group/my_group_view.dart';
 import 'package:auth/presentation/groups/widgets/edit_post_page.dart';
+import 'package:auth/presentation/home/single_post_view.dart';
 import 'package:auth/presentation/interests/favourite_players_view.dart';
 import 'package:auth/presentation/interests/favourite_teams_view.dart';
 import 'package:auth/presentation/manager/group_cubit/ban_member/ban_member_cubit.dart';
@@ -42,6 +43,7 @@ import 'package:auth/presentation/manager/group_cubit/get_members_by_roles/membe
 import 'package:auth/presentation/manager/group_cubit/unban_member/unban_member_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/update_group/update_group_cubit.dart';
 import 'package:auth/presentation/manager/notifications_cubit/notifications_cubit.dart';
+import 'package:auth/presentation/manager/post_cubit/get_post/get_post_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/get_user_profile_by_id_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/interests/select_interests_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_posts_cubit.dart';
@@ -225,6 +227,99 @@ GoRouter createRouter(bool isLoggedIn) {
         path: '/app',
         builder: (context, state) => const SizedBox.shrink(),
         routes: [
+          GoRoute(
+            path: AppRoutes.singlePostById,
+            builder: (context, state) {
+              final postId = state.pathParameters['postId']!;
+              return BlocProvider(
+                create: (context) => di.sl<GetPostCubit>(),
+                child: SinglePostView(postId: postId),
+              );
+            },
+          ),
+          GoRoute(
+            path: AppRoutes.userProfilebyId,
+            builder: (context, state) {
+              final userId = state.pathParameters['userId']!;
+              return MultiBlocProvider(
+                providers: [
+                  BlocProvider(
+                    create: (context) =>
+                        di.sl<GetUserProfileByIdCubit>()
+                          ..loadUserProfileById(userId),
+                  ),
+                  BlocProvider(create: (context) => di.sl<ProfilePostsCubit>()),
+                  BlocProvider(create: (context) => di.sl<FollowCubit>()),
+                ],
+                child: UserProfileView(userId: userId),
+              );
+            },
+          ),
+          GoRoute(
+            path: 'follow_info',
+            builder: (context, state) {
+              final String? tabString = state.uri.queryParameters['tab'];
+              final String? targetUserId = state.uri.queryParameters['userId'];
+              final int index = int.tryParse(tabString ?? '0') ?? 0;
+              return BlocProvider(
+                create: (context) => di.sl<ProfileSocialInfoCubit>(),
+                child: SocialInfoScreen(
+                  initialTabIndex: index,
+                  userId: targetUserId,
+                ),
+              );
+            },
+          ),
+          GoRoute(
+            path: 'settings',
+            builder: (context, state) => BlocProvider<FollowCubit>(
+              create: (context) => di.sl<FollowCubit>(),
+              child: const UserProfileSettings(),
+            ),
+            routes: [
+              GoRoute(
+                path: 'edit',
+                builder: (context, state) {
+                  final profileState = context.read<ProfileCubit>().state;
+                  String currentName = "";
+                  String currentBio = "";
+                  String currentAvatar = "";
+                  if (profileState is ProfileLoaded) {
+                    currentName = profileState.user.name;
+                    currentBio = profileState.user.bio ?? "";
+                    currentAvatar = profileState.user.avatar;
+                  }
+                  return BlocProvider(
+                    create: (context) => ProfileUpdateCubit(
+                      updateProfileUseCase: di.sl(),
+                      changePasswordUseCase: di.sl(),
+                      initialName: currentName,
+                      initialBio: currentBio,
+                      initialAvatar: currentAvatar,
+                    ),
+                    child: const EditProfileScreen(),
+                  );
+                },
+              ),
+              GoRoute(
+                path: 'liked_posts',
+                builder: (context, state) => BlocProvider(
+                  create: (context) =>
+                      di.sl<LikedPostsCubit>()..fetchLikedPosts(),
+                  child: const LikedPostsScreen(),
+                ),
+              ),
+              GoRoute(
+                path: 'change_password',
+                builder: (context, state) => BlocProvider(
+                  create: (context) => di.sl<ChangePasswordCubit>(),
+                  child: ChangePasswordScreen(),
+                ),
+              ),
+            ],
+          ),
+          // ],
+          // ),
           StatefulShellRoute.indexedStack(
             builder: (context, state, navigationShell) {
               return AuthShell(navigationShell: navigationShell);
@@ -336,98 +431,6 @@ GoRouter createRouter(bool isLoggedIn) {
                         child: UserProfileView(),
                       ),
                     ),
-                    routes: [
-                      GoRoute(
-                        path: AppRoutes.userProfilebyId,
-                        builder: (context, state) {
-                          final userId = state.pathParameters['userId']!;
-                          return MultiBlocProvider(
-                            providers: [
-                              BlocProvider(
-                                create: (context) =>
-                                    di.sl<GetUserProfileByIdCubit>()
-                                      ..loadUserProfileById(userId),
-                              ),
-                              BlocProvider(
-                                create: (context) => di.sl<ProfilePostsCubit>(),
-                              ),
-                              BlocProvider(
-                                create: (context) => di.sl<FollowCubit>(),
-                              ),
-                            ],
-                            child: UserProfileView(userId: userId),
-                          );
-                        },
-                      ),
-                      GoRoute(
-                        path: 'follow_info',
-                        builder: (context, state) {
-                          final String? tabString =
-                              state.uri.queryParameters['tab'];
-                          final String? targetUserId =
-                              state.uri.queryParameters['userId'];
-                          final int index = int.tryParse(tabString ?? '0') ?? 0;
-                          return BlocProvider(
-                            create: (context) =>
-                                di.sl<ProfileSocialInfoCubit>(),
-                            child: SocialInfoScreen(
-                              initialTabIndex: index,
-                              userId: targetUserId,
-                            ),
-                          );
-                        },
-                      ),
-                      GoRoute(
-                        path: 'settings',
-                        builder: (context, state) => BlocProvider<FollowCubit>(
-                          create: (context) => di.sl<FollowCubit>(),
-                          child: const UserProfileSettings(),
-                        ),
-                        routes: [
-                          GoRoute(
-                            path: 'edit',
-                            builder: (context, state) {
-                              final profileState = context
-                                  .read<ProfileCubit>()
-                                  .state;
-                              String currentName = "";
-                              String currentBio = "";
-                              String currentAvatar = "";
-                              if (profileState is ProfileLoaded) {
-                                currentName = profileState.user.name;
-                                currentBio = profileState.user.bio ?? "";
-                                currentAvatar = profileState.user.avatar;
-                              }
-                              return BlocProvider(
-                                create: (context) => ProfileUpdateCubit(
-                                  updateProfileUseCase: di.sl(),
-                                  changePasswordUseCase: di.sl(),
-                                  initialName: currentName,
-                                  initialBio: currentBio,
-                                  initialAvatar: currentAvatar,
-                                ),
-                                child: const EditProfileScreen(),
-                              );
-                            },
-                          ),
-                          GoRoute(
-                            path: 'liked_posts',
-                            builder: (context, state) => BlocProvider(
-                              create: (context) =>
-                                  di.sl<LikedPostsCubit>()..fetchLikedPosts(),
-                              child: const LikedPostsScreen(),
-                            ),
-                          ),
-                          GoRoute(
-                            path: 'change_password',
-                            builder: (context, state) => BlocProvider(
-                              create: (context) => di.sl<ChangePasswordCubit>(),
-                              child: ChangePasswordScreen(),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
                   ),
                 ],
               ),

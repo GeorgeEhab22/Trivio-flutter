@@ -1,5 +1,5 @@
-import '../../core/json_parser.dart';
 import '../../domain/entities/notification.dart';
+import '../../domain/entities/notification_type.dart';
 
 class NotificationModel extends NotificationEntity {
   const NotificationModel({
@@ -9,52 +9,44 @@ class NotificationModel extends NotificationEntity {
     required super.senderName,
     super.senderAvatar,
     required super.type,
-    super.content,
+    required super.message,
+    required super.entityId,
     super.isRead,
     required super.createdAt,
   });
 
   factory NotificationModel.fromJson(Map<String, dynamic> json) {
-    final dynamic senderRaw = json['sender'] ?? json['actor'];
-    final bool isSenderPopulated = senderRaw is Map<String, dynamic>;
+    final sender = json['sender'] ?? {};
 
     return NotificationModel(
-      id: JsonParser.parseId(json['_id'] ?? json['id']) ?? '',
-      receiverId:
-          JsonParser.parseId(json['receiverId'] ?? json['userId']) ?? '',
-      senderId: JsonParser.parseId(senderRaw) ?? '',
-
-      senderName: isSenderPopulated
-          ? JsonParser.parseString(senderRaw['username'] ?? senderRaw['name'])
-          : JsonParser.parseString(json['senderName']),
-
-      senderAvatar: isSenderPopulated
-          ? JsonParser.parseString(
-              senderRaw['profilePicture'] ?? senderRaw['avatar'],
-            )
-          : JsonParser.parseString(json['senderAvatar']),
-
-      type: JsonParser.parseNotificationType(
-        json['type'] ?? json['notificationType'],
-      ),
-      content: JsonParser.parseString(json['content'] ?? json['message']),
+      id: json['_id']?.toString() ?? '',
+      receiverId: json['receiver']?.toString() ?? '',
+      senderId: sender['_id']?.toString() ?? '',
+      senderName: sender['username']?.toString() ?? '',
+      senderAvatar: sender['avatar']?.toString(),
+      type: _parseType(json['entityType']?.toString()),
+      message: json['message']?.toString() ?? '',
+      entityId: json['entityID']?.toString() ?? '',
       isRead: json['isRead'] == true,
-      createdAt: JsonParser.parseDate(json['createdAt']) ?? DateTime.now(),
+      createdAt: json['createdAt'] != null
+          ? DateTime.parse(json['createdAt'])
+          : DateTime.now(),
     );
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      '_id': id,
-      'receiverId': receiverId,
-      'senderId': senderId,
-      'senderName': senderName,
-      'senderAvatar': senderAvatar,
-      'type': type.name, 
-      'content': content,
-      'isRead': isRead,
-      'createdAt': createdAt.toIso8601String(),
-    };
+  static NotificationType _parseType(String? type) {
+    switch (type?.toUpperCase()) {
+      case 'FOLLOW':
+        return NotificationType.follow;
+      case 'COMMENT':
+        return NotificationType.comment;
+      case 'REACT':
+        return NotificationType.react;
+      case 'MATCH':
+        return NotificationType.matchAlert;
+      default:
+        return NotificationType.none;
+    }
   }
 
   NotificationEntity toEntity() => NotificationEntity(
@@ -64,22 +56,9 @@ class NotificationModel extends NotificationEntity {
     senderName: senderName,
     senderAvatar: senderAvatar,
     type: type,
-    content: content,
+    message: message,
+    entityId: entityId,
     isRead: isRead,
     createdAt: createdAt,
   );
-
-  factory NotificationModel.fromEntity(NotificationEntity entity) {
-    return NotificationModel(
-      id: entity.id,
-      receiverId: entity.receiverId,
-      senderId: entity.senderId,
-      senderName: entity.senderName,
-      senderAvatar: entity.senderAvatar,
-      type: entity.type,
-      content: entity.content,
-      isRead: entity.isRead,
-      createdAt: entity.createdAt,
-    );
-  }
 }

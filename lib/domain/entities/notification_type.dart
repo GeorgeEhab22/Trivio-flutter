@@ -1,7 +1,7 @@
 enum NotificationType { 
   none, 
-  postReact, 
-  postComment, 
-  matchAlert, 
-  followUser 
+  react, 
+  comment, 
+  follow,
+  matchAlert,
 }

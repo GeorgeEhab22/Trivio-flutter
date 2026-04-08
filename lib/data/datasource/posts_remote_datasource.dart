@@ -109,7 +109,10 @@ class PostsRemoteDataSourceImpl implements PostsRemoteDataSource {
         "${ApiEndpoints.fetchSinglePost}/$postId",
         options: _getAuthOptions(),
       );
-      return PostModel.fromJson(response);
+      final data = response['data'];
+      final Map<String, dynamic> postJson = data['post'];
+      postJson['userReact'] = data['userReact']; 
+      return PostModel.fromJson(postJson);
     } catch (e) {
       errorHandler.handleDioError(e);
       rethrow;

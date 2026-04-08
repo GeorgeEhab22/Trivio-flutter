@@ -58,15 +58,20 @@ class AppRoutes {
 
   //profile
   static const String userProfilebyId = 'user_profile/:userId'; 
-  static String userProfileByIdPath(String id) => '/app/profile/user_profile/$id'; 
-  static const String profileSettings = '/app/profile/settings';
-  static const String requests = '/app/profile/settings/requests';
-  static const String followerInfo = '/app/profile/follow_info';
-  static const String editProfile = '/app/profile/settings/edit';
-  static const String changePassword = '/app/profile/settings/change_password';
-  static const String likedPosts = '/app/profile/settings/liked_posts';
+static String userProfileByIdPath(String id) => '/app/user_profile/$id';
+  static const String profileSettings = '/app/settings';
+  static const String requests = '/app/settings/requests';
+  static const String editProfile = '/app/settings/edit';
+  static const String changePassword = '/app/settings/change_password';
+  static const String likedPosts = '/app/settings/liked_posts';
+  
+  static const String followerInfo = '/app/follow_info';
 
   // interests
   static const String selectTeams = '/select-teams';
   static const String selectPlayers = '/select-teams/select-players';
+
+  // post details
+  static const String singlePostById = 'post/:postId'; 
+  static String singlePostPath(String id) => '/app/post/$id';
 }
