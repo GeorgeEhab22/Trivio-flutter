@@ -1,4 +1,5 @@
 import 'package:auth/common/functions/custom_list_tile.dart';
+import 'package:auth/constants/paths.dart';
 import 'package:auth/core/app_routes.dart';
 import 'package:auth/common/functions/custom_square_button.dart';
 import 'package:auth/core/language_switch_button.dart';
@@ -57,7 +58,7 @@ class SettingsView extends StatelessWidget {
                           Expanded(
                             child: CustomSquareButton(
                               label: l10n.saved,
-                              icon: Icons.bookmark_border,
+                              svgAsset: Paths.saveIcon,
                               backgroundColor: Theme.of(
                                 context,
                               ).scaffoldBackgroundColor,
@@ -72,7 +73,7 @@ class SettingsView extends StatelessWidget {
                           Expanded(
                             child: CustomSquareButton(
                               label: l10n.groups,
-                              icon: Icons.groups_2_outlined,
+                              svgAsset: Paths.groupsIcon,
                               backgroundColor: Theme.of(
                                 context,
                               ).scaffoldBackgroundColor,
@@ -126,7 +127,7 @@ class SettingsView extends StatelessWidget {
                 const SizedBox(height: 20),
 
                 CustomListTile(
-                  icon: Icons.notifications_none,
+                  svgAsset: Paths.notificationIcon,
                   text: l10n.notifications,
                   withArrow: true,
                   onTap: () {
@@ -135,7 +136,7 @@ class SettingsView extends StatelessWidget {
                 ),
                 const Divider(),
                 CustomListTile(
-                  icon: Icons.mode_night_outlined,
+                  svgAsset: Paths.darkmodeIcon,
                   text: l10n.theme,
                   withArrow: true,
                   onTap: () {

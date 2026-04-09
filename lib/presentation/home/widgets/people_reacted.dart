@@ -1,5 +1,8 @@
+import 'package:auth/constants/paths.dart';
 import 'package:auth/domain/entities/reaction_type.dart';
+import 'package:auth/presentation/home/reactions/widgets/render_reactions.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class PeopleReacted extends StatelessWidget {
@@ -37,10 +40,12 @@ class PeopleReacted extends StatelessWidget {
             child: Stack(
               clipBehavior: Clip.none,
               children: List.generate(topThree.length, (index) {
-                final reaction = topThree[index];
+                final path = _emojiPath(topThree[index]);
                 return Positioned(
-                  left: index * 14,
-                  child: Text(_emoji(reaction), style: const TextStyle(fontSize: 16)),
+                  left: index * 14.0,
+                  child: path.isNotEmpty
+                      ? ReactionEmoji(path: path, size: 20)
+                      : const SizedBox(width: 20, height: 20),
                 );
               }),
             ),
@@ -60,24 +65,24 @@ class PeopleReacted extends StatelessWidget {
     );
   }
 
-  String _emoji(ReactionType type) {
+  String _emojiPath(ReactionType type) {
     switch (type) {
       case ReactionType.like:
-        return '👍';
+        return Paths.likeEmoji;
       case ReactionType.love:
-        return '❤️';
+        return Paths.loveEmoji;
       case ReactionType.haha:
-        return '😂';
+        return Paths.hahaEmoji;
       case ReactionType.wow:
-        return '😮';
+        return Paths.wowEmoji;
       case ReactionType.sad:
-        return '😢';
+        return Paths.sadEmoji;
       case ReactionType.angry:
-        return '😡';
+        return Paths.angryEmoji;
       case ReactionType.goal:
-        return '⚽';
+        return Paths.ballEmoji;
       case ReactionType.offside:
-        return '🚩';
+        return Paths.offsideEmoji;
       case ReactionType.none:
         return '';
     }

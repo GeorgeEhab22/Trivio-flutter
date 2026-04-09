@@ -56,7 +56,7 @@ class PostFooter extends StatelessWidget {
               child: Row(
                 children: [
                   ReactionAction(
-                    postId: post.postID ,
+                    postId: post.postID,
                     currentUserId: currentUserId,
                     initialReaction: resolvedReaction,
                     initialCount: resolvedCount,
@@ -84,7 +84,7 @@ class PostFooter extends StatelessWidget {
               ),
             ),
             SizedBox(
-              width: 52,
+              width: 60,
               child: Align(
                 alignment: AlignmentDirectional.centerEnd,
                 child: hasReactions
@@ -112,23 +112,11 @@ class PostFooter extends StatelessWidget {
   }
 
   ReactionType _resolveCurrentUserReaction() {
-  if (currentReaction != null && currentReaction != ReactionType.none) {
-    return currentReaction!;
+    if (currentReaction != null && currentReaction != ReactionType.none) {
+      return currentReaction!;
+    }
+    return post.userReaction;
   }
-  // if (post.userReaction != ReactionType.none) {
-  //   return post.userReaction;
-  // }
-  // final reactions = post.reactions;
-  // if (reactions != null && reactions.isNotEmpty) {
-  //   final myReaction = reactions.firstWhere(
-  //     (r) => r.userId == currentUserId,
-  //     orElse: () => const Reaction(id: '', userId: '', type: ReactionType.none, postId: ''),
-  //   );
-  //   return myReaction.type;
-  // }
-  // return ReactionType.none;
-  return post.userReaction;
-}
 
   String? _resolveCurrentUserReactionId() {
     final List<Reaction>? reactions = post.reactions;
@@ -148,10 +136,21 @@ class PostFooter extends StatelessWidget {
   }
 
   List<ReactionType> _topReactionTypes() {
+    final userReaction = post.userReaction;
+    final hasUserReaction =
+        userReaction != ReactionType.none && userReaction != ReactionType.none;
+
     if (post.reactionCountsByType.isNotEmpty) {
       final sortedByCount = post.reactionCountsByType.entries.toList()
         ..sort((a, b) => b.value.compareTo(a.value));
-      return sortedByCount.map((entry) => entry.key).take(3).toList();
+      final types = sortedByCount.map((entry) => entry.key).toList();
+
+      if (hasUserReaction) {
+        types.remove(userReaction);
+        types.add( userReaction);
+      }
+
+      return types.take(3).toList();
     }
 
     final reactions = post.reactions;
@@ -161,14 +160,19 @@ class PostFooter extends StatelessWidget {
 
     final counts = <ReactionType, int>{};
     for (final reaction in reactions) {
-      if (reaction.type == ReactionType.none) {
-        continue;
-      }
+      if (reaction.type == ReactionType.none) continue;
       counts.update(reaction.type, (value) => value + 1, ifAbsent: () => 1);
     }
     final sorted = counts.entries.toList()
       ..sort((a, b) => b.value.compareTo(a.value));
-    return sorted.map((entry) => entry.key).take(3).toList();
+    final types = sorted.map((entry) => entry.key).toList();
+
+    if (hasUserReaction) {
+      types.remove(userReaction);
+      types.add( userReaction);
+    }
+
+    return types.take(3).toList();
   }
 }
 

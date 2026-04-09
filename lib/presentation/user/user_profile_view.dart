@@ -1,10 +1,11 @@
 import 'package:auth/constants/colors.dart';
+import 'package:auth/constants/paths.dart';
 import 'package:auth/core/app_routes.dart';
 import 'package:auth/core/styels.dart';
-import 'package:auth/domain/entities/user_profile.dart'; 
+import 'package:auth/domain/entities/user_profile.dart';
 import 'package:auth/presentation/home/posts_in_timeline/widgets/post_card.dart';
-import 'package:auth/presentation/manager/profile_cubit/get_user_profile_by_id_cubit.dart'; 
-import 'package:auth/presentation/manager/profile_cubit/get_user_profile_by_id_state.dart'; 
+import 'package:auth/presentation/manager/profile_cubit/get_user_profile_by_id_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/get_user_profile_by_id_state.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_posts_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_posts_state.dart';
@@ -13,6 +14,7 @@ import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/user/widgets/profile_info_box.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
@@ -68,7 +70,6 @@ class _UserProfileViewState extends State<UserProfileView> {
     if (isMyProfile) {
       return _buildMyProfileBody();
     } else {
-
       return _buildOtherUserProfileBody();
     }
   }
@@ -142,16 +143,7 @@ class _UserProfileViewState extends State<UserProfileView> {
               scrolledUnderElevation: 0,
               centerTitle: false,
               surfaceTintColor: Colors.transparent,
-              title: Text(
-                'Trivio',
-                style: TextStyle(
-                  color: Theme.of(context).textTheme.bodyMedium?.color,
-                  fontWeight: FontWeight.w800,
-                  fontSize: 25,
-                ),
-                overflow: TextOverflow.ellipsis,
-              ),
-
+              title: SvgPicture.asset(Paths.trivioLogo, width: 70, height: 70),
               //TODO : check if current user
 
               // leading: IconButton(
@@ -166,11 +158,20 @@ class _UserProfileViewState extends State<UserProfileView> {
               // ),
               actions: [
                 if (isMyProfile)
-                  IconButton(
-                    onPressed: () => context.push(AppRoutes.profileSettings),
-                    icon: Icon(
-                      Icons.settings,
-                      color: Theme.of(context).iconTheme.color,
+                  Padding(
+                    padding: const EdgeInsetsDirectional.only(end: 12.0),
+                    child: IconButton(
+                      onPressed: () => context.push(AppRoutes.profileSettings),
+                      icon: SvgPicture.asset(
+                        Paths.settingsIcon,
+                        colorFilter: ColorFilter.mode(
+                          Theme.of(context).iconTheme.color!,
+                          BlendMode.srcIn,
+                        ),
+
+                        width: 20,
+                        height: 20,
+                      ),
                     ),
                   ),
               ],

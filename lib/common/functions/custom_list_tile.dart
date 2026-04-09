@@ -1,22 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class CustomListTile extends StatelessWidget {
-  final IconData icon;
+  final IconData? icon;
+  final String? svgAsset;
   final String text;
   final Color? color;
   final VoidCallback onTap;
   final bool withArrow;
-  final bool  redColor;
+  final bool redColor;
 
   const CustomListTile({
     super.key,
-    required this.icon,
+    this.icon,
+    this.svgAsset,
     required this.text,
     required this.onTap,
     this.color,
-    this.withArrow= false,
-    this.redColor=false,
-  });
+    this.withArrow = false,
+    this.redColor = false,
+  }) : assert(
+         icon != null || svgAsset != null,
+         'Either icon or svgAsset must be provided',
+       );
 
   @override
   Widget build(BuildContext context) {
@@ -32,8 +38,21 @@ class CustomListTile extends StatelessWidget {
             ? Colors.redAccent
             : (Theme.of(context).iconTheme.color ?? Colors.black87));
 
+    Widget leadingWidget;
+
+    if (svgAsset != null) {
+      leadingWidget = SvgPicture.asset(
+        svgAsset!,
+        width: 24,
+        height: 24,
+        colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
+      );
+    } else {
+      leadingWidget = Icon(icon!, color: iconColor, size: 24);
+    }
+
     return ListTile(
-      leading: Icon(icon, color: iconColor, size: 24),
+      leading: leadingWidget,
       title: Text(
         text,
         style: TextStyle(

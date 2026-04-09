@@ -1,7 +1,8 @@
 import 'package:auth/common/functions/reels_buttons_green_effect.dart';
+import 'package:auth/constants/paths.dart';
 import 'package:auth/presentation/home/share_post/share_buttom_sheet.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:flutter_svg/svg.dart';
 import '../widgets/post_action_item.dart';
 
 class ShareButton extends StatelessWidget {
@@ -21,7 +22,6 @@ class ShareButton extends StatelessWidget {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      // use `ctx` inside the builder to avoid shadowing and accidental pops on the wrong Navigator
       builder: (ctx) => Theme(
         data: isReelView ? ThemeData.dark() : Theme.of(context),
         child: const ShareBottomSheet(),
@@ -34,12 +34,13 @@ class ShareButton extends StatelessWidget {
     final iconColor = isReelView
         ? Colors.white
         : Theme.of(context).iconTheme.color;
-    final iconSize = isReelView ? 24.0 : 22.0;
 
-    Widget iconWidget = FaIcon(
-      FontAwesomeIcons.arrowUpFromBracket,
-      size: iconSize,
-      color: iconColor,
+    Widget iconWidget = SvgPicture.asset(
+      Paths.shareIcon,
+      colorFilter: ColorFilter.mode(
+        Theme.of(context).iconTheme.color!,
+        BlendMode.srcIn,
+      ),
     );
 
     if (isReelView) {

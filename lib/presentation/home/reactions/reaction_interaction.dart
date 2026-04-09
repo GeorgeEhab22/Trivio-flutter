@@ -1,3 +1,4 @@
+import 'package:auth/constants/paths.dart';
 import 'package:auth/domain/entities/reaction_type.dart';
 import 'package:auth/l10n/app_localizations.dart'; // Import localization
 import 'package:flutter/material.dart';
@@ -29,14 +30,14 @@ class _ReactionInteractionState extends State<ReactionInteraction> {
   bool _isOverlayOpen = false;
 
   static const List<String> _emojiList = [
-    '👍',
-    '❤️',
-    '😂',
-    '😮',
-    '😢',
-    '😡',
-    '⚽',
-    '🚩',
+    Paths.likeEmoji, 
+    Paths.loveEmoji,
+    Paths.hahaEmoji,
+    Paths.wowEmoji,
+    Paths.sadEmoji,
+    Paths.angryEmoji,
+    Paths.ballEmoji,
+    Paths.offsideEmoji,
   ];
   static const List<ReactionType> _reactionList = [
     ReactionType.like,
