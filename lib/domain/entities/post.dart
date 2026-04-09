@@ -25,6 +25,7 @@ class Post extends Equatable {
   final DateTime createdAt;
   final List<String> tags;
   final bool shownTags;
+  final bool isAuthorFollowed;
 
   const Post({
     required this.authorId,
@@ -48,6 +49,7 @@ class Post extends Equatable {
     required this.createdAt,
     this.tags = const [],
     this.shownTags = false,
+    this.isAuthorFollowed = false,
   });
   Post copyWith({
     String? authorId,
@@ -71,6 +73,7 @@ class Post extends Equatable {
     DateTime? createdAt,
     List<String>? tags,
     bool? shownTags,
+    bool? isAuthorFollowed,
   }) {
     return Post(
       authorId: authorId ?? this.authorId,
@@ -94,6 +97,7 @@ class Post extends Equatable {
       createdAt: createdAt ?? this.createdAt,
       tags: tags ?? this.tags,
       shownTags: shownTags ?? this.shownTags,
+      isAuthorFollowed: isAuthorFollowed ?? this.isAuthorFollowed,
     );
   }
 
@@ -117,5 +121,6 @@ class Post extends Equatable {
     createdAt,
     tags,
     shownTags,
+    isAuthorFollowed,
   ];
 }

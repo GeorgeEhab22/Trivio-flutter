@@ -5,6 +5,8 @@ import 'package:auth/common/functions/custom_list_tile.dart';
 import 'package:auth/common/functions/custom_square_button.dart';
 import 'package:auth/presentation/manager/group_cubit/get_group_posts/group_posts_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/saved_posts/saved_posts_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/saved_posts/saved_posts_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:auth/domain/entities/post.dart';
@@ -31,12 +33,12 @@ class OptionsBottomSheet extends StatelessWidget {
         : Colors.grey[300];
     final cubit = context.read<PostInteractionCubit>();
     final postCubit = context.read<PostCubit>();
+    final savedPostsCubit = context.read<SavedPostsCubit>();
 
     GroupPostsCubit? groupPostsCubit;
-      if (post.location == 'group') {
-        groupPostsCubit = context.read<GroupPostsCubit>();
-      }
-    
+    if (post.location == 'group') {
+      groupPostsCubit = context.read<GroupPostsCubit>();
+    }
 
     return Container(
       decoration: BoxDecoration(
@@ -64,22 +66,16 @@ class OptionsBottomSheet extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  BlocBuilder<PostInteractionCubit, PostInteractionState>(
-                    buildWhen: (previous, current) {
-                      return current is PostSaveUpdated ||
-                          current is SavePostSuccess ||
-                          current is SavePostError;
-                    },
+                  BlocBuilder<SavedPostsCubit, SavedPostsState>(
                     builder: (context, state) {
-                      bool isSaved = post.flagged ?? false;
+                      bool isSaved = false;
 
-                      if (state is PostSaveUpdated) {
-                        isSaved = state.isSaved;
-                      } else if (state is SavePostSuccess) {
-                        isSaved = state.isSaved;
-                      } else if (state is SavePostError) {
-                        isSaved = state.oldStatus;
+                      if (state is SavedPostsLoaded) {
+                        isSaved = state.savedPosts.any(
+                          (p) => p.postID == post.postID,
+                        );
                       }
+
                       return Expanded(
                         child: CustomSquareButton(
                           label: isSaved ? l10n.saved : l10n.save,
@@ -88,11 +84,8 @@ class OptionsBottomSheet extends StatelessWidget {
                               : Icons.bookmark_border,
                           backgroundColor: Theme.of(context).cardColor,
                           onTap: () {
-                            cubit.toggleSavePost(
-                              postId: post.postID ,
-                              userId: currentUserId,
-                              currentSavedStatus: isSaved,
-                            );
+                            savedPostsCubit.toggleSavePost(post);
+                            context.pop();
                           },
                         ),
                       );
@@ -105,10 +98,11 @@ class OptionsBottomSheet extends StatelessWidget {
                       icon: Icons.link_outlined,
                       backgroundColor: Theme.of(context).cardColor,
                       onTap: () {
-                            final String postUrl = (post.location == 'group' && post.groupID != null)
+                        final String postUrl =
+                            (post.location == 'group' && post.groupID != null)
                             ? "https://trivio.app/group/${post.groupID}/post/${post.postID}"
                             : "https://trivio.app/post/${post.postID}";
-                            copyToClipboard(context, postUrl);
+                        copyToClipboard(context, postUrl);
                         context.pop();
                       },
                     ),
@@ -123,7 +117,7 @@ class OptionsBottomSheet extends StatelessWidget {
             if (post.authorId == currentUserId)
               CustomListTile(
                 icon: Icons.edit_outlined,
-                text: l10n.editPost, 
+                text: l10n.editPost,
                 onTap: () {
                   context.pop();
                   context.push(
@@ -168,7 +162,7 @@ class OptionsBottomSheet extends StatelessWidget {
                       child: ReportReasonsBottomSheet(
                         onReportSelected: (reason) {
                           cubit.reportPost(
-                            postId: post.postID ,
+                            postId: post.postID,
                             userId: currentUserId,
                             reason: reason,
                           );

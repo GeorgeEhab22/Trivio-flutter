@@ -5,6 +5,7 @@ import 'package:auth/core/app_routes.dart';
 import 'package:auth/core/styels.dart';
 import 'package:auth/domain/entities/user_profile.dart';
 import 'package:auth/l10n/app_localizations.dart';
+import 'package:auth/presentation/home/posts_in_timeline/widgets/follow_button.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_state.dart';
 import 'package:auth/presentation/user/widgets/profile_social_info.dart';
@@ -21,11 +22,16 @@ class ProfileInfoBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+   final String targetUserId = user.id; 
     bool isCurrentUser = false;
+    String loggedInUserId = ""; 
+    
     final state = context.read<ProfileCubit>().state;
     if (state is ProfileLoaded) {
-      isCurrentUser = state.user.id == user.id;
+      loggedInUserId = state.user.id;
+      isCurrentUser = loggedInUserId == targetUserId;
     }
+
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 20.0),
@@ -76,31 +82,38 @@ class ProfileInfoBox extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              if (isCurrentUser)
+              if (state is ProfileLoaded)
                 SizedBox(
                   width: 180,
-                  child: CustomSquareButton(
-                    label: l10n.editProfile,
-                    backgroundColor: AppColors.primary,
-                    textColor: Colors.white,
-                    textStyle: const TextStyle(
-                      fontWeight: FontWeight.w900,
-                      fontSize: 13,
-                    ),
-                    borderRadius: 10,
-                    height: 10,
-                    row: true,
-                    leadingIcon: Icons.edit,
-                    iconColor: Colors.white,
-                    onTap: () {
-                      GoRouter.of(context).push(AppRoutes.editProfile);
-                    },
-                  ),
+                  height: 44,
+                  child: isCurrentUser
+                      ? CustomSquareButton(
+                          label: l10n.editProfile,
+                          backgroundColor: AppColors.primary,
+                          textColor: Colors.white,
+                          textStyle: const TextStyle(
+                            fontWeight: FontWeight.w900,
+                            fontSize: 13,
+                          ),
+                          borderRadius: 10,
+                          height: 10,
+                          row: true,
+                          leadingIcon: Icons.edit,
+                          iconColor: Colors.white,
+                          onTap: () {
+                            GoRouter.of(context).push(AppRoutes.editProfile);
+                          },
+                        )
+                      : FollowButton(
+                          currentUserId: loggedInUserId,
+                          authorId: targetUserId,
+                          isFollowing: user.isFollowing,
+                        ),
                 ),
-              
-                //TODO : add foloow button
-                const SizedBox(width: 12),
+              const SizedBox(width: 12),
               Container(
+                height: 44,
+                width: 44,
                 decoration: BoxDecoration(
                   color: isDark ? Colors.grey[800] : Colors.grey[200],
                   borderRadius: BorderRadius.circular(10),

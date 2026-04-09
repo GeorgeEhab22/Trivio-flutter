@@ -1310,4 +1310,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noMyGroupsYet => 'You haven\'t created any groups yet.';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get logoutAccountConfirm =>
+      'Are you sure you want to log out? You\'ll need to sign in again to access your data.';
+
+  @override
+  String get savedPosts => 'Saved Posts';
+
+  @override
+  String get noSavedPosts => 'No Saved Posts';
 }

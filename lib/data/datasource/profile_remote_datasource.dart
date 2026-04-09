@@ -24,6 +24,9 @@ abstract class ProfileRemoteDataSource {
   Future<List<Post>> getLikedPostsIds();
   Future<List<Post>> getLikedPosts();
   Future<List<Post>> getMyPosts();
+  Future<List<String>> getSavedPosts();
+  Future<void> savePost(String postId);
+  Future<void> unsavePost(String postId);
 }
 
 class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
@@ -85,28 +88,28 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   }) async {
     try {
       final Map<String, dynamic> data = {};
-      
+
       if (username != null && username.isNotEmpty) data["username"] = username;
       if (bio != null && bio.trim().isNotEmpty) {
         data["bio"] = bio;
       }
-      
-    if (avatarFile != null) {
+
+      if (avatarFile != null) {
         if (kIsWeb) {
           final bytes = await avatarFile.readAsBytes();
           data["avatar"] = MultipartFile.fromBytes(
             bytes,
-            filename: 'profile_image.jpg', 
+            filename: 'profile_image.jpg',
           );
         } else {
           data["avatar"] = await MultipartFile.fromFile(
             avatarFile.path,
-            filename: avatarFile.path.split('/').last, 
+            filename: avatarFile.path.split('/').last,
           );
         }
       }
       final response = await api.patch(
-        ApiEndpoints.updateProfile, 
+        ApiEndpoints.updateProfile,
         data: FormData.fromMap(data),
       );
       return UserProfileModel.fromJson(response['data']['user']);
@@ -135,12 +138,18 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
     try {
       final response = await api.get(ApiEndpoints.suggestions);
       final List list = response['data']['suggestions'];
-      return list.map((item) => UserProfilePreview(
-        id: item['_id'],
-        name: item['username'],
-        avatarUrl: item['avatar']
-      )).toList();
-    } catch (e) { throw _handleError(e); }
+      return list
+          .map(
+            (item) => UserProfilePreview(
+              id: item['_id'],
+              name: item['username'],
+              avatarUrl: item['avatar'],
+            ),
+          )
+          .toList();
+    } catch (e) {
+      throw _handleError(e);
+    }
   }
 
   @override
@@ -158,46 +167,112 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
     return ServerException(e.message ?? 'An unknown error occurred');
   }
 
-@override
-Future<List<PostModel>> getMyPosts() async {
-  try {
-    final response = await api.get(ApiEndpoints.getUserPosts);
-    
-    if (response['data'] == null || response['data']['posts'] == null) {
-      return [];
+  @override
+  Future<List<PostModel>> getMyPosts() async {
+    try {
+      final response = await api.get(ApiEndpoints.getUserPosts);
+
+      if (response['data'] == null || response['data']['posts'] == null) {
+        return [];
+      }
+      final List postsJson = response['data']['posts'];
+      return postsJson.map((json) => PostModel.fromJson(json)).toList();
+    } on DioException catch (e) {
+      throw ServerException(e.response?.data['message'] ?? 'Server Error');
+    } catch (e) {
+      throw ServerException('Mapping Error: $e');
     }
-    final List postsJson = response['data']['posts'];
-    return postsJson.map((json) => PostModel.fromJson(json)).toList();
-  } on DioException catch (e) {
-    throw ServerException(e.response?.data['message'] ?? 'Server Error');
-  } catch (e) {
-    throw ServerException('Mapping Error: $e');
   }
-}
 
-@override
-Future<List<PostModel>> getLikedPosts() async {
-  try {
-    final responseIds = await api.get(ApiEndpoints.likedPostsIds);
-    
-    final List<dynamic> rawIds = responseIds['data']['likedPosts'] ?? [];
-    
-    if (rawIds.isEmpty) return [];
+  @override
+  Future<List<PostModel>> getLikedPosts() async {
+    try {
+      final responseIds = await api.get(ApiEndpoints.likedPostsIds);
 
-    final List<String> postIds = rawIds.map((item) {
-      return item is Map ? item['_id'].toString() : item.toString();
-    }).toList();
+      final List<dynamic> rawIds = responseIds['data']['likedPosts'] ?? [];
 
-    final response = await api.post(
-      ApiEndpoints.likedPosts, 
-      data: {'postIds': postIds},
-    );
+      if (rawIds.isEmpty) return [];
 
-    final List postsJson = response['data']['posts'] ?? [];
-    return postsJson.map((json) => PostModel.fromJson(json)).toList();
-  } catch (e) {
-    errorHandler.handleDioError(e);
-    rethrow;
+      final List<String> postIds = rawIds.map((item) {
+        return item is Map ? item['_id'].toString() : item.toString();
+      }).toList();
+
+      final response = await api.post(
+        ApiEndpoints.likedPosts,
+        data: {'postIds': postIds},
+      );
+
+      final List postsJson = response['data']['posts'] ?? [];
+      return postsJson.map((json) => PostModel.fromJson(json)).toList();
+    } catch (e) {
+      errorHandler.handleDioError(e);
+      rethrow;
+    }
   }
-}
+
+  @override
+  Future<List<String>> getSavedPosts() async {
+    try {
+      final response = await api.get(ApiEndpoints.getSavedPosts);
+
+      // Safety check: ensure 'data' and 'savedPosts' exist
+      final dynamic data = response['data'];
+      if (data == null || data['savedPosts'] == null) return [];
+
+      final List rawList = data['savedPosts'];
+
+      // Convert to List<String> safely
+      return rawList
+          .where((item) => item != null) // Remove nulls
+          .map((item) {
+            // If the item is a Map (an object), get its _id.
+            // If it's already a String, just use it.
+            if (item is Map) return item['_id']?.toString() ?? '';
+            return item.toString();
+          })
+          .where((id) => id.isNotEmpty) // Remove empty strings
+          .toList();
+    } catch (e) {
+      debugPrint(
+        "🚨 Data Source Exception: $e",
+      ); // Print to console to see the real error
+      throw _handleError(e);
+    }
+  }
+
+  @override
+  Future<void> savePost(String postId) async {
+    try {
+      await api.post(
+        ApiEndpoints.savePost(postId),
+        data: {'postId': postId},
+        // Force JSON content type
+        options: Options(contentType: Headers.jsonContentType),
+      );
+    } catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  @override
+  Future<void> unsavePost(String postId) async {
+    try {
+      debugPrint("🚀 Attempting to UNSAVE: ${ApiEndpoints.unsavePost(postId)}");
+
+      // In Dio, DELETE requests sometimes need the data passed inside Options
+      // depending on how your ApiService is wrapped.
+      // Let's try passing it explicitly.
+      final response = await api.delete(
+        ApiEndpoints.unsavePost(postId),
+        data: {'postId': postId},
+      );
+
+      debugPrint("📥 UNSAVE RESPONSE: $response");
+    } on DioException catch (e) {
+      debugPrint("❌ UNSAVE FAILED DATA: ${e.response?.data}");
+      // If you get a 404 or 405 here, try changing api.delete to api.post
+      // as some routers treat actions as POST even if named 'unsave'
+      throw _handleError(e);
+    }
+  }
 }

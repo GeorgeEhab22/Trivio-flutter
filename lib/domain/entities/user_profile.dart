@@ -12,6 +12,9 @@ class UserProfile {
   final List<String> favPlayers;
 
   final int postsCount;
+  final String relationshipStatus;
+
+bool get isFollowing => relationshipStatus.toLowerCase() == 'following';
 
   const UserProfile({
     required this.id,
@@ -25,5 +28,6 @@ class UserProfile {
     this.favTeams = const [],
     this.favPlayers = const [],
     this.postsCount = 0,
+    this.relationshipStatus = '',
   });
 }

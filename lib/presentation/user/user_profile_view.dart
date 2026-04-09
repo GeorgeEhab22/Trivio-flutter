@@ -1,10 +1,10 @@
 import 'package:auth/constants/colors.dart';
 import 'package:auth/core/app_routes.dart';
 import 'package:auth/core/styels.dart';
-import 'package:auth/domain/entities/user_profile.dart'; 
+import 'package:auth/domain/entities/user_profile.dart';
 import 'package:auth/presentation/home/posts_in_timeline/widgets/post_card.dart';
-import 'package:auth/presentation/manager/profile_cubit/get_user_profile_by_id_cubit.dart'; 
-import 'package:auth/presentation/manager/profile_cubit/get_user_profile_by_id_state.dart'; 
+import 'package:auth/presentation/manager/profile_cubit/get_user_profile_by_id_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/get_user_profile_by_id_state.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_posts_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_posts_state.dart';
@@ -15,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:visibility_detector/visibility_detector.dart';
+
 
 class ScrollToPostsNotification extends Notification {}
 
@@ -68,7 +69,6 @@ class _UserProfileViewState extends State<UserProfileView> {
     if (isMyProfile) {
       return _buildMyProfileBody();
     } else {
-
       return _buildOtherUserProfileBody();
     }
   }
@@ -142,6 +142,16 @@ class _UserProfileViewState extends State<UserProfileView> {
               scrolledUnderElevation: 0,
               centerTitle: false,
               surfaceTintColor: Colors.transparent,
+              leading: !isMyProfile
+                  ? IconButton(
+                      onPressed: () => context.pop(),
+                      icon: Icon(
+                        Icons.arrow_back_ios_new_rounded,
+                        color: Theme.of(context).iconTheme.color,
+                        size: 25,
+                      ),
+                    )
+                  : null,
               title: Text(
                 'Trivio',
                 style: TextStyle(
@@ -151,19 +161,6 @@ class _UserProfileViewState extends State<UserProfileView> {
                 ),
                 overflow: TextOverflow.ellipsis,
               ),
-
-              //TODO : check if current user
-
-              // leading: IconButton(
-              //   onPressed: () {
-              //     context.pop();
-              //   },
-              //   icon: Icon(
-              //     Icons.arrow_back_ios_new_rounded,
-              //     color: Theme.of(context).iconTheme.color,
-              //     size: 25,
-              //   ),
-              // ),
               actions: [
                 if (isMyProfile)
                   IconButton(

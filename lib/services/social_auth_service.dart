@@ -68,4 +68,19 @@ class SocialAuthService {
       'authorizationCode': credential.authorizationCode,
     };
   }
+
+  Future<void> signOut() async {
+    try {
+      if (await _googleSignIn.isSignedIn()) {
+        await _googleSignIn.signOut();
+      }
+    
+      try {
+        await _googleSignIn.disconnect();
+      } catch (_) {
+      }
+    } catch (e) {
+      debugPrint('Error during SocialAuthService signOut: $e');
+    }
+  }
 }

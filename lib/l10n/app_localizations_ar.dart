@@ -1296,4 +1296,17 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get noMyGroupsYet => 'لم تقم بإنشاء أي مجموعات حتى الآن.';
+
+  @override
+  String get cancel => 'إلغاء';
+
+  @override
+  String get logoutAccountConfirm =>
+      'هل أنت متأكد أنك تريد تسجيل الخروج؟ ستحتاج إلى تسجيل الدخول مرة أخرى للوصول إلى بياناتك.';
+
+  @override
+  String get savedPosts => 'المنشورات المحفوظة';
+
+  @override
+  String get noSavedPosts => 'لا يوجد منشورات محفوظة';
 }

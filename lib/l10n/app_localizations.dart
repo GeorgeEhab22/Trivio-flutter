@@ -2593,6 +2593,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You haven\'t created any groups yet.'**
   String get noMyGroupsYet;
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// No description provided for @logoutAccountConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to log out? You\'ll need to sign in again to access your data.'**
+  String get logoutAccountConfirm;
+
+  /// No description provided for @savedPosts.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved Posts'**
+  String get savedPosts;
+
+  /// No description provided for @noSavedPosts.
+  ///
+  /// In en, this message translates to:
+  /// **'No Saved Posts'**
+  String get noSavedPosts;
 }
 
 class _AppLocalizationsDelegate

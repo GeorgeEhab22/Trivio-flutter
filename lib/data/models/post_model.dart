@@ -4,6 +4,7 @@ import 'package:auth/domain/entities/mentions.dart';
 import 'package:auth/domain/entities/post.dart';
 import 'package:auth/domain/entities/reaction.dart';
 import 'package:auth/domain/entities/reaction_type.dart';
+import 'package:flutter/foundation.dart';
 
 class PostModel extends Post {
   final int updateCount;
@@ -35,6 +36,7 @@ class PostModel extends Post {
     required super.createdAt,
     super.tags = const [],
     super.shownTags = false,
+    super.isAuthorFollowed = false,
   });
 
   factory PostModel.fromJson(Map<String, dynamic> json) {
@@ -43,6 +45,9 @@ class PostModel extends Post {
         : (json['data'] != null && json['data']['post'] != null)
             ? json['data']['post'] as Map<String, dynamic>
             : json;
+
+    final bool isFollowed = json['isFollowed'] ?? 
+                            (json['data'] != null ? json['data']['isFollowed'] ?? false : false);
 
     final dummyReactions = _parseReactionCounter(raw['reactionCounts']);
 
@@ -58,11 +63,13 @@ class PostModel extends Post {
       gName = groupData['name'];
       gCover = groupData['coverImage'] ?? groupData['logo'];
     }
+    
+    //TODO : remove when backend is fixed to add mobile ip and change to your ip
 
-    //TODO : remove when backend is fixed to add mobile ip
-    // and change to your ip
-    if (gCover != null && gCover.contains('localhost')) {
-      gCover = gCover.replaceAll('localhost', '192.168.1.28');
+   if (gCover != null && gCover.contains('localhost')) {
+      if (!kIsWeb && (defaultTargetPlatform == TargetPlatform.android || defaultTargetPlatform == TargetPlatform.iOS)) {
+        gCover = gCover.replaceAll('localhost', '192.168.1.28');
+      }
     }
     final dynamic authorData = raw['authorID'] ?? raw['authorId'];
     String aId = '';
@@ -77,8 +84,11 @@ class PostModel extends Post {
       aImage = authorData['avatar'] ?? authorData['profilePicture'];
 
       if (aImage != null && aImage.contains('localhost')) {
-        aImage = aImage.replaceAll('localhost', '192.168.1.28');
-      }
+        if (!kIsWeb && (defaultTargetPlatform == TargetPlatform.android || defaultTargetPlatform == TargetPlatform.iOS)) {
+          aImage = aImage.replaceAll('localhost', '192.168.1.28');
+        }
+      
+    }
     }
 
     final userReaction = JsonParser.parseReactionType(
@@ -150,6 +160,7 @@ class PostModel extends Post {
 
       tags: (raw['tags'] as List<dynamic>? ?? []).map((e) => e.toString()).toList(),
       shownTags: raw['shownTags'] ?? false,
+      isAuthorFollowed: isFollowed,
     );
   }
 
@@ -247,6 +258,7 @@ class PostModel extends Post {
       createdAt: createdAt,
       tags: tags,
       shownTags: shownTags,
+      isAuthorFollowed: isAuthorFollowed,
     );
   }
 

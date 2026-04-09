@@ -65,7 +65,9 @@ class SettingsView extends StatelessWidget {
                                 context,
                               ).colorScheme.outlineVariant,
                               alignment: CrossAxisAlignment.start,
-                              onTap: () {},
+                              onTap: () {
+                                context.push(AppRoutes.saved);
+                              },
                             ),
                           ),
                           const SizedBox(width: 12),
