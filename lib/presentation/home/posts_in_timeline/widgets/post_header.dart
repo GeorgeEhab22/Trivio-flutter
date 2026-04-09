@@ -1,8 +1,10 @@
+import 'package:auth/injection_container.dart' as di;
 import 'package:auth/presentation/home/posts_in_timeline/widgets/follow_button.dart';
 import 'package:auth/presentation/manager/group_cubit/get_group_posts/group_posts_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_state.dart';
+import 'package:auth/presentation/manager/profile_cubit/saved_posts/saved_posts_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:auth/domain/entities/post.dart';
@@ -30,8 +32,8 @@ class PostHeader extends StatelessWidget {
     final Color iconBorderColor = isDark
         ? Colors.white.withValues(alpha: 0.12)
         : Colors.black.withValues(alpha: 0.08);
-  
-    String authorName = post.authorName ??"Not Me";
+
+    String authorName = post.authorName ?? "Not Me";
     String? authorImage = post.authorImage;
     final profileState = context.read<ProfileCubit>().state;
 
@@ -64,7 +66,7 @@ class PostHeader extends StatelessWidget {
                 if (post.authorId != currentUserId)
                   FollowButton(
                     currentUserId: currentUserId,
-                    authorId: post.authorId, 
+                    authorId: post.authorId,
                     isFollowing: post.isAuthorFollowed,
                   ),
               ],
@@ -103,9 +105,12 @@ class PostHeader extends StatelessWidget {
                           if (groupPostsCubit != null)
                             BlocProvider.value(value: groupPostsCubit),
                         ],
-                        child: OptionsBottomSheet(
-                          post: post,
-                          currentUserId: currentUserId,
+                        child: BlocProvider(
+                          create: (context) => di.sl<SavedPostsCubit>()..loadSavedPosts(),
+                          child: OptionsBottomSheet(
+                            post: post,
+                            currentUserId: currentUserId,
+                          ),
                         ),
                       ),
                     );

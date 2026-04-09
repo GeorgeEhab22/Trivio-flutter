@@ -109,4 +109,35 @@ Future<Either<Failure, List<Post>>> getMyPosts() async {
   }
 }
 
+  @override
+  Future<Either<Failure, List<String>>> getSavedPosts() async {
+    try {
+      final posts = await remoteDataSource.getSavedPosts();
+      return Right(posts);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } catch (e) {
+      return Left(ServerFailure('Unexpected error loading saved posts: $e'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, Unit>> savePost(String postId) async {
+    try {
+      await remoteDataSource.savePost(postId);
+      return const Right(unit);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, Unit>> unsavePost(String postId) async {
+    try {
+      await remoteDataSource.unsavePost(postId);
+      return const Right(unit);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    }
+  }
 }

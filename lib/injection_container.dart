@@ -122,8 +122,11 @@ import 'package:auth/domain/usecases/interests/remove_fav_teams_use_case.dart';
 import 'package:auth/domain/usecases/interests/select_interests.dart';
 import 'package:auth/domain/usecases/user_profile/get_liked_posts.dart';
 import 'package:auth/domain/usecases/user_profile/get_my_posts.dart';
+import 'package:auth/domain/usecases/user_profile/get_saved_posts.dart';
 import 'package:auth/domain/usecases/user_profile/get_suggestions.dart';
 import 'package:auth/domain/usecases/user_profile/get_user_profile_by_id.dart';
+import 'package:auth/domain/usecases/user_profile/save_post.dart';
+import 'package:auth/domain/usecases/user_profile/unsave_post.dart';
 import 'package:auth/domain/usecases/user_profile/update_profile.dart';
 import 'package:auth/presentation/manager/chatbot_cubit/chatbot_cubit.dart';
 import 'package:auth/presentation/manager/comment_cubit/comment_cubit.dart';
@@ -164,6 +167,7 @@ import 'package:auth/presentation/manager/profile_cubit/profile_liked_posts_cubi
 import 'package:auth/presentation/manager/profile_cubit/profile_posts_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_social_info_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_update_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/saved_posts/saved_posts_cubit.dart';
 import 'package:auth/presentation/manager/register_cubit/register_cubit.dart';
 import 'package:auth/presentation/manager/sigin_in_cubit/request_otp/request_otp_cubit.dart';
 import 'package:auth/presentation/manager/sigin_in_cubit/sign_in_cubit.dart';
@@ -514,6 +518,19 @@ Future<void> init() async {
     () =>
         ProfilePostsCubit(getMyPostsUseCase: sl(), getLikedPostsUseCase: sl()),
   );
+
+  //saved posts
+  sl.registerLazySingleton(() => GetSavedPosts(sl()));
+  sl.registerLazySingleton(() => SavePost(sl()));
+  sl.registerLazySingleton(() => UnsavePost(sl()));
+
+  sl.registerFactory(() => SavedPostsCubit(
+        getSavedPostsUseCase: sl(),
+        savePostUseCase: sl(),
+        unsavePostUseCase: sl(),
+        getPostUseCase: sl(),
+      ));
+
   //follow
   sl.registerLazySingleton<FollowRemoteDataSource>(
     () => FollowRemoteDataSourceImpl(api: sl(), errorHandler: sl()),
