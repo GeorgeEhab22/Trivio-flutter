@@ -2617,6 +2617,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No Saved Posts'**
   String get noSavedPosts;
+
+  /// No description provided for @sensitiveContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Sensitive Content'**
+  String get sensitiveContent;
+
+  /// No description provided for @seePost.
+  ///
+  /// In en, this message translates to:
+  /// **'See Post'**
+  String get seePost;
 }
 
 class _AppLocalizationsDelegate

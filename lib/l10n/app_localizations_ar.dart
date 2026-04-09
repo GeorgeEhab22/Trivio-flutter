@@ -1309,4 +1309,10 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get noSavedPosts => 'لا يوجد منشورات محفوظة';
+
+  @override
+  String get sensitiveContent => 'محتوى حساس';
+
+  @override
+  String get seePost => ' عرض المنشور';
 }

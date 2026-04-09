@@ -1323,4 +1323,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noSavedPosts => 'No Saved Posts';
+
+  @override
+  String get sensitiveContent => 'Sensitive Content';
+
+  @override
+  String get seePost => 'See Post';
 }

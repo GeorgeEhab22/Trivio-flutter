@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:auth/presentation/home/posts_in_timeline/widgets/post_content.dart';
 import 'package:auth/presentation/home/posts_in_timeline/widgets/post_footer.dart';
 import 'package:auth/presentation/home/posts_in_timeline/widgets/post_header.dart';
@@ -18,7 +19,9 @@ class PostCard extends StatelessWidget {
   final String currentUserId;
   final ReactionType? currentReaction;
 
-  const PostCard({
+  final ValueNotifier<bool> isRevealed = ValueNotifier<bool>(false);
+
+  PostCard({
     super.key,
     required this.post,
     required this.currentUserId,
@@ -43,6 +46,7 @@ class PostCard extends StatelessWidget {
         try {
           groupPostsState = context.watch<GroupPostsCubit>().state;
         } catch (_) {}
+        
         bool isDeleting = false;
         if (groupPostsState is GroupPostsDeleting) {
           isDeleting = groupPostsState.postId == post.postID;
@@ -51,12 +55,16 @@ class PostCard extends StatelessWidget {
           isDeleting = isDeleting || postCubitState.postId == post.postID;
         }
 
-        final isReportLoading =
-            state is ReportPostLoading && state.postId == post.postID;
-        final hasMetrics =
-            post.reactionsCount > 0 || (post.media?.isNotEmpty ?? false);
+        final isReportLoading = state is ReportPostLoading && state.postId == post.postID;
+        final hasMetrics = post.reactionsCount > 0 || (post.media?.isNotEmpty ?? false);
         final isGroupPost = post.location == 'group';
         final isDark = Theme.of(context).brightness == Brightness.dark;
+        
+        // --- Flagged Post Variables ---
+        final bool isFlagged = post.flagged ?? false;
+        const double blurSigma = 15.0; // Intensity of the blur
+
+        // Styling Variables
         final borderColor = isDark
             ? Colors.white.withValues(alpha: 0.12)
             : Colors.black.withValues(alpha: 0.08);
@@ -95,84 +103,38 @@ class PostCard extends StatelessWidget {
                 ),
                 child: Stack(
                   children: [
-                    PositionedDirectional(
-                      end: -28,
-                      top: -38,
-                      child: Container(
-                        width: 108,
-                        height: 108,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          gradient: LinearGradient(
-                            colors: [
-                              AppColors.primary.withValues(
-                                alpha: isDark ? 0.25 : 0.2,
-                              ),
-                              Colors.transparent,
-                            ],
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                          ),
-                        ),
-                      ),
-                    ),
+                    _buildBackgroundCircle(isDark),
+                    
                     Material(
                       color: Colors.transparent,
-                      child: InkWell(
-                        onTap: () {},
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              height: 4,
-                              decoration: BoxDecoration(
-                                gradient: isDark
-                                    ? LinearGradient(
-                                        colors: [
-                                          AppColors.primary.withAlpha(900),
-                                          AppColors.darkGreen,
-                                        ],
-                                      )
-                                    : LinearGradient(
-                                        colors: [
-                                          AppColors.primary,
-                                          AppColors.darkGreen,
-                                        ],
-                                      ),
-                              ),
-                            ),
-                            PostHeader(
-                              post: post,
-                              currentUserId: currentUserId,
-                            ),
-                            PostContent(post: post),
-                            if (hasMetrics || isGroupPost) ...[
-                              const SizedBox(height: 6),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 14,
-                                ),
-                                
-                              ),
-                            ],
-                            const SizedBox(height: 10),
-                            Divider(
-                              height: 1,
-                              thickness: 0.7,
-                              indent: 12,
-                              endIndent: 12,
-                              color: isDark
-                                  ? Colors.white.withValues(alpha: 0.09)
-                                  : const Color(0xFFE8ECEF),
-                            ),
-                            PostFooter(
-                              post: post,
-                              currentUserId: currentUserId,
-                              currentReaction:
-                                  currentReaction ?? post.userReaction,
-                            ),
-                          ],
-                        ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildTopGlowBar(isDark),
+                          PostHeader(
+                            post: post,
+                            currentUserId: currentUserId,
+                          ),
+                          
+                          ValueListenableBuilder<bool>(
+                            valueListenable: isRevealed,
+                            builder: (context, revealed, child) {
+                              if (isFlagged && !revealed) {
+                                return _buildBlurredContent(context, isDark, blurSigma);
+                              }
+                              return PostContent(post: post);
+                            },
+                          ),
+
+                          if (hasMetrics || isGroupPost) const SizedBox(height: 10),
+                          
+                          _buildDivider(isDark),
+                          PostFooter(
+                            post: post,
+                            currentUserId: currentUserId,
+                            currentReaction: currentReaction ?? post.userReaction,
+                          ),
+                        ],
                       ),
                     ),
                   ],
@@ -184,5 +146,105 @@ class PostCard extends StatelessWidget {
       },
     );
   }
-}
 
+  Widget _buildBlurredContent(BuildContext context, bool isDark, double sigma) {
+    final l10n = AppLocalizations.of(context)!;
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        // The actual content (blurred)
+        ClipRect(
+          child: ImageFiltered(
+            imageFilter: ImageFilter.blur(sigmaX: sigma, sigmaY: sigma),
+            child: PostContent(post: post),
+          ),
+        ),
+        // The Overlay Info
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: isDark ? Colors.black54 : Colors.white70,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.visibility_off_outlined,
+                color: isDark ? Colors.white : AppColors.primary,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              l10n.sensitiveContent,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: isDark ? Colors.white : Colors.black87,
+              ),
+            ),
+            const SizedBox(height: 8),
+            TextButton(
+              onPressed: () => isRevealed.value = true,
+              style: TextButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              ),
+              child: Text(l10n.seePost),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  // --- Helper UI Components to keep the build method clean ---
+
+  Widget _buildTopGlowBar(bool isDark) {
+    return Container(
+      height: 4,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: isDark 
+            ? [AppColors.primary.withAlpha(200), AppColors.darkGreen] 
+            : [AppColors.primary, AppColors.darkGreen],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBackgroundCircle(bool isDark) {
+    return PositionedDirectional(
+      end: -28,
+      top: -38,
+      child: Container(
+        width: 108,
+        height: 108,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          gradient: LinearGradient(
+            colors: [
+              AppColors.primary.withValues(alpha: isDark ? 0.25 : 0.2),
+              Colors.transparent,
+            ],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDivider(bool isDark) {
+    return Divider(
+      height: 1,
+      thickness: 0.7,
+      indent: 12,
+      endIndent: 12,
+      color: isDark
+          ? Colors.white.withValues(alpha: 0.09)
+          : const Color(0xFFE8ECEF),
+    );
+  }
+}
