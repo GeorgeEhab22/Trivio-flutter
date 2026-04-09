@@ -11,13 +11,13 @@ import 'package:auth/presentation/manager/profile_cubit/profile_posts_state.dart
 import 'package:auth/presentation/manager/profile_cubit/profile_state.dart';
 import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/user/widgets/profile_info_box.dart';
+import 'package:auth/presentation/user/widgets/profile_social_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 
-class ScrollToPostsNotification extends Notification {}
 
 class UserProfileView extends StatefulWidget {
   final String? userId; // If null, we are looking at "My Profile"

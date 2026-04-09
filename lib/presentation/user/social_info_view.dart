@@ -44,7 +44,19 @@ class SocialInfoScreen extends StatelessWidget {
       child: Builder(
         builder: (context) {
           final tabController = DefaultTabController.of(context);
-
+          tabController.addListener(() {
+            if (!tabController.indexIsChanging) {
+              final cubit = context.read<ProfileSocialInfoCubit>();
+              // Refresh the data for the newly selected tab
+              if (tabController.index == 0) {
+                cubit.fetchFollowers(userId: userId);
+              } else if (tabController.index == 1) {
+                cubit.fetchFollowing(userId: userId);
+              } else if (tabController.index == 2 && isMyProfile && isPrivateAccount) {
+                cubit.fetchRequests();
+              }
+            }
+          });
           return Scaffold(
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             appBar: AppBar(

@@ -24,7 +24,7 @@ class ProfileSocialInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-final String queryParam = userId != null ? '&userId=$userId' : '';
+    final String queryParam = userId != null ? '&userId=$userId' : '';
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
       padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),

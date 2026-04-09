@@ -97,7 +97,7 @@ class FollowInfoList extends StatelessWidget {
                     builder: (context, socialState) {
                       bool amIFollowing = false; 
                       
-                      if (isFollowingList && socialState is SocialInfoLoaded) {
+                      if (socialState is SocialInfoLoaded) {
                          amIFollowing = socialState.following.any(
                            (f) => f.user.id.toString().trim() == id.toString().trim(),
                          );
@@ -107,7 +107,7 @@ class FollowInfoList extends StatelessWidget {
                         currentUserId: currentUserId!,
                         authorId: id,
                         isFollowing: amIFollowing,
-                        showUnfollowText: isFollowingList,
+                        showUnfollowText: isFollowingList, 
                       );
                     },
                   ),
