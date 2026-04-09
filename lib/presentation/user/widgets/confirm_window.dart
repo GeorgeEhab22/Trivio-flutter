@@ -1,5 +1,8 @@
 import 'package:auth/core/styels.dart';
+import 'package:auth/injection_container.dart' as di;
+import 'package:auth/presentation/manager/sigin_in_cubit/sign_in_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ConfirmWindow extends StatelessWidget {
   final String title;
@@ -13,8 +16,12 @@ class ConfirmWindow extends StatelessWidget {
     required this.onConfirm,
   });
 
-  // The "Magic" static method to trigger the window
-  static void show(BuildContext context, {required String title, required String subtitle, required VoidCallback onConfirm}) {
+  static void show(
+    BuildContext context, {
+    required String title,
+    required String subtitle,
+    required VoidCallback onConfirm,
+  }) {
     showGeneralDialog(
       context: context,
       barrierDismissible: true,
@@ -23,13 +30,17 @@ class ConfirmWindow extends StatelessWidget {
       pageBuilder: (context, a1, a2) => const SizedBox.shrink(),
       transitionBuilder: (context, anim, anim2, child) {
         return ScaleTransition(
-          scale: Tween<double>(begin: 0.5, end: 1.0).animate(
-            CurvedAnimation(parent: anim, curve: Curves.easeOutBack),
-          ),
-          child: ConfirmWindow(
-            title: title,
-            subtitle: subtitle,
-            onConfirm: onConfirm,
+          scale: Tween<double>(
+            begin: 0.5,
+            end: 1.0,
+          ).animate(CurvedAnimation(parent: anim, curve: Curves.easeOutBack)),
+          child: BlocProvider(
+            create: (context) => di.sl<SignInCubit>(),
+            child: ConfirmWindow(
+              title: title,
+              subtitle: subtitle,
+              onConfirm: onConfirm,
+            ),
           ),
         );
       },
@@ -58,7 +69,9 @@ class ConfirmWindow extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: Styles.textStyle25.copyWith(fontWeight: FontWeight.bold),
+                  style: Styles.textStyle25.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 12),
@@ -73,7 +86,10 @@ class ConfirmWindow extends StatelessWidget {
                     Expanded(
                       child: TextButton(
                         onPressed: () => Navigator.pop(context),
-                        child: const Text("Cancel", style: TextStyle(color: Colors.grey)),
+                        child: const Text(
+                          "Cancel",
+                          style: TextStyle(color: Colors.grey),
+                        ),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -82,14 +98,19 @@ class ConfirmWindow extends StatelessWidget {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.redAccent,
                           foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
                           elevation: 0,
                         ),
                         onPressed: () {
                           Navigator.pop(context); // Close window
                           onConfirm(); // Do the logout logic
                         },
-                        child: const Text("Logout", style: TextStyle(fontWeight: FontWeight.bold)),
+                        child: const Text(
+                          "Logout",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
                       ),
                     ),
                   ],
@@ -97,7 +118,6 @@ class ConfirmWindow extends StatelessWidget {
               ],
             ),
           ),
-          // The Overlapping Icon
           const Positioned(
             top: 0,
             child: CircleAvatar(

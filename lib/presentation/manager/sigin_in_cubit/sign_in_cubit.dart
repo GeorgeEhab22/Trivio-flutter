@@ -4,7 +4,7 @@ import 'package:auth/domain/usecases/sign_in/signin_usecase.dart';
 import 'package:auth/presentation/manager/sigin_in_cubit/sign_in_state.dart';
 import 'package:auth/services/social_auth_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
 
 class SignInCubit extends Cubit<SignInState> {
   final SignInUseCase _signInUseCase;
@@ -71,19 +71,6 @@ class SignInCubit extends Cubit<SignInState> {
     }
   }
 
-  Future<void> logout() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.remove('auth_token'); 
-      await socialAuthService.signOut(); 
-      emit(const SignInInitial());
-    } catch (e) {
-      emit(const SignInFailure(
-        message: "Logout failed. Please try again.",
-        errorType: "server",
-      ));
-    }
-  }
   
   void resetState() => emit(const SignInInitial());
 

@@ -2,11 +2,10 @@ import 'package:auth/constants/colors.dart';
 import 'package:auth/core/app_routes.dart';
 import 'package:auth/core/styels.dart';
 import 'package:auth/l10n/app_localizations.dart';
+import 'package:auth/presentation/manager/log_out_cubit/log_out_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_state.dart';
-import 'package:auth/presentation/manager/sigin_in_cubit/sign_in_cubit.dart';
 import 'package:auth/presentation/user/widgets/confirm_window.dart';
-// import 'package:auth/presentation/user/widgets/profile_info_box.dart';
 import 'package:auth/presentation/user/widgets/settings_row.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -108,13 +107,15 @@ class UserProfileSettings extends StatelessWidget {
 
                     InkWell(
                       onTap: () {
+                        final logOutCubit = context.read<LogOutCubit>();
+                        final profileCubit = context.read<ProfileCubit>();
                         ConfirmWindow.show(
                           context,
                           title: l10n.logoutAccount,
                           subtitle: l10n.logoutAccountConfirm,
                           onConfirm: () async {
-                            await context.read<SignInCubit>().logout();
-                            context.read<ProfileCubit>().clearProfile();
+                            await logOutCubit.executeLogOut();
+                            profileCubit.clearProfile();
                             if (context.mounted) {
                               context.go(AppRoutes.signIn);
                             }

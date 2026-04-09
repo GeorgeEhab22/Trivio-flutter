@@ -3,7 +3,6 @@ import 'package:auth/domain/usecases/post/get_post_usecase.dart';
 import 'package:auth/domain/usecases/user_profile/get_saved_posts.dart';
 import 'package:auth/domain/usecases/user_profile/save_post.dart';
 import 'package:auth/domain/usecases/user_profile/unsave_post.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'saved_posts_state.dart';
 

@@ -155,6 +155,7 @@ import 'package:auth/presentation/manager/locale_cubit/locale_cubit.dart';
 import 'package:auth/domain/usecases/user_profile/get_my_profile.dart';
 import 'package:auth/presentation/manager/follow_cubit/follow_cubit.dart';
 import 'package:auth/presentation/manager/follow_cubit/get_follow_info_cubit.dart';
+import 'package:auth/presentation/manager/log_out_cubit/log_out_cubit.dart';
 import 'package:auth/presentation/manager/notifications_cubit/notifications_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/create_post_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/get_post/get_post_cubit.dart';
@@ -238,6 +239,7 @@ Future<void> init() async {
   );
   sl.registerFactory(() => RegisterCubit(registerUseCase: sl()));
   sl.registerFactory(() => RequestOTPCubit(sendPasswordResetOtp: sl()));
+  sl.registerFactory(() => LogOutCubit());
 
   // ==========================================================================
   // FEATURE: STATS (Football Data)
