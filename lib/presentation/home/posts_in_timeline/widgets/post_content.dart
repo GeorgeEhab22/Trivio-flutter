@@ -1,6 +1,7 @@
 import 'package:auth/constants/colors.dart';
 import 'package:auth/presentation/home/posts_in_timeline/widgets/post_image_slider.dart';
 import 'package:auth/presentation/home/posts_in_timeline/widgets/post_video.dart';
+import 'package:auth/presentation/home/posts_in_timeline/widgets/post_image.dart';
 import 'package:auth/presentation/home/widgets/exbandable_text.dart';
 import 'package:flutter/material.dart';
 import 'package:auth/domain/entities/post.dart';
@@ -68,7 +69,9 @@ class PostContent extends StatelessWidget {
         if (hasMedia)
           isVideo(post.media![0])
               ? PostVideo(videoUrl: post.media![0])
-              : PostImageSlider(images: post.media!, postId: post.postID ),
+              : post.media!.length == 1
+              ? PostImage(imageUrl: post.media![0])
+              : PostImageSlider(images: post.media!, postId: post.postID),
       ],
     );
   }

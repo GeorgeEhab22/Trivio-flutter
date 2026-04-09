@@ -17,34 +17,39 @@ class PostImage extends StatelessWidget {
   Widget build(BuildContext context) {
     if (imageUrl == null || imageUrl!.isEmpty) return const SizedBox.shrink();
 
-    // final maxHeight = MediaQuery.of(context).size.height * 0.55;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardGradient = isDark
+        ? const [Color(0xFF1D2228), Color(0xFF171B20)]
+        : const [Color(0xFFFFFFFF), Color(0xFFF8FBF9)];
+
+    final maxHeight = MediaQuery.of(context).size.height * 0.65;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(16), 
-        child: Container(
-          width: double.infinity,
-          height: double.infinity,
-          // constraints: BoxConstraints(
-          //   maxHeight: maxHeight, 
-          // ),
-          color: Colors.grey[100],
-          child: CachedNetworkImage(
-            imageUrl: imageUrl!,
-            fit: BoxFit.cover, 
-            memCacheHeight: 800,
-            memCacheWidth: 800,
-            alignment: Alignment.center, 
-            placeholder: (context, url) => Container(
-              height: 200,
-              color: Colors.grey[200],
-              child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 0),
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxHeight: maxHeight),
+        child: Ink(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: cardGradient,
             ),
-            errorWidget: (context, url, error) => Container(
-              height: 200,
-              color: Colors.grey[100],
-              child: const Icon(Icons.broken_image, color: Colors.grey, size: 40),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: CachedNetworkImage(
+              imageUrl: imageUrl!,
+              width: double.infinity,
+              fit: BoxFit.cover,
+              memCacheHeight: 1000,
+              alignment: Alignment.center,
+              placeholder: (context, url) => const SizedBox(height: 250),
+              errorWidget: (context, url, error) => const SizedBox(
+                height: 250,
+                child: Icon(Icons.broken_image_outlined, color: Colors.grey),
+              ),
             ),
           ),
         ),
