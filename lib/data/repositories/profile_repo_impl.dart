@@ -140,4 +140,15 @@ Future<Either<Failure, List<Post>>> getMyPosts() async {
       return Left(ServerFailure(e.message));
     }
   }
+  @override
+Future<Either<Failure, List<Post>>> getUserPostsById(String userId) async {
+  try {
+    final posts = await remoteDataSource.getUserPostsById(userId);
+    return Right(posts);
+  } on ServerException catch (e) {
+    return Left(ServerFailure(e.message));
+  } catch (e) {
+    return Left(ServerFailure(e.toString()));
+  }
+}
 }

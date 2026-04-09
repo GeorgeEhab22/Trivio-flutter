@@ -13,7 +13,7 @@ class FollowButton extends StatefulWidget {
   final bool isFollowing; 
   final bool isReel;
   final bool showUnfollowText;
-
+  final VoidCallback? onFollowChanged;
   const FollowButton({
     super.key,
     required this.currentUserId,
@@ -21,6 +21,7 @@ class FollowButton extends StatefulWidget {
     required this.isFollowing,
     this.isReel = false,
     this.showUnfollowText = false,
+    this.onFollowChanged,
   });
 
   @override
@@ -60,18 +61,25 @@ class _FollowButtonState extends State<FollowButton> {
 
     return BlocListener<FollowCubit, FollowState>(
       listener: (context, state) {
-        if (!_isProcessingLocally) return;
-
-        if (state is FollowFailure) {
+        if (_isProcessingLocally && state is FollowFailure) {
           showCustomSnackBar(context, state.message, false);
           setState(() {
-            _isFollowing = !_isFollowing; 
+            _isFollowing = !_isFollowing;
             _isProcessingLocally = false;
           });
-        } else if (state is FollowSuccess || state is UnfollowSuccess) {
+          //widget.onFollowChanged?.call();
+        } 
+        if (state is FollowSuccess && state.follow?.user.id == widget.authorId) {
           setState(() {
+            _isFollowing = true;
             _isProcessingLocally = false;
           });
+        } else if (state is UnfollowSuccess && state.unfollowedUserId == widget.authorId) {
+          setState(() {
+            _isFollowing = false;
+            _isProcessingLocally = false;
+          });
+          //widget.onFollowChanged?.call();
         }
       },
       child: SizedBox(

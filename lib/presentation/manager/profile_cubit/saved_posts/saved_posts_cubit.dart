@@ -26,7 +26,7 @@ class SavedPostsCubit extends Cubit<SavedPostsState> {
   Future<void> loadSavedPosts() async {
   emit(SavedPostsLoading());
   
-  final result = await getSavedPostsUseCase(); // This now returns Either<Failure, List<String>>
+  final result = await getSavedPostsUseCase();
   
   result.fold(
     (failure) => emit(SavedPostsError(failure.message)),
@@ -40,7 +40,7 @@ class SavedPostsCubit extends Cubit<SavedPostsState> {
       for (var id in ids) {
         final postResult = await getPostUseCase(id);
         postResult.fold(
-          (failure) => debugPrint("Post $id fetch failed"),
+          (failure) => emit(SavedPostsError(failure.message)),
           (post) => fullPosts.add(post),
         );
       }

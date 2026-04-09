@@ -48,6 +48,7 @@ import 'package:auth/presentation/manager/profile_cubit/get_user_profile_by_id_c
 import 'package:auth/presentation/manager/profile_cubit/interests/select_interests_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_posts_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/saved_posts/saved_posts_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/user/get_user_posts_cubit.dart';
 import 'package:auth/presentation/manager/sigin_in_cubit/forget_password_otp_cubit.dart';
 import 'package:auth/presentation/home/widgets/edit_page.dart';
 import 'package:auth/presentation/manager/follow_cubit/follow_cubit.dart';
@@ -251,10 +252,11 @@ GoRouter createRouter(bool isLoggedIn) {
                           ..loadUserProfileById(userId),
                   ),
                   BlocProvider(create: (context) => di.sl<ProfilePostsCubit>()),
+                  BlocProvider(create: (context) => di.sl<GetUserPostsCubit>()..fetchUserPosts(userId)),
                   BlocProvider(create: (context) => di.sl<FollowCubit>()),
                   BlocProvider(
-      create: (context) => di.sl<ProfileSocialInfoCubit>(),
-    ),
+                    create: (context) => di.sl<ProfileSocialInfoCubit>(),
+                  ),
                 ],
                 child: UserProfileView(userId: userId),
               );
@@ -267,19 +269,17 @@ GoRouter createRouter(bool isLoggedIn) {
               final String? targetUserId = state.uri.queryParameters['userId'];
               final int index = int.tryParse(tabString ?? '0') ?? 0;
               return MultiBlocProvider(
-  providers: [
-    BlocProvider(
-      create: (context) => di.sl<ProfileSocialInfoCubit>(),
-    ),
-    BlocProvider(
-      create: (context) => di.sl<FollowCubit>(),
-    ),
-  ],
-  child: SocialInfoScreen(
-    initialTabIndex: index,
-    userId: targetUserId,
-  ),
-);
+                providers: [
+                  BlocProvider(
+                    create: (context) => di.sl<ProfileSocialInfoCubit>(),
+                  ),
+                  BlocProvider(create: (context) => di.sl<FollowCubit>()),
+                ],
+                child: SocialInfoScreen(
+                  initialTabIndex: index,
+                  userId: targetUserId,
+                ),
+              );
             },
           ),
           GoRoute(

@@ -21,4 +21,5 @@ abstract class UserProfileRepo {
   Future<Either<Failure, List<String>>> getSavedPosts();
   Future<Either<Failure, Unit>> savePost(String postId);
   Future<Either<Failure, Unit>> unsavePost(String postId);
+  Future<Either<Failure, List<Post>>> getUserPostsById(String userId);
 }

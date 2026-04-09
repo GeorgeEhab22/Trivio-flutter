@@ -27,6 +27,7 @@ abstract class ProfileRemoteDataSource {
   Future<List<String>> getSavedPosts();
   Future<void> savePost(String postId);
   Future<void> unsavePost(String postId);
+  Future<List<Post>> getUserPostsById(String userId);
 }
 
 class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
@@ -275,4 +276,28 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       throw _handleError(e);
     }
   }
+  
+@override
+Future<List<Post>> getUserPostsById(String userId) async {
+  try {
+    final response = await api.get(ApiEndpoints.getProfilePosts(userId));
+
+    if (response == null || response['data'] == null) return [];
+
+    final dynamic postsWrapper = response['data']['posts'];
+    
+    if (postsWrapper is Map && postsWrapper.containsKey('posts')) {
+      final List postsList = postsWrapper['posts'];
+      return postsList.map((json) => PostModel.fromJson(json)).toList();
+    } else if (postsWrapper is List) {
+      return postsWrapper.map((json) => PostModel.fromJson(json)).toList();
+    }
+
+    return [];
+  } on DioException catch (e) {
+    throw ServerException(e.response?.data['message'] ?? 'Server Error');
+  } catch (e) {
+    throw ServerException('Mapping Error: $e');
+  }
+}
 }

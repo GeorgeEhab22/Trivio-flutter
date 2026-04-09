@@ -2,6 +2,8 @@ import 'package:auth/injection_container.dart' as di;
 import 'package:auth/presentation/home/posts_in_timeline/widgets/follow_button.dart';
 import 'package:auth/presentation/manager/group_cubit/get_group_posts/group_posts_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/get_user_profile_by_id_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/get_user_profile_by_id_state.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_state.dart';
 import 'package:auth/presentation/manager/profile_cubit/saved_posts/saved_posts_cubit.dart';
@@ -33,14 +35,23 @@ class PostHeader extends StatelessWidget {
         ? Colors.white.withValues(alpha: 0.12)
         : Colors.black.withValues(alpha: 0.08);
 
-    String authorName = post.authorName ?? "Not Me";
-    String? authorImage = post.authorImage;
-    final profileState = context.read<ProfileCubit>().state;
+    final profileState = context.watch<ProfileCubit>().state;
+    
+    GetUserProfileByIdState? otherProfileState;
+    try {
+      otherProfileState = context.watch<GetUserProfileByIdCubit>().state;
+    } catch (_) {
+    }
 
-    if (profileState is ProfileLoaded &&
-        post.authorId == profileState.user.id) {
+    String authorName = post.authorName ?? "User";
+    String? authorImage = post.authorImage;
+
+    if (profileState is ProfileLoaded && post.authorId == profileState.user.id) {
       authorName = profileState.user.name;
       authorImage = profileState.user.avatar;
+    } else if (otherProfileState is GetUserProfileByIdLoaded && post.authorId == otherProfileState.user.id) {
+      authorName = otherProfileState.user.name;
+      authorImage = otherProfileState.user.avatar;
     }
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
@@ -68,6 +79,9 @@ class PostHeader extends StatelessWidget {
                     currentUserId: currentUserId,
                     authorId: post.authorId,
                     isFollowing: post.isAuthorFollowed,
+                    // onFollowChanged: () {
+                    //   context.read<PostCubit>().fetchPosts();
+                    // },
                   ),
               ],
               SizedBox(width: 8),
@@ -106,7 +120,8 @@ class PostHeader extends StatelessWidget {
                             BlocProvider.value(value: groupPostsCubit),
                         ],
                         child: BlocProvider(
-                          create: (context) => di.sl<SavedPostsCubit>()..loadSavedPosts(),
+                          create: (context) =>
+                              di.sl<SavedPostsCubit>()..loadSavedPosts(),
                           child: OptionsBottomSheet(
                             post: post,
                             currentUserId: currentUserId,

@@ -124,6 +124,7 @@ import 'package:auth/domain/usecases/user_profile/get_liked_posts.dart';
 import 'package:auth/domain/usecases/user_profile/get_my_posts.dart';
 import 'package:auth/domain/usecases/user_profile/get_saved_posts.dart';
 import 'package:auth/domain/usecases/user_profile/get_suggestions.dart';
+import 'package:auth/domain/usecases/user_profile/get_user_posts.dart';
 import 'package:auth/domain/usecases/user_profile/get_user_profile_by_id.dart';
 import 'package:auth/domain/usecases/user_profile/save_post.dart';
 import 'package:auth/domain/usecases/user_profile/unsave_post.dart';
@@ -160,6 +161,7 @@ import 'package:auth/presentation/manager/post_cubit/get_post/get_post_cubit.dar
 import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/post_interaction_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/get_user_profile_by_id_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/user/get_user_posts_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/interests/select_interests_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/change_password_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_cubit.dart';
@@ -517,6 +519,12 @@ Future<void> init() async {
   sl.registerFactory(
     () =>
         ProfilePostsCubit(getMyPostsUseCase: sl(), getLikedPostsUseCase: sl()),
+  );
+  sl.registerLazySingleton(() => GetUserPostsUseCase(sl()));
+  sl.registerFactory(
+    () => GetUserPostsCubit(
+      getUserPostsUseCase: sl(),
+    ),
   );
 
   //saved posts

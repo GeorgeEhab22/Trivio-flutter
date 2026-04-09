@@ -1,4 +1,5 @@
 import 'package:auth/presentation/home/posts_in_timeline/widgets/post_card.dart';
+import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_state.dart';
 import 'package:auth/presentation/manager/profile_cubit/saved_posts/saved_posts_cubit.dart';
@@ -19,7 +20,6 @@ class _SavedPostsViewState extends State<SavedPostsView> {
   @override
   void initState() {
     super.initState();
-    // Load the posts when the screen is first opened
     context.read<SavedPostsCubit>().loadSavedPosts();
   }
 
@@ -32,9 +32,9 @@ class _SavedPostsViewState extends State<SavedPostsView> {
         centerTitle: true,
         title: Text(
           l10n.savedPosts,
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+          style: Theme.of(
+            context,
+          ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
         ),
         // 1. Back Button
         leading: IconButton(
@@ -42,20 +42,29 @@ class _SavedPostsViewState extends State<SavedPostsView> {
           onPressed: () => context.pop(),
         ),
       ),
-      body: BlocBuilder<SavedPostsCubit, SavedPostsState>(
+      body: BlocConsumer<SavedPostsCubit, SavedPostsState>(
+        listener: (context, state) {
+          if (state is SavedPostsLoaded) {
+            final profileState = context.read<ProfileCubit>().state;
+            if (profileState is ProfileLoaded) {
+              // This ensures the Post objects get their 'isFollowing' flags updated
+              context.read<PostCubit>().hydrateCurrentUserReactions(
+                currentUserId: profileState.user.id,
+              );
+            }
+          }
+        },
         builder: (context, state) {
           // 3. Loading State
           if (state is SavedPostsLoading) {
-            return const Center(
-              child: CircularProgressIndicator.adaptive(),
-            );
+            return const Center(child: CircularProgressIndicator.adaptive());
           }
-              final profileState = context.read<ProfileCubit>().state;
-    String myUserId = ''; 
-    
-    if (profileState is ProfileLoaded) {
-      myUserId = profileState.user.id; 
-    }
+          final profileState = context.read<ProfileCubit>().state;
+          String myUserId = '';
+
+          if (profileState is ProfileLoaded) {
+            myUserId = profileState.user.id;
+          }
           // 3. Error State
           if (state is SavedPostsError) {
             return Center(
@@ -66,7 +75,8 @@ class _SavedPostsViewState extends State<SavedPostsView> {
                   const SizedBox(height: 16),
                   Text(state.message),
                   TextButton(
-                    onPressed: () => context.read<SavedPostsCubit>().loadSavedPosts(),
+                    onPressed: () =>
+                        context.read<SavedPostsCubit>().loadSavedPosts(),
                     child: Text(l10n.retry),
                   ),
                 ],
@@ -103,8 +113,13 @@ class _SavedPostsViewState extends State<SavedPostsView> {
               itemCount: posts.length,
               separatorBuilder: (context, index) => const SizedBox(height: 8),
               itemBuilder: (context, index) {
-                final post = posts[index];
-                return PostCard(post: post, currentUserId: myUserId);
+                final localPost = posts[index];
+                final freshPost = context.watch<PostCubit>().posts.firstWhere(
+                  (p) => p.postID == localPost.postID,
+                  orElse: () => localPost,
+                );
+
+                return PostCard(post: freshPost, currentUserId: myUserId);
               },
             );
           }
