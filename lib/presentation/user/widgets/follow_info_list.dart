@@ -102,12 +102,20 @@ class FollowInfoList extends StatelessWidget {
                            (f) => f.user.id.toString().trim() == id.toString().trim(),
                          );
                       }
-
+                      String displayedText = "";
+                      if(isFollowingList)
+                      {
+                        displayedText = l10n.unfollow;
+                      }
+                       else
+                      {
+                        displayedText = l10n.following;
+                      }
                       return FollowButton(
                         currentUserId: currentUserId!,
                         authorId: id,
                         isFollowing: amIFollowing,
-                        showUnfollowText: isFollowingList, 
+                        followedText: displayedText,
                       );
                     },
                   ),

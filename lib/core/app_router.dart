@@ -477,8 +477,11 @@ GoRouter createRouter(bool isLoggedIn) {
       ),
       GoRoute(
         path: '/notifications',
-        builder: (context, state) => BlocProvider(
-          create: (context) => di.sl<NotificationCubit>(),
+        builder: (context, state) => MultiBlocProvider(
+          providers: [
+            BlocProvider(create: (context) => di.sl<NotificationCubit>()),
+            BlocProvider(create: (context) => di.sl<ProfileSocialInfoCubit>()..fetchFollowing()),
+          ],
           child: const NotificationsView(),
         ),
       ),

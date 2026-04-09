@@ -12,7 +12,8 @@ class FollowButton extends StatefulWidget {
   final String authorId;
   final bool isFollowing; 
   final bool isReel;
-  final bool showUnfollowText;
+  final String? followedText;
+  final String? unfollowedText;
   final VoidCallback? onFollowChanged;
   const FollowButton({
     super.key,
@@ -20,7 +21,8 @@ class FollowButton extends StatefulWidget {
     required this.authorId,
     required this.isFollowing,
     this.isReel = false,
-    this.showUnfollowText = false,
+    this.followedText,
+    this.unfollowedText,
     this.onFollowChanged,
   });
 
@@ -54,9 +56,9 @@ class _FollowButtonState extends State<FollowButton> {
     
     String buttonText;
     if (_isFollowing) {
-      buttonText = widget.showUnfollowText ? l10n.unfollow : l10n.following;
+      buttonText = widget.followedText ?? l10n.following;
     } else {
-      buttonText = l10n.follow;
+      buttonText = widget.unfollowedText ?? l10n.follow;
     }
 
     return BlocListener<FollowCubit, FollowState>(
@@ -67,19 +69,19 @@ class _FollowButtonState extends State<FollowButton> {
             _isFollowing = !_isFollowing;
             _isProcessingLocally = false;
           });
-          //widget.onFollowChanged?.call();
         } 
         if (state is FollowSuccess && state.follow?.user.id == widget.authorId) {
           setState(() {
             _isFollowing = true;
             _isProcessingLocally = false;
+            widget.onFollowChanged?.call();
           });
         } else if (state is UnfollowSuccess && state.unfollowedUserId == widget.authorId) {
           setState(() {
             _isFollowing = false;
             _isProcessingLocally = false;
           });
-          //widget.onFollowChanged?.call();
+          widget.onFollowChanged?.call();
         }
       },
       child: SizedBox(

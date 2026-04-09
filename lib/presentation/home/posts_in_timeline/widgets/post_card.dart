@@ -2,8 +2,6 @@ import 'dart:ui';
 import 'package:auth/presentation/home/posts_in_timeline/widgets/post_content.dart';
 import 'package:auth/presentation/home/posts_in_timeline/widgets/post_footer.dart';
 import 'package:auth/presentation/home/posts_in_timeline/widgets/post_header.dart';
-import 'package:auth/presentation/manager/group_cubit/get_group_posts/group_posts_cubit.dart';
-import 'package:auth/presentation/manager/group_cubit/get_group_posts/group_posts_state.dart';
 import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
 import 'package:auth/constants/colors.dart';
 import 'package:flutter/material.dart';
@@ -41,39 +39,11 @@ class PostCard extends StatelessWidget {
         }
       },
       builder: (context, state) {
-        final postCubitState = context.watch<PostCubit>().state;
-        GroupPostsState? groupPostsState;
-        try {
-          groupPostsState = context.watch<GroupPostsCubit>().state;
-        } catch (_) {}
-        
-        bool isDeleting = false;
-        if (groupPostsState is GroupPostsDeleting) {
-          isDeleting = groupPostsState.postId == post.postID;
-        }
-        if (postCubitState is DeletePostLoading) {
-          isDeleting = isDeleting || postCubitState.postId == post.postID;
-        }
-
-        final isReportLoading = state is ReportPostLoading && state.postId == post.postID;
-        final hasMetrics = post.reactionsCount > 0 || (post.media?.isNotEmpty ?? false);
-        final isGroupPost = post.location == 'group';
         final isDark = Theme.of(context).brightness == Brightness.dark;
-        
-        // --- Flagged Post Variables ---
-        final bool isFlagged = post.flagged ?? false;
-        const double blurSigma = 15.0; // Intensity of the blur
-
-        // Styling Variables
-        final borderColor = isDark
-            ? Colors.white.withValues(alpha: 0.12)
-            : Colors.black.withValues(alpha: 0.08);
-        final cardGradient = isDark
-            ? const [Color(0xFF1D2228), Color(0xFF171B20)]
-            : const [Color(0xFFFFFFFF), Color(0xFFF8FBF9)];
-        final shadowColor = isDark
-            ? Colors.black.withValues(alpha: 0.38)
-            : const Color(0xFF0F172A).withValues(alpha: 0.08);
+        final isFlagged = post.flagged ?? false;
+        final postCubitState = context.watch<PostCubit>().state;
+        bool isDeleting = postCubitState is DeletePostLoading && postCubitState.postId == post.postID;
+        final isReportLoading = state is ReportPostLoading && state.postId == post.postID;
 
         return AnimatedOpacity(
           duration: const Duration(milliseconds: 180),
@@ -84,7 +54,7 @@ class PostCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(24),
               boxShadow: [
                 BoxShadow(
-                  color: shadowColor,
+                  color: isDark ? Colors.black38 : const Color(0xFF0F172A).withValues(alpha: 0.08),
                   blurRadius: 28,
                   offset: const Offset(0, 14),
                 ),
@@ -92,53 +62,31 @@ class PostCard extends StatelessWidget {
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(24),
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: cardGradient,
-                  ),
-                  border: Border.all(color: borderColor),
-                ),
-                child: Stack(
-                  children: [
-                    _buildBackgroundCircle(isDark),
-                    
-                    Material(
-                      color: Colors.transparent,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _buildTopGlowBar(isDark),
-                          PostHeader(
-                            post: post,
-                            currentUserId: currentUserId,
-                          ),
-                          
-                          ValueListenableBuilder<bool>(
-                            valueListenable: isRevealed,
-                            builder: (context, revealed, child) {
-                              if (isFlagged && !revealed) {
-                                return _buildBlurredContent(context, isDark, blurSigma);
-                              }
-                              return PostContent(post: post);
-                            },
-                          ),
+              child: ValueListenableBuilder<bool>(
+                valueListenable: isRevealed,
+                builder: (context, revealed, _) {
+                  final showBlur = isFlagged && !revealed;
 
-                          if (hasMetrics || isGroupPost) const SizedBox(height: 10),
-                          
-                          _buildDivider(isDark),
-                          PostFooter(
-                            post: post,
-                            currentUserId: currentUserId,
-                            currentReaction: currentReaction ?? post.userReaction,
+                  return Stack(
+                    children: [
+                      _buildCardBody(context, isDark),
+                      if (showBlur)
+                        Positioned.fill(
+                          child: ClipRRect(
+                            child: BackdropFilter(
+                              filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
+                              child: Container(
+                                color: isDark 
+                                    ? Colors.black.withValues(alpha: 0.4) 
+                                    : Colors.white.withValues(alpha: 0.2),
+                                child: _buildBlurControls(context, isDark),
+                              ),
+                            ),
                           ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+                        ),
+                    ],
+                  );
+                },
               ),
             ),
           ),
@@ -146,60 +94,71 @@ class PostCard extends StatelessWidget {
       },
     );
   }
+  
+  Widget _buildCardBody(BuildContext context, bool isDark) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: isDark 
+              ? const [Color(0xFF1D2228), Color(0xFF171B20)] 
+              : const [Color(0xFFFFFFFF), Color(0xFFF8FBF9)],
+        ),
+        border: Border.all(
+          color: isDark ? Colors.white12 : Colors.black.withValues(alpha: 0.08),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildTopGlowBar(isDark),
+          PostHeader(post: post, currentUserId: currentUserId),
+          PostContent(post: post),
+          const SizedBox(height: 10),
+          _buildDivider(isDark),
+          PostFooter(
+            post: post,
+            currentUserId: currentUserId,
+            currentReaction: currentReaction ?? post.userReaction,
+          ),
+        ],
+      ),
+    );
+  }
 
-  Widget _buildBlurredContent(BuildContext context, bool isDark, double sigma) {
+  Widget _buildBlurControls(BuildContext context, bool isDark) {
     final l10n = AppLocalizations.of(context)!;
-    return Stack(
-      alignment: Alignment.center,
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        // The actual content (blurred)
-        ClipRect(
-          child: ImageFiltered(
-            imageFilter: ImageFilter.blur(sigmaX: sigma, sigmaY: sigma),
-            child: PostContent(post: post),
+        Icon(
+          Icons.visibility_off_rounded,
+          color: isDark ? Colors.white70 : Colors.black54,
+          size: 40,
+        ),
+        const SizedBox(height: 12),
+        Text(
+          l10n.sensitiveContent,
+          style: TextStyle(
+            color: isDark ? Colors.white : Colors.black,
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
           ),
         ),
-        // The Overlay Info
-        Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: isDark ? Colors.black54 : Colors.white70,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.visibility_off_outlined,
-                color: isDark ? Colors.white : AppColors.primary,
-              ),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              l10n.sensitiveContent,
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: isDark ? Colors.white : Colors.black87,
-              ),
-            ),
-            const SizedBox(height: 8),
-            TextButton(
-              onPressed: () => isRevealed.value = true,
-              style: TextButton.styleFrom(
-                backgroundColor: AppColors.primary,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-              ),
-              child: Text(l10n.seePost),
-            ),
-          ],
+        const SizedBox(height: 16),
+        ElevatedButton(
+          onPressed: () => isRevealed.value = true,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.primary,
+            foregroundColor: Colors.white,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          ),
+          child: Text(l10n.seePost),
         ),
       ],
     );
   }
-
-  // --- Helper UI Components to keep the build method clean ---
 
   Widget _buildTopGlowBar(bool isDark) {
     return Container(
@@ -209,28 +168,6 @@ class PostCard extends StatelessWidget {
           colors: isDark 
             ? [AppColors.primary.withAlpha(200), AppColors.darkGreen] 
             : [AppColors.primary, AppColors.darkGreen],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildBackgroundCircle(bool isDark) {
-    return PositionedDirectional(
-      end: -28,
-      top: -38,
-      child: Container(
-        width: 108,
-        height: 108,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          gradient: LinearGradient(
-            colors: [
-              AppColors.primary.withValues(alpha: isDark ? 0.25 : 0.2),
-              Colors.transparent,
-            ],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
         ),
       ),
     );

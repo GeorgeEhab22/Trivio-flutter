@@ -168,4 +168,36 @@ class NotificationCubit extends Cubit<NotificationState> {
     if (failure is AuthFailure) return failure.message;
     return 'Unexpected error occurred';
   }
+
+  Future<void> refreshNotifications() async {
+
+    _currentPage = 1;
+    _lastHeader = null;
+    _isFetching = true;
+
+    final result = await getNotificationsUseCase(
+      page: _currentPage,
+      limit: _limit,
+    );
+
+    result.fold(
+      (failure) {
+        emit(NotificationError(_mapFailureToMessage(failure)));
+      },
+      (newNotifications) {
+        _allItems.clear(); // Clear old data only after a successful fetch
+        final processedItems = _processNewItems(newNotifications);
+        _allItems.addAll(processedItems);
+
+        emit(
+          NotificationLoaded(
+            items: List.from(_allItems),
+            hasReachedMax: newNotifications.length < _limit,
+          ),
+        );
+      },
+    );
+
+    _isFetching = false;
+  }
 }
