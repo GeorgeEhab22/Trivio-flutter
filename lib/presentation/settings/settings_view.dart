@@ -102,7 +102,9 @@ class SettingsView extends StatelessWidget {
                                 context,
                               ).colorScheme.outlineVariant,
                               alignment: CrossAxisAlignment.start,
-                              onTap: () {},
+                              onTap: () {
+                                context.go(AppRoutes.home);
+                              },
                             ),
                           ),
                           const SizedBox(width: 12),
@@ -117,7 +119,9 @@ class SettingsView extends StatelessWidget {
                                 context,
                               ).colorScheme.outlineVariant,
                               alignment: CrossAxisAlignment.start,
-                              onTap: () {},
+                              onTap: () {
+                                context.go(AppRoutes.reels);
+                              },
                             ),
                           ),
                         ],

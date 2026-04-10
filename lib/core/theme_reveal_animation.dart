@@ -24,14 +24,14 @@ class _ThemeRevealAnimationState extends State<ThemeRevealAnimation>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
-  ThemeMode? _previousTheme;
+  ThemeMode? previousTheme;
   Offset? _tapPosition;
   bool _isDisposed = false;
 
   @override
   void initState() {
     super.initState();
-    _previousTheme = widget.themeMode;
+    previousTheme = widget.themeMode;
     _controller = AnimationController(vsync: this, duration: widget.duration);
     _animation = CurvedAnimation(
       parent: _controller,
@@ -43,7 +43,7 @@ class _ThemeRevealAnimationState extends State<ThemeRevealAnimation>
   void didUpdateWidget(ThemeRevealAnimation oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.themeMode != widget.themeMode && !_isDisposed) {
-      _previousTheme = oldWidget.themeMode;
+      previousTheme = oldWidget.themeMode;
       _controller.forward(from: 0.0);
     }
   }

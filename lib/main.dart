@@ -22,7 +22,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await di.init();
   await dotenv.load(fileName: ".env");
-  await _setupDevMode();
+  //await _setupDevMode();
   
   
   final prefs = await SharedPreferences.getInstance();
@@ -148,11 +148,11 @@ class MyApp extends StatelessWidget {
   );
 }
 
-Future<void> _setupDevMode() async {
-  final prefs = await SharedPreferences.getInstance();
+// Future<void> _setupDevMode() async {
+//   final prefs = await SharedPreferences.getInstance();
 
-  // 1. Paste your long JWT string here
-const String devToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZDZkNGFhMDU0ZmQwYzYwMDBlZTNmNSIsInVzZXJuYW1lIjoiWlNDIiwiZW1haWwiOiJsaW8xMG1lc3NpMjIxNUBnbWFpbC5jb20iLCJpYXQiOjE3NzU3NDY3MTV9.CPxu3CcyL-6NlUhrJ57FyRYAbzLmnLAet7zX49vYuYE";
-  await prefs.setString('auth_token', devToken);
-  print("🛠️ DEV MODE: Token injected. App will start as logged in.");
-}
+//   // 1. Paste your long JWT string here
+//   const String devToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YzMwNjg3MDIwOTg0MWVjOGUyYTliMSIsInVzZXJuYW1lIjoiZ2VvIiwiZW1haWwiOiJnZW9yZ2VlaGFiLmNzQGdtYWlsLmNvbSIsImlhdCI6MTc3NDM5NTAxOH0.FKii1aEy9pI-GPaS1Tomvd0b4cxgHpgYScoT_9le5Bk";
+//   await prefs.setString('auth_token', devToken);
+//   print("🛠️ DEV MODE: Token injected. App will start as logged in.");
+// }

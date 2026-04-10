@@ -9,7 +9,6 @@ import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/home/reactions/widgets/render_reactions.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 class ReactionsScreen extends StatefulWidget {
   final List<Reaction>? initialReactions;

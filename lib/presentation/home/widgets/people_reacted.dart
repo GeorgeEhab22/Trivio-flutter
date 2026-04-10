@@ -2,7 +2,6 @@ import 'package:auth/constants/paths.dart';
 import 'package:auth/domain/entities/reaction_type.dart';
 import 'package:auth/presentation/home/reactions/widgets/render_reactions.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class PeopleReacted extends StatelessWidget {
