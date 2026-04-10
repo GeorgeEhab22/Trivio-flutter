@@ -1,3 +1,4 @@
+import 'package:auth/core/app_routes.dart';
 import 'package:auth/injection_container.dart' as di;
 import 'package:auth/presentation/home/posts_in_timeline/widgets/follow_button.dart';
 import 'package:auth/presentation/manager/group_cubit/get_group_posts/group_posts_cubit.dart';
@@ -13,6 +14,7 @@ import 'package:auth/domain/entities/post.dart';
 import 'package:auth/presentation/home/widgets/author_info.dart';
 import 'package:auth/presentation/home/posts_in_timeline/buttom_sheets/options_bottom_sheet.dart';
 import 'package:auth/presentation/manager/post_cubit/post_interaction_cubit.dart';
+import 'package:go_router/go_router.dart';
 
 class PostHeader extends StatelessWidget {
   final Post post;
@@ -59,15 +61,27 @@ class PostHeader extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
-            child: AuthorInfo(
-              authorName: authorName,
-              authorImage: authorImage,
-              createdAt: post.createdAt,
-              showTimeInline: false,
-              isGroupPost: isGroupPost,
-              groupImage: post.groupCoverImage,
-              groupName: post.groupName,
-              avatarRadius: 20,
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(30),
+                onTap: () {
+                  context.push(AppRoutes.userProfileByIdPath(post.authorId));
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 8.0),
+                  child: AuthorInfo(
+                    authorName: authorName,
+                    authorImage: authorImage,
+                    createdAt: post.createdAt,
+                    showTimeInline: false,
+                    isGroupPost: isGroupPost,
+                    groupImage: post.groupCoverImage,
+                    groupName: post.groupName,
+                    avatarRadius: 20,
+                  ),
+                ),
+              ),
             ),
           ),
           Row(
@@ -79,9 +93,6 @@ class PostHeader extends StatelessWidget {
                     currentUserId: currentUserId,
                     authorId: post.authorId,
                     isFollowing: post.isAuthorFollowed,
-                    // onFollowChanged: () {
-                    //   context.read<PostCubit>().fetchPosts();
-                    // },
                   ),
               ],
               SizedBox(width: 8),

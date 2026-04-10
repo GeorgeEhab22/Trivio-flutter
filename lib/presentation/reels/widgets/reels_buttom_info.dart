@@ -1,3 +1,4 @@
+import 'package:auth/core/app_routes.dart';
 import 'package:auth/domain/entities/post.dart';
 import 'package:auth/presentation/home/posts_in_timeline/widgets/follow_button.dart';
 import 'package:auth/presentation/home/widgets/exbandable_text.dart';
@@ -6,6 +7,7 @@ import 'package:auth/presentation/manager/profile_cubit/profile_state.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class ReelsBottomInfo extends StatelessWidget {
   final Post reel;
@@ -19,7 +21,7 @@ class ReelsBottomInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-      String authorName = reel.authorName ??"Not Me";
+    String authorName = reel.authorName ?? "Not Me";
     String? authorImage;
 
     final profileState = context.read<ProfileCubit>().state;
@@ -38,39 +40,60 @@ class ReelsBottomInfo extends StatelessWidget {
         children: [
           Row(
             children: [
-              CircleAvatar(
-                radius: 18,
-                backgroundColor: Colors.white24,
-                child: ClipOval(
-                  child: authorImage != null
-                      ? CachedNetworkImage(
-                          imageUrl: authorImage,
-                          fit: BoxFit.cover,
-                          width: 36,
-                          height: 36,
-                          placeholder: (context, url) =>
-                              const CircularProgressIndicator(strokeWidth: 1),
-                          errorWidget: (context, url, error) =>
-                              const Icon(Icons.person, color: Colors.white),
-                        )
-                      : const Icon(Icons.person, color: Colors.white, size: 20),
-                ),
-              ),
-              const SizedBox(width: 10),
-
-              Text(
-                authorName,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                  shadows: [
-                    Shadow(
-                      offset: Offset(0, 1),
-                      blurRadius: 2,
-                      color: Colors.black87,
-                    ),
-                  ],
+              Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(20),
+                  onTap: () {
+                    context.push(AppRoutes.userProfileByIdPath(reel.authorId));
+                  },
+                  child: Row(
+                    children: [
+                      CircleAvatar(
+                        radius: 18,
+                        backgroundColor: Colors.white24,
+                        child: ClipOval(
+                          child: authorImage != null
+                              ? CachedNetworkImage(
+                                  imageUrl: authorImage,
+                                  fit: BoxFit.cover,
+                                  width: 36,
+                                  height: 36,
+                                  placeholder: (context, url) =>
+                                      const CircularProgressIndicator(
+                                        strokeWidth: 1,
+                                      ),
+                                  errorWidget: (context, url, error) =>
+                                      const Icon(
+                                        Icons.person,
+                                        color: Colors.white,
+                                      ),
+                                )
+                              : const Icon(
+                                  Icons.person,
+                                  color: Colors.white,
+                                  size: 20,
+                                ),
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        authorName,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          shadows: [
+                            Shadow(
+                              offset: Offset(0, 1),
+                              blurRadius: 2,
+                              color: Colors.black87,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
               const SizedBox(width: 15),
@@ -78,7 +101,7 @@ class ReelsBottomInfo extends StatelessWidget {
                 FollowButton(
                   currentUserId: currentUserId,
                   authorId: reel.authorId,
-                  isFollowing: false,
+                  isFollowing: reel.isAuthorFollowed,
                   isReel: true,
                 ),
             ],
