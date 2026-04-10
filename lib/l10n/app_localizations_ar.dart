@@ -1318,6 +1318,8 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get seePost => ' عرض المنشور';
+
+  @override
   String get toxicContentTitle => 'محتوى ضار';
 
   @override

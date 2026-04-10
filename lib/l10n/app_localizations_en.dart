@@ -1332,6 +1332,8 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get seePost => 'See Post';
+
+  @override
   String get toxicContentTitle => 'Toxic Content';
 
   @override

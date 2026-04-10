@@ -2635,6 +2635,7 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'See Post'**
   String get seePost;
+
   /// No description provided for @toxicContentTitle.
   ///
   /// In en, this message translates to:
