@@ -1,6 +1,8 @@
 // ignore_for_file: deprecated_member_use
 
+import 'package:auth/constants/paths.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 
 class GlassmorphismNav extends StatefulWidget {
@@ -137,11 +139,11 @@ class _GlassmorphismNavState extends State<GlassmorphismNav>
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _buildGlassNavItem(Icons.home_rounded, 0, isDarkMode),
-              _buildGlassNavItem(Icons.play_circle_filled, 1, isDarkMode),
-              _buildGlassNavItem(Icons.smart_toy_rounded, 2, isDarkMode),
-              _buildGlassNavItem(Icons.bar_chart_rounded, 3, isDarkMode),
-              _buildGlassNavItem(Icons.person_rounded, 4, isDarkMode),
+              _buildGlassNavItem(Paths.homeIcon, 0, isDarkMode),
+              _buildGlassNavItem(Icons.video_library_outlined, 1, isDarkMode),
+              _buildGlassNavItem(Paths.chatbotIcon, 2, isDarkMode),
+              _buildGlassNavItem(Paths.statsIcon, 3, isDarkMode),
+              _buildGlassNavItem(Paths.profileIcon, 4, isDarkMode),
             ],
           ),
         ),
@@ -149,12 +151,12 @@ class _GlassmorphismNavState extends State<GlassmorphismNav>
     );
   }
 
-  Widget _buildGlassNavItem(IconData icon, int index, bool isDarkMode) {
+  Widget _buildGlassNavItem(dynamic icon, int index, bool isDarkMode) {
+
     final isSelected = widget.currentIndex == index;
 
-    // Theme-aware colors
     final selectedBgColor = isDarkMode
-        ? Colors.white.withOpacity(0.15) // Brighter selection in dark mode
+        ? Colors.white.withOpacity(0.15)
         : Colors.white.withOpacity(0.3);
 
     final selectedBorderColor = isDarkMode
@@ -162,12 +164,34 @@ class _GlassmorphismNavState extends State<GlassmorphismNav>
         : Colors.white.withOpacity(0.5);
 
     final selectedIconColor = isDarkMode
-        ? Colors.green[400] // Brighter green in dark mode
-        : Colors.green[700];
+        ? Colors.green[400]!
+        : Colors.green[200]!;
 
     final unselectedIconColor = isDarkMode
-        ? Colors.grey[400] // Lighter gray in dark mode
-        : Colors.grey[700];
+        ? Colors.grey[400]!
+        : Colors.grey[700]!;
+
+    final Color resolvedIconColor = isSelected
+        ? selectedIconColor
+        : unselectedIconColor;
+
+    final double iconSize = isSelected ? 28 : 24;
+
+    Widget iconWidget;
+    if (icon is String) {
+      iconWidget = SvgPicture.asset(
+        icon,
+        width: iconSize,
+        height: iconSize,
+        colorFilter: ColorFilter.mode(resolvedIconColor, BlendMode.srcIn),
+      );
+    } else {
+      iconWidget = Icon(
+        icon as IconData,
+        size: iconSize,
+        color: resolvedIconColor,
+      );
+    }
 
     return GestureDetector(
       onTap: () => _onNavItemTapped(index),
@@ -181,7 +205,6 @@ class _GlassmorphismNavState extends State<GlassmorphismNav>
           border: isSelected
               ? Border.all(color: selectedBorderColor, width: 2)
               : null,
-          // Add subtle glow effect for selected item in dark mode
           boxShadow: isSelected && isDarkMode
               ? [
                   BoxShadow(
@@ -195,14 +218,9 @@ class _GlassmorphismNavState extends State<GlassmorphismNav>
         child: AnimatedScale(
           duration: const Duration(milliseconds: 300),
           scale: isSelected ? 1.0 : 0.9,
-          child: Icon(
-            icon,
-            color: isSelected ? selectedIconColor : unselectedIconColor,
-            size: isSelected ? 28 : 24,
-          ),
+          child: iconWidget,
         ),
       ),
     );
   }
 }
-

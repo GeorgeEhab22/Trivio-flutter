@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class CustomSquareButton extends StatelessWidget {
   final IconData? icon;
+  final String? svgAsset;          // SVG for column layout icon
+  final String? leadingSvgAsset;   // SVG for row layout leading icon
+  final String? trailingSvgAsset;  // SVG for row layout trailing icon
   final String? label;
   final VoidCallback? onTap;
   final Color? backgroundColor;
@@ -21,6 +25,9 @@ class CustomSquareButton extends StatelessWidget {
   const CustomSquareButton({
     super.key,
     this.icon,
+    this.svgAsset,
+    this.leadingSvgAsset,
+    this.trailingSvgAsset,
     this.label,
     this.onTap,
     this.backgroundColor,
@@ -37,6 +44,15 @@ class CustomSquareButton extends StatelessWidget {
     this.height = 14,
     this.isLoading = false,
   });
+
+  Widget _buildSvg(String asset, Color color, double size) {
+    return SvgPicture.asset(
+      asset,
+      width: size,
+      height: size,
+      colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -66,12 +82,15 @@ class CustomSquareButton extends StatelessWidget {
       ),
     );
 
-   return isExpanded 
-      ? SizedBox(width: double.infinity, child: buttonContent) 
-      : buttonContent;
+    return isExpanded
+        ? SizedBox(width: double.infinity, child: buttonContent)
+        : buttonContent;
   }
 
   Widget buildRowLayout(BuildContext context, TextStyle style) {
+    final Color resolvedIconColor =
+        iconColor ?? Theme.of(context).iconTheme.color ?? Colors.black87;
+
     return Row(
       mainAxisSize: isExpanded ? MainAxisSize.max : MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -88,43 +107,42 @@ class CustomSquareButton extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 10),
-        ] 
-        else if (leadingIcon != null) ...[
-          Icon(
-            leadingIcon,
-            color: iconColor ?? Theme.of(context).iconTheme.color,
-            size: 20,
-          ),
+        ] else if (leadingSvgAsset != null) ...[
+          _buildSvg(leadingSvgAsset!, resolvedIconColor, 20),
+          const SizedBox(width: 8),
+        ] else if (leadingIcon != null) ...[
+          Icon(leadingIcon, color: resolvedIconColor, size: 20),
           const SizedBox(width: 8),
         ],
-        
+
         Flexible(
           child: Text(label ?? '', textAlign: TextAlign.center, style: style),
         ),
-        
-        if (trailingIcon != null) ...[
+
+        if (trailingSvgAsset != null) ...[
           const SizedBox(width: 8),
-          Icon(
-            trailingIcon,
-            color: iconColor ?? Theme.of(context).iconTheme.color,
-            size: 20,
-          ),
+          _buildSvg(trailingSvgAsset!, resolvedIconColor, 20),
+        ] else if (trailingIcon != null) ...[
+          const SizedBox(width: 8),
+          Icon(trailingIcon, color: resolvedIconColor, size: 20),
         ],
       ],
     );
   }
 
   Widget buildColumnLayout(BuildContext context, TextStyle style) {
+    final Color resolvedIconColor =
+        iconColor ?? Theme.of(context).iconTheme.color ?? Colors.black87;
+
     return Column(
       crossAxisAlignment: alignment,
       mainAxisSize: MainAxisSize.min,
       children: [
-        if (icon != null) ...[
-          Icon(
-            icon,
-            color: iconColor ?? Theme.of(context).iconTheme.color,
-            size: 24,
-          ),
+        if (svgAsset != null) ...[
+          _buildSvg(svgAsset!, resolvedIconColor, 24),
+          const SizedBox(height: 6),
+        ] else if (icon != null) ...[
+          Icon(icon, color: resolvedIconColor, size: 24),
           const SizedBox(height: 6),
         ],
         Text(label ?? '', textAlign: TextAlign.center, style: style),

@@ -1,7 +1,10 @@
 import 'package:auth/common/functions/reels_buttons_green_effect.dart';
+import 'package:auth/constants/paths.dart';
 import 'package:auth/domain/entities/reaction_type.dart';
+import 'package:auth/presentation/home/reactions/widgets/render_reactions.dart';
 import 'package:auth/presentation/home/widgets/post_action_item.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class ReactionButton extends StatelessWidget {
   final ReactionType? reactionType;
@@ -34,12 +37,11 @@ class ReactionButton extends StatelessWidget {
     Widget iconWidget;
 
     if (type == ReactionType.none) {
-      iconWidget = Icon(Icons.thumb_up_alt_outlined, size: iconSize, color: color);
+      iconWidget = ReactionEmoji(path: Paths.goalEmoji, size: iconSize);
     } else {
-      iconWidget = Text(
-        _getEmoji(type),
-        style: TextStyle(fontSize: iconSize, height: 1, color: isVertical ? Colors.white : null),
-      );
+      final svgPath = _getReactionSvg(type);
+
+      iconWidget = ReactionEmoji(path: svgPath, size: iconSize);
     }
 
     if (isVertical) {
@@ -54,26 +56,26 @@ class ReactionButton extends StatelessWidget {
     return Theme.of(context).iconTheme.color ?? Colors.grey;
   }
 
-  String _getEmoji(ReactionType type) {
+  String _getReactionSvg(ReactionType type) {
     switch (type) {
       case ReactionType.like:
-        return '👍';
+        return Paths.likeEmoji;
       case ReactionType.love:
-        return '❤️';
+        return Paths.loveEmoji;
       case ReactionType.haha:
-        return '😂';
+        return Paths.hahaEmoji;
       case ReactionType.wow:
-        return '😮';
+        return Paths.wowEmoji;
       case ReactionType.sad:
-        return '😢';
+        return Paths.sadEmoji;
       case ReactionType.angry:
-        return '😡';
+        return Paths.angryEmoji;
       case ReactionType.goal:
-        return '⚽';
+        return Paths.ballEmoji;
       case ReactionType.offside:
-        return '🚩';
+        return Paths.offsideEmoji;
       default:
-        return '👍';
+        return Paths.ballEmoji;
     }
   }
 }

@@ -1,3 +1,4 @@
+import 'package:auth/constants/paths.dart';
 import 'package:auth/domain/entities/reaction.dart';
 import 'package:auth/domain/entities/reaction_type.dart';
 import 'package:auth/common/functions/number_extensions.dart';
@@ -5,8 +6,10 @@ import 'package:auth/domain/usecases/comment/get_comment_reactions_usecase.dart'
 import 'package:auth/domain/usecases/post/get_post_reactions_usecase.dart';
 import 'package:auth/injection_container.dart' as di;
 import 'package:auth/l10n/app_localizations.dart';
+import 'package:auth/presentation/home/reactions/widgets/render_reactions.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class ReactionsScreen extends StatefulWidget {
   final List<Reaction>? initialReactions;
@@ -18,24 +21,23 @@ class ReactionsScreen extends StatefulWidget {
     super.key,
     required List<Reaction> reactions,
     this.currentUserId,
-  })
-    : initialReactions = reactions,
-      postId = null,
-      commentId = null;
+  })  : initialReactions = reactions,
+        postId = null,
+        commentId = null;
 
   const ReactionsScreen.forPost({
     super.key,
     required this.postId,
     this.currentUserId,
-  }) : initialReactions = null,
-       commentId = null;
+  })  : initialReactions = null,
+        commentId = null;
 
   const ReactionsScreen.forComment({
     super.key,
     required this.commentId,
     this.currentUserId,
-  }) : initialReactions = null,
-       postId = null;
+  })  : initialReactions = null,
+        postId = null;
 
   @override
   State<ReactionsScreen> createState() => _ReactionsScreenState();
@@ -67,12 +69,8 @@ class _ReactionsScreenState extends State<ReactionsScreen> {
     }
     if (widget.postId != null) {
       final postId = widget.postId!.trim();
-      if (postId.isEmpty) {
-        return const [];
-      }
-      final result = await di.sl<GetPostReactionsUseCase>()(
-        postId: postId,
-      );
+      if (postId.isEmpty) return const [];
+      final result = await di.sl<GetPostReactionsUseCase>()(postId: postId);
       return result.fold(
         (failure) => throw Exception(failure.message),
         (fetched) => fetched,
@@ -80,12 +78,8 @@ class _ReactionsScreenState extends State<ReactionsScreen> {
     }
 
     final commentId = widget.commentId!.trim();
-    if (commentId.isEmpty) {
-      return const [];
-    }
-    final result = await di.sl<GetCommentReactionsUseCase>()(
-      commentId: commentId,
-    );
+    if (commentId.isEmpty) return const [];
+    final result = await di.sl<GetCommentReactionsUseCase>()(commentId: commentId);
     return result.fold(
       (failure) => throw Exception(failure.message),
       (fetched) => fetched,
@@ -130,22 +124,18 @@ class _ReactionsScreenState extends State<ReactionsScreen> {
         final reactions = snapshot.data ?? const <Reaction>[];
         final reactionsByType = <ReactionType, List<Reaction>>{};
         for (final reaction in reactions) {
-          if (reaction.type == ReactionType.none) {
-            continue;
-          }
+          if (reaction.type == ReactionType.none) continue;
           reactionsByType.putIfAbsent(reaction.type, () => <Reaction>[]);
           reactionsByType[reaction.type]!.add(reaction);
         }
 
         final sortedTypes = reactionsByType.keys.toList()
           ..sort((a, b) {
-            final byCount = reactionsByType[b]!.length.compareTo(
-              reactionsByType[a]!.length,
-            );
-            if (byCount != 0) {
-              return byCount;
-            }
-            return _reactionOrder.indexOf(a).compareTo(_reactionOrder.indexOf(b));
+            final byCount = reactionsByType[b]!.length
+                .compareTo(reactionsByType[a]!.length);
+            if (byCount != 0) return byCount;
+            return _reactionOrder.indexOf(a)
+                .compareTo(_reactionOrder.indexOf(b));
           });
 
         return DefaultTabController(
@@ -164,10 +154,23 @@ class _ReactionsScreenState extends State<ReactionsScreen> {
                       text:
                           '${l10n.reactionsTabAll} ${reactions.length.toString().localizeDigits(context)}',
                     ),
+                    // Tab uses a Row since Tab.icon only accepts a Widget,
+                    // letting us place the SVG beside the count text.
                     ...sortedTypes.map(
                       (type) => Tab(
-                        text:
-                            '${_emoji(type)} ${reactionsByType[type]!.length.toString().localizeDigits(context)}',
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            ReactionEmoji(path: _emojiPath(type), size: 20),
+                            const SizedBox(width: 4),
+                            Text(
+                              reactionsByType[type]!
+                                  .length
+                                  .toString()
+                                  .localizeDigits(context),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ],
@@ -196,29 +199,29 @@ class _ReactionsScreenState extends State<ReactionsScreen> {
     );
   }
 
-  static String _emoji(ReactionType type) {
+  // Returns the SVG asset path for a given reaction type.
+  static String _emojiPath(ReactionType type) {
     switch (type) {
       case ReactionType.like:
-        return '👍';
+        return Paths.likeEmoji;
       case ReactionType.love:
-        return '❤️';
+        return Paths.loveEmoji;
       case ReactionType.haha:
-        return '😂';
+        return Paths.hahaEmoji;
       case ReactionType.wow:
-        return '😮';
+        return Paths.wowEmoji;
       case ReactionType.sad:
-        return '😢';
+        return Paths.sadEmoji;
       case ReactionType.angry:
-        return '😡';
+        return Paths.angryEmoji;
       case ReactionType.goal:
-        return '⚽';
+        return Paths.ballEmoji;
       case ReactionType.offside:
-        return '🚩';
+        return Paths.offsideEmoji;
       case ReactionType.none:
         return '';
     }
   }
-
 }
 
 class _WebDragScrollBehavior extends MaterialScrollBehavior {
@@ -226,12 +229,12 @@ class _WebDragScrollBehavior extends MaterialScrollBehavior {
 
   @override
   Set<PointerDeviceKind> get dragDevices => {
-    PointerDeviceKind.touch,
-    PointerDeviceKind.mouse,
-    PointerDeviceKind.stylus,
-    PointerDeviceKind.trackpad,
-    PointerDeviceKind.unknown,
-  };
+        PointerDeviceKind.touch,
+        PointerDeviceKind.mouse,
+        PointerDeviceKind.stylus,
+        PointerDeviceKind.trackpad,
+        PointerDeviceKind.unknown,
+      };
 }
 
 class _ReactionUsersList extends StatelessWidget {
@@ -254,9 +257,10 @@ class _ReactionUsersList extends StatelessWidget {
           child: Text(
             emptyText,
             textAlign: TextAlign.center,
-            style: Theme.of(
-              context,
-            ).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
+            style: Theme.of(context)
+                .textTheme
+                .bodyMedium
+                ?.copyWith(color: Colors.grey[600]),
           ),
         ),
       );
@@ -267,20 +271,20 @@ class _ReactionUsersList extends StatelessWidget {
       separatorBuilder: (_, __) => const Divider(height: 1),
       itemBuilder: (context, index) {
         final reaction = reactions[index];
-        final emoji = _ReactionsScreenState._emoji(reaction.type);
+        final emojiPath = _ReactionsScreenState._emojiPath(reaction.type);
         final username = reaction.username?.trim();
-        final isCurrentUser =
-            currentUserId != null &&
+        final isCurrentUser = currentUserId != null &&
             currentUserId!.trim().isNotEmpty &&
             reaction.userId == currentUserId;
         final resolvedName = isCurrentUser
             ? AppLocalizations.of(context)!.reactionsYou
             : ((username == null || username.isEmpty)
-                  ? reaction.userId
-                  : username);
+                ? reaction.userId
+                : username);
         final profilePicture = reaction.profilePicture?.trim();
         final hasProfilePicture =
             profilePicture != null && profilePicture.isNotEmpty;
+
         return ListTile(
           leading: SizedBox(
             width: 40,
@@ -300,7 +304,9 @@ class _ReactionUsersList extends StatelessWidget {
                 PositionedDirectional(
                   end: -2,
                   bottom: -2,
-                  child: Text(emoji, style: const TextStyle(fontSize: 14)),
+                  child: emojiPath.isNotEmpty
+                      ?ReactionEmoji(path: emojiPath, size: 20)
+                      : const SizedBox.shrink(),
                 ),
               ],
             ),

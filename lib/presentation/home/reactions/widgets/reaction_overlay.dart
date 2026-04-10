@@ -1,4 +1,5 @@
 import 'package:auth/domain/entities/reaction_type.dart';
+import 'package:auth/presentation/home/reactions/widgets/render_reactions.dart';
 import 'package:flutter/material.dart';
 
 OverlayEntry buildReactionsOverlay({
@@ -73,9 +74,7 @@ OverlayEntry buildReactionsOverlay({
                         maxWidth: screenSize.width - 16,
                       ),
                       decoration: BoxDecoration(
-                        color: Theme.of(
-                          context,
-                        ).cardColor, // Respect dark/light theme
+                        color: Theme.of(context).cardColor,
                         borderRadius: BorderRadius.circular(30),
                         boxShadow: const [
                           BoxShadow(
@@ -124,6 +123,17 @@ OverlayEntry buildReactionsOverlay({
   );
 }
 
+bool _isSvgAsset(String emoji) => emoji.endsWith('.svg');
+
+Widget _buildEmojiWidget(String emoji, double size) {
+  
+  if (_isSvgAsset(emoji)) {
+    
+    return ReactionEmoji(path: emoji, size: size);
+  }
+  return Text(emoji, style: TextStyle(fontSize: size));
+}
+
 Widget _buildReactionItem({
   required String emoji,
   required String label,
@@ -141,7 +151,6 @@ Widget _buildReactionItem({
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Label is now localized because it's passed from the parent state
             if (isHovering)
               Text(
                 label,
@@ -154,7 +163,7 @@ Widget _buildReactionItem({
               duration: const Duration(milliseconds: 150),
               scale: isHovering ? 1.4 : 1.0,
               curve: Curves.easeOutBack,
-              child: Text(emoji, style: const TextStyle(fontSize: 24)),
+              child: _buildEmojiWidget(emoji, 24),
             ),
           ],
         ),

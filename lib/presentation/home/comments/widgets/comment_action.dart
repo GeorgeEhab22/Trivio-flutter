@@ -1,4 +1,5 @@
 import 'package:auth/common/functions/reels_buttons_green_effect.dart';
+import 'package:auth/constants/paths.dart';
 import 'package:auth/injection_container.dart' as di;
 import 'package:auth/domain/entities/reaction_type.dart';
 import 'package:auth/presentation/home/comments/comments_view.dart';
@@ -8,7 +9,7 @@ import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/get_user_profile_by_id_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:flutter_svg/svg.dart';
 import '../../widgets/post_action_item.dart';
 
 class CommentAction extends StatelessWidget {
@@ -40,10 +41,14 @@ class CommentAction extends StatelessWidget {
         : Theme.of(context).iconTheme.color;
     final iconSize = isReelView ? 24.0 : 22.0;
 
-    Widget iconWidget = FaIcon(
-      FontAwesomeIcons.comment,
-      size: iconSize,
-      color: iconColor,
+    Widget iconWidget = SvgPicture.asset(
+      Paths.commentIcon,
+      colorFilter: ColorFilter.mode(
+        Theme.of(context).iconTheme.color!,
+        BlendMode.srcIn,
+      ),
+      width: iconSize,
+      height: iconSize,
     );
 
     if (isReelView) {

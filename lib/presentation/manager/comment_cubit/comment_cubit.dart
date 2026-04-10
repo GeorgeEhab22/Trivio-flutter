@@ -432,7 +432,7 @@ class CommentCubit extends Cubit<CommentState> {
       currentUserId: currentUserId,
     );
     final nextReaction = currentReaction == ReactionType.none
-        ? ReactionType.like
+        ? ReactionType.goal
         : ReactionType.none;
 
     final previousComment = _applyCommentReactionOptimistically(

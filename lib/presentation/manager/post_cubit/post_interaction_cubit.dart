@@ -59,42 +59,47 @@ class PostInteractionCubit extends Cubit<PostInteractionState> {
     required int currentCount,
     String? currentReactionId,
   }) async {
-    int newCount = currentCount;
-    ReactionType newReaction = currentReaction;
+    // If already reacted → remove it
+    if (currentReaction != ReactionType.none) {
+      final newCount = (currentCount - 1).clamp(0, 1 << 30);
 
-    if (currentReaction == ReactionType.none) {
-      newReaction = ReactionType.like;
-      newCount = newCount + 1;
-    } else {
-      newReaction = ReactionType.none;
-      newCount = (newCount - 1).clamp(0, 1 << 30);
+      emit(
+        PostReactionUpdated(
+          postId: postId,
+          reactionType: ReactionType.none,
+          count: newCount,
+          reactionId: null,
+        ),
+      );
+
+      await _performRemoveReaction(
+        postId: postId,
+        oldReaction: currentReaction,
+        oldCount: currentCount,
+        oldReactionId: currentReactionId ?? _reactionIdsByPost[postId],
+      );
+      return;
     }
+
+    const defaultReaction = ReactionType.goal;
+    final newCount = currentCount + 1;
 
     emit(
       PostReactionUpdated(
         postId: postId,
-        reactionType: newReaction,
+        reactionType: defaultReaction,
         count: newCount,
         reactionId: currentReactionId,
       ),
     );
 
-    if (newReaction == ReactionType.none) {
-      await _performRemoveReaction(
-        postId: postId,
-        oldReaction: currentReaction,
-        oldCount: currentCount,
-        oldReactionId: currentReactionId,
-      );
-    } else {
-      await _performReactApiCall(
-        postId: postId,
-        reactionType: newReaction,
-        oldReaction: currentReaction,
-        oldCount: currentCount,
-        oldReactionId: currentReactionId,
-      );
-    }
+    await _performReactApiCall(
+      postId: postId,
+      reactionType: defaultReaction,
+      oldReaction: ReactionType.none,
+      oldCount: currentCount,
+      oldReactionId: null,
+    );
   }
 
   Future<void> chooseReaction({

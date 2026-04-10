@@ -1,4 +1,5 @@
 import 'package:auth/constants/colors.dart';
+import 'package:auth/constants/paths.dart';
 import 'package:auth/core/app_routes.dart';
 import 'package:auth/core/styels.dart';
 import 'package:auth/domain/entities/post.dart';
@@ -18,6 +19,7 @@ import 'package:auth/presentation/user/widgets/profile_info_box.dart';
 import 'package:auth/presentation/user/widgets/profile_social_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
@@ -170,11 +172,20 @@ class _UserProfileViewState extends State<UserProfileView> {
               ),
               actions: [
                 if (isMyProfile)
-                  IconButton(
-                    onPressed: () => context.push(AppRoutes.profileSettings),
-                    icon: Icon(
-                      Icons.settings,
-                      color: Theme.of(context).iconTheme.color,
+                  Padding(
+                    padding: const EdgeInsetsDirectional.only(end: 12.0),
+                    child: IconButton(
+                      onPressed: () => context.push(AppRoutes.profileSettings),
+                      icon: SvgPicture.asset(
+                        Paths.settingsIcon,
+                        colorFilter: ColorFilter.mode(
+                          Theme.of(context).iconTheme.color!,
+                          BlendMode.srcIn,
+                        ),
+
+                        width: 20,
+                        height: 20,
+                      ),
                     ),
                   ),
               ],
