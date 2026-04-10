@@ -18,7 +18,8 @@ import 'package:skeletonizer/skeletonizer.dart';
 
 class AdminsListView extends StatelessWidget {
   final String groupId;
-  const AdminsListView({super.key, required this.groupId});
+  final String myRole;
+  const AdminsListView({super.key, required this.groupId, required this.myRole});
 
   @override
   Widget build(BuildContext context) {
@@ -62,10 +63,10 @@ class AdminsListView extends StatelessWidget {
         body: BlocBuilder<GroupMembersCubit, GroupMembersState>(
           builder: (context, state) {
             final cubit = context.read<GroupMembersCubit>();
-            final groupState = context.read<GetGroupCubit>().state;
-            String myRoleInGroup = 'member';
+           final groupState = context.read<GetGroupCubit>().state;
+            String groupCreatorId = '';
             if (groupState is GetGroupSuccess) {
-              myRoleInGroup = groupState.group.role ?? 'member';
+              groupCreatorId = groupState.group.creatorId ?? '';
             }
             final bool isInitialLoading =
                 state.isLoading && state.admins.isEmpty;
@@ -100,14 +101,20 @@ class AdminsListView extends StatelessWidget {
                     }
 
                     final admin = displayAdmins[index];
+
+                    String displayRole = admin.role;
+                    if (admin.userId.isNotEmpty && admin.userId == groupCreatorId) {
+                      displayRole = 'creator';
+                    }
+
                     return Skeletonizer(
                       enabled: isInitialLoading || admin.userId.isEmpty,
                       child: MemberRow(
                         name: admin.userName,
                         image: admin.profileImageUrl,
-                        role: admin.role ,
+                        role: displayRole ,
                         targetUserId: admin.userId,
-                        myRole: myRoleInGroup,
+                        myRole: myRole,
                         onRoleChanged: (newRole) {
                           context
                               .read<ChangeMemberRoleCubit>()

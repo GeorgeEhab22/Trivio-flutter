@@ -19,10 +19,15 @@ class GetJoinRequestsCubit extends BasePaginationCubit<JoinRequest> {
   String getItemId(JoinRequest item) => item.requestId;
 
   void removeRequestLocally(String requestId) {
-    items.removeWhere((r) => r.requestId == requestId);
+    final updatedItems = items
+        .where((req) => req.requestId != requestId)
+        .toList();
+
+    items = updatedItems;
+
     emit(
       PaginationLoaded<JoinRequest>(
-        items: List.from(items),
+        items: updatedItems,
         hasReachedMax: hasReachedMax,
       ),
     );

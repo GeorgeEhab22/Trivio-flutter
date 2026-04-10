@@ -148,4 +148,7 @@ abstract class GroupRepo {
     int page = 1,
     String? search,
   });
+
+  //28- get my role in group
+  Future<Either<Failure, String>> getUserGroupRole({required String groupId});
 }

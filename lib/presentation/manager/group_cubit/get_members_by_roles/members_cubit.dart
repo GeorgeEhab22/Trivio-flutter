@@ -197,18 +197,22 @@ class GroupMembersCubit extends Cubit<GroupMembersState> {
 
     final updatedUser = all[userIndex].copyWith(role: newRole);
 
-    final newMembers = state.members.where((m) => m.userId != userId).toList();
-    final newModerators = state.moderators
-        .where((m) => m.userId != userId)
-        .toList();
-    final newAdmins = state.admins.where((m) => m.userId != userId).toList();
+    final newMembers = List<GroupMember>.from(
+      state.members.map((m) => m.userId == userId ? updatedUser : m),
+    );
 
-    if (newRole == 'moderator') {
+    final newModerators = List<GroupMember>.from(
+      state.moderators.where((m) => m.userId != userId),
+    );
+    if (newRole.toLowerCase() == 'moderator') {
       newModerators.add(updatedUser);
-    } else if (newRole == 'admin') {
+    }
+
+    final newAdmins = List<GroupMember>.from(
+      state.admins.where((m) => m.userId != userId),
+    );
+    if (newRole.toLowerCase() == 'admin' || newRole.toLowerCase() == 'creator') {
       newAdmins.add(updatedUser);
-    } else {
-      newMembers.add(updatedUser);
     }
 
     emit(

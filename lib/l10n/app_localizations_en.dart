@@ -1329,4 +1329,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get contentViolationTitle => 'Content Violation Update';
+
+  @override
+  String get creator => 'Creator';
+
+  @override
+  String get thereIsNoBannedMembers => 'There is no banned members';
 }

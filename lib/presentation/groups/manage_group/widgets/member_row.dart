@@ -133,14 +133,18 @@ class MemberRow extends StatelessWidget {
                 context: context,
                 title: l10n.changeRole,
                 actions: [
-                  buildRoleOption(context, "member", Icons.person, l10n.member),
-                  buildRoleOption(
-                    context,
-                    "moderator",
-                    Icons.admin_panel_settings_outlined,
-                    l10n.moderator,
-                  ),
-                  if (myRole == 'creator')
+                  if (role != 'member')
+                    buildRoleOption(context, "member", Icons.person, l10n.member),
+                  
+                  if (role != 'moderator')
+                    buildRoleOption(
+                      context,
+                      "moderator",
+                      Icons.admin_panel_settings_outlined,
+                      l10n.moderator,
+                    ),
+                  
+                  if (myRole == 'creator' && role != 'admin')
                     buildRoleOption(
                       context,
                       "admin",

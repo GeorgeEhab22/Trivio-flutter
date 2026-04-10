@@ -6,8 +6,6 @@ import 'package:auth/presentation/manager/group_cubit/ban_member/ban_member_cubi
 import 'package:auth/presentation/manager/group_cubit/ban_member/ban_member_state.dart';
 import 'package:auth/presentation/manager/group_cubit/change_member_role/change_member_role_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/change_member_role/change_member_role_state.dart';
-import 'package:auth/presentation/manager/group_cubit/get_group/get_group_cubit.dart';
-import 'package:auth/presentation/manager/group_cubit/get_group/get_group_state.dart';
 import 'package:auth/presentation/manager/group_cubit/kick_member/kick_member_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/kick_member/kick_member_state.dart';
 import 'package:auth/presentation/manager/group_cubit/get_members_by_roles/members_cubit.dart';
@@ -18,7 +16,8 @@ import 'package:skeletonizer/skeletonizer.dart';
 
 class ModeratorsListView extends StatelessWidget {
   final String groupId;
-  const ModeratorsListView({super.key, required this.groupId});
+  final String myRole;
+  const ModeratorsListView({super.key, required this.groupId, required this.myRole});
 
   @override
   Widget build(BuildContext context) {
@@ -62,11 +61,7 @@ class ModeratorsListView extends StatelessWidget {
         body: BlocBuilder<GroupMembersCubit, GroupMembersState>(
           builder: (context, state) {
             final cubit = context.read<GroupMembersCubit>();
-            final groupState = context.read<GetGroupCubit>().state;
-            String myRoleInGroup = 'member';
-            if (groupState is GetGroupSuccess) {
-              myRoleInGroup = groupState.group.role ?? 'member';
-            }
+          
             final bool isInitialLoading =
                 state.isLoading && state.moderators.isEmpty;
             final bool isLoadingMore = state.isLoadingMoreModerators;
@@ -110,7 +105,7 @@ class ModeratorsListView extends StatelessWidget {
                         image: moderator.profileImageUrl,
                         role: moderator.role ,
                         targetUserId: moderator.userId, 
-                        myRole: myRoleInGroup,
+                        myRole: myRole,
                         onRoleChanged: (newRole) {
                           context
                               .read<ChangeMemberRoleCubit>()

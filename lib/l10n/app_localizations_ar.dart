@@ -1315,4 +1315,10 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get contentViolationTitle => 'تحديث بخصوص انتهاك المحتوى';
+
+  @override
+  String get creator => 'المالك';
+
+  @override
+  String get thereIsNoBannedMembers => 'لا يوجد أعضاء محظورين';
 }

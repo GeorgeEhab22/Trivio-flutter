@@ -485,5 +485,7 @@
   "savedPosts": "المنشورات المحفوظة",
   "noSavedPosts":"لا يوجد منشورات محفوظة",
   "toxicContentTitle": "محتوى ضار",
-  "contentViolationTitle": "تحديث بخصوص انتهاك المحتوى"
+  "contentViolationTitle": "تحديث بخصوص انتهاك المحتوى",
+  "creator": "المالك",
+  "thereIsNoBannedMembers": "لا يوجد أعضاء محظورين" 
 }
