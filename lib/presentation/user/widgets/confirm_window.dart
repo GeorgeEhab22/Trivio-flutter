@@ -1,6 +1,7 @@
 import 'package:auth/core/styels.dart';
 import 'package:auth/injection_container.dart' as di;
 import 'package:auth/presentation/manager/sigin_in_cubit/sign_in_cubit.dart';
+import 'package:auth/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -49,6 +50,7 @@ class ConfirmWindow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       elevation: 0,
@@ -86,10 +88,7 @@ class ConfirmWindow extends StatelessWidget {
                     Expanded(
                       child: TextButton(
                         onPressed: () => Navigator.pop(context),
-                        child: const Text(
-                          "Cancel",
-                          style: TextStyle(color: Colors.grey),
-                        ),
+                        child:  Text(l10n.cancel, style:const TextStyle(color: Colors.grey)),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -107,10 +106,7 @@ class ConfirmWindow extends StatelessWidget {
                           Navigator.pop(context); // Close window
                           onConfirm(); // Do the logout logic
                         },
-                        child: const Text(
-                          "Logout",
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
+                        child:  Text(l10n.logout, style:const TextStyle(fontWeight: FontWeight.bold)),
                       ),
                     ),
                   ],

@@ -18,7 +18,8 @@ import 'package:skeletonizer/skeletonizer.dart';
 
 class MembersListView extends StatelessWidget {
   final String groupId;
-  const MembersListView({super.key, required this.groupId});
+  final String myRole;
+  const MembersListView({super.key, required this.groupId, required this.myRole});
 
   @override
   Widget build(BuildContext context) {
@@ -66,12 +67,9 @@ class MembersListView extends StatelessWidget {
           builder: (context, state) {
             final cubit = context.read<GroupMembersCubit>();
             final groupState = context.read<GetGroupCubit>().state;
-            String myRoleInGroup = 'member';
+            String groupCreatorId = '';
             if (groupState is GetGroupSuccess) {
-              myRoleInGroup = groupState.group.role ?? 'member';
-              print("==== MY ROLE FROM BACKEND ====");
-              print("Raw Role: ${groupState.group.role}");
-              print("Role used in UI: $myRoleInGroup");
+              groupCreatorId = groupState.group.creatorId ?? '';
             }
             final bool isInitialLoading =
                 state.isLoading && state.members.isEmpty;
@@ -110,14 +108,18 @@ class MembersListView extends StatelessWidget {
                     }
 
                     final member = displayMembers[index];
+                    String displayRole = member.role;
+                    if (member.userId.isNotEmpty && member.userId == groupCreatorId) {
+                      displayRole = 'creator';
+                    }
                     return Skeletonizer(
                       enabled: isInitialLoading || member.userId.isEmpty,
                       child: MemberRow(
                         name: member.userName,
                         image: member.profileImageUrl,
-                        role: member.role,
+                        role: displayRole,
                         targetUserId: member.userId,
-                        myRole: myRoleInGroup,
+                        myRole: myRole,
                         onRoleChanged: (newRole) {
                           context
                               .read<ChangeMemberRoleCubit>()

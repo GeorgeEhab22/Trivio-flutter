@@ -9,6 +9,7 @@ import 'package:auth/presentation/manager/post_cubit/post_interaction_cubit.dart
 import 'package:auth/presentation/manager/profile_cubit/profile_cubit.dart';
 import 'package:auth/presentation/manager/theme_cubit/theme_cubit.dart';
 import 'package:auth/presentation/manager/locale_cubit/locale_cubit.dart'; // Import this
+import 'package:auth/services/fcm_helper.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -21,8 +22,14 @@ import 'injection_container.dart' as di;
 
 final RouteObserver<ModalRoute<dynamic>> routeObserver =
     RouteObserver<ModalRoute<dynamic>>();
+
+final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
+    GlobalKey<ScaffoldMessengerState>();
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await FcmHelper.initFCM();
+
   await di.init();
   await dotenv.load(fileName: ".env");
   await _setupDevMode();
@@ -33,6 +40,7 @@ void main() async {
   final bool isLoggedIn = token != null && token.isNotEmpty;
   if (isLoggedIn) {
     di.sl<ApiService>().dio.options.headers['Authorization'] = 'Bearer $token';
+    FcmHelper.sendTokenToBackend();
   }
   final bool isDesktop =
       !kIsWeb && (Platform.isWindows || Platform.isMacOS || Platform.isLinux);
@@ -77,6 +85,7 @@ class MyApp extends StatelessWidget {
                   child: ThemeRevealAnimation(
                     themeMode: themeState.mode,
                     child: MaterialApp.router(
+                      scaffoldMessengerKey: scaffoldMessengerKey,
                       title: 'TRIVIO',
                       debugShowCheckedModeBanner: false,
 
@@ -157,9 +166,9 @@ class MyApp extends StatelessWidget {
 Future<void> _setupDevMode() async {
   final prefs = await SharedPreferences.getInstance();
 
-  // 1. Paste your long JWT string here
   const String devToken =
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZDZkNGFhMDU0ZmQwYzYwMDBlZTNmNSIsInVzZXJuYW1lIjoiWlNDIiwiZW1haWwiOiJsaW8xMG1lc3NpMjIxNUBnbWFpbC5jb20iLCJpYXQiOjE3NzU4NDcxNjl9.6JSYsWQ7E-E9PPCgIPO05KFHzyi2GTKJuXjk0AfI03g";
+      
   await prefs.setString('auth_token', devToken);
   print("🛠️ DEV MODE: Token injected. App will start as logged in.");
 }

@@ -503,4 +503,17 @@ class GroupRepoImpl implements GroupRepo {
       return Left(ServerFailure('Failed to fetch feed'));
     }
   }
+
+  //28- get my role in group
+  @override
+  Future<Either<Failure, String>> getUserGroupRole({required String groupId}) async {
+    try {
+      final role = await remoteDataSource.getUserGroupRole(groupId);
+      return Right(role);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } catch (_) {
+      return Left(ServerFailure('Failed to fetch user group role'));
+    }
+  }
 }

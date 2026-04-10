@@ -116,7 +116,15 @@ class CustomSquareButton extends StatelessWidget {
         ],
 
         Flexible(
-          child: Text(label ?? '', textAlign: TextAlign.center, style: style),
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              label ?? '', 
+              textAlign: TextAlign.center, 
+              style: style,
+              maxLines: 1, 
+            ),
+          ),
         ),
 
         if (trailingSvgAsset != null) ...[
@@ -145,7 +153,15 @@ class CustomSquareButton extends StatelessWidget {
           Icon(icon, color: resolvedIconColor, size: 24),
           const SizedBox(height: 6),
         ],
-        Text(label ?? '', textAlign: TextAlign.center, style: style),
+        FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(
+            label ?? '', 
+            textAlign: TextAlign.center, 
+            style: style,
+            maxLines: 1,
+          ),
+        ),
       ],
     );
   }

@@ -98,5 +98,6 @@ class ApiEndpoints {
   static const String chatbotSendMessage = 'users/chatbot/send-message';
 
   //notifications
-  static const String notifications = 'users/me/notifications';
+  static const String notifications = 'notifications';
+  static const String fcmToken = "/users/me/fcm-token";
 }

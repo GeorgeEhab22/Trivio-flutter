@@ -340,7 +340,7 @@
   "googleSignInFailed": "Google sign-in failed. Please try again.",
   "networkError": "Please check your internet connection.",
   "failedToLoadData": "Failed to load football data. Please check your connection.",
-  "matches": "matches",
+  "matchesToday": "Today Matches",
   "noMatchesFound": "No Matches Found",
   "errInvalidCode" : "Please enter all 6 digits",
   "copied": "Copied to clipboard",
@@ -484,5 +484,16 @@
   "savedPosts": "Saved Posts",
   "noSavedPosts": "No Saved Posts",
   "sensitiveContent": "Sensitive Content",
-  "seePost":"See Post"
+  "seePost":"See Post",
+  "toxicContentTitle": "Toxic Content",
+  "contentViolationTitle": "Content Violation Update",
+  "creator": "Creator",
+  "thereIsNoBannedMembers": "There is no banned members",
+  "addvideo": "Add reel",
+  "dataAnalysisMode": "Data Analysis Mode",
+  "attach": "Attach",
+  "inquireMatchDynamics": "Inquire about match dynamics...",
+  "tacticalIntelligence": "TACTICAL INTELLIGENCE",
+  "logout": "Logout"
+
 }

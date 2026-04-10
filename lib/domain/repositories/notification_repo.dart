@@ -9,4 +9,7 @@ abstract class NotificationRepo {
   });
 
   Future<Either<Failure, void>> openNotification(String notificationId);
+
+  Future<Either<Failure, void>> registerFcmToken(String token);
+  Future<Either<Failure, void>> deleteFcmToken(String token);
 }

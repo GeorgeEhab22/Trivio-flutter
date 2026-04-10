@@ -14,8 +14,11 @@ class MemberRuleRow extends StatelessWidget {
     IconData roleIcon;
     Color roleColor;
     String localizedRole;
-
-    if (roleKey == 'admin') {
+    if (roleKey == 'creator') {
+      roleIcon = Icons.stars_rounded; 
+      roleColor = Colors.purple;    
+      localizedRole = l10n.creator;  
+    } else if (roleKey == 'admin') {
       roleIcon = Icons.admin_panel_settings_rounded;
       roleColor = Colors.amber;
       localizedRole = l10n.admin;

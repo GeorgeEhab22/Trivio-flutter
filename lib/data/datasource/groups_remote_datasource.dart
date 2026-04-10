@@ -128,6 +128,8 @@ abstract class GroupRemoteDataSource {
   Future<List<GroupModel>> getMyGroups({int page = 1, String? search});
   // 27-get joined groups
   Future<List<GroupModel>> getJoinedGroups({int page = 1, String? search});
+  //28- get my role in group
+  Future<String> getUserGroupRole(String groupId);
 }
 
 class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
@@ -607,6 +609,19 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
         .toList();
   }
 
+  @override
+  Future<String> getUserGroupRole(String groupId) async {
+    try {
+      final response = await api.get(
+        "${ApiEndpoints.groups}/$groupId/role",
+        options: _getAuthOptions(),
+      );
+      return response['data']['role']; 
+    } catch (e) {
+      errorHandler.handleDioError(e);
+      rethrow;
+    }
+  }
   Future<void> _simpleDelete(String path) async {
     try {
       await api.delete(path, options: _getAuthOptions());

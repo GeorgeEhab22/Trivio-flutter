@@ -14,12 +14,15 @@ class PostFooter extends StatelessWidget {
   final Post post;
   final String currentUserId;
   final ReactionType? currentReaction;
+  final String? targetCommentId;
+
 
   const PostFooter({
     super.key,
     required this.post,
     required this.currentUserId,
     this.currentReaction,
+    this.targetCommentId,
   });
 
   @override
@@ -70,6 +73,7 @@ class PostFooter extends StatelessWidget {
                     sharesCount: presentationShareCount,
                     reactionsCount: resolvedCount,
                     topReactions: _topReactionTypes(),
+                    targetCommentId: targetCommentId,
                   ),
                   _ActionDivider(color: dividerColor),
                   ShareButton(count: presentationShareCount),

@@ -74,6 +74,7 @@ import 'package:auth/domain/usecases/group/members/get_group_admins_use_case.dar
 import 'package:auth/domain/usecases/group/members/get_group_banned_members_use_case.dart';
 import 'package:auth/domain/usecases/group/members/get_group_members_use_case.dart';
 import 'package:auth/domain/usecases/group/members/get_group_moderators_use_case.dart';
+import 'package:auth/domain/usecases/group/members/get_user_group_role_usecase.dart';
 import 'package:auth/domain/usecases/group/members/kick_member_use_case.dart';
 import 'package:auth/domain/usecases/group/members/unban_member_use_case.dart';
 import 'package:auth/domain/usecases/follow/accept_follow_requests.dart';
@@ -88,8 +89,10 @@ import 'package:auth/domain/usecases/follow/unfollow_user.dart';
 import 'package:auth/domain/usecases/interests/get_all_players_use_case.dart';
 import 'package:auth/domain/usecases/interests/get_all_teams_use_case.dart';
 import 'package:auth/domain/usecases/interests/search_players_use_case.dart';
+import 'package:auth/domain/usecases/notfication/delete_fcm_token_usecase.dart';
 import 'package:auth/domain/usecases/notfication/get_notifications_use_case.dart';
 import 'package:auth/domain/usecases/notfication/open_notification_use_case.dart';
+import 'package:auth/domain/usecases/notfication/register_fcm_token_usecase.dart';
 import 'package:auth/domain/usecases/post/comment_on_post_usecase.dart';
 import 'package:auth/domain/usecases/post/create_post_usecase.dart';
 import 'package:auth/domain/usecases/post/delete_post_usecase.dart';
@@ -146,6 +149,7 @@ import 'package:auth/presentation/manager/group_cubit/get_groups/get_groups_cubi
 import 'package:auth/presentation/manager/group_cubit/get_join_requests/get_join_requests_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/get_joined_groups/get_joined_groups_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/get_my_groups/get_my_groups_cubit.dart';
+import 'package:auth/presentation/manager/group_cubit/get_user_group_role/user_group_role_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/join_group/join_group_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/kick_member/kick_member_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/leave_group/leave_group_cubit.dart';
@@ -236,8 +240,11 @@ Future<void> init() async {
 
   // Cubits
   sl.registerFactory(
-    () => SignInCubit(signInUseCase: sl(), googleSignInUseCase: sl()),
+    () => SignInCubit(signInUseCase: sl(), googleSignInUseCase: sl(), registerFcmTokenUseCase: sl(), deleteFcmTokenUseCase: sl()),
   );
+  sl.registerLazySingleton(() => RegisterFcmTokenUseCase(sl()));
+  sl.registerLazySingleton(() => DeleteFcmTokenUseCase(sl()));
+
   sl.registerFactory(() => RegisterCubit(registerUseCase: sl()));
   sl.registerFactory(() => RequestOTPCubit(sendPasswordResetOtp: sl()));
   sl.registerFactory(() => LogOutCubit());
@@ -458,6 +465,11 @@ Future<void> init() async {
 
   // get groups posts feed
   sl.registerLazySingleton(() => GetGroupsPostsFeedUseCase(sl()));
+
+  //get user role in group
+  sl.registerLazySingleton(() => GetUserGroupRoleUseCase(sl()));
+  sl.registerFactory(() => UserGroupRoleCubit(sl()));
+  
   // ==========================================================================
   // FEATURE: Chatbot
   // ==========================================================================

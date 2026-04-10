@@ -951,7 +951,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Failed to load football data. Please check your connection.';
 
   @override
-  String get matches => 'Matches';
+  String get matchesToday => 'Today Matches';
 
   @override
   String get noMatchesFound => 'No Matches Found';
@@ -1254,6 +1254,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get all => 'All';
 
   @override
+  String get matches => 'Matches';
+
+  @override
   String get social => 'social';
 
   @override
@@ -1329,4 +1332,32 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get seePost => 'See Post';
+  String get toxicContentTitle => 'Toxic Content';
+
+  @override
+  String get contentViolationTitle => 'Content Violation Update';
+
+  @override
+  String get creator => 'Creator';
+
+  @override
+  String get thereIsNoBannedMembers => 'There is no banned members';
+
+  @override
+  String get addvideo => 'Add reel';
+
+  @override
+  String get dataAnalysisMode => 'Data Analysis Mode';
+
+  @override
+  String get attach => 'Attach';
+
+  @override
+  String get inquireMatchDynamics => 'Inquire about match dynamics...';
+
+  @override
+  String get tacticalIntelligence => 'TACTICAL INTELLIGENCE';
+
+  @override
+  String get logout => 'Logout';
 }

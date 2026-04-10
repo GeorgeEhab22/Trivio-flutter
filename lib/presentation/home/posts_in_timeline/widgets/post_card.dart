@@ -16,6 +16,7 @@ class PostCard extends StatelessWidget {
   final Post post;
   final String currentUserId;
   final ReactionType? currentReaction;
+  final String? targetCommentId;
 
   final ValueNotifier<bool> isRevealed = ValueNotifier<bool>(false);
 
@@ -24,6 +25,7 @@ class PostCard extends StatelessWidget {
     required this.post,
     required this.currentUserId,
     this.currentReaction,
+    this.targetCommentId,
   });
 
   @override
@@ -121,6 +123,7 @@ class PostCard extends StatelessWidget {
             post: post,
             currentUserId: currentUserId,
             currentReaction: currentReaction ?? post.userReaction,
+            targetCommentId: targetCommentId, 
           ),
         ],
       ),

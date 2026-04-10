@@ -21,6 +21,7 @@ class CommentAction extends StatelessWidget {
   final String currentUserId;
   final bool isReelView;
   final VoidCallback? onReelsCommentTap;
+  final String? targetCommentId;
 
   const CommentAction({
     super.key,
@@ -32,6 +33,7 @@ class CommentAction extends StatelessWidget {
     this.topReactions = const <ReactionType>[],
     this.isReelView = false,
     this.onReelsCommentTap,
+    this.targetCommentId,
   });
 
   @override
@@ -95,6 +97,7 @@ class CommentAction extends StatelessWidget {
                 reactionsCount: reactionsCount,
                 topReactions: topReactions,
                 isReelView: isReelView,
+                targetCommentId: targetCommentId,
               ),
             ),
           ),

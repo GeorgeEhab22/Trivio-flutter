@@ -1,3 +1,4 @@
+import 'package:auth/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class ResponseHeader extends StatelessWidget {
@@ -5,6 +6,7 @@ class ResponseHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Row(
@@ -18,9 +20,9 @@ class ResponseHeader extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 6),
-          const Text(
-            'TACTICAL INTELLIGENCE',
-            style: TextStyle(
+          Text(
+            l10n.tacticalIntelligence,
+            style:const TextStyle(
               color: Color(0xFF00E639),
               fontSize: 10,
               fontWeight: FontWeight.w600,

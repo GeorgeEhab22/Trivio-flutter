@@ -1898,11 +1898,11 @@ abstract class AppLocalizations {
   /// **'Failed to load football data. Please check your connection.'**
   String get failedToLoadData;
 
-  /// No description provided for @matches.
+  /// No description provided for @matchesToday.
   ///
   /// In en, this message translates to:
-  /// **'Matches'**
-  String get matches;
+  /// **'Today Matches'**
+  String get matchesToday;
 
   /// No description provided for @noMatchesFound.
   ///
@@ -2480,6 +2480,12 @@ abstract class AppLocalizations {
   /// **'All'**
   String get all;
 
+  /// No description provided for @matches.
+  ///
+  /// In en, this message translates to:
+  /// **'Matches'**
+  String get matches;
+
   /// No description provided for @social.
   ///
   /// In en, this message translates to:
@@ -2629,6 +2635,65 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'See Post'**
   String get seePost;
+  /// No description provided for @toxicContentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Toxic Content'**
+  String get toxicContentTitle;
+
+  /// No description provided for @contentViolationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Content Violation Update'**
+  String get contentViolationTitle;
+
+  /// No description provided for @creator.
+  ///
+  /// In en, this message translates to:
+  /// **'Creator'**
+  String get creator;
+
+  /// No description provided for @thereIsNoBannedMembers.
+  ///
+  /// In en, this message translates to:
+  /// **'There is no banned members'**
+  String get thereIsNoBannedMembers;
+
+  /// No description provided for @addvideo.
+  ///
+  /// In en, this message translates to:
+  /// **'Add reel'**
+  String get addvideo;
+
+  /// No description provided for @dataAnalysisMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Data Analysis Mode'**
+  String get dataAnalysisMode;
+
+  /// No description provided for @attach.
+  ///
+  /// In en, this message translates to:
+  /// **'Attach'**
+  String get attach;
+
+  /// No description provided for @inquireMatchDynamics.
+  ///
+  /// In en, this message translates to:
+  /// **'Inquire about match dynamics...'**
+  String get inquireMatchDynamics;
+
+  /// No description provided for @tacticalIntelligence.
+  ///
+  /// In en, this message translates to:
+  /// **'TACTICAL INTELLIGENCE'**
+  String get tacticalIntelligence;
+
+  /// No description provided for @logout.
+  ///
+  /// In en, this message translates to:
+  /// **'Logout'**
+  String get logout;
 }
 
 class _AppLocalizationsDelegate

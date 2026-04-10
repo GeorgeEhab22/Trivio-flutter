@@ -21,6 +21,7 @@ class CommentsView extends StatefulWidget {
   final int reactionsCount;
   final List<ReactionType> topReactions;
   final bool isReelView;
+  final String? targetCommentId;
 
   const CommentsView({
     super.key,
@@ -30,6 +31,7 @@ class CommentsView extends StatefulWidget {
     this.reactionsCount = 0,
     this.topReactions = const <ReactionType>[],
     this.isReelView = false,
+    this.targetCommentId,
   });
 
   @override
@@ -299,6 +301,7 @@ class _CommentsViewState extends State<CommentsView> {
                   Expanded(
                     child: CommentsBlocConsumer(
                       currentUserId: userId,
+                      targetCommentId:widget.targetCommentId,
                     ),
                   ),
                   InputFieldBlocBuilder(

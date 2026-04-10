@@ -47,4 +47,24 @@ class NotificationRepoImpl implements NotificationRepo {
       return Left(ServerFailure('Failed to open notification'));
     }
   }
+
+  @override
+  Future<Either<Failure, void>> registerFcmToken(String token) async {
+    try {
+      await remoteDataSource.registerFcmToken(token);
+      return const Right(null);
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> deleteFcmToken(String token) async {
+    try {
+      await remoteDataSource.deleteFcmToken(token);
+      return const Right(null);
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
 }

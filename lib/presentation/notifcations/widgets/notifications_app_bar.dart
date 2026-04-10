@@ -16,6 +16,7 @@ class NotificationsAppBar extends StatelessWidget
     return AppBar(
       backgroundColor: backgroundColor,
       elevation: 0,
+      scrolledUnderElevation: 0,
       leading: IconButton(
         onPressed: () => context.pop(),
         icon: const Icon(Icons.arrow_back_ios_new_rounded),
