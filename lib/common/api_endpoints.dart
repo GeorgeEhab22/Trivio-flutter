@@ -24,6 +24,7 @@ class ApiEndpoints {
   static const toggleSavePost = 'posts/save'; // POST {postId}
   static const reportPost = 'posts/report'; // POST {postId}
   static const searchPosts = 'posts/search'; // GET ?q=query
+  static const submitWatchedPosts = 'users/me/mark-posts-as-seen'; // POST
 
   // FOLLOW
   static const toggleFollow = 'users/follow'; // POST {userId}
@@ -66,11 +67,9 @@ class ApiEndpoints {
   static String declineFollowRequest(String requestId) =>
       'follow-requests/follow-requests/$requestId/decline';
 
-  static String getUserFollowers(String userId) =>
-      'users/$userId/followers';
+  static String getUserFollowers(String userId) => 'users/$userId/followers';
 
-  static String getUserFollowing(String userId) =>
-      'users/$userId/following';
+  static String getUserFollowing(String userId) => 'users/$userId/following';
 
   //profile
   static const String myFollowers = 'users/me/followers';
@@ -94,11 +93,10 @@ class ApiEndpoints {
   static const String favPlayers = 'users/me/favPlayers';
   static const String removeFavTeams = 'users/me/removeFavTeam';
   static const String removeFavPlayers = 'users/me/removeFavPlayer';
-   //chatbot
+  //chatbot
   static const String chatbotHistory = 'users/chatbot/get-history';
   static const String chatbotSendMessage = 'users/chatbot/send-message';
 
-  
   //notifications
   static const String notifications = 'users/me/notifications';
 }

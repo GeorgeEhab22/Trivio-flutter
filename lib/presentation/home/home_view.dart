@@ -1,50 +1,75 @@
+
 import 'package:auth/constants/colors.dart';
 import 'package:auth/core/custom_app_bar.dart';
 import 'package:auth/presentation/home/add_post/add_post_bottom_sheet.dart';
 import 'package:auth/presentation/home/posts_in_timeline/time_line_list_view.dart';
+import 'package:auth/presentation/home/watch_time/watch_time_tracker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
 import 'package:auth/presentation/authentication/widgets/show_custom_snackbar.dart';
-import 'package:auth/l10n/app_localizations.dart'; // Import localization
+import 'package:auth/l10n/app_localizations.dart';
 
-class HomeView extends StatelessWidget {
+class HomeView extends StatefulWidget {
   const HomeView({super.key});
+
+  @override
+  State<HomeView> createState() => _HomeViewState();
+}
+
+class _HomeViewState extends State<HomeView> with RouteAware {
+    RouteObserver<ModalRoute<dynamic>>? _routeObserver;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_routeObserver != null) return;
+    _routeObserver = context.read<RouteObserver<ModalRoute<dynamic>>>();
+    _routeObserver!.subscribe(this, ModalRoute.of(context)!);
+  }
+
+  @override
+  void dispose() {
+    _routeObserver?.unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
+  void didPopNext() => _flushWatchTime();
+
+  @override
+  void didPop() => _flushWatchTime();
+
+  void _flushWatchTime() {
+    WatchTimeTracker.of(context)?.flushAndDispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<PostCubit>();
     final l10n = AppLocalizations.of(context)!;
 
-    return BlocListener<PostCubit, PostState>(
-      listener: (context, state) {
-        if (state is DeletePostSuccess) {
-          showCustomSnackBar(context, l10n.postDeletedSuccess, true);
-        }
-        if (state is DeletePostError) {
-          // Use the localized error helper we discussed or show state message
-          showCustomSnackBar(context, state.message, false);
-        }
-        if (state is EditPostSuccess) {
-          showCustomSnackBar(context, 'Post updated successfully', true);
-        }
-        if (state is EditPostError) {
-          showCustomSnackBar(context, state.message, false);
-        }
-      },
-      child: Scaffold(
-        body: SafeArea(
-          child: Stack(
-            children: [
-              NotificationListener<ScrollNotification>(
-                onNotification: (notification) {
-                  if (notification is ScrollEndNotification &&
-                      notification.metrics.extentAfter < 500) {
-                    context.read<PostCubit>().loadMorePosts();
-                  }
-                  return false;
-                },
-                child: RefreshIndicator(
+    return WatchTimeTracker(
+      child: BlocListener<PostCubit, PostState>(
+        listener: (context, state) {
+          if (state is DeletePostSuccess) {
+            showCustomSnackBar(context, l10n.postDeletedSuccess, true);
+          }
+          if (state is DeletePostError) {
+            showCustomSnackBar(context, state.message, false);
+          }
+          if (state is EditPostSuccess) {
+            showCustomSnackBar(context, 'Post updated successfully', true);
+          }
+          if (state is EditPostError) {
+            showCustomSnackBar(context, state.message, false);
+          }
+        },
+        child: Scaffold(
+          body: SafeArea(
+            child: Stack(
+              children: [
+                RefreshIndicator(
                   onRefresh: () =>
                       context.read<PostCubit>().fetchPosts(refresh: true),
                   child: const CustomScrollView(
@@ -62,9 +87,9 @@ class HomeView extends StatelessWidget {
                     ],
                   ),
                 ),
-              ),
-              _buildAddPostFAB(context, cubit),
-            ],
+                _buildAddPostFAB(context, cubit),
+              ],
+            ),
           ),
         ),
       ),
@@ -72,15 +97,12 @@ class HomeView extends StatelessWidget {
   }
 
   Widget _buildAddPostFAB(BuildContext context, PostCubit cubit) {
-    // In RTL (Arabic), 'right: 20' will naturally place it on the left 
-    // of the screen unless you wrap it in Directionality(ltr).
-    // Standard practice for Arabic is to let it flip.
     return Positioned(
       bottom: 20,
       right: 20,
       child: FloatingActionButton(
         shape: const CircleBorder(),
-        backgroundColor:AppColors.darkGreen,
+        backgroundColor: AppColors.darkGreen,
         child: const Icon(Icons.add, color: Colors.white),
         onPressed: () async {
           final newPost = await showModalBottomSheet(

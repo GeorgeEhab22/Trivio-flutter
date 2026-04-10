@@ -16,15 +16,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_localizations/flutter_localizations.dart'; // Import this
+import 'package:provider/provider.dart';
 import 'injection_container.dart' as di;
 
+final RouteObserver<ModalRoute<dynamic>> routeObserver =
+    RouteObserver<ModalRoute<dynamic>>();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await di.init();
   await dotenv.load(fileName: ".env");
-  //await _setupDevMode();
-  
-  
+  await _setupDevMode();
+
   final prefs = await SharedPreferences.getInstance();
   //await prefs.remove('auth_token');
   final token = prefs.getString('auth_token');
@@ -32,9 +34,10 @@ void main() async {
   if (isLoggedIn) {
     di.sl<ApiService>().dio.options.headers['Authorization'] = 'Bearer $token';
   }
-  final bool isDesktop = !kIsWeb && (Platform.isWindows || Platform.isMacOS || Platform.isLinux);
+  final bool isDesktop =
+      !kIsWeb && (Platform.isWindows || Platform.isMacOS || Platform.isLinux);
   final bool enableDevicePreview = !kReleaseMode && (isDesktop || kIsWeb);
-  
+
   runApp(
     DevicePreview(
       enabled: enableDevicePreview,
@@ -51,62 +54,65 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final router = createRouter(isLoggedIn);
 
-    return MultiBlocProvider( 
+    return MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => di.sl<PostCubit>()..fetchPosts()),
         BlocProvider(create: (context) => di.sl<PostInteractionCubit>()),
         BlocProvider(create: (_) => di.sl<ThemeCubit>()),
-        BlocProvider(create: (_) => di.sl<LocaleCubit>()), 
-        BlocProvider(create: (_) => ProfileCubit(getMyProfile: di.sl())..loadProfile()),
-
+        BlocProvider(create: (_) => di.sl<LocaleCubit>()),
+        BlocProvider(
+          create: (_) => ProfileCubit(getMyProfile: di.sl())..loadProfile(),
+        ),
       ],
-      child: BlocBuilder<LocaleCubit, Locale>( 
-        builder: (context, localeState) {
-          return BlocBuilder<ThemeCubit, ThemeState>(
-            builder: (context, themeState) {
-              return AnimatedTheme(
-                data: _getThemeData(themeState.mode, context),
-                duration: const Duration(milliseconds: 400),
-                curve: Curves.easeInOutCubicEmphasized,
-                child: ThemeRevealAnimation(
-                  themeMode: themeState.mode,
-                  child: MaterialApp.router(
-                    title: 'TRIVIO',
-                    debugShowCheckedModeBanner: false,
-                    
-                    locale: localeState, 
-                    supportedLocales: AppLocalizations.supportedLocales,
-                    localizationsDelegates: const [
-                      AppLocalizations.delegate,
-                      GlobalMaterialLocalizations.delegate,
-                      GlobalWidgetsLocalizations.delegate,
-                      GlobalCupertinoLocalizations.delegate,
-                    ],
-
-                    builder: (context, child) {
-                      return Stack(
-                        children: [
-                          DevicePreview.appBuilder(context, child),
-                          if (themeState.isAnimating)
-                            _buildThemeTransitionOverlay(themeState.mode),
-                        ],
-                      );
-                    },
+      child: Provider<RouteObserver<ModalRoute<dynamic>>>.value(
+        value: routeObserver,
+        child: BlocBuilder<LocaleCubit, Locale>(
+          builder: (context, localeState) {
+            return BlocBuilder<ThemeCubit, ThemeState>(
+              builder: (context, themeState) {
+                return AnimatedTheme(
+                  data: _getThemeData(themeState.mode, context),
+                  duration: const Duration(milliseconds: 400),
+                  curve: Curves.easeInOutCubicEmphasized,
+                  child: ThemeRevealAnimation(
                     themeMode: themeState.mode,
-                    theme: _lightTheme,
-                    darkTheme: _darkTheme,
-                    routerConfig: router,
+                    child: MaterialApp.router(
+                      title: 'TRIVIO',
+                      debugShowCheckedModeBanner: false,
+
+                      locale: localeState,
+                      supportedLocales: AppLocalizations.supportedLocales,
+                      localizationsDelegates: const [
+                        AppLocalizations.delegate,
+                        GlobalMaterialLocalizations.delegate,
+                        GlobalWidgetsLocalizations.delegate,
+                        GlobalCupertinoLocalizations.delegate,
+                      ],
+
+                      builder: (context, child) {
+                        return Stack(
+                          children: [
+                            DevicePreview.appBuilder(context, child),
+                            if (themeState.isAnimating)
+                              _buildThemeTransitionOverlay(themeState.mode),
+                          ],
+                        );
+                      },
+                      themeMode: themeState.mode,
+                      theme: _lightTheme,
+                      darkTheme: _darkTheme,
+                      routerConfig: router,
+                    ),
                   ),
-                ),
-              );
-            },
-          );
-        },
+                );
+              },
+            );
+          },
+        ),
       ),
     );
   }
 
-  
   ThemeData _getThemeData(ThemeMode mode, BuildContext context) {
     final brightness = MediaQuery.platformBrightnessOf(context);
     if (mode == ThemeMode.system) {
@@ -148,11 +154,12 @@ class MyApp extends StatelessWidget {
   );
 }
 
-// Future<void> _setupDevMode() async {
-//   final prefs = await SharedPreferences.getInstance();
+Future<void> _setupDevMode() async {
+  final prefs = await SharedPreferences.getInstance();
 
-//   // 1. Paste your long JWT string here
-//   const String devToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YzMwNjg3MDIwOTg0MWVjOGUyYTliMSIsInVzZXJuYW1lIjoiZ2VvIiwiZW1haWwiOiJnZW9yZ2VlaGFiLmNzQGdtYWlsLmNvbSIsImlhdCI6MTc3NDM5NTAxOH0.FKii1aEy9pI-GPaS1Tomvd0b4cxgHpgYScoT_9le5Bk";
-//   await prefs.setString('auth_token', devToken);
-//   print("🛠️ DEV MODE: Token injected. App will start as logged in.");
-// }
+  // 1. Paste your long JWT string here
+  const String devToken =
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZDZkNGFhMDU0ZmQwYzYwMDBlZTNmNSIsInVzZXJuYW1lIjoiWlNDIiwiZW1haWwiOiJsaW8xMG1lc3NpMjIxNUBnbWFpbC5jb20iLCJpYXQiOjE3NzU4NDcxNjl9.6JSYsWQ7E-E9PPCgIPO05KFHzyi2GTKJuXjk0AfI03g";
+  await prefs.setString('auth_token', devToken);
+  print("🛠️ DEV MODE: Token injected. App will start as logged in.");
+}

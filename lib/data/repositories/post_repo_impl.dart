@@ -61,15 +61,9 @@ class PostRepositoryImpl implements PostRepo {
   }
 
   @override
-  Future<Either<Failure, List<Post>>> fetchPosts({
-    int page = 1,
-    int limit = 20,
-  }) async {
+  Future<Either<Failure, List<Post>>> fetchPosts({int limit = 20}) async {
     try {
-      final models = await remoteDataSource.fetchPosts(
-        page: page,
-        limit: limit,
-      );
+      final models = await remoteDataSource.fetchPosts(limit: limit);
       final entities = models.map((m) => m.toEntity()).toList();
       return Right(entities);
     } on ServerException catch (e) {
@@ -310,6 +304,18 @@ class PostRepositoryImpl implements PostRepo {
       return Left(NetworkFailure(e.message));
     } catch (_) {
       return Left(ServerFailure('Failed to search posts'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, Unit>> submitWatchedPosts(
+    List<String> watchedPosts,
+  ) async {
+    try {
+      await remoteDataSource.submitWatchedPosts(watchedPosts);
+      return const Right(unit);
+    } on ServerException catch (e) {
+      return Left(ServerFailure( e.message));
     }
   }
 }

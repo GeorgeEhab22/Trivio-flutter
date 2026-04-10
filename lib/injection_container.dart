@@ -104,6 +104,7 @@ import 'package:auth/domain/usecases/post/search_post_usecase.dart';
 import 'package:auth/domain/usecases/post/share_post_usecase.dart';
 import 'package:auth/domain/usecases/post/follow_user.dart';
 import 'package:auth/domain/usecases/post/save_post_usecase.dart';
+import 'package:auth/domain/usecases/post/submit_watched_posts_use_case.dart';
 import 'package:auth/domain/usecases/register/register_usecase.dart';
 import 'package:auth/domain/usecases/register/resend_verification_code.dart';
 import 'package:auth/domain/usecases/register/verify_code.dart';
@@ -279,8 +280,11 @@ Future<void> init() async {
   sl.registerLazySingleton(() => FollowUserUseCase(sl()));
   sl.registerLazySingleton(() => SavePostUseCase(sl()));
   sl.registerLazySingleton(() => CommentOnPostUseCase(sl()));
+  sl.registerLazySingleton(() => SubmitWatchedPostsUseCase(sl()));
+  
   sl.registerFactory(
     () => PostCubit(
+      submitWatchedPostsUseCase: sl(),
       getPostsUseCase: sl(),
       getPostReactionsUseCase: sl(),
       deletePostUseCase: sl(),

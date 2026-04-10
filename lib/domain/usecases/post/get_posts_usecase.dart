@@ -8,12 +8,11 @@ class GetPostsUseCase {
 
   GetPostsUseCase(this.repo);
 
-  // later add recommendation posts , trending posts , following posts
 
   Future<Either<Failure, List<Post>>> call({
-    int page = 1,
+   
     int limit = 20,
   }) async {
-    return await repo.fetchPosts(page: page, limit: limit);
+    return await repo.fetchPosts( limit: limit);
   }
 }

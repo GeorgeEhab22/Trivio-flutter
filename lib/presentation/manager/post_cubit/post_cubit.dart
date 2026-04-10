@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:async' show unawaited;
 
 import 'package:auth/core/errors/failure.dart';
 import 'package:auth/domain/entities/post.dart';
@@ -8,7 +9,9 @@ import 'package:auth/domain/usecases/post/delete_post_usecase.dart';
 import 'package:auth/domain/usecases/post/get_post_reactions_usecase.dart';
 import 'package:auth/domain/usecases/post/get_posts_usecase.dart';
 import 'package:auth/domain/usecases/post/edit_post_usecase.dart';
+import 'package:auth/domain/usecases/post/submit_watched_posts_use_case.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -20,6 +23,7 @@ class PostCubit extends Cubit<PostState> {
   final DeletePostUseCase deletePostUseCase;
   final EditPostUseCase editPostUseCase;
   final SharedPreferences prefs;
+  final SubmitWatchedPostsUseCase submitWatchedPostsUseCase;
 
   static const String _commentsCountFloorsPrefsKey =
       'post_comments_count_floors';
@@ -37,6 +41,7 @@ class PostCubit extends Cubit<PostState> {
   bool _isHydratingCurrentUserReactions = false;
 
   PostCubit({
+    required this.submitWatchedPostsUseCase,
     required this.getPostsUseCase,
     required this.getPostReactionsUseCase,
     required this.deletePostUseCase,
@@ -203,7 +208,7 @@ class PostCubit extends Cubit<PostState> {
     var didMutateCeilings = false;
     final updated = source.map((post) {
       final postId = post.postID;
-      if ( postId.trim().isEmpty) {
+      if (postId.trim().isEmpty) {
         return post;
       }
 
@@ -337,7 +342,7 @@ class PostCubit extends Cubit<PostState> {
       emit(PostLoading());
     }
 
-    final result = await getPostsUseCase(page: page, limit: 10);
+    final result = await getPostsUseCase(limit: 10);
 
     result.fold(
       (failure) {
@@ -359,54 +364,13 @@ class PostCubit extends Cubit<PostState> {
     );
   }
 
-  Future<void> loadMorePosts() async {
-    if (isLoadingMore || hasReachedMax) return;
-
-    isLoadingMore = true;
-    emit(PostsLoadingMore(List.from(posts)));
-
-    final result = await getPostsUseCase(page: page, limit: 10);
-    if (isClosed) return;
-    isLoadingMore = false;
-
-    result.fold(
-      (failure) {
-        emit(PostsLoadingMoreError(failure.message, List.from(posts)));
-      },
-      (newPosts) {
-        final normalizedNewPosts = _applyReactionSnapshot(
-          _applyCommentsCountFloors(newPosts),
-        );
-        if (newPosts.isEmpty) {
-          hasReachedMax = true;
-          emit(PostLoaded(List.from(posts), hasReachedMax: true));
-          return;
-        }
-
-        final existingIds = posts.map((p) => p.postID).toSet();
-        final uniqueNewPosts = normalizedNewPosts
-            .where((p) => !existingIds.contains(p.postID))
-            .toList();
-
-        if (uniqueNewPosts.isNotEmpty) {
-          posts.addAll(uniqueNewPosts);
-          page++;
-        } else {
-          hasReachedMax = true;
-        }
-
-        emit(PostLoaded(List.from(posts), hasReachedMax: hasReachedMax));
-      },
-    );
-  }
-
   void addNewPostToFeed(Post newPost) {
     posts.insert(
       0,
       _applyReactionSnapshot(_applyCommentsCountFloors([newPost])).first,
     );
     final postId = newPost.postID.trim();
-    if ( postId.isNotEmpty) {
+    if (postId.isNotEmpty) {
       _hydratedCurrentUserReactionPostIds.remove(postId);
     }
     emit(PostLoaded(List.from(posts), hasReachedMax: hasReachedMax));
@@ -422,7 +386,7 @@ class PostCubit extends Cubit<PostState> {
 
     final candidates = posts.where((post) {
       final postId = post.postID.trim();
-      if ( postId.isEmpty) {
+      if (postId.isEmpty) {
         return false;
       }
       if (_hydratedCurrentUserReactionPostIds.contains(postId)) {
@@ -446,7 +410,7 @@ class PostCubit extends Cubit<PostState> {
 
     for (final post in candidates) {
       final postId = post.postID.trim();
-      if ( postId.isEmpty) {
+      if (postId.isEmpty) {
         continue;
       }
 
@@ -593,7 +557,9 @@ class PostCubit extends Cubit<PostState> {
           updatedReactions.removeAt(existingIndex);
         }
       } else {
-        final previous = existingIndex >= 0 ? updatedReactions[existingIndex] : null;
+        final previous = existingIndex >= 0
+            ? updatedReactions[existingIndex]
+            : null;
         final normalizedReactionId = reactionId?.trim() ?? '';
         final resolvedReactionId = normalizedReactionId.isNotEmpty
             ? normalizedReactionId
@@ -697,6 +663,19 @@ class PostCubit extends Cubit<PostState> {
         emit(PostLoaded(List.from(posts), hasReachedMax: hasReachedMax));
         emit(EditPostSuccess(updatedPost: updatedPost));
       },
+    );
+  }
+
+  void markPostsAsWatched(List<String> postIds) {
+    if (postIds.isEmpty) return;
+
+    unawaited(
+      submitWatchedPostsUseCase(postIds).then((result) {
+        result.fold(
+          (failure) => debugPrint('[WatchedPosts] Failed: ${failure.message}'),
+          (_) => debugPrint('[WatchedPosts] Submitted: ${postIds.length} ids'),
+        );
+      }),
     );
   }
 }

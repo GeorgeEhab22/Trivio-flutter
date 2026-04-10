@@ -19,7 +19,7 @@ abstract class PostsRemoteDataSource {
     List<String>? tags,
     bool? shownTags,
   });
-  Future<List<PostModel>> fetchPosts({int page = 1, int limit = 20});
+  Future<List<PostModel>> fetchPosts({int limit = 20});
   Future<PostModel> fetchSinglePost(String postId);
   Future<PostModel> editPost({
     required String postId,
@@ -61,6 +61,7 @@ abstract class PostsRemoteDataSource {
     int maxPages = 20,
   });
   Future<List<PostModel>> searchPosts(String query);
+  Future<void> submitWatchedPosts(List<String> postIds);
 }
 
 class PostsRemoteDataSourceImpl implements PostsRemoteDataSource {
@@ -81,10 +82,10 @@ class PostsRemoteDataSourceImpl implements PostsRemoteDataSource {
   }
 
   @override
-  Future<List<PostModel>> fetchPosts({int page = 1, int limit = 20}) async {
+  Future<List<PostModel>> fetchPosts({int limit = 20}) async {
     try {
       final response = await api.get(
-        "${ApiEndpoints.fetchPosts}?page=$page&limit=$limit",
+        "${ApiEndpoints.fetchPosts}?limit=$limit",
         options: _getAuthOptions(),
       );
       final List? postsRaw =
@@ -110,7 +111,7 @@ class PostsRemoteDataSourceImpl implements PostsRemoteDataSource {
       );
       final data = response['data'];
       final Map<String, dynamic> postJson = data['post'];
-      postJson['userReact'] = data['userReact']; 
+      postJson['userReact'] = data['userReact'];
       return PostModel.fromJson(postJson);
     } catch (e) {
       errorHandler.handleDioError(e);
@@ -156,7 +157,7 @@ class PostsRemoteDataSourceImpl implements PostsRemoteDataSource {
 
       if (tags != null && tags.isNotEmpty) {
         for (var i = 0; i < tags.length; i++) {
-          formData.fields.add(MapEntry('tags[$i]', tags[i])); 
+          formData.fields.add(MapEntry('tags[$i]', tags[i]));
         }
       }
 
@@ -171,6 +172,7 @@ class PostsRemoteDataSourceImpl implements PostsRemoteDataSource {
       rethrow;
     }
   }
+
   @override
   Future<String?> reactToPost({
     required String postId,
@@ -367,6 +369,21 @@ class PostsRemoteDataSourceImpl implements PostsRemoteDataSource {
           .map((e) => PostModel.fromJson(e))
           .toList();
     } catch (e) {
+      errorHandler.handleDioError(e);
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> submitWatchedPosts(List<String> postIds) async {
+    try {
+      await api.post(
+        ApiEndpoints.submitWatchedPosts,
+        data: {'postsID': postIds},
+        options: _getAuthOptions(),
+      );
+    } catch (e) {
+      debugPrint('[WatchedPosts] remote error: $e');
       errorHandler.handleDioError(e);
       rethrow;
     }

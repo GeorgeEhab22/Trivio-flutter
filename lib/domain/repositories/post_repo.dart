@@ -17,7 +17,6 @@ abstract class PostRepo {
   Future<Either<Failure, Post>> getPost(String postId);
 
   Future<Either<Failure, List<Post>>> fetchPosts({
-    int page = 1,
     int limit = 20,
   });
 
@@ -76,4 +75,7 @@ abstract class PostRepo {
   });
 
   Future<Either<Failure, List<Post>>> searchPosts(String query);
+  Future<Either<Failure, Unit>> submitWatchedPosts(
+    List<String> watchedPosts,
+  );
 }

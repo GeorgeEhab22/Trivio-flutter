@@ -89,6 +89,8 @@ import 'package:auth/core/app_routes.dart';
 import 'package:auth/core/auth_shell.dart';
 import 'package:auth/injection_container.dart' as di;
 import 'package:image_picker/image_picker.dart';
+import 'package:auth/main.dart' show routeObserver; 
+
 
 int previousTabIndex = 0;
 final GlobalKey<NavigatorState> _interestsShellKey = GlobalKey<NavigatorState>(
@@ -124,6 +126,7 @@ CustomTransitionPage buildAnimatedPage({
 GoRouter createRouter(bool isLoggedIn) {
   return GoRouter(
     initialLocation: isLoggedIn ? AppRoutes.home : AppRoutes.signIn,
+    observers: [routeObserver],
     routes: [
       GoRoute(
         path: AppRoutes.signIn,
