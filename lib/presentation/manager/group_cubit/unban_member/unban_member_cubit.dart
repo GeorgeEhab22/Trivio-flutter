@@ -21,7 +21,7 @@ class UnbanMemberCubit extends Cubit<UnbanMemberState> {
 
     result.fold(
       (failure) => emit(UnbanMemberFailure(message: failure.message)),
-      (message) => emit(UnbanMemberSuccess(message)),
+      (message) => emit(UnbanMemberSuccess(message, targetUserId)),
     );
   }
 }

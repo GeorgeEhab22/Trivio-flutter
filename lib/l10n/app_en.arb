@@ -484,5 +484,7 @@
   "savedPosts": "Saved Posts",
   "noSavedPosts": "No Saved Posts",
   "toxicContentTitle": "Toxic Content",
-  "contentViolationTitle": "Content Violation Update"
+  "contentViolationTitle": "Content Violation Update",
+  "creator": "Creator",
+  "thereIsNoBannedMembers": "There is no banned members"
 }

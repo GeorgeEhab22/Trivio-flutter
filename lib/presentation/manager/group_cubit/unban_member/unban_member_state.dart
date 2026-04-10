@@ -16,9 +16,10 @@ class UnbanMemberLoading extends UnbanMemberState {
 
 class UnbanMemberSuccess extends UnbanMemberState {
   final String message;
-  const UnbanMemberSuccess(this.message);
+  final String userId;
+  const UnbanMemberSuccess(this.message, this.userId);
   @override
-  List<Object?> get props => [message];
+  List<Object?> get props => [message, userId];
 }
 
 class UnbanMemberFailure extends UnbanMemberState {

@@ -2629,6 +2629,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Content Violation Update'**
   String get contentViolationTitle;
+
+  /// No description provided for @creator.
+  ///
+  /// In en, this message translates to:
+  /// **'Creator'**
+  String get creator;
+
+  /// No description provided for @thereIsNoBannedMembers.
+  ///
+  /// In en, this message translates to:
+  /// **'There is no banned members'**
+  String get thereIsNoBannedMembers;
 }
 
 class _AppLocalizationsDelegate

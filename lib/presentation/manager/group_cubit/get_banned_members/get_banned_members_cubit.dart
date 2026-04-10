@@ -19,10 +19,13 @@ class GetBannedMembersCubit extends BasePaginationCubit<GroupMember> {
   String getItemId(GroupMember item) => item.userId;
 
   void removeMemberLocally(String userId) {
-    items.removeWhere((m) => m.userId == userId);
+    final newItems = items.where((m) => m.userId != userId).toList();
+    
+    items = newItems;
+
     emit(
       PaginationLoaded<GroupMember>(
-        items: List.from(items),
+        items: newItems, 
         hasReachedMax: hasReachedMax,
       ),
     );
