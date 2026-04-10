@@ -1,14 +1,19 @@
-gradle-wrapper.jar
-/.gradle
-/captures/
-/gradlew
-/gradlew.bat
-/local.properties
-GeneratedPluginRegistrant.java
-.cxx/
+# Firebase Configuration (Sensitive)
+android/app/google-services.json
+lib/firebase_options.dart
 
-# Remember to never publicly share your keystore.
-# See https://flutter.dev/to/reference-keystore
-key.properties
-**/*.keystore
-**/*.jks
+# Private Environment Variables
+.env
+.env*
+
+# IDE Settings
+.vscode/
+.idea/
+*.iml
+
+# Flutter/Dart Build & Cache
+build/
+.dart_tool/
+.packages
+.pub-cache/
+.pub/

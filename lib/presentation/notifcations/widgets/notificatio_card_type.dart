@@ -34,9 +34,10 @@ class NotificationCardType extends StatelessWidget {
         notification.message.contains("violating our community guidelines") ||
         notification.message.contains("inappropriate content");
 
-    // if (notification.senderId == notification.receiverId) {
-    //   return const SizedBox.shrink();
-    // }
+    if ((notification.senderId == notification.receiverId) && !isToxic) {
+      return const SizedBox.shrink();
+    }
+
     if (isToxic) {
       return ToxicContentCard(notification: notification, timeText: timeText);
     }

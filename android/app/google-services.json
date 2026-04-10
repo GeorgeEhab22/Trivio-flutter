@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "819757220267",
-    "project_id": "trivio-8888",
-    "storage_bucket": "trivio-8888.firebasestorage.app"
+    "project_number": "1052642368571",
+    "project_id": "trivio-4878e",
+    "storage_bucket": "trivio-4878e.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:819757220267:android:72c27fb69b0e546fcd92ee",
+        "mobilesdk_app_id": "1:1052642368571:android:ee5bdc0a975c36989e101e",
         "android_client_info": {
           "package_name": "com.example.auth"
         }
@@ -15,26 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCYo6LMrmKRWxZIgq-xo6cGmvQQ8Js76M4"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:819757220267:android:505089b116c9a9b2cd92ee",
-        "android_client_info": {
-          "package_name": "com.example.register_page"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyCYo6LMrmKRWxZIgq-xo6cGmvQQ8Js76M4"
+          "current_key": "AIzaSyBnEeEE3EEBB8n8C2XqtF7WtpLz5nazVes"
         }
       ],
       "services": {

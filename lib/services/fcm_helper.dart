@@ -1,14 +1,19 @@
 import 'dart:io';
-import 'package:auth/core/app_router.dart';
+import 'package:auth/presentation/manager/notifications_cubit/notifications_cubit.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+
+import 'package:auth/core/app_router.dart';
+import 'package:auth/presentation/manager/profile_cubit/profile_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/profile_state.dart';
+import 'package:auth/presentation/notifcations/widgets/top_notification_card.dart';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:go_router/go_router.dart';
 
 import '../firebase_options.dart';
-import '../main.dart';
 import '../core/app_routes.dart';
 import '../data/datasource/notifications_remote_datasource.dart';
 import '../injection_container.dart' as di;
@@ -44,57 +49,49 @@ class FcmHelper {
 
   static void _setupForegroundListener() {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
-      print("🔥 FCM MESSAGE RECEIVED IN FOREGROUND 🔥");
-      print("🔥 Data: ${message.data}");
-      print("🔥 Notification: ${message.notification?.title}");
-      try {
-        await _audioPlayer.play(AssetSource('sounds/notificationSound.wav'));
-      } catch (e) {
-        debugPrint("Notification Audio Error: $e");
+      final context = navigatorKey.currentContext;
+
+      final title =
+          message.notification?.title ??
+          message.data['title'] ??
+          "New Notification";
+      final body =
+          message.notification?.body ??
+          message.data['body'] ??
+          message.data['message'] ??
+          "";
+
+      final bool isToxic =
+          body.contains("violating our community guidelines") ||
+          body.contains("inappropriate content");
+
+      if (context != null && context.mounted) {
+        try {
+          final profileState = context.read<ProfileCubit>().state;
+          if (profileState is ProfileLoaded) {
+            final currentUserId = profileState.user.id;
+            final senderId =
+                message.data['senderId'] ??
+                message.data['userId'] ??
+                message.data['actorId'];
+
+            if (senderId != null && senderId == currentUserId && !isToxic) {
+              return;
+            }
+          }
+        } catch (_) {}
       }
 
-      if (scaffoldMessengerKey.currentState != null) {
-        final title =
-            message.notification?.title ??
-            message.data['title'] ??
-            "new notification";
-        final body =
-            message.notification?.body ??
-            message.data['body'] ??
-            message.data['message'] ??
-            "";
+      try {
+        //TODO: here to change notification sound
+        await _audioPlayer.play(AssetSource('sounds/notificationSound.wav'));
+      } catch (_) {}
 
-        scaffoldMessengerKey.currentState?.showSnackBar(
-          SnackBar(
-            backgroundColor: const Color(0xFF1D2228),
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-                Text(body, style: const TextStyle(color: Colors.white70)),
-              ],
-            ),
-            action: SnackBarAction(
-              label: 'View',
-              textColor: Colors.blueAccent,
-              onPressed: () => _handleMessageRouting(message),
-            ),
-          ),
-        );
-      }else {
-       print("⚠️ scaffoldMessengerKey.currentState is NULL!");
-    }
+      TopNotificationCard.show(
+        title: title,
+        body: body,
+        onTap: () => _handleMessageRouting(message),
+      );
     });
   }
 
@@ -113,21 +110,47 @@ class FcmHelper {
   static void _handleMessageRouting(RemoteMessage message) {
     final String? type = message.data['entityType'];
     final String? entityId = message.data['entityId'];
-    final String? postId =
-        message.data['postId']; 
+    final String? postId = message.data['postId'];
+    final String? notificationId =
+        message.data['id'] ?? message.data['notificationId'];
 
-    if (navigatorKey.currentContext == null || type == null || entityId == null)
-      return;
+    final String? senderId =
+        message.data['senderId'] ??
+        message.data['userId'] ??
+        message.data['actorId'];
+
+    if (navigatorKey.currentContext == null || type == null) return;
 
     final context = navigatorKey.currentContext!;
     final routeType = type.toUpperCase();
 
+    if (notificationId != null) {
+      context.read<NotificationCubit>().markAsRead(notificationId);
+    }
+
     if (routeType == 'FOLLOW') {
-      context.push(AppRoutes.userProfileByIdPath(entityId));
-    } else if (routeType == 'REACT' || routeType == 'COMMENT') {
-     
+      final String? targetUserId = senderId ?? entityId;
+
+      if (targetUserId != null) {
+        context.push(AppRoutes.userProfileByIdPath(targetUserId));
+      }
+    } else if (routeType == 'REACT') {
       final targetId = postId ?? entityId;
-      context.push(AppRoutes.singlePostPath(targetId));
+      if (targetId != null) {
+        context.push(AppRoutes.singlePostPath(targetId));
+      }
+    } else if (routeType == 'COMMENT') {
+      final targetPostId = postId ?? entityId;
+      final commentId = entityId;
+
+      if (targetPostId != null) {
+        final path = Uri(
+          path: AppRoutes.singlePostPath(targetPostId),
+          queryParameters: {'commentId': commentId},
+        ).toString();
+
+        context.push(path);
+      }
     }
   }
 
@@ -135,15 +158,22 @@ class FcmHelper {
       isSupported ? _messaging.getToken() : Future.value(null);
 
   static Future<void> sendTokenToBackend() async {
-    if (!isSupported) return;
-    try {
-      final token = await getDeviceToken();
-      if (token != null) {
-        await di.sl<NotificationRemoteDataSource>().registerFcmToken(token);
-        print("FCM Token synced with backend : $token");
-      }
-    } catch (e) {
-      print("FCM Sync Error: $e");
+    if (!isSupported) {
+      return;
     }
+
+    try {
+      final token = await _messaging.getToken().timeout(
+        const Duration(seconds: 20),
+        onTimeout: () {
+          return null;
+        },
+      );
+
+      if (token != null) {
+        print("✅ SUCCESS! FCM Token: $token");
+        await di.sl<NotificationRemoteDataSource>().registerFcmToken(token);
+      } else {}
+    } catch (_) {}
   }
 }

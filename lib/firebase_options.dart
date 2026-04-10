@@ -41,48 +41,49 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyDqhx6h2M4YMRK6IUwDG2iHQotaNDm1ddk',
-    appId: '1:819757220267:web:2503e36c6f739aadcd92ee',
-    messagingSenderId: '819757220267',
-    projectId: 'trivio-8888',
-    authDomain: 'trivio-8888.firebaseapp.com',
-    storageBucket: 'trivio-8888.firebasestorage.app',
-    measurementId: 'G-23VC95ZSE8',
+    apiKey: 'AIzaSyCpZNudESNhabe3Puw3tSpNQPtER9H9PWs',
+    appId: '1:1052642368571:web:5db333f257dfa6309e101e',
+    messagingSenderId: '1052642368571',
+    projectId: 'trivio-4878e',
+    authDomain: 'trivio-4878e.firebaseapp.com',
+    storageBucket: 'trivio-4878e.firebasestorage.app',
+    measurementId: 'G-NXG24RJ26F',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyCYo6LMrmKRWxZIgq-xo6cGmvQQ8Js76M4',
-    appId: '1:819757220267:android:72c27fb69b0e546fcd92ee',
-    messagingSenderId: '819757220267',
-    projectId: 'trivio-8888',
-    storageBucket: 'trivio-8888.firebasestorage.app',
+    apiKey: 'AIzaSyBnEeEE3EEBB8n8C2XqtF7WtpLz5nazVes',
+    appId: '1:1052642368571:android:ee5bdc0a975c36989e101e',
+    messagingSenderId: '1052642368571',
+    projectId: 'trivio-4878e',
+    storageBucket: 'trivio-4878e.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyD8zLMuAG2ul6-V03D_34elJvmsw_g3PtU',
-    appId: '1:819757220267:ios:dec7b40ddbc2ae01cd92ee',
-    messagingSenderId: '819757220267',
-    projectId: 'trivio-8888',
-    storageBucket: 'trivio-8888.firebasestorage.app',
+    apiKey: 'AIzaSyBBygwkSvjfnWPdHb_jOarrk4AzYu0EO7U',
+    appId: '1:1052642368571:ios:e8c7616f38d2d05c9e101e',
+    messagingSenderId: '1052642368571',
+    projectId: 'trivio-4878e',
+    storageBucket: 'trivio-4878e.firebasestorage.app',
     iosBundleId: 'com.example.auth',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyD8zLMuAG2ul6-V03D_34elJvmsw_g3PtU',
-    appId: '1:819757220267:ios:dec7b40ddbc2ae01cd92ee',
-    messagingSenderId: '819757220267',
-    projectId: 'trivio-8888',
-    storageBucket: 'trivio-8888.firebasestorage.app',
+    apiKey: 'AIzaSyBBygwkSvjfnWPdHb_jOarrk4AzYu0EO7U',
+    appId: '1:1052642368571:ios:e8c7616f38d2d05c9e101e',
+    messagingSenderId: '1052642368571',
+    projectId: 'trivio-4878e',
+    storageBucket: 'trivio-4878e.firebasestorage.app',
     iosBundleId: 'com.example.auth',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyC2G7LWyRrPueaXfM1utgEfvq5yaLI8Q-E',
-    appId: '1:819757220267:web:7ddbc75a8a9a3104cd92ee',
-    messagingSenderId: '819757220267',
-    projectId: 'trivio-8888',
-    authDomain: 'trivio-8888.firebaseapp.com',
-    storageBucket: 'trivio-8888.firebasestorage.app',
-    measurementId: 'G-63VLQFDLPR',
+    apiKey: 'AIzaSyCpZNudESNhabe3Puw3tSpNQPtER9H9PWs',
+    appId: '1:1052642368571:web:5bca423b0cc91a2d9e101e',
+    messagingSenderId: '1052642368571',
+    projectId: 'trivio-4878e',
+    authDomain: 'trivio-4878e.firebaseapp.com',
+    storageBucket: 'trivio-4878e.firebasestorage.app',
+    measurementId: 'G-LTQVXQ5R4X',
   );
+
 }
