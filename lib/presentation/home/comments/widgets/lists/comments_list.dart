@@ -8,12 +8,14 @@ class CommentsList extends StatelessWidget {
   final List<Comment> comments;
   final String currentUserId;
   final ValueChanged<Comment> onReplyTap;
+  final String? targetCommentId;
 
   const CommentsList({
     super.key,
     required this.comments,
     required this.currentUserId,
     required this.onReplyTap,
+    this.targetCommentId,
   });
 
   @override
@@ -44,6 +46,7 @@ class CommentsList extends StatelessWidget {
           currentUserId: currentUserId,
           onReplyTap: onReplyTap,
           replies: comment.repliesList ?? [],
+          targetCommentId: targetCommentId,
         );
       },
     );

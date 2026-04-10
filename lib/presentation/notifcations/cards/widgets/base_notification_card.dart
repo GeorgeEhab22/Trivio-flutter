@@ -1,4 +1,4 @@
-import 'package:auth/constants/colors.dart'; 
+import 'package:auth/constants/colors.dart';
 import 'package:flutter/material.dart';
 
 class BaseNotificationCard extends StatelessWidget {
@@ -10,6 +10,7 @@ class BaseNotificationCard extends StatelessWidget {
   final Widget? trailingWidget;
   final VoidCallback? onTap;
   final bool isRead;
+  final bool isToxic;
 
   const BaseNotificationCard({
     super.key,
@@ -21,24 +22,26 @@ class BaseNotificationCard extends StatelessWidget {
     this.trailingWidget,
     this.onTap,
     this.isRead = true,
+    this.isToxic = false,
   });
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
-    final borderColor = isDark
-        ? Colors.white.withValues(alpha: 0.12)
-        : Colors.black.withValues(alpha: 0.08);
-        
+
+    final borderColor = isToxic
+        ? Colors.redAccent.withValues(alpha: 0.5) 
+        : (isDark
+              ? Colors.white.withValues(alpha: 0.12)
+              : Colors.black.withValues(alpha: 0.08));
+
     final cardGradient = isDark
         ? const [Color(0xFF1D2228), Color(0xFF171B20)]
         : const [Color(0xFFFFFFFF), Color(0xFFF8FBF9)];
-        
+
     final shadowColor = isDark
         ? Colors.black.withValues(alpha: 0.38)
         : const Color(0xFF0F172A).withValues(alpha: 0.08);
-
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -74,7 +77,9 @@ class BaseNotificationCard extends StatelessWidget {
                   gradient: !isRead
                       ? LinearGradient(
                           colors: [
-                            AppColors.primary.withValues(alpha: isDark ? 0.15 : 0.08),
+                            AppColors.primary.withValues(
+                              alpha: isDark ? 0.15 : 0.08,
+                            ),
                             Colors.transparent,
                           ],
                           begin: Alignment.centerLeft,
@@ -85,7 +90,6 @@ class BaseNotificationCard extends StatelessWidget {
                 padding: const EdgeInsets.fromLTRB(4, 16, 16, 16),
                 child: Stack(
                   children: [
-                   
                     PositionedDirectional(
                       start: 0,
                       top: 0,
@@ -106,10 +110,9 @@ class BaseNotificationCard extends StatelessWidget {
                         ),
                       ),
                     ),
-                    
-                  
+
                     Padding(
-                      padding: const EdgeInsetsDirectional.only(start: 12), 
+                      padding: const EdgeInsetsDirectional.only(start: 12),
                       child: Row(
                         crossAxisAlignment: subtitle == null
                             ? CrossAxisAlignment.center
@@ -131,8 +134,8 @@ class BaseNotificationCard extends StatelessWidget {
                                       time,
                                       style: TextStyle(
                                         color: isDark
-                                                ? Colors.grey[500]
-                                                : Colors.grey[400],
+                                            ? Colors.grey[500]
+                                            : Colors.grey[400],
                                         fontSize: 10,
                                         fontWeight: !isRead
                                             ? FontWeight.bold

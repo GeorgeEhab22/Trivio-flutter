@@ -15,7 +15,6 @@ import 'reply_tree_wrapper.dart';
 import 'package:auth/l10n/app_localizations.dart';
 
 class CommentItem extends StatefulWidget {
-
   final Comment comment;
   final String currentUserId;
   final Function(Comment comment)? onReplyTap;
@@ -23,6 +22,7 @@ class CommentItem extends StatefulWidget {
   final ReactionType? initialReaction;
   final bool showReplyTree;
   final bool isLastReplyInThread;
+  final String? targetCommentId;
 
   const CommentItem({
     super.key,
@@ -33,6 +33,7 @@ class CommentItem extends StatefulWidget {
     this.initialReaction,
     this.showReplyTree = false,
     this.isLastReplyInThread = false,
+    this.targetCommentId,
   });
 
   @override
@@ -42,6 +43,39 @@ class CommentItem extends StatefulWidget {
 class _CommentItemState extends State<CommentItem> {
   final TextEditingController _editController = TextEditingController();
   String? _syncedEditingId;
+  bool _isHighlighted = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    if (widget.targetCommentId == widget.comment.id) {
+      Future.delayed(const Duration(milliseconds: 500), () {
+        if (mounted) setState(() => _isHighlighted = true);
+      });
+      Future.delayed(const Duration(milliseconds: 3500), () {
+        if (mounted) setState(() => _isHighlighted = false);
+      });
+    }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (widget.targetCommentId != null &&
+          widget.replies.any((r) => r.id == widget.targetCommentId)) {
+        final commentCubit = context.read<CommentCubit>();
+        if (!commentCubit.isRepliesExpanded(widget.comment.id)) {
+          final profileState = context.read<ProfileCubit>().state;
+          String userId = (profileState is ProfileLoaded)
+              ? profileState.user.id
+              : '';
+          commentCubit.toggleRepliesVisibility(
+            parentCommentId: widget.comment.id,
+            postId: widget.comment.postId,
+            currentUserId: userId,
+          );
+        }
+      }
+    });
+  }
 
   @override
   void dispose() {
@@ -113,6 +147,10 @@ class _CommentItemState extends State<CommentItem> {
         ? Colors.black.withValues(alpha: 0.32)
         : const Color(0xFF0F172A).withValues(alpha: 0.08);
 
+    final Color highlightColor = const Color(
+      0xFF1DB954,
+    ).withValues(alpha: isDark ? 0.25 : 0.15);
+
     final Widget content = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -150,6 +188,7 @@ class _CommentItemState extends State<CommentItem> {
           mutedTextColor: mutedTextColor,
           liveReplies: liveReplies,
           onReplyTap: widget.onReplyTap,
+          targetCommentId: widget.targetCommentId,
           onToggleReplies: () {
             final state = context.read<ProfileCubit>().state;
             String currentUserId = '';
@@ -172,16 +211,29 @@ class _CommentItemState extends State<CommentItem> {
         showReplyTree: widget.showReplyTree,
         isLastReplyInThread: widget.isLastReplyInThread,
         replyBackgroundColor: replyBackgroundColor,
-        child: Padding(
-          padding: const EdgeInsets.only(bottom: 2),
-          child: content,
+        child: Stack(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(bottom: 2),
+              child: content,
+            ),
+            Positioned.fill(
+              child: IgnorePointer(
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 1500), 
+                  curve: Curves.easeInOut,
+                  color: _isHighlighted ? highlightColor : Colors.transparent,
+                ),
+              ),
+            ),
+          ],
         ),
       );
     }
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
-      child: Container(
+      child: Container( 
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(22),
           boxShadow: [
@@ -196,12 +248,12 @@ class _CommentItemState extends State<CommentItem> {
           borderRadius: BorderRadius.circular(22),
           child: DecoratedBox(
             decoration: BoxDecoration(
-              gradient: LinearGradient(
+              gradient: LinearGradient( 
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: cardGradient,
               ),
-              border: Border.all(color: borderColor),
+              border: Border.all(color: borderColor), 
             ),
             child: Stack(
               children: [
@@ -229,18 +281,33 @@ class _CommentItemState extends State<CommentItem> {
                   children: [
                     Container(
                       height: 3,
-                      decoration:  BoxDecoration(
+                      decoration: BoxDecoration(
                         gradient: isDark
                             ? LinearGradient(
-                                colors: [AppColors.primary.withAlpha(950), AppColors.darkGreen],
+                                colors: [
+                                  AppColors.primary.withAlpha(950),
+                                  AppColors.darkGreen,
+                                ],
                               )
                             : LinearGradient(
-                                colors: [AppColors.primary, AppColors.darkGreen],
+                                colors: [
+                                  AppColors.primary,
+                                  AppColors.darkGreen,
+                                ],
                               ),
                       ),
                     ),
                     content,
                   ],
+                ),
+                Positioned.fill(
+                  child: IgnorePointer( 
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 1500),
+                      curve: Curves.easeInOut,
+                      color: _isHighlighted ? highlightColor : Colors.transparent,
+                    ),
+                  ),
                 ),
               ],
             ),

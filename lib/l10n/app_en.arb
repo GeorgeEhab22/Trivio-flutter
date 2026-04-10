@@ -482,5 +482,7 @@
   "cancel": "Cancel",
   "logoutAccountConfirm": "Are you sure you want to log out? You'll need to sign in again to access your data.",
   "savedPosts": "Saved Posts",
-  "noSavedPosts": "No Saved Posts"
+  "noSavedPosts": "No Saved Posts",
+  "toxicContentTitle": "Toxic Content",
+  "contentViolationTitle": "Content Violation Update"
 }

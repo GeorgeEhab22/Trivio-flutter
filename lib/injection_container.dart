@@ -88,8 +88,10 @@ import 'package:auth/domain/usecases/follow/unfollow_user.dart';
 import 'package:auth/domain/usecases/interests/get_all_players_use_case.dart';
 import 'package:auth/domain/usecases/interests/get_all_teams_use_case.dart';
 import 'package:auth/domain/usecases/interests/search_players_use_case.dart';
+import 'package:auth/domain/usecases/notfication/delete_fcm_token_usecase.dart';
 import 'package:auth/domain/usecases/notfication/get_notifications_use_case.dart';
 import 'package:auth/domain/usecases/notfication/open_notification_use_case.dart';
+import 'package:auth/domain/usecases/notfication/register_fcm_token_usecase.dart';
 import 'package:auth/domain/usecases/post/comment_on_post_usecase.dart';
 import 'package:auth/domain/usecases/post/create_post_usecase.dart';
 import 'package:auth/domain/usecases/post/delete_post_usecase.dart';
@@ -232,8 +234,11 @@ Future<void> init() async {
 
   // Cubits
   sl.registerFactory(
-    () => SignInCubit(signInUseCase: sl(), googleSignInUseCase: sl()),
+    () => SignInCubit(signInUseCase: sl(), googleSignInUseCase: sl(), registerFcmTokenUseCase: sl(), deleteFcmTokenUseCase: sl()),
   );
+  sl.registerLazySingleton(() => RegisterFcmTokenUseCase(sl()));
+  sl.registerLazySingleton(() => DeleteFcmTokenUseCase(sl()));
+
   sl.registerFactory(() => RegisterCubit(registerUseCase: sl()));
   sl.registerFactory(() => RequestOTPCubit(sendPasswordResetOtp: sl()));
 

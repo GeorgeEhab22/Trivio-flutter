@@ -13,6 +13,8 @@ abstract class NotificationRemoteDataSource {
   });
   
   Future<void> openNotification(String notificationId);
+  Future<void> registerFcmToken(String token);
+  Future<void> deleteFcmToken(String token);
 }
 
 class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
@@ -67,13 +69,43 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
   @override
   Future<void> openNotification(String notificationId) async {
     try {
-      await api.patch(
-        "${ApiEndpoints.notifications}/$notificationId/read",
+      await api.put(
+        "${ApiEndpoints.notifications}/$notificationId",
         options: _getAuthOptions(),
       );
     } catch (e) {
       errorHandler.handleDioError(e);
       rethrow;
     } 
+  }
+
+  @override
+  Future<void> registerFcmToken(String token) async {
+    try {
+      await api.post(
+        ApiEndpoints.fcmToken,
+        data: {"token": token},
+        options: _getAuthOptions(),
+      );
+      print("FCM Token registered successfully");
+    } catch (e) {
+      errorHandler.handleDioError(e);
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> deleteFcmToken(String token) async {
+    try {
+      await api.delete(
+        ApiEndpoints.fcmToken, 
+        data: {"token": token},
+        options: _getAuthOptions(),
+      );
+      print("FCM Token deleted successfully");
+    } catch (e) {
+      errorHandler.handleDioError(e);
+      rethrow;
+    }
   }
 }

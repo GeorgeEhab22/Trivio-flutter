@@ -1309,4 +1309,10 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get noSavedPosts => 'لا يوجد منشورات محفوظة';
+
+  @override
+  String get toxicContentTitle => 'محتوى ضار';
+
+  @override
+  String get contentViolationTitle => 'تحديث بخصوص انتهاك المحتوى';
 }
