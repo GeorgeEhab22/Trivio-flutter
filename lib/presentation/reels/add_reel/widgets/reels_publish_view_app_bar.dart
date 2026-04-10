@@ -24,7 +24,7 @@ class ReelsPublishViewAppBar extends StatelessWidget
     final l10n = AppLocalizations.of(context)!;
     return AppBar(
       backgroundColor: Colors.black,
-      title: const Text("New Reel", style: TextStyle(color: Colors.white)),
+      title: Text(l10n.addvideo, style: TextStyle(color: Colors.white)),
       actions: [
         TextButton(
           onPressed: () {

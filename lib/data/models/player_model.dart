@@ -13,8 +13,8 @@ class PlayerModel extends Player {
     String rawLogo = json['strThumb'] ?? json['strCutout'] ?? '';
     String finalLogo = rawLogo;
 
-    if (kIsWeb && rawLogo.isNotEmpty && !rawLogo.contains('corsproxy.io')) {
-      finalLogo = "https://corsproxy.io/?${Uri.encodeComponent(rawLogo)}";
+    if (kIsWeb && rawLogo.isNotEmpty && !rawLogo.contains('wsrv.nl')) {
+      finalLogo = "https://wsrv.nl/?url=$rawLogo";
     }
 
     return PlayerModel(

@@ -6,6 +6,7 @@ import 'package:auth/presentation/manager/profile_cubit/change_password_cubit.da
 import 'package:auth/presentation/manager/profile_cubit/change_password_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
   const ChangePasswordScreen({super.key});
@@ -50,6 +51,11 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.changePassword, style: Styles.textStyle20),
+        scrolledUnderElevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new, size: 20),
+          onPressed: () => context.pop(),
+        ),
       ),
       body: BlocListener<ChangePasswordCubit, ChangePasswordState>(
         listener: (context, state) {
@@ -60,7 +66,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                 backgroundColor: Colors.green,
               ),
             );
-            Navigator.pop(context);
+            context.pop();
           } else if (state is ChangePasswordError) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(

@@ -467,7 +467,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get reels => 'المقاطع';
 
   @override
-  String get notifications => 'التنبيهات';
+  String get notifications => 'الإشعارات';
 
   @override
   String get theme => 'المظهر';
@@ -945,7 +945,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get failedToLoadData => 'فشل تحميل البيانات. يرجى التحقق من الاتصال.';
 
   @override
-  String get matches => 'المباريات';
+  String get matchesToday => 'مباريات اليوم';
 
   @override
   String get noMatchesFound => 'لا توجد مباريات';
@@ -1006,7 +1006,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get unbanSuccess => 'تم إلغاء حظر العضو بنجاح.';
 
   @override
-  String get editPost => 'Edit post';
+  String get editPost => 'تعديل المنشور';
 
   @override
   String get no_internet => 'لا يوجد اتصال بالإنترنت. يرجى التحقق من الشبكة.';
@@ -1240,6 +1240,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get all => 'الكل';
 
   @override
+  String get matches => 'المباريات';
+
+  @override
   String get social => 'اجتماعي';
 
   @override
@@ -1321,4 +1324,22 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get thereIsNoBannedMembers => 'لا يوجد أعضاء محظورين';
+
+  @override
+  String get addvideo => 'إضافة فيديو';
+
+  @override
+  String get dataAnalysisMode => 'وضع تحليل البيانات';
+
+  @override
+  String get attach => 'إرفاق';
+
+  @override
+  String get inquireMatchDynamics => 'استفسر عن أحداث وتفاصيل المباراة...';
+
+  @override
+  String get tacticalIntelligence => 'الذكاء التكتيكي';
+
+  @override
+  String get logout => 'خروج';
 }

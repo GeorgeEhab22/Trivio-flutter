@@ -120,6 +120,7 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   PreferredSizeWidget _buildAppBar() {
+    bool isArabic = Localizations.localeOf(context).languageCode == 'ar';
     return PreferredSize(
       preferredSize: const Size.fromHeight(70),
       child: ClipRect(
@@ -148,7 +149,7 @@ class _ChatScreenState extends State<ChatScreen> {
               IconButton(
                 icon: const Icon(Icons.info_outline, color: Color(0xFF00E639)),
                 onPressed: () {},
-                tooltip: 'About',
+                tooltip: isArabic ? 'حول' : 'About',
               ),
               const SizedBox(width: 8),
             ],

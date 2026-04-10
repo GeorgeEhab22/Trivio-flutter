@@ -29,6 +29,7 @@ class _SavedPostsViewState extends State<SavedPostsView> {
 
     return Scaffold(
       appBar: AppBar(
+        scrolledUnderElevation: 0,
         centerTitle: true,
         title: Text(
           l10n.savedPosts,

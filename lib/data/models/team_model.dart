@@ -14,7 +14,7 @@ class TeamModel extends Team {
     
     String finalLogo = rawLogo;
     if (kIsWeb && rawLogo.isNotEmpty) {
-      finalLogo = "https://corsproxy.io/?${Uri.encodeComponent(rawLogo)}";
+      finalLogo = "https://wsrv.nl/?url=$rawLogo";
     }
 
     return TeamModel(

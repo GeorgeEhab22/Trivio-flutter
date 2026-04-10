@@ -1,3 +1,4 @@
+import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/chatbot/widgets/send_button.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui';
@@ -14,6 +15,7 @@ class ChatInputBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n=AppLocalizations.of(context)!;
     return ClipRect(
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
@@ -39,7 +41,7 @@ class ChatInputBar extends StatelessWidget {
                   color: Colors.white.withValues(alpha: 0.5),
                 ),
                 onPressed: () {},
-                tooltip: 'Attach',
+                tooltip: l10n.attach,
               ),
               Expanded(
                 child: TextField(
@@ -50,7 +52,7 @@ class ChatInputBar extends StatelessWidget {
                   maxLines: 4,
                   minLines: 1,
                   decoration: InputDecoration(
-                    hintText: 'Inquire about match dynamics...',
+                    hintText: l10n.inquireMatchDynamics,
                     hintStyle: TextStyle(
                       color: Colors.white.withValues(alpha: 0.35),
                       fontSize: 15,

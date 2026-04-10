@@ -48,7 +48,7 @@ class MyGroupsListView extends StatelessWidget {
             padding: EdgeInsets.zero,
             itemCount: isEmptyState
                 ? 2
-                : displayGroups.length + 1 + (cubit.hasReachedMax ? 1 : 0),
+                : displayGroups.length + 1 ,
             itemBuilder: (context, index) {
               if (index == 0) {
                 return Padding(

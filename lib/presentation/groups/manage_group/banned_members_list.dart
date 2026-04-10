@@ -11,6 +11,7 @@ import 'package:auth/presentation/manager/group_cubit/unban_member/unban_member_
 import 'package:auth/presentation/manager/groups_pagination/pagination_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class BannedMembersList extends StatelessWidget {
@@ -34,7 +35,11 @@ class BannedMembersList extends StatelessWidget {
         }
       },
       child: Scaffold(
-        appBar: AppBar(title: Text(l10n.bannedMembers)),
+        appBar: AppBar(title: Text(l10n.bannedMembers), centerTitle: true, scrolledUnderElevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new, size: 20),
+          onPressed: () => context.pop(),
+        ),),
         body: BlocBuilder<GetBannedMembersCubit, PaginationState>(
           builder: (context, state) {
             final cubit = context.read<GetBannedMembersCubit>();

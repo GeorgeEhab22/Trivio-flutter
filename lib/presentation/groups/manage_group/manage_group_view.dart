@@ -37,12 +37,11 @@ class ManageGroupView extends StatelessWidget {
         appBar: AppBar(
           surfaceTintColor: Colors.transparent,
           elevation: 0,
+          scrolledUnderElevation: 0,
           leading: IconButton(
-            onPressed: () => context.pop(),
-            icon: Icon(
-              isArabic ? Icons.arrow_back_ios_rounded : Icons.arrow_back,
-            ),
-          ),
+          icon: const Icon(Icons.arrow_back_ios_new, size: 20),
+          onPressed: () => context.pop(),
+        ),
           title: Text(l10n.manageGroup, style: Styles.textStyleBold18),
           centerTitle: true,
         ),

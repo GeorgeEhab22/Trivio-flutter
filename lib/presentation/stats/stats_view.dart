@@ -17,7 +17,7 @@ Widget build(BuildContext context) {
     child: Scaffold(
       appBar: AppBar(
         forceMaterialTransparency: true,
-        title: Text(l10n.matches, style: Styles.textStyle30),
+        title: Text(l10n.matchesToday, style: Styles.textStyle25),
       ),
       body: const StatsBlocBuilder(),
     ),

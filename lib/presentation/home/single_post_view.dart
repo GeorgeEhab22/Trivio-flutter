@@ -59,7 +59,7 @@ class _SinglePostViewState extends State<SinglePostView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Post'), centerTitle: true),
+      appBar: AppBar(scrolledUnderElevation: 0,),
       body: BlocConsumer<GetPostCubit, GetPostState>(
         listener: (context, state) {
           if (state is GetPostSuccess && widget.targetCommentId != null) {

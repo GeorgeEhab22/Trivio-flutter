@@ -28,12 +28,22 @@ class MatchTile extends StatelessWidget {
     final bool isAwayWinner = match.score?.winner == 'AWAY_TEAM';
 
     return Container(
-      padding: const EdgeInsets.only(top: 10),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
       decoration: BoxDecoration(
-        border: Border(
-          top: BorderSide(color: AppColors.lightGrey, width: 1),
-          bottom: BorderSide(color: AppColors.lightGrey, width: 1),
+        color: Theme.of(context).cardColor,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: AppColors.lightGrey.withValues(alpha: 0.3),
+          width: 1,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

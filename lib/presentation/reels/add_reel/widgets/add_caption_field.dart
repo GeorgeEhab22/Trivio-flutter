@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:auth/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class AddCaptionField extends StatelessWidget {
@@ -8,6 +9,7 @@ class AddCaptionField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return ClipRRect(
       borderRadius: BorderRadius.circular(20),
       child: BackdropFilter(
@@ -36,12 +38,12 @@ class AddCaptionField extends StatelessWidget {
                   maxLines: 4,
                   minLines: 1,
                   style: const TextStyle(color: Colors.white, fontSize: 14),
-                  decoration: const InputDecoration(
-                    hintText: "Add a caption...",
-                    hintStyle: TextStyle(color: Colors.white54),
+                  decoration: InputDecoration(
+                    hintText: l10n.addPostHint,
+                    hintStyle:const TextStyle(color: Colors.white54),
                     border: InputBorder.none,
                     isDense: true,
-                    contentPadding: EdgeInsets.symmetric(vertical: 4),
+                    contentPadding:const EdgeInsets.symmetric(vertical: 4),
                   ),
                 ),
               ),
