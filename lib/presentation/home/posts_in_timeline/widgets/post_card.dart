@@ -17,12 +17,14 @@ class PostCard extends StatelessWidget {
   final Post post;
   final String currentUserId;
   final ReactionType? currentReaction;
+  final String? targetCommentId;
 
   const PostCard({
     super.key,
     required this.post,
     required this.currentUserId,
     this.currentReaction,
+    this.targetCommentId,
   });
 
   @override
@@ -170,6 +172,7 @@ class PostCard extends StatelessWidget {
                               currentUserId: currentUserId,
                               currentReaction:
                                   currentReaction ?? post.userReaction,
+                              targetCommentId: targetCommentId,
                             ),
                           ],
                         ),

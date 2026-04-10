@@ -108,6 +108,7 @@ class NotificationCubit extends Cubit<NotificationState> {
           type: oldNotif.type,
           message: oldNotif.message, 
           entityId: oldNotif.entityId, 
+          postId: oldNotif.postId,
           isRead: true,
           createdAt: oldNotif.createdAt,
         );

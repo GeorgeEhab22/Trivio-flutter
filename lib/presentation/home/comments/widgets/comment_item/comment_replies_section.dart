@@ -14,6 +14,7 @@ class CommentRepliesSection extends StatelessWidget {
   final List<Comment> liveReplies;
   final Function(Comment comment)? onReplyTap;
   final VoidCallback onToggleReplies;
+  final String? targetCommentId;
 
   const CommentRepliesSection({
     super.key,
@@ -26,6 +27,7 @@ class CommentRepliesSection extends StatelessWidget {
     required this.liveReplies,
     required this.onToggleReplies,
     this.onReplyTap,
+    this.targetCommentId,
   });
 
   @override
@@ -107,6 +109,7 @@ class CommentRepliesSection extends StatelessWidget {
                     replies: liveReplies,
                     currentUserId: currentUserId,
                     onReplyTap: onReplyTap,
+                    targetCommentId: targetCommentId,
                   )
                 : Padding(
                     padding: const EdgeInsets.only(top: 2),

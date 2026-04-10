@@ -92,6 +92,7 @@ int previousTabIndex = 0;
 final GlobalKey<NavigatorState> _interestsShellKey = GlobalKey<NavigatorState>(
   debugLabel: 'interests_shell',
 );
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 CustomTransitionPage buildAnimatedPage({
   required Widget child,
@@ -121,9 +122,10 @@ CustomTransitionPage buildAnimatedPage({
 
 GoRouter createRouter(bool isLoggedIn) {
   return GoRouter(
+    navigatorKey: navigatorKey,
     // initialLocation: AppRoutes.selectTeams,
-    initialLocation: isLoggedIn ? AppRoutes.home : AppRoutes.signIn,
-    //initialLocation: AppRoutes.signIn,
+    // initialLocation: isLoggedIn ? AppRoutes.home : AppRoutes.signIn,
+    initialLocation: AppRoutes.signIn,
     routes: [
       GoRoute(
         path: AppRoutes.signIn,
@@ -233,9 +235,10 @@ GoRouter createRouter(bool isLoggedIn) {
             path: AppRoutes.singlePostById,
             builder: (context, state) {
               final postId = state.pathParameters['postId']!;
+              final targetCommentId = state.uri.queryParameters['commentId'];
               return BlocProvider(
                 create: (context) => di.sl<GetPostCubit>(),
-                child: SinglePostView(postId: postId),
+                child: SinglePostView(postId: postId,targetCommentId: targetCommentId,),
               );
             },
           ),

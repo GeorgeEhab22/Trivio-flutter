@@ -99,5 +99,6 @@ class ApiEndpoints {
 
   
   //notifications
-  static const String notifications = 'users/me/notifications';
+  static const String notifications = 'notifications';
+  static const String fcmToken = "/users/me/fcm-token";
 }

@@ -9,6 +9,7 @@ import 'package:auth/presentation/manager/post_cubit/post_interaction_cubit.dart
 import 'package:auth/presentation/manager/profile_cubit/profile_cubit.dart';
 import 'package:auth/presentation/manager/theme_cubit/theme_cubit.dart';
 import 'package:auth/presentation/manager/locale_cubit/locale_cubit.dart'; // Import this
+import 'package:auth/services/fcm_helper.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -18,8 +19,18 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_localizations/flutter_localizations.dart'; // Import this
 import 'injection_container.dart' as di;
 
+final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
+    GlobalKey<ScaffoldMessengerState>();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  try {
+    await FcmHelper.initFCM().timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {},
+    );
+  } catch (_) {}
+
   await di.init();
   await dotenv.load(fileName: ".env");
   // await _setupDevMode();
@@ -31,10 +42,12 @@ void main() async {
   final bool isLoggedIn = token != null && token.isNotEmpty;
   if (isLoggedIn) {
     di.sl<ApiService>().dio.options.headers['Authorization'] = 'Bearer $token';
+    FcmHelper.sendTokenToBackend();
   }
-  final bool isDesktop = !kIsWeb && (Platform.isWindows || Platform.isMacOS || Platform.isLinux);
+  final bool isDesktop =
+      !kIsWeb && (Platform.isWindows || Platform.isMacOS || Platform.isLinux);
   final bool enableDevicePreview = !kReleaseMode && (isDesktop || kIsWeb);
-  
+
   runApp(
     DevicePreview(
       enabled: enableDevicePreview,
@@ -51,16 +64,17 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final router = createRouter(isLoggedIn);
 
-    return MultiBlocProvider( 
+    return MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => di.sl<PostCubit>()..fetchPosts()),
         BlocProvider(create: (context) => di.sl<PostInteractionCubit>()),
         BlocProvider(create: (_) => di.sl<ThemeCubit>()),
-        BlocProvider(create: (_) => di.sl<LocaleCubit>()), 
-        BlocProvider(create: (_) => ProfileCubit(getMyProfile: di.sl())..loadProfile()),
-
+        BlocProvider(create: (_) => di.sl<LocaleCubit>()),
+        BlocProvider(
+          create: (_) => ProfileCubit(getMyProfile: di.sl())..loadProfile(),
+        ),
       ],
-      child: BlocBuilder<LocaleCubit, Locale>( 
+      child: BlocBuilder<LocaleCubit, Locale>(
         builder: (context, localeState) {
           return BlocBuilder<ThemeCubit, ThemeState>(
             builder: (context, themeState) {
@@ -71,10 +85,11 @@ class MyApp extends StatelessWidget {
                 child: ThemeRevealAnimation(
                   themeMode: themeState.mode,
                   child: MaterialApp.router(
+                    scaffoldMessengerKey: scaffoldMessengerKey,
                     title: 'TRIVIO',
                     debugShowCheckedModeBanner: false,
-                    
-                    locale: localeState, 
+
+                    locale: localeState,
                     supportedLocales: AppLocalizations.supportedLocales,
                     localizationsDelegates: const [
                       AppLocalizations.delegate,
@@ -106,7 +121,6 @@ class MyApp extends StatelessWidget {
     );
   }
 
-  
   ThemeData _getThemeData(ThemeMode mode, BuildContext context) {
     final brightness = MediaQuery.platformBrightnessOf(context);
     if (mode == ThemeMode.system) {
@@ -152,7 +166,8 @@ Future<void> _setupDevMode() async {
   final prefs = await SharedPreferences.getInstance();
 
   // 1. Paste your long JWT string here
-const String devToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YzMwNjg3MDIwOTg0MWVjOGUyYTliMSIsInVzZXJuYW1lIjoiZ2VvIiwiZW1haWwiOiJnZW9yZ2VlaGFiLmNzQGdtYWlsLmNvbSIsImlhdCI6MTc3NDM5NTAxOH0.FKii1aEy9pI-GPaS1Tomvd0b4cxgHpgYScoT_9le5Bk";
+  const String devToken =
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YzMwNjg3MDIwOTg0MWVjOGUyYTliMSIsInVzZXJuYW1lIjoiZ2VvIiwiZW1haWwiOiJnZW9yZ2VlaGFiLmNzQGdtYWlsLmNvbSIsImlhdCI6MTc3NDM5NTAxOH0.FKii1aEy9pI-GPaS1Tomvd0b4cxgHpgYScoT_9le5Bk";
   await prefs.setString('auth_token', devToken);
   print("🛠️ DEV MODE: Token injected. App will start as logged in.");
 }

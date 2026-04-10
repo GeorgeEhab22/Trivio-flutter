@@ -10,9 +10,9 @@ class NotificationEntity extends Equatable {
   final NotificationType type;
   final String message;
   final String entityId;
+  final String? postId;
   final bool isRead;
   final DateTime createdAt;
-  
 
   const NotificationEntity({
     required this.id,
@@ -23,21 +23,23 @@ class NotificationEntity extends Equatable {
     required this.type,
     required this.message,
     required this.entityId,
+    this.postId,
     this.isRead = false,
     required this.createdAt,
   });
 
   @override
   List<Object?> get props => [
-        id,
-        receiverId,
-        senderId,
-        senderName,
-        senderAvatar,
-        type,
-        message,
-        entityId,
-        isRead,
-        createdAt,
-      ];
+    id,
+    receiverId,
+    senderId,
+    senderName,
+    senderAvatar,
+    type,
+    message,
+    entityId,
+    postId,
+    isRead,
+    createdAt,
+  ];
 }

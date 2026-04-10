@@ -1323,4 +1323,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noSavedPosts => 'No Saved Posts';
+
+  @override
+  String get toxicContentTitle => 'Toxic Content';
+
+  @override
+  String get contentViolationTitle => 'Content Violation Update';
 }

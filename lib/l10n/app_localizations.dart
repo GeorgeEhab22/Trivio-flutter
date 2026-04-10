@@ -2617,6 +2617,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No Saved Posts'**
   String get noSavedPosts;
+
+  /// No description provided for @toxicContentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Toxic Content'**
+  String get toxicContentTitle;
+
+  /// No description provided for @contentViolationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Content Violation Update'**
+  String get contentViolationTitle;
 }
 
 class _AppLocalizationsDelegate

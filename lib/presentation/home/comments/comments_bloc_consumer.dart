@@ -12,8 +12,9 @@ import 'widgets/lists/comments_list.dart';
 
 class CommentsBlocConsumer extends StatelessWidget {
   final String currentUserId;
+  final String? targetCommentId;
 
-  const CommentsBlocConsumer({super.key, required this.currentUserId});
+  const CommentsBlocConsumer({super.key, required this.currentUserId,this.targetCommentId});
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +42,6 @@ class CommentsBlocConsumer extends StatelessWidget {
         // 1. Listen to ProfileCubit to get the "My Info"
         return BlocBuilder<ProfileCubit, ProfileState>(
           builder: (context, profileState) {
-            
             // 2. Helper function to patch comments
             List<Comment> patchComments(List<Comment> originalList) {
               if (profileState is! ProfileLoaded) return originalList;
@@ -53,14 +53,17 @@ class CommentsBlocConsumer extends StatelessWidget {
                 // Check if this comment belongs to the current user
                 if (comment.authorId == currentUserId) {
                   // Only patch if info is actually missing or generic
-                  bool needsPatch = comment.authorName == 'Unknown User' || 
-                                   comment.authorName.isEmpty || 
-                                   comment.authorImage == null;
-                  
+                  bool needsPatch =
+                      comment.authorName == 'Unknown User' ||
+                      comment.authorName.isEmpty ||
+                      comment.authorImage == null;
+
                   if (needsPatch) {
                     return comment.copyWith(
-                      authorName: (comment.authorName == 'Unknown User' || comment.authorName.isEmpty) 
-                          ? myName 
+                      authorName:
+                          (comment.authorName == 'Unknown User' ||
+                              comment.authorName.isEmpty)
+                          ? myName
                           : comment.authorName,
                       authorImage: comment.authorImage ?? myAvatar,
                     );
@@ -73,7 +76,9 @@ class CommentsBlocConsumer extends StatelessWidget {
             // 3. Handle States with Patched Data
             if (commentState is CommentLoading) {
               final commentsForSkeleton = patchComments(
-                commentState.comments.isNotEmpty ? commentState.comments : _dummyComments
+                commentState.comments.isNotEmpty
+                    ? commentState.comments
+                    : _dummyComments,
               );
               return Skeletonizer(
                 child: CommentsList(
@@ -82,9 +87,7 @@ class CommentsBlocConsumer extends StatelessWidget {
                   onReplyTap: (_) {},
                 ),
               );
-            } 
-            
-            else if (commentState is CommentError) {
+            } else if (commentState is CommentError) {
               return Center(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -95,9 +98,7 @@ class CommentsBlocConsumer extends StatelessWidget {
                   ),
                 ),
               );
-            } 
-            
-            else if (commentState is CommentLoaded) {
+            } else if (commentState is CommentLoaded) {
               if (commentState.comments.isEmpty) {
                 return _buildEmptyState(l10n);
               }
@@ -111,9 +112,10 @@ class CommentsBlocConsumer extends StatelessWidget {
                 onReplyTap: (comment) {
                   context.read<CommentCubit>().triggerReply(comment);
                 },
+                targetCommentId:targetCommentId,
               );
             }
-            
+
             return const SizedBox.shrink();
           },
         );
@@ -127,7 +129,11 @@ class CommentsBlocConsumer extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.chat_bubble_outline_rounded, size: 34, color: Colors.grey[500]),
+          Icon(
+            Icons.chat_bubble_outline_rounded,
+            size: 34,
+            color: Colors.grey[500],
+          ),
           const SizedBox(height: 8),
           Text(l10n.noCommentsYet, style: TextStyle(color: Colors.grey[600])),
         ],
