@@ -23,13 +23,7 @@ final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
     GlobalKey<ScaffoldMessengerState>();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  try {
-    await FcmHelper.initFCM().timeout(
-      const Duration(seconds: 10),
-      onTimeout: () {},
-    );
-  } catch (_) {}
+  await FcmHelper.initFCM();
 
   await di.init();
   await dotenv.load(fileName: ".env");
