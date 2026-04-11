@@ -19,17 +19,17 @@ class SavedPostsCubit extends Cubit<SavedPostsState> {
     required this.getPostUseCase,
   }) : super(SavedPostsInitial());
 
-
   final Map<String, Post> _postCache = {};
 
   Future<void> loadSavedPosts() async {
-  emit(SavedPostsLoading());
-  
-  final result = await getSavedPostsUseCase();
-  
-  result.fold(
-    (failure) => emit(SavedPostsError(failure.message)),
-    (ids) async {
+    if (isClosed) return;
+    emit(SavedPostsLoading());
+
+    final result = await getSavedPostsUseCase();
+
+    result.fold((failure) => emit(SavedPostsError(failure.message)), (
+      ids,
+    ) async {
       if (ids.isEmpty) {
         emit(SavedPostsLoaded(const []));
         return;
@@ -38,16 +38,14 @@ class SavedPostsCubit extends Cubit<SavedPostsState> {
       List<Post> fullPosts = [];
       for (var id in ids) {
         final postResult = await getPostUseCase(id);
-        postResult.fold(
-          (failure) => emit(SavedPostsError(failure.message)),
-          (post) => fullPosts.add(post),
-        );
+        postResult.fold((failure) {
+          if (!isClosed) emit(SavedPostsError(failure.message));
+        }, (post) => fullPosts.add(post));
       }
-      
-      emit(SavedPostsLoaded(fullPosts));
-    },
-  );
-}
+
+      if (!isClosed) emit(SavedPostsLoaded(fullPosts));
+    });
+  }
 
   Future<void> toggleSavePost(Post post) async {
     // 1. Add post to cache so we don't lose its data if backend returns null
@@ -70,8 +68,8 @@ class SavedPostsCubit extends Cubit<SavedPostsState> {
 
     emit(SavedPostsLoaded(updatedList));
 
-    final result = isSaved 
-        ? await unsavePostUseCase(post.postID) 
+    final result = isSaved
+        ? await unsavePostUseCase(post.postID)
         : await savePostUseCase(post.postID);
 
     result.fold(
@@ -79,5 +77,4 @@ class SavedPostsCubit extends Cubit<SavedPostsState> {
       (_) => null,
     );
   }
-  
 }

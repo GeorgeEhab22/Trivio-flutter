@@ -35,6 +35,7 @@ class OptionsBottomSheet extends StatelessWidget {
         ? Colors.grey[700]
         : Colors.grey[300];
     final cubit = context.read<PostInteractionCubit>();
+    final postCubit = context.read<PostCubit>();
     final savedPostsCubit = context.read<SavedPostsCubit>();
 
     return Container(
@@ -124,7 +125,7 @@ class OptionsBottomSheet extends StatelessWidget {
                         'initialText': post.caption,
                         'title': l10n.editPost,
                         'onSave': (String newText) {
-                          context.read<PostCubit>().editPost(
+                          postCubit.editPost(
                             postId: post.postID,
                             newCaption: newText,
                           );

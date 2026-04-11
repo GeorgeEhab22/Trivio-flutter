@@ -282,4 +282,12 @@ class SelectInterestsCubit extends Cubit<SelectInterestsState> {
       filteredPlayers: currentData.filteredPlayers,
     );
   }
+  Future<void> syncPendingInterests(List<String> teams, List<String> players) async {
+    await selectInterestsUseCase(
+      favTeams: teams,
+      favPlayers: players,
+      teamsToDelete: [],
+      playersToDelete: [],
+    );
+  }
 }

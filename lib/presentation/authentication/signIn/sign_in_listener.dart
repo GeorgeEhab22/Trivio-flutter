@@ -1,5 +1,6 @@
 import 'package:auth/core/app_routes.dart';
 import 'package:auth/l10n/app_localizations.dart';
+import 'package:auth/presentation/manager/profile_cubit/interests/select_interests_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_cubit.dart';
 import 'package:auth/presentation/manager/sigin_in_cubit/sign_in_state.dart';
 import 'package:auth/presentation/authentication/widgets/show_custom_snackbar.dart';
@@ -8,12 +9,22 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class SignInListener {
-  static void handleStateChanges(BuildContext context, SignInState state) {
+  static void handleStateChanges(BuildContext context, SignInState state, List<String>? pendingTeams, List<String>? pendingPlayers) {
     final l10n = AppLocalizations.of(context)!;
 
     if (state is SignInSuccess) {
       context.read<ProfileCubit>().loadProfile();
-      context.go(AppRoutes.selectTeams);
+
+      if ((pendingTeams != null && pendingTeams.isNotEmpty) || 
+          (pendingPlayers != null && pendingPlayers.isNotEmpty)) {
+            
+         context.read<SelectInterestsCubit>().syncPendingInterests(
+           pendingTeams ?? [], 
+           pendingPlayers ?? [],
+         );
+      }
+
+      context.go(AppRoutes.home);
     } else if (state is SignInFailure) {
       String errorMessage = state.message;
 

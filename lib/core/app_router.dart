@@ -134,10 +134,19 @@ GoRouter createRouter(bool isLoggedIn) {
     routes: [
       GoRoute(
         path: AppRoutes.signIn,
-        builder: (context, state) => BlocProvider(
-          create: (_) => di.sl<SignInCubit>(),
-          child: const SignInPage(),
-        ),
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>? ?? {};
+          return MultiBlocProvider(
+            providers: [
+              BlocProvider(create: (_) => di.sl<SignInCubit>()),
+              BlocProvider(create: (_) => di.sl<SelectInterestsCubit>()), 
+            ],
+            child: SignInPage(
+              pendingTeams: extra['pendingTeams'],
+              pendingPlayers: extra['pendingPlayers'],
+            ),
+          );
+        },
       ),
       GoRoute(
         path: AppRoutes.register,

@@ -12,7 +12,7 @@ class VerifyCodeListener {
 
     if (state is VerifyCodeSuccess) {
       showCustomSnackBar(context, l10n.verificationSuccess, true);
-      context.go(AppRoutes.signIn);
+      context.go(AppRoutes.selectTeams);
     } else if (state is VerifyCodeError) {
       final localizedError = ErrorParser.localizeError(context, state.message);
       showCustomSnackBar(context, localizedError, false);
