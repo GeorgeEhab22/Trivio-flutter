@@ -435,6 +435,7 @@
   "requestsTab": "الطلبات",
   "suggestionsTab": "اقتراحات",
   "noUsersFound": "لم يتم العثور على مستخدمين.",
+  "noFollowersFound": "لا يوجد متابعين",
   "noPendingRequestsSimple": "لا توجد طلبات معلقة",
 
   "noLikedPostsYet": "لا توجد منشورات معجب بها بعد.",

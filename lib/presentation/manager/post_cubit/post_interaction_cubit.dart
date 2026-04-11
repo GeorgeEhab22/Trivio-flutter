@@ -229,17 +229,17 @@ class PostInteractionCubit extends Cubit<PostInteractionState> {
     );
   }
 
-  Future<void> sharePost({
+   Future<void> sharePost({
     required String postId,
-    required String userId,
-    String? additionalContent,
+    required String type,
+    String? caption,  
   }) async {
     emit(SharePostLoading(postId: postId));
 
     final result = await sharePostUseCase(
       postId: postId,
-      userId: userId,
-      additionalContent: additionalContent,
+      type: type,
+      caption: caption,
     );
 
     result.fold(
@@ -280,7 +280,6 @@ class PostInteractionCubit extends Cubit<PostInteractionState> {
   String? get shareErrorMessage =>
       state is SharePostError ? (state as SharePostError).message : null;
 
-  // save post
 
   Future<void> toggleSavePost({
     required String postId,

@@ -1,5 +1,6 @@
 import 'package:auth/common/functions/custom_list_tile.dart';
 import 'package:auth/common/functions/show_custom_dialog.dart';
+import 'package:auth/core/app_routes.dart';
 import 'package:auth/core/styels.dart';
 import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/groups/manage_group/widgets/member_rule_row.dart';
@@ -65,7 +66,16 @@ class MemberRow extends StatelessWidget {
     bool showMoreOptions = canKick || canBan;
 
     return ListTile(
-      leading: UserAvatarWidget(userId: targetUserId ?? ''),
+      leading: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(30),
+          child: UserAvatarWidget(userId: targetUserId ?? ''),
+          onTap: () {
+            context.push(AppRoutes.userProfileByIdPath(targetUserId ?? ''));
+          },
+        ),
+      ),
 
       title: Padding(
         // Use directional padding for RTL support
@@ -134,8 +144,13 @@ class MemberRow extends StatelessWidget {
                 title: l10n.changeRole,
                 actions: [
                   if (role != 'member')
-                    buildRoleOption(context, "member", Icons.person, l10n.member),
-                  
+                    buildRoleOption(
+                      context,
+                      "member",
+                      Icons.person,
+                      l10n.member,
+                    ),
+
                   if (role != 'moderator')
                     buildRoleOption(
                       context,
@@ -143,7 +158,7 @@ class MemberRow extends StatelessWidget {
                       Icons.admin_panel_settings_outlined,
                       l10n.moderator,
                     ),
-                  
+
                   if (myRole == 'creator' && role != 'admin')
                     buildRoleOption(
                       context,

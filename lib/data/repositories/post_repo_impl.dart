@@ -6,6 +6,7 @@ import 'package:auth/domain/entities/reaction.dart';
 import 'package:auth/domain/entities/reaction_type.dart';
 import 'package:auth/domain/repositories/post_repo.dart';
 import 'package:dartz/dartz.dart';
+import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
 
 class PostRepositoryImpl implements PostRepo {
@@ -123,14 +124,14 @@ class PostRepositoryImpl implements PostRepo {
   @override
   Future<Either<Failure, Post>> sharePost({
     required String postId,
-    required String userId,
-    String? additionalContent,
+    required String type,     
+    String? caption,    
   }) async {
     try {
       final model = await remoteDataSource.sharePost(
         postId: postId,
-        userId: userId,
-        additionalContent: additionalContent,
+        type: type,     
+        caption: caption, 
       );
       return Right(model.toEntity());
     } on AuthException catch (e) {
@@ -139,8 +140,11 @@ class PostRepositoryImpl implements PostRepo {
       return Left(ServerFailure(e.message));
     } on NetworkException catch (e) {
       return Left(NetworkFailure(e.message));
-    } catch (_) {
-      return Left(ServerFailure('Failed to share post'));
+    } catch (e) {
+      debugPrint("object: $e");
+      return Left(
+        ServerFailure('An unexpected error occurred while sharing the post'),
+      );
     }
   }
 

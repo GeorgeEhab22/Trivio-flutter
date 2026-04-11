@@ -433,6 +433,7 @@
   "requestsTab": "Requests",
   "suggestionsTab": "Suggestions",
   "noUsersFound": "No users found.",
+  "noFollowersFound": "No followers found",
   "noPendingRequestsSimple": "No pending requests",
 
   "noLikedPostsYet": "No liked posts yet.",

@@ -36,6 +36,7 @@ class PostModel extends Post {
     super.tags = const [],
     super.shownTags = false,
     super.isAuthorFollowed = false,
+    super.sharedFrom,
   });
 
   factory PostModel.fromJson(Map<String, dynamic> json) {
@@ -109,9 +110,19 @@ class PostModel extends Post {
         .map((m) => JsonParser.parseString(m))
         .toList();
 
+    final dynamic sharedData = raw['sharedFrom'];
+  String? sID;
+
+  if (sharedData is String) {
+    sID = sharedData;
+  } else if (sharedData is Map<String, dynamic>) {
+    // If backend populated it, extract the ID from the nested object
+    sID = JsonParser.parseId(sharedData['_id']) ?? sharedData['id']?.toString();
+  }
+
     return PostModel(
       postID: JsonParser.parseId(raw['_id']) ?? '',
-
+      sharedFrom: sID,
       updateCount: JsonParser.parseInt(raw['__v']),
 
       authorId: aId,
@@ -143,7 +154,6 @@ class PostModel extends Post {
         raw['commentsCount'] ?? raw['comments_count'] ?? raw['repliesCount'],
       ),
 
-      /// ✅ CREATED AT SAFE (IMPORTANT)
       createdAt: JsonParser.parseDate(raw['createdAt']) ?? DateTime.now(),
 
       tags: (raw['tags'] as List<dynamic>? ?? [])
@@ -226,6 +236,7 @@ class PostModel extends Post {
 
   Post toEntity() {
     return Post(
+      sharedFrom: sharedFrom,
       authorId: authorId,
       authorName: authorName,
       authorImage: authorImage,

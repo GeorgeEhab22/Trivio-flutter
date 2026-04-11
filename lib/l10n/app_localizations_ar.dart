@@ -1183,6 +1183,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get noUsersFound => 'لم يتم العثور على مستخدمين.';
 
   @override
+  String get noFollowersFound => 'لا يوجد متابعين';
+
+  @override
   String get noPendingRequestsSimple => 'لا توجد طلبات معلقة';
 
   @override

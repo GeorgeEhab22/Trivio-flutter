@@ -10,7 +10,8 @@ class ReelsShareButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ShareButton(
       count: count,
-      isReelView: true, 
+      isReelView: true,
+      post: null!, // TODO: share reel
     );
   }
 }

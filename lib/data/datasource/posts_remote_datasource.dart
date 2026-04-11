@@ -27,11 +27,6 @@ abstract class PostsRemoteDataSource {
     String? newType,
   });
   Future<void> deletePost(String postId);
-  Future<PostModel> sharePost({
-    required String postId,
-    required String userId,
-    String? additionalContent,
-  });
   Future<PostModel> toggleSavePost({
     required String postId,
     required String userId,
@@ -62,6 +57,11 @@ abstract class PostsRemoteDataSource {
   });
   Future<List<PostModel>> searchPosts(String query);
   Future<void> submitWatchedPosts(List<String> postIds);
+  Future<PostModel> sharePost({
+    required String postId,
+    required String type,
+    String? caption,
+  });
 }
 
 class PostsRemoteDataSourceImpl implements PostsRemoteDataSource {
@@ -291,26 +291,6 @@ class PostsRemoteDataSourceImpl implements PostsRemoteDataSource {
     }
   }
 
-  @override
-  Future<PostModel> sharePost({
-    required String postId,
-    required String userId,
-    String? additionalContent,
-  }) async {
-    try {
-      final response = await api.post(
-        "${ApiEndpoints.sharePost}$postId",
-        data: {'userId': userId, 'content': additionalContent},
-        options: _getAuthOptions(),
-      );
-      final data = response['data'];
-      final target = data is List ? data.first : data;
-      return PostModel.fromJson(target);
-    } catch (e) {
-      errorHandler.handleDioError(e);
-      rethrow;
-    }
-  }
 
   @override
   Future<PostModel> toggleSavePost({
@@ -392,6 +372,43 @@ class PostsRemoteDataSourceImpl implements PostsRemoteDataSource {
       );
     } catch (e) {
       debugPrint('[WatchedPosts] remote error: $e');
+      errorHandler.handleDioError(e);
+      rethrow;
+    }
+  }
+
+  @override
+  Future<PostModel> sharePost({
+    required String postId,
+    required String type,
+    String? caption,
+  }) async {
+    try {
+      final String url = "${ApiEndpoints.sharePost}/$postId/share";
+
+      final response = await api.post(
+        url,
+        data: {
+          'type': type, 
+          'caption': caption,
+        },
+        options: _getAuthOptions(),
+      );
+      final data = response['data'];
+      
+      if (data == null || data['post'] == null) {
+        throw ServerException('API returned success but post data was null');
+      }
+
+      final Map<String, dynamic> postJson = data['post'];
+      
+      return PostModel.fromJson(postJson);
+    }on DioException catch (e) {
+      debugPrint("Server Error Response: ${e.response?.data}");
+      debugPrint("Server Status Code: ${e.response?.statusCode}");
+      errorHandler.handleDioError(e);
+      rethrow;
+    } catch (e) {
       errorHandler.handleDioError(e);
       rethrow;
     }

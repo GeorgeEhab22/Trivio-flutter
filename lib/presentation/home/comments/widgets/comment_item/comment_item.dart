@@ -1,4 +1,5 @@
 import 'package:auth/constants/colors.dart';
+import 'package:auth/core/app_routes.dart';
 import 'package:auth/domain/entities/reaction_type.dart';
 import 'package:auth/presentation/manager/comment_cubit/comment_cubit.dart';
 import 'package:auth/presentation/manager/comment_cubit/comment_state.dart';
@@ -7,6 +8,7 @@ import 'package:auth/presentation/manager/profile_cubit/profile_state.dart';
 import 'package:flutter/material.dart';
 import 'package:auth/domain/entities/comment.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'comment_header.dart';
 import 'comment_actions_row.dart';
 import 'comment_body_section.dart';
@@ -154,10 +156,19 @@ class _CommentItemState extends State<CommentItem> {
     final Widget content = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CommentHeader(
-          isOwner: isOwner,
-          isReply: isReply,
-          comment: widget.comment,
+        Material(
+          color: Colors.transparent,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(30),
+            onTap: () {
+              context.push(AppRoutes.userProfileByIdPath(widget.comment.authorId));
+            },
+            child: CommentHeader(
+              isOwner: isOwner,
+              isReply: isReply,
+              comment: widget.comment,
+            ),
+          ),
         ),
         CommentBodySection(
           isEditing: isEditing,

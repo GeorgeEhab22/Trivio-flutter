@@ -8,7 +8,7 @@ import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/post_interaction_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_cubit.dart';
 import 'package:auth/presentation/manager/theme_cubit/theme_cubit.dart';
-import 'package:auth/presentation/manager/locale_cubit/locale_cubit.dart'; // Import this
+import 'package:auth/presentation/manager/locale_cubit/locale_cubit.dart';
 import 'package:auth/services/fcm_helper.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/foundation.dart';
@@ -16,7 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_localizations/flutter_localizations.dart'; // Import this
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'injection_container.dart' as di;
 
@@ -32,7 +32,7 @@ void main() async {
 
   await di.init();
   await dotenv.load(fileName: ".env");
-  await _setupDevMode();
+  //await _setupDevMode();
 
   final prefs = await SharedPreferences.getInstance();
   //await prefs.remove('auth_token');

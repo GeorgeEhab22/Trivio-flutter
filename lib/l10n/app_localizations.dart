@@ -2366,6 +2366,12 @@ abstract class AppLocalizations {
   /// **'No users found.'**
   String get noUsersFound;
 
+  /// No description provided for @noFollowersFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No followers found'**
+  String get noFollowersFound;
+
   /// No description provided for @noPendingRequestsSimple.
   ///
   /// In en, this message translates to:

@@ -10,21 +10,16 @@ class SharePostUseCase {
 
   Future<Either<Failure, Post>> call({
     required String postId,
-    required String userId,
-    String? additionalContent,
+    required String type,
+    String? caption,     
   }) async {
     if (postId.trim().isEmpty) {
       return const Left(ValidationFailure('Post ID is required'));
     }
-
-    if (userId.trim().isEmpty) {
-      return const Left(ValidationFailure('User ID is required'));
-    }
-
     return await repo.sharePost(
       postId: postId,
-      userId: userId,
-      additionalContent: additionalContent,
+      type: type,
+      caption: caption,
     );
   }
 }
