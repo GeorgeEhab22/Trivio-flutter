@@ -4,7 +4,6 @@ import 'package:auth/constants/colors.dart';
 import 'package:auth/core/styels.dart';
 import 'package:auth/data/models/stats_dart/matches.dart';
 import 'package:auth/presentation/stats/widgets/custom_team_row.dart';
-import 'package:auth/presentation/stats/widgets/notification_button.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -26,12 +25,12 @@ class MatchTile extends StatelessWidget {
 
     final bool isHomeWinner = match.score?.winner == 'HOME_TEAM';
     final bool isAwayWinner = match.score?.winner == 'AWAY_TEAM';
-
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
       decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
+        color: isDark? Colors.transparent:Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: AppColors.lightGrey.withValues(alpha: 0.3),
@@ -167,15 +166,6 @@ class MatchTile extends StatelessWidget {
                       ],
                     ),
                   ),
-
-                  Container(
-                    width: 1,
-                    height: double.infinity,
-                    margin: const EdgeInsets.symmetric(horizontal: 8),
-                    color: AppColors.customGrey,
-                  ),
-
-                  Skeleton.ignore(child: const NotificationButton()),
                 ],
               ),
             ),

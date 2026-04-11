@@ -19,7 +19,6 @@ class ManageGroupView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
 
     return BlocListener<DeleteGroupCubit, DeleteGroupState>(
       listener: (context, state) {

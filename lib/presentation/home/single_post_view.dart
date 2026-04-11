@@ -10,6 +10,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:auth/presentation/home/posts_in_timeline/widgets/post_card.dart';
 import 'package:auth/presentation/manager/post_cubit/get_post/get_post_state.dart';
 import 'package:auth/presentation/manager/post_cubit/get_post/get_post_cubit.dart';
+import 'package:go_router/go_router.dart';
 
 class SinglePostView extends StatefulWidget {
   final String postId;
@@ -59,7 +60,19 @@ class _SinglePostViewState extends State<SinglePostView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(scrolledUnderElevation: 0,),
+      appBar: AppBar(
+        scrolledUnderElevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new, size: 20),
+          onPressed: () => context.pop(),
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.search, size: 30),
+            onPressed: () {},
+          ),
+        ],
+      ),
       body: BlocConsumer<GetPostCubit, GetPostState>(
         listener: (context, state) {
           if (state is GetPostSuccess && widget.targetCommentId != null) {
