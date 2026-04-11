@@ -65,6 +65,7 @@ abstract class GroupRepo {
   Future<Either<Failure, String>> changeMemberRole({
     required String groupId,
     required String userId,
+    required String oldRole,
     required String newRole, // admin , moderator , member
   });
 

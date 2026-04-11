@@ -130,6 +130,13 @@ abstract class GroupRemoteDataSource {
   Future<List<GroupModel>> getJoinedGroups({int page = 1, String? search});
   //28- get my role in group
   Future<String> getUserGroupRole(String groupId);
+
+  Future<void> changeMemberRole({
+    required String groupId,
+    required String userId,
+    required String oldRole,
+    required String newRole,
+  });
 }
 
 class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
@@ -269,7 +276,10 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
     final query = search != null
         ? "?page=$page&keyword=$search"
         : "?page=$page";
-    final list = await _fetchPaginatedData("${ApiEndpoints.groups}$query",customKey: 'groups');
+    final list = await _fetchPaginatedData(
+      "${ApiEndpoints.groups}$query",
+      customKey: 'groups',
+    );
     return list.map((e) => GroupModel.fromJson(e)).toList();
   }
 
@@ -307,7 +317,6 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
     required String groupId,
     int page = 1,
   }) async {
-  
     final list = await _fetchPaginatedData(
       "${ApiEndpoints.groups}/$groupId/requests?page=$page",
     );
@@ -320,7 +329,6 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
     required String groupId,
     required String requestId,
   }) async {
-    
     await api.post(
       "${ApiEndpoints.groups}/$groupId/requests/$requestId/accept",
       options: _getAuthOptions(),
@@ -333,7 +341,6 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
     required String groupId,
     required String requestId,
   }) async {
-    
     await api.post(
       "${ApiEndpoints.groups}/$groupId/requests/$requestId/decline",
       options: _getAuthOptions(),
@@ -347,7 +354,6 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
     required String userId,
     required String role,
   }) async {
-    
     await _memberRoleAction(groupId, userId, role, "promote");
   }
 
@@ -357,7 +363,6 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
     required String userId,
     required String role,
   }) async {
-   
     await _memberRoleAction(groupId, userId, role, "demote");
   }
 
@@ -367,7 +372,6 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
     required String groupId,
     required String userId,
   }) async {
-   
     await _memberAction(groupId, userId, "kick");
   }
 
@@ -377,7 +381,6 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
     required String groupId,
     required String userId,
   }) async {
-   
     await _memberAction(groupId, userId, "ban");
   }
 
@@ -387,7 +390,6 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
     required String groupId,
     required String userId,
   }) async {
-   
     await _memberAction(groupId, userId, "unban");
   }
 
@@ -397,7 +399,6 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
     required String groupId,
     int page = 1,
   }) async {
-  
     final list = await _fetchPaginatedData(
       "${ApiEndpoints.groups}/$groupId/members?page=$page",
     );
@@ -410,7 +411,6 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
     required String groupId,
     int page = 1,
   }) async {
-   
     final list = await _fetchPaginatedData(
       "${ApiEndpoints.groups}/$groupId/moderators?page=$page",
     );
@@ -423,7 +423,6 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
     required String groupId,
     int page = 1,
   }) async {
-    
     final list = await _fetchPaginatedData(
       "${ApiEndpoints.groups}/$groupId/admins?page=$page",
     );
@@ -436,7 +435,6 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
     required String groupId,
     int page = 1,
   }) async {
-    
     final list = await _fetchPaginatedData(
       "${ApiEndpoints.groups}/$groupId/banned?page=$page",
     );
@@ -454,7 +452,6 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
     bool? shownTags,
   }) async {
     try {
-    
       final formData = FormData.fromMap({
         'caption': caption ?? '',
         'type': type,
@@ -482,7 +479,7 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
       }
       if (tags != null && tags.isNotEmpty) {
         for (var i = 0; i < tags.length; i++) {
-          formData.fields.add(MapEntry('tags[$i]', tags[i])); 
+          formData.fields.add(MapEntry('tags[$i]', tags[i]));
         }
       }
       final response = await api.post(
@@ -506,7 +503,6 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
     required String postId,
   }) async {
     try {
-     
       await api.delete(
         "${ApiEndpoints.groups}/$groupId/posts/$postId",
         options: _getAuthOptions(),
@@ -666,18 +662,22 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
     }
   }
 
- Future<List<dynamic>> _fetchPaginatedData(String url, {String? customKey}) async {
+  Future<List<dynamic>> _fetchPaginatedData(
+    String url, {
+    String? customKey,
+  }) async {
     try {
       final response = await api.get(url, options: _getAuthOptions());
       final mainData = response['data'];
-      
+
       if (mainData == null) return [];
 
       if (customKey != null && mainData[customKey] != null) {
         final target = mainData[customKey];
         if (target is List) return target;
-        if (target is Map && target['data'] is List) return target['data'] as List;
-      }
+        if (target is Map && target['data'] is List)
+{          return target['data'] as List;
+}      }
 
       if (mainData is List) return mainData;
       if (mainData['data'] is List) return mainData['data'] as List;
@@ -692,12 +692,36 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
         if (message == "no groups found" ||
             message == "no posts found" ||
             message == "no members found") {
-         
           return [];
         }
       }
       errorHandler.handleDioError(e);
       rethrow;
+    }
+  }
+  int _getRoleValue(String role) {
+    final r = role.toLowerCase();
+    if (r == 'creator') return 3;
+    if (r == 'admin') return 2;
+    if (r == 'moderator') return 1;
+    return 0; // member
+  }
+
+// used in cubit
+  @override
+  Future<void> changeMemberRole({
+    required String groupId,
+    required String userId,
+    required String oldRole,
+    required String newRole,
+  }) async {
+    int oldVal = _getRoleValue(oldRole);
+    int newVal = _getRoleValue(newRole);
+
+    if (newVal > oldVal) {
+      await promoteMember(groupId: groupId, userId: userId, role: newRole);
+    } else if (newVal < oldVal) {
+      await demoteMember(groupId: groupId, userId: userId, role: newRole);
     }
   }
 }

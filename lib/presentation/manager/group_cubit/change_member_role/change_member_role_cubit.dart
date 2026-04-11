@@ -13,6 +13,7 @@ class ChangeMemberRoleCubit extends Cubit<ChangeMemberRoleState> {
   Future<void> changeMemberRole({
     required String groupId,
     required String userId,
+    required String oldRole,
     required String newRole,
   }) async {
     emit(const ChangeMemberRoleLoading());
@@ -20,6 +21,7 @@ class ChangeMemberRoleCubit extends Cubit<ChangeMemberRoleState> {
     final result = await _changeMemberRoleUseCase(
       groupId: groupId,
       userId: userId,
+      oldRole: oldRole,
       newRole: newRole,
     );
 

@@ -9,6 +9,7 @@ class ChangeMemberRoleUseCase {
   Future<Either<Failure, String>> call({
     required String groupId,
     required String userId,
+    required String oldRole,
     required String newRole,
   }) async {
     final validRoles = ['admin', 'moderator', 'member'];
@@ -18,6 +19,7 @@ class ChangeMemberRoleUseCase {
     return await groupRepo.changeMemberRole(
       groupId: groupId,
       userId: userId,
+      oldRole: oldRole.toLowerCase(),
       newRole: newRole.toLowerCase(),
     );
   }

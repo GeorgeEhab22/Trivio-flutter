@@ -120,6 +120,7 @@ class AdminsListView extends StatelessWidget {
                               .read<ChangeMemberRoleCubit>()
                               .changeMemberRole(
                                 groupId: groupId,
+                                oldRole: admin.role,
                                 userId: admin.userId,
                                 newRole: newRole,
                               );
