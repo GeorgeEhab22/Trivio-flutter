@@ -37,7 +37,7 @@ class FollowInfoList extends StatelessWidget {
     }
     
     if (data.isEmpty) {
-      return Center(child: Text(l10n.noUsersFound, style: Styles.textStyle20));
+      return Center(child: Text(l10n.noFollowersFound, style: Styles.textStyle20));
     }
 
     return ListView.builder(

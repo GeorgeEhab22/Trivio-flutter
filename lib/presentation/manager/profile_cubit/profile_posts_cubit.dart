@@ -17,7 +17,6 @@ class ProfilePostsCubit extends Cubit<ProfilePostsState> {
 Future<void> fetchAllProfileData() async {
   emit(ProfilePostsLoading());
 
-  // Run both, but handle them so one crash doesn't stop the other
   final results = await Future.wait([
     getMyPostsUseCase.call(),
     getLikedPostsUseCase.call(),
@@ -26,27 +25,30 @@ Future<void> fetchAllProfileData() async {
   final myPostsResult = results[0];
   final likedPostsResult = results[1];
 
-  List<Post> myPosts = [];
-  List<Post> likedPosts = [];
-  String? errorMessage;
+  // Use variables to capture the results of the folds
+  List<Post>? myPosts;
+  List<Post>? likedPosts;
+  String? error;
 
   myPostsResult.fold(
-    (f) => errorMessage = f.message, 
-    (p) => myPosts = p
-  );
-  
-  likedPostsResult.fold(
-    (f) => errorMessage = f.message, 
-    (p) => likedPosts = p
+    (f) => error = f.message,
+    (p) => myPosts = p,
   );
 
-  if (myPosts.isEmpty && likedPosts.isEmpty && errorMessage != null) {
-    emit(ProfilePostsFailure(errorMessage!));
-  } else {
+  likedPostsResult.fold(
+    (f) => error = f.message,
+    (p) => likedPosts = p,
+  );
+
+  // If we successfully got at least the "My Posts" list, we show the UI.
+  // Otherwise, if we have an error and no data, we fail.
+  if (myPosts != null) {
     emit(ProfilePostsLoaded(
-      myPosts: myPosts,
-      likedPosts: likedPosts,
+      myPosts: myPosts!,
+      likedPosts: likedPosts ?? [],
     ));
+  } else {
+    emit(ProfilePostsFailure(error ?? "Unknown Error"));
   }
 }
 

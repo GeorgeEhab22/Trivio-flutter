@@ -4,6 +4,7 @@ import 'package:auth/core/app_routes.dart';
 import 'package:auth/core/styels.dart';
 import 'package:auth/domain/entities/post.dart';
 import 'package:auth/domain/entities/user_profile.dart';
+import 'package:auth/presentation/home/add_post/add_post_bottom_sheet.dart';
 import 'package:auth/presentation/home/posts_in_timeline/widgets/post_card.dart';
 import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/get_user_profile_by_id_cubit.dart';
@@ -162,7 +163,11 @@ class _UserProfileViewState extends State<UserProfileView> {
                       ),
                     )
                   : null,
-              title: SvgPicture.asset(isDarkMode ? Paths.trivioDarkLogo : Paths.trivioLogo, width: 55, height: 55),
+              title: SvgPicture.asset(
+                isDarkMode ? Paths.trivioDarkLogo : Paths.trivioLogo,
+                width: 55,
+                height: 55,
+              ),
 
               actions: [
                 if (isMyProfile)
@@ -188,6 +193,26 @@ class _UserProfileViewState extends State<UserProfileView> {
                 child: Divider(height: 1, color: Theme.of(context).cardColor),
               ),
             ),
+            floatingActionButton: isMyProfile
+                ? FloatingActionButton(
+                    shape: const CircleBorder(),
+                    backgroundColor: AppColors.darkGreen,
+                    child: const Icon(Icons.add, color: Colors.white),
+                    onPressed: () async {
+                      final newPost = await showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        backgroundColor: Colors.transparent,
+                        builder: (context) => const AddPostBottomSheet(),
+                      );
+
+                      if (newPost != null && context.mounted) {
+                        context.read<PostCubit>().addNewPostToFeed(newPost);
+                        context.read<ProfilePostsCubit>().fetchAllProfileData();
+                      }
+                    },
+                  )
+                : null,
             body: RefreshIndicator(
               color: AppColors.primary,
               onRefresh: () async {
@@ -242,12 +267,29 @@ class _UserProfileViewState extends State<UserProfileView> {
   Widget _buildMyPostsList(String currentUserId, dynamic l10n) {
     return BlocBuilder<ProfilePostsCubit, ProfilePostsState>(
       builder: (context, state) {
+        if (state is ProfilePostsLoading) {
+          return const SliverToBoxAdapter(
+            child: Padding(
+              padding: EdgeInsets.all(30.0),
+              child: Center(child: CircularProgressIndicator()),
+            ),
+          );
+        }
         if (state is ProfilePostsLoaded) {
+          if (state.myPosts.isEmpty) {
+            return SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 40),
+                child: Center(child: Text(l10n.noPostsYet ?? "No posts yet")),
+              ),
+            );
+          }
           return _renderSliverList(state.myPosts, currentUserId, l10n);
         }
-        return const SliverToBoxAdapter(
-          child: Center(child: CircularProgressIndicator()),
-        );
+        if (state is ProfilePostsFailure) {
+          return SliverToBoxAdapter(child: Center(child: Text(state.message)));
+        }
+        return const SliverToBoxAdapter(child: SizedBox.shrink());
       },
     );
   }

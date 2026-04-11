@@ -1197,6 +1197,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noUsersFound => 'No users found.';
 
   @override
+  String get noFollowersFound => 'No followers found';
+
+  @override
   String get noPendingRequestsSimple => 'No pending requests';
 
   @override
