@@ -1,30 +1,35 @@
 import 'package:auth/common/functions/reels_buttons_green_effect.dart';
 import 'package:auth/constants/paths.dart';
+import 'package:auth/domain/entities/post.dart';
+import 'package:auth/injection_container.dart' as di;
 import 'package:auth/presentation/home/share_post/share_buttom_sheet.dart';
+import 'package:auth/presentation/manager/post_cubit/get_post/get_post_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import '../widgets/post_action_item.dart';
 
 class ShareButton extends StatelessWidget {
   final int count;
   final bool isReelView;
-  // final VoidCallback onShare;
+  final Post post;
 
-  const ShareButton({super.key, required this.count, this.isReelView = false});
+  const ShareButton({
+    super.key,
+    required this.count,
+    required this.post,
+    this.isReelView = false,
+  });
 
   void _openShareSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
-      isScrollControlled: true,
-      backgroundColor: isReelView
-          ? Colors.black.withValues(alpha: 0.08)
-          : Theme.of(context).cardColor,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
       builder: (ctx) => Theme(
         data: isReelView ? ThemeData.dark() : Theme.of(context),
-        child: const ShareBottomSheet(),
+        child: BlocProvider(
+          create: (context) => di.sl<GetPostCubit>(),
+          child: ShareBottomSheet(post: post),
+        ),
       ),
     );
   }
@@ -34,7 +39,6 @@ class ShareButton extends StatelessWidget {
     final iconColor = isReelView
         ? Colors.white
         : Theme.of(context).iconTheme.color;
-
     Widget iconWidget = SvgPicture.asset(
       Paths.shareIcon,
       colorFilter: ColorFilter.mode(

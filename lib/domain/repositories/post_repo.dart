@@ -34,8 +34,8 @@ abstract class PostRepo {
 
   Future<Either<Failure, Post>> sharePost({
     required String postId,
-    required String userId,
-    String? additionalContent,
+    required String type,
+    String? caption,
   });
 
   Future<Either<Failure, Post>> toggleSavePost({

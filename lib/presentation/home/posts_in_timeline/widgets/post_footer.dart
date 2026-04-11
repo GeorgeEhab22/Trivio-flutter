@@ -76,7 +76,7 @@ class PostFooter extends StatelessWidget {
                     targetCommentId: targetCommentId,
                   ),
                   _ActionDivider(color: dividerColor),
-                  ShareButton(count: presentationShareCount),
+                  ShareButton(count: presentationShareCount, post: post),
                   _ActionDivider(color: dividerColor),
                   const SizedBox(width: 10),
                   SendPostButton(

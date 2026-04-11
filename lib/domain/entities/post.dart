@@ -4,6 +4,7 @@ import 'package:auth/domain/entities/reaction_type.dart';
 import 'package:equatable/equatable.dart';
 
 class Post extends Equatable {
+  final String? sharedFrom;
   final String authorId;
   final String? authorName; 
   final String? authorImage;
@@ -28,6 +29,7 @@ class Post extends Equatable {
   final bool isAuthorFollowed;
 
   const Post({
+    this.sharedFrom,
     required this.authorId,
     this.authorName,
     this.authorImage,
@@ -52,6 +54,7 @@ class Post extends Equatable {
     this.isAuthorFollowed = false,
   });
   Post copyWith({
+    String? sharedFrom,
     String? authorId,
     String? authorName,
     String? authorImage,
@@ -76,6 +79,7 @@ class Post extends Equatable {
     bool? isAuthorFollowed,
   }) {
     return Post(
+      sharedFrom: sharedFrom ?? this.sharedFrom,
       authorId: authorId ?? this.authorId,
       authorName: authorName ?? this.authorName,
       authorImage: authorImage ?? this.authorImage,
@@ -103,9 +107,11 @@ class Post extends Equatable {
 
   int get likesCount => reactionsCount;
   //int get commentsCount => comments.length;
+  bool get isShare => sharedFrom != null && sharedFrom!.isNotEmpty;
 
   @override
   List<Object?> get props => [
+    sharedFrom,
     authorId,
     authorName,
     authorImage,

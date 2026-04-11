@@ -8,7 +8,8 @@ import 'package:auth/domain/entities/post.dart';
 
 class PostContent extends StatelessWidget {
   final Post post;
-  const PostContent({super.key, required this.post});
+  final bool isNested; // Indicates if this content is inside a shared post preview
+  const PostContent({super.key, required this.post, this.isNested = false});
 
   @override
   Widget build(BuildContext context) {

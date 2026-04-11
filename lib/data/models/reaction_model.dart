@@ -25,8 +25,8 @@ class ReactionModel extends Reaction {
           ? JsonParser.parseString(userRaw['username']) 
           : JsonParser.parseString(json['username']),
       profilePicture: isUserPopulated 
-          ? JsonParser.parseString(userRaw['profilePicture'] ?? userRaw['profileImage']) 
-          : JsonParser.parseString(json['profilePicture']),
+          ? JsonParser.parseString(userRaw['profilePicture'] ?? userRaw['profileImage']??userRaw['avatar']) 
+          : JsonParser.parseString(json['profilePicture']??json['avatar']),
     );
   }
 
