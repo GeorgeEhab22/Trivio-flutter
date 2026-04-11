@@ -105,9 +105,13 @@ class PostModel extends Post {
     final mentions = Mentions(userIds: userIds, usernames: usernames);
 
     /// ✅ MEDIA SAFE
-    final mediaList = (raw['media'] as List<dynamic>? ?? [])
-        .map((m) => JsonParser.parseString(m))
-        .toList();
+    final mediaList = (raw['media'] as List<dynamic>? ?? []).map((m) {
+      if (m is Map<String, dynamic>) {
+        return JsonParser.parseString(m['url']);
+      }
+      return JsonParser.parseString(m);
+    }).where((url) => url.isNotEmpty).toList();
+
 
     return PostModel(
       postID: JsonParser.parseId(raw['_id']) ?? '',
@@ -198,7 +202,15 @@ class PostModel extends Post {
           for (int i = 0; i < mentions!.userIds.length; i++)
             {'_id': mentions!.userIds[i], 'username': mentions!.usernames[i]},
       ],
-      'media': media,
+      'media': media?.map((url) {
+        final isVideo = url.toLowerCase().endsWith('.mp4') || 
+                        url.toLowerCase().endsWith('.mov') || 
+                        url.toLowerCase().endsWith('.webm');
+        return {
+          'url': url,
+          'mediaType': isVideo ? 'reel' : 'image',
+        };
+      }).toList(),
       'location': location,
       'views': views,
       'flagged': flagged,

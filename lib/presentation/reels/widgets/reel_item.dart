@@ -4,7 +4,7 @@ import 'package:auth/domain/entities/post.dart';
 import 'package:auth/presentation/home/comments/comments_view.dart';
 import 'package:auth/presentation/manager/comment_cubit/comment_cubit.dart';
 import 'package:auth/presentation/manager/comment_cubit/comment_state.dart';
-import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
+import 'package:auth/presentation/manager/post_cubit/get_reels/get_reels_cubit.dart';
 import 'package:auth/presentation/reels/buttons/reels_comment_button.dart';
 import 'package:auth/presentation/reels/buttons/reels_more_button.dart';
 import 'package:auth/presentation/reels/buttons/reels_reaction_button.dart';
@@ -177,7 +177,7 @@ class _ReelItemState extends State<ReelItem> {
                 listener: (context, state) {
                   if (state is CommentActionSuccess &&
                       state.commentsDelta != 0) {
-                    context.read<PostCubit>().incrementCommentsCount(
+                    context.read<ReelsCubit>().incrementCommentsCount(
                       widget.reel.postID,
                       by: state.commentsDelta,
                     );

@@ -33,7 +33,7 @@ class UserProfileView extends StatefulWidget {
 
 class _UserProfileViewState extends State<UserProfileView> {
   final GlobalKey _postsHeaderKey = GlobalKey();
-
+  final Set<String> _deletedPostIds = {};
   void _scrollToPosts() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
@@ -142,99 +142,115 @@ class _UserProfileViewState extends State<UserProfileView> {
         _scrollToPosts();
         return true;
       },
-      child: BlocBuilder<ProfilePostsCubit, ProfilePostsState>(
-        builder: (context, postsState) {
-          return Scaffold(
-            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-            appBar: AppBar(
-              backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-              elevation: 0,
-              scrolledUnderElevation: 0,
-              centerTitle: false,
-              surfaceTintColor: Colors.transparent,
-              leading: !isMyProfile
-                  ? IconButton(
-                      onPressed: () => context.pop(),
-                      icon: Icon(
-                        Icons.arrow_back_ios_new_rounded,
-                        color: Theme.of(context).iconTheme.color,
-                        size: 25,
-                      ),
-                    )
-                  : null,
-              title: SvgPicture.asset(isDarkMode ? Paths.trivioDarkLogo : Paths.trivioLogo, width: 55, height: 55),
-
-              actions: [
-                if (isMyProfile)
-                  Padding(
-                    padding: const EdgeInsetsDirectional.only(end: 12.0),
-                    child: IconButton(
-                      onPressed: () => context.push(AppRoutes.profileSettings),
-                      icon: SvgPicture.asset(
-                        Paths.settingsIcon,
-                        colorFilter: ColorFilter.mode(
-                          Theme.of(context).iconTheme.color!,
-                          BlendMode.srcIn,
+      child: BlocListener<PostCubit, PostState>(
+        listener: (context, state) {
+          if (state is DeletePostSuccess) {
+            setState(() {
+              _deletedPostIds.add(state.post.postID);
+            });
+          }
+        },
+        child: BlocBuilder<ProfilePostsCubit, ProfilePostsState>(
+          builder: (context, postsState) {
+            return Scaffold(
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+              appBar: AppBar(
+                backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+                elevation: 0,
+                scrolledUnderElevation: 0,
+                centerTitle: false,
+                surfaceTintColor: Colors.transparent,
+                leading: !isMyProfile
+                    ? IconButton(
+                        onPressed: () => context.pop(),
+                        icon: Icon(
+                          Icons.arrow_back_ios_new_rounded,
+                          color: Theme.of(context).iconTheme.color,
+                          size: 25,
                         ),
+                      )
+                    : null,
+                title: SvgPicture.asset(
+                  isDarkMode ? Paths.trivioDarkLogo : Paths.trivioLogo,
+                  width: 55,
+                  height: 55,
+                ),
 
-                        width: 20,
-                        height: 20,
+                actions: [
+                  if (isMyProfile)
+                    Padding(
+                      padding: const EdgeInsetsDirectional.only(end: 12.0),
+                      child: IconButton(
+                        onPressed: () =>
+                            context.push(AppRoutes.profileSettings),
+                        icon: SvgPicture.asset(
+                          Paths.settingsIcon,
+                          colorFilter: ColorFilter.mode(
+                            Theme.of(context).iconTheme.color!,
+                            BlendMode.srcIn,
+                          ),
+
+                          width: 20,
+                          height: 20,
+                        ),
                       ),
                     ),
-                  ),
-              ],
-              bottom: PreferredSize(
-                preferredSize: const Size.fromHeight(1),
-                child: Divider(height: 1, color: Theme.of(context).cardColor),
+                ],
+                bottom: PreferredSize(
+                  preferredSize: const Size.fromHeight(1),
+                  child: Divider(height: 1, color: Theme.of(context).cardColor),
+                ),
               ),
-            ),
-            body: RefreshIndicator(
-              color: AppColors.primary,
-              onRefresh: () async {
-                if (isMyProfile) {
-                  await context.read<ProfilePostsCubit>().fetchAllProfileData();
-                } else {
-                  await context
-                      .read<GetUserProfileByIdCubit>()
-                      .loadUserProfileById(widget.userId!);
-                  await context.read<GetUserPostsCubit>().fetchUserPosts(
-                    widget.userId!,
-                  );
-                }
-              },
+              body: RefreshIndicator(
+                color: AppColors.primary,
+                onRefresh: () async {
+                  if (isMyProfile) {
+                    await context
+                        .read<ProfilePostsCubit>()
+                        .fetchAllProfileData();
+                  } else {
+                    await context
+                        .read<GetUserProfileByIdCubit>()
+                        .loadUserProfileById(widget.userId!);
+                    await context.read<GetUserPostsCubit>().fetchUserPosts(
+                      widget.userId!,
+                    );
+                  }
+                },
 
-              child: CustomScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                slivers: [
-                  SliverToBoxAdapter(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ProfileInfoBox(user: user),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 20,
-                            vertical: 10,
-                          ),
-                          child: Text(
-                            l10n.posts,
-                            key: _postsHeaderKey,
-                            style: Styles.textStyle25.copyWith(
-                              fontWeight: FontWeight.bold,
+                child: CustomScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  slivers: [
+                    SliverToBoxAdapter(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ProfileInfoBox(user: user),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 10,
+                            ),
+                            child: Text(
+                              l10n.posts,
+                              key: _postsHeaderKey,
+                              style: Styles.textStyle25.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                  isMyProfile
-                      ? _buildMyPostsList(user.id, l10n)
-                      : _buildOtherUserPostsList(user.id, l10n),
-                ],
+                    isMyProfile
+                        ? _buildMyPostsList(user.id, l10n)
+                        : _buildOtherUserPostsList(user.id, l10n),
+                  ],
+                ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }
@@ -280,17 +296,17 @@ class _UserProfileViewState extends State<UserProfileView> {
     final myState = context.read<ProfileCubit>().state;
     final postCubit = context.watch<PostCubit>();
     String myActualId = (myState is ProfileLoaded) ? myState.user.id : "";
-
+final visiblePosts = posts.where((p) => !_deletedPostIds.contains(p.postID)).toList();
     return SliverList(
       delegate: SliverChildBuilderDelegate((context, index) {
-        final localPost = posts[index];
+        final localPost = visiblePosts[index];
         final post = postCubit.posts.firstWhere(
           (p) => p.postID == localPost.postID,
           orElse: () => localPost,
         );
 
         return PostCard(post: post, currentUserId: myActualId);
-      }, childCount: posts.length),
+      }, childCount: visiblePosts.length),
     );
   }
 }

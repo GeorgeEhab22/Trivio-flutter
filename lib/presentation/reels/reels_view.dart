@@ -1,9 +1,10 @@
+import 'package:auth/presentation/manager/post_cubit/get_reels/get_reels_cubit.dart';
+import 'package:auth/presentation/manager/post_cubit/get_reels/get_reels_state.dart';
 import 'package:cached_video_player_plus/cached_video_player_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:preload_page_view/preload_page_view.dart'
     hide PageScrollPhysics;
-import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_state.dart';
 import 'package:auth/presentation/reels/widgets/reel_item.dart';
@@ -25,6 +26,7 @@ class _ReelsViewState extends State<ReelsView> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    context.read<ReelsCubit>().fetchReels();
     _pool.onNotify = () {
       if (mounted) setState(() {});
     };
@@ -62,26 +64,20 @@ class _ReelsViewState extends State<ReelsView> with WidgetsBindingObserver {
 
     return Scaffold(
       backgroundColor: Colors.black,
-      body: BlocBuilder<PostCubit, PostState>(
+      body: BlocBuilder<ReelsCubit, ReelsState>(
         builder: (context, state) {
-          if (state is PostLoading) {
+          if (state is ReelsLoading || state is ReelsInitial) {
             return const Center(
               child: CircularProgressIndicator(color: Colors.white),
             );
-          } else if (state is PostLoaded) {
-            final reels = state.posts.where((p) {
-              if (p.media == null || p.media!.isEmpty) return false;
-              final m = p.media!.first.toLowerCase();
-              return m.endsWith('.mp4') ||
-                  m.endsWith('.mov') ||
-                  m.endsWith('.webm');
-            }).toList();
+          } else if (state is ReelsLoaded) {
+            final reels = state.reels;
 
             if (reels.isEmpty) {
               return const Center(
                 child: Text(
                   "No Reels yet",
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(color: Colors.white, fontSize: 16),
                 ),
               );
             }
@@ -104,6 +100,9 @@ class _ReelsViewState extends State<ReelsView> with WidgetsBindingObserver {
                     _pool.preloadAround(index, reels);
                     _pool.playIndex(index);
                     setState(() {}); // update overlays if needed
+                    if (index >= reels.length - 2) {
+                      context.read<ReelsCubit>().fetchReels();
+                    }
                   },
                   itemBuilder: (context, index) {
                     final reel = reels[index];
@@ -119,7 +118,7 @@ class _ReelsViewState extends State<ReelsView> with WidgetsBindingObserver {
                 const ReelsAppBar(),
               ],
             );
-          } else if (state is PostError) {
+          } else if (state is ReelsError) {
             return Center(
               child: Text(
                 state.message,

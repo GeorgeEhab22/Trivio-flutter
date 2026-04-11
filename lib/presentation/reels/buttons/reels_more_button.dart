@@ -2,6 +2,7 @@ import 'package:auth/common/functions/reels_buttons_green_effect.dart';
 import 'package:auth/domain/entities/post.dart';
 import 'package:auth/injection_container.dart' as di;
 import 'package:auth/presentation/home/posts_in_timeline/buttom_sheets/options_bottom_sheet.dart';
+import 'package:auth/presentation/manager/post_cubit/get_reels/get_reels_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/post_interaction_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/saved_posts/saved_posts_cubit.dart';
@@ -26,7 +27,7 @@ class ReelsMoreButton extends StatelessWidget {
         onTap: () {
           final postInteractionCubit = context.read<PostInteractionCubit>();
           final postCubit = context.read<PostCubit>();
-
+          final reelsCubit = context.read<ReelsCubit>();
           showModalBottomSheet(
             context: context,
             backgroundColor: const Color(0xFF18191a),
@@ -37,12 +38,14 @@ class ReelsMoreButton extends StatelessWidget {
                 providers: [
                   BlocProvider.value(value: postInteractionCubit),
                   BlocProvider.value(value: postCubit),
+                  BlocProvider.value(value: reelsCubit),
                 ],
                 child: BlocProvider(
                   create: (context) => di.sl<SavedPostsCubit>()..loadSavedPosts(),
                   child: OptionsBottomSheet(
                     post: reel,
                     currentUserId: currentUserId,
+                    isReelView: true,
                   ),
                 ),
               ),

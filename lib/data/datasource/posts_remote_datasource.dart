@@ -62,6 +62,8 @@ abstract class PostsRemoteDataSource {
   });
   Future<List<PostModel>> searchPosts(String query);
   Future<void> submitWatchedPosts(List<String> postIds);
+  //reels
+  Future<List<PostModel>> getReels({int page = 1});
 }
 
 class PostsRemoteDataSourceImpl implements PostsRemoteDataSource {
@@ -385,6 +387,23 @@ class PostsRemoteDataSourceImpl implements PostsRemoteDataSource {
       );
     } catch (e) {
       debugPrint('[WatchedPosts] remote error: $e');
+      errorHandler.handleDioError(e);
+      rethrow;
+    }
+  }
+
+  //reels
+ @override
+  Future<List<PostModel>> getReels({int page = 1}) async {
+    try {
+      final response = await api.get(
+        "${ApiEndpoints.reels}?page=$page",
+        options: _getAuthOptions(),
+      );
+      final List<dynamic> dataList = response['data']['reels'] ?? [];
+
+      return dataList.map((e) => PostModel.fromJson(e)).toList();
+    } catch (e) {
       errorHandler.handleDioError(e);
       rethrow;
     }
