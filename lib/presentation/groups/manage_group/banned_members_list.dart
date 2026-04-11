@@ -1,4 +1,5 @@
 import 'package:auth/common/functions/show_custom_dialog.dart';
+import 'package:auth/core/app_routes.dart';
 import 'package:auth/core/styels.dart';
 import 'package:auth/domain/entities/group_member.dart';
 import 'package:auth/l10n/app_localizations.dart';
@@ -94,7 +95,16 @@ class BannedMembersList extends StatelessWidget {
                   return Skeletonizer(
                     enabled: isInitialLoading || bannedMember.userId.isEmpty,
                     child: ListTile(
-                      leading: UserAvatarWidget(userId: bannedMember.userId),
+                      leading: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(30),
+                          child: UserAvatarWidget(userId: bannedMember.userId),
+                          onTap: () {
+                            context.push(AppRoutes.userProfileByIdPath(bannedMember.userId));
+                          },
+                        ),
+                      ),
                       title: Text(
                         bannedMember.userName,
                         style: Styles.textStyle16,

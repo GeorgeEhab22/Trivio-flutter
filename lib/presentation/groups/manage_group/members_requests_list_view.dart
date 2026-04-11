@@ -1,4 +1,5 @@
 import 'package:auth/common/functions/show_custom_dialog.dart';
+import 'package:auth/core/app_routes.dart';
 import 'package:auth/core/errors/error_parser.dart';
 import 'package:auth/core/styels.dart';
 import 'package:auth/domain/entities/join_request.dart';
@@ -129,7 +130,16 @@ class MembersRequestsListView extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.all(4),
                       child: ListTile(
-                        leading: UserAvatarWidget(userId: request.userId),
+                        leading: Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(30),
+                            child: UserAvatarWidget(userId: request.userId),
+                            onTap: () {
+                              context.push(AppRoutes.userProfileByIdPath(request.userId));
+                            },
+                          ),
+                        ),
                         title: Text(
                           request.userName.isEmpty
                               ? l10n.unknownUser
