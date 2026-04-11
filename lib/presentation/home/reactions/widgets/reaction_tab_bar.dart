@@ -32,6 +32,7 @@ class ReactionTabBar extends StatelessWidget implements PreferredSizeWidget {
       physics: const BouncingScrollPhysics(),
 
       overlayColor: WidgetStateProperty.all(Colors.transparent),
+      labelColor: AppColors.primary,
 
       indicator: BoxDecoration(
         borderRadius: BorderRadius.circular(24),
