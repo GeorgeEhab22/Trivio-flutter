@@ -205,15 +205,7 @@ class _GlassmorphismNavState extends State<GlassmorphismNav>
           border: isSelected
               ? Border.all(color: selectedBorderColor, width: 2)
               : null,
-          boxShadow: isSelected && isDarkMode
-              ? [
-                  BoxShadow(
-                    color: Colors.green.withOpacity(0.3),
-                    blurRadius: 12,
-                    spreadRadius: 2,
-                  ),
-                ]
-              : null,
+          
         ),
         child: AnimatedScale(
           duration: const Duration(milliseconds: 300),

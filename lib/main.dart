@@ -167,7 +167,7 @@ Future<void> _setupDevMode() async {
   final prefs = await SharedPreferences.getInstance();
 
   const String devToken =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZDZkNGFhMDU0ZmQwYzYwMDBlZTNmNSIsInVzZXJuYW1lIjoiWlNDIiwiZW1haWwiOiJsaW8xMG1lc3NpMjIxNUBnbWFpbC5jb20iLCJpYXQiOjE3NzU4NDcxNjl9.6JSYsWQ7E-E9PPCgIPO05KFHzyi2GTKJuXjk0AfI03g";
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZDZkYjczMDU0ZmQwYzYwMDBlZTliYSIsInVzZXJuYW1lIjoibGl2ZXIiLCJlbWFpbCI6Im1hcm40NzI1QGdtYWlsLmNvbSIsImlhdCI6MTc3NTkyMDYxOX0.fyo4R6Tc-7-2gzy7y5CJWiYblm3IQ8w7aajFnLwPMG4";
       
   await prefs.setString('auth_token', devToken);
   print("🛠️ DEV MODE: Token injected. App will start as logged in.");
