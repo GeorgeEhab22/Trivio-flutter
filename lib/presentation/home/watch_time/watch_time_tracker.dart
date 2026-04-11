@@ -1,9 +1,5 @@
-// lib/presentation/home/watch_time/watch_time_tracker.dart
-
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
 
 class WatchTimeTracker extends StatefulWidget {
   final Widget child;
@@ -59,9 +55,9 @@ class WatchTimeTrackerState extends State<WatchTimeTracker>
 
   void _flush() {
     if (_watchedPostIds.isEmpty) return;
-    final ids = List<String>.from(_watchedPostIds);
+    //final ids = List<String>.from(_watchedPostIds);
     _watchedPostIds.clear();
-    context.read<PostCubit>().markPostsAsWatched(ids);
+    //context.read<PostCubit>().markPostsAsWatched(ids);
   }
 
   void flushAndDispose() => _flush(); 

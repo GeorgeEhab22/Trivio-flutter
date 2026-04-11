@@ -92,10 +92,17 @@ class PostsRemoteDataSourceImpl implements PostsRemoteDataSource {
           response['data']?['posts'] ?? response['data']?['data'];
       if (postsRaw == null) return [];
 
-      return postsRaw
+      final posts = postsRaw
           .whereType<Map<String, dynamic>>()
           .map((json) => PostModel.fromJson(json))
           .toList();
+
+      final postIds = posts.map((post) => post.postID).toList();
+      if (postIds.isNotEmpty) {
+        await submitWatchedPosts(postIds);
+      }
+
+      return posts;
     } catch (e) {
       debugPrint('Error fetching posts: $e');
       errorHandler.handleDioError(e);

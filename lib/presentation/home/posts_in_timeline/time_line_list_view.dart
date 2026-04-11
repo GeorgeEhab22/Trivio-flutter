@@ -85,6 +85,17 @@ class TimelineListView extends StatelessWidget {
                   );
                 }
 
+                if (!isInitialLoading && !isLoadingMore) {
+                  final threshold = (displayPosts.length * 0.6).floor();
+                  if (index >= threshold) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      if (context.mounted) {
+                        context.read<PostCubit>().fetchPosts();
+                      }
+                    });
+                  }
+                }
+
                 final post = displayPosts[index];
 
                 final profileState = context.read<ProfileCubit>().state;

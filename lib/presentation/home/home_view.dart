@@ -1,4 +1,3 @@
-
 import 'package:auth/constants/colors.dart';
 import 'package:auth/core/custom_app_bar.dart';
 import 'package:auth/presentation/home/add_post/add_post_bottom_sheet.dart';
@@ -18,7 +17,7 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> with RouteAware {
-    RouteObserver<ModalRoute<dynamic>>? _routeObserver;
+  RouteObserver<ModalRoute<dynamic>>? _routeObserver;
 
   @override
   void didChangeDependencies() {
