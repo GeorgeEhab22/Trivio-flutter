@@ -1,7 +1,12 @@
 import 'dart:ui';
+import 'package:auth/domain/usecases/post/get_post_usecase.dart';
+import 'package:auth/injection_container.dart' as di;
 import 'package:auth/presentation/home/posts_in_timeline/widgets/post_content.dart';
 import 'package:auth/presentation/home/posts_in_timeline/widgets/post_footer.dart';
 import 'package:auth/presentation/home/posts_in_timeline/widgets/post_header.dart';
+import 'package:auth/presentation/home/posts_in_timeline/widgets/shared_post_preview.dart';
+import 'package:auth/presentation/manager/post_cubit/get_post/get_post_cubit.dart';
+import 'package:auth/presentation/manager/post_cubit/get_post/get_post_state.dart';
 import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
 import 'package:auth/constants/colors.dart';
 import 'package:flutter/material.dart';
@@ -44,8 +49,11 @@ class PostCard extends StatelessWidget {
         final isDark = Theme.of(context).brightness == Brightness.dark;
         final isFlagged = post.flagged ?? false;
         final postCubitState = context.watch<PostCubit>().state;
-        bool isDeleting = postCubitState is DeletePostLoading && postCubitState.postId == post.postID;
-        final isReportLoading = state is ReportPostLoading && state.postId == post.postID;
+        bool isDeleting =
+            postCubitState is DeletePostLoading &&
+            postCubitState.postId == post.postID;
+        final isReportLoading =
+            state is ReportPostLoading && state.postId == post.postID;
 
         return AnimatedOpacity(
           duration: const Duration(milliseconds: 180),
@@ -56,7 +64,9 @@ class PostCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(24),
               boxShadow: [
                 BoxShadow(
-                  color: isDark ? Colors.black38 : const Color(0xFF0F172A).withValues(alpha: 0.08),
+                  color: isDark
+                      ? Colors.black38
+                      : const Color(0xFF0F172A).withValues(alpha: 0.08),
                   blurRadius: 28,
                   offset: const Offset(0, 14),
                 ),
@@ -78,8 +88,8 @@ class PostCard extends StatelessWidget {
                             child: BackdropFilter(
                               filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
                               child: Container(
-                                color: isDark 
-                                    ? Colors.black.withValues(alpha: 0.4) 
+                                color: isDark
+                                    ? Colors.black.withValues(alpha: 0.4)
                                     : Colors.white.withValues(alpha: 0.2),
                                 child: _buildBlurControls(context, isDark),
                               ),
@@ -96,15 +106,15 @@ class PostCard extends StatelessWidget {
       },
     );
   }
-  
+
   Widget _buildCardBody(BuildContext context, bool isDark) {
     return DecoratedBox(
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: isDark 
-              ? const [Color(0xFF1D2228), Color(0xFF171B20)] 
+          colors: isDark
+              ? const [Color(0xFF1D2228), Color(0xFF171B20)]
               : const [Color(0xFFFFFFFF), Color(0xFFF8FBF9)],
         ),
         border: Border.all(
@@ -116,14 +126,20 @@ class PostCard extends StatelessWidget {
         children: [
           _buildTopGlowBar(isDark),
           PostHeader(post: post, currentUserId: currentUserId),
-          PostContent(post: post),
-          const SizedBox(height: 10),
+          if (post.caption != null && post.caption!.isNotEmpty)
+            PostContent(post: post),
+
+          if (post.isShare)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+              child: _SharedPostLoader(sharedPostId: post.sharedFrom!),
+            ),
           _buildDivider(isDark),
           PostFooter(
             post: post,
             currentUserId: currentUserId,
             currentReaction: currentReaction ?? post.userReaction,
-            targetCommentId: targetCommentId, 
+            targetCommentId: targetCommentId,
           ),
         ],
       ),
@@ -155,7 +171,9 @@ class PostCard extends StatelessWidget {
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.primary,
             foregroundColor: Colors.white,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
           ),
           child: Text(l10n.seePost),
         ),
@@ -168,9 +186,9 @@ class PostCard extends StatelessWidget {
       height: 4,
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: isDark 
-            ? [AppColors.primary.withAlpha(200), AppColors.darkGreen] 
-            : [AppColors.primary, AppColors.darkGreen],
+          colors: isDark
+              ? [AppColors.primary.withAlpha(200), AppColors.darkGreen]
+              : [AppColors.primary, AppColors.darkGreen],
         ),
       ),
     );
@@ -185,6 +203,41 @@ class PostCard extends StatelessWidget {
       color: isDark
           ? Colors.white.withValues(alpha: 0.09)
           : const Color(0xFFE8ECEF),
+    );
+  }
+}
+
+class _SharedPostLoader extends StatelessWidget {
+  final String sharedPostId;
+
+  const _SharedPostLoader({required this.sharedPostId});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) =>
+          GetPostCubit(getPostUseCase: di.sl<GetPostUseCase>())
+            ..getPost(sharedPostId),
+      child: BlocBuilder<GetPostCubit, GetPostState>(
+        builder: (context, state) {
+          if (state is GetPostLoading) {
+            return const Center(
+              child: Padding(
+                padding: EdgeInsets.all(16.0),
+                child: CircularProgressIndicator(strokeWidth: 2),
+              ),
+            );
+          }
+          if (state is GetPostSuccess) {
+            return SharedPostPreview(post: state.post);
+          }
+          if (state is GetPostFailure) {
+            debugPrint("Fetch Error for $sharedPostId: ${state.message}");
+            return const Center(child: Text("Content unavailable"));
+          }
+          return const SizedBox.shrink();
+        },
+      ),
     );
   }
 }

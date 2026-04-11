@@ -4,7 +4,6 @@ import 'package:auth/domain/entities/mentions.dart';
 import 'package:auth/domain/entities/post.dart';
 import 'package:auth/domain/entities/reaction.dart';
 import 'package:auth/domain/entities/reaction_type.dart';
-import 'package:flutter/foundation.dart';
 
 class PostModel extends Post {
   final int updateCount;
@@ -37,20 +36,23 @@ class PostModel extends Post {
     super.tags = const [],
     super.shownTags = false,
     super.isAuthorFollowed = false,
+    super.sharedFrom,
   });
 
   factory PostModel.fromJson(Map<String, dynamic> json) {
-    final Map<String, dynamic> raw = json.containsKey('post') && json['post'] is Map
-        ? json['post'] as Map<String, dynamic>
-        : (json['data'] != null && json['data']['post'] != null)
-            ? json['data']['post'] as Map<String, dynamic>
-            : json;
+    final Map<String, dynamic> raw = json['post'] is Map<String, dynamic>
+        ? json['post']
+        : (json['data']?['post'] is Map<String, dynamic>
+              ? json['data']['post']
+              : json);
 
-    final bool isFollowed = json['isFollowed'] ?? 
-                            (json['data'] != null ? json['data']['isFollowed'] ?? false : false);
+    final bool isFollowed =
+        json['isFollowed'] ??
+        (json['data'] != null ? json['data']['isFollowed'] ?? false : false);
 
     final dummyReactions = _parseReactionCounter(raw['reactionCounts']);
 
+    /// ✅ GROUP SAFE
     final dynamic groupData = raw['groupID'];
     String? gID;
     String? gName;
@@ -59,18 +61,14 @@ class PostModel extends Post {
     if (groupData is String) {
       gID = groupData;
     } else if (groupData is Map<String, dynamic>) {
-      gID = groupData['_id'];
-      gName = groupData['name'];
-      gCover = groupData['coverImage'] ?? groupData['logo'];
+      gID = JsonParser.parseId(groupData['_id']);
+      gName = JsonParser.parseString(groupData['name']);
+      gCover = JsonParser.parseString(
+        groupData['coverImage'] ?? groupData['logo'],
+      );
     }
-    
-    //TODO : remove when backend is fixed to add mobile ip and change to your ip
 
-   if (gCover != null && gCover.contains('localhost')) {
-      if (!kIsWeb && (defaultTargetPlatform == TargetPlatform.android || defaultTargetPlatform == TargetPlatform.iOS)) {
-        gCover = gCover.replaceAll('localhost', '192.168.1.28');
-      }
-    }
+    /// ✅ AUTHOR SAFE
     final dynamic authorData = raw['authorID'] ?? raw['authorId'];
     String aId = '';
     String? aName;
@@ -79,62 +77,65 @@ class PostModel extends Post {
     if (authorData is String) {
       aId = authorData;
     } else if (authorData is Map<String, dynamic>) {
-      aId = authorData['_id'] ?? '';
-      aName = authorData['username'] ?? authorData['name'];
-      aImage = authorData['avatar'] ?? authorData['profilePicture'];
-
-      if (aImage != null && aImage.contains('localhost')) {
-        if (!kIsWeb && (defaultTargetPlatform == TargetPlatform.android || defaultTargetPlatform == TargetPlatform.iOS)) {
-          aImage = aImage.replaceAll('localhost', '192.168.1.28');
-        }
-      
-    }
+      aId = JsonParser.parseId(authorData['_id']) ?? '';
+      aName = JsonParser.parseString(
+        authorData['username'] ?? authorData['name'],
+      );
+      aImage = JsonParser.parseString(
+        authorData['avatar'] ?? authorData['profilePicture'],
+      );
     }
 
+    /// ✅ USER REACTION SAFE
     final userReaction = JsonParser.parseReactionType(
-      json['userReact'] ?? raw['userReaction'] ?? raw['myReaction'] ?? raw['currentUserReaction'],
+      json['userReact']?.toString(),
     );
 
+    /// ✅ MENTIONS SAFE (THIS WAS CRASHING 🚨)
     final mentionsJson = raw['mentions'] as List<dynamic>? ?? [];
     final userIds = <String>[];
     final usernames = <String>[];
 
     for (final m in mentionsJson) {
-      final map = m as Map<String, dynamic>;
-      userIds.add(map['_id'] as String? ?? '');
-      usernames.add(map['username'] as String? ?? '');
+      if (m is Map<String, dynamic>) {
+        userIds.add(JsonParser.parseId(m['_id']) ?? '');
+        usernames.add(JsonParser.parseString(m['username']));
+      }
     }
 
     final mentions = Mentions(userIds: userIds, usernames: usernames);
 
-    //TODO: remove when backend is fixed to add mobile ip and change to your ip and un comment the above code
-    final mediaList = (raw['media'] as List<dynamic>? ?? []).map((m) {
-      String url = m as String;
+    /// ✅ MEDIA SAFE
+    final mediaList = (raw['media'] as List<dynamic>? ?? [])
+        .map((m) => JsonParser.parseString(m))
+        .toList();
 
-      // if (url.contains('localhost') || url.contains('192.168.1.5')) {
-      //   if (url.toLowerCase().endsWith('.mp4') ||
-      //       url.toLowerCase().endsWith('.mov') ||
-      //       url.toLowerCase().endsWith('.webm')) {
-      //     return 'https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4';
-      //   }
+    final dynamic sharedData = raw['sharedFrom'];
+  String? sID;
 
-      //   return url.replaceAll('localhost', '192.168.1.5');
-      // }
-
-      return url;
-    }).toList();
+  if (sharedData is String) {
+    sID = sharedData;
+  } else if (sharedData is Map<String, dynamic>) {
+    // If backend populated it, extract the ID from the nested object
+    sID = JsonParser.parseId(sharedData['_id']) ?? sharedData['id']?.toString();
+  }
 
     return PostModel(
-      postID: JsonParser.parseString(raw['_id']),
+      postID: JsonParser.parseId(raw['_id']) ?? '',
+      sharedFrom: sID,
       updateCount: JsonParser.parseInt(raw['__v']),
+
       authorId: aId,
       authorName: aName,
       authorImage: aImage,
+
       type: JsonParser.parseString(raw['type'], fallback: 'public'),
       caption: JsonParser.parseString(raw['caption']),
       location: JsonParser.parseString(raw['location']),
+
       views: JsonParser.parseInt(raw['views']),
       flagged: raw['flagged'],
+
       media: mediaList,
       mentions: mentions,
 
@@ -149,16 +150,16 @@ class PostModel extends Post {
       reactionsCount: _calculateTotalReactions(raw, dummyReactions),
       userReaction: userReaction,
 
-      //TODO: Handle commentsCount properly
       commentsCount: JsonParser.parseInt(
         raw['commentsCount'] ?? raw['comments_count'] ?? raw['repliesCount'],
       ),
 
-      createdAt: raw['createdAt'] != null
-          ? DateTime.parse(raw['createdAt'] as String)
-          : DateTime.now(),
+      createdAt: JsonParser.parseDate(raw['createdAt']) ?? DateTime.now(),
 
-      tags: (raw['tags'] as List<dynamic>? ?? []).map((e) => e.toString()).toList(),
+      tags: (raw['tags'] as List<dynamic>? ?? [])
+          .map((e) => e.toString())
+          .toList(),
+
       shownTags: raw['shownTags'] ?? false,
       isAuthorFollowed: isFollowed,
     );
@@ -235,6 +236,7 @@ class PostModel extends Post {
 
   Post toEntity() {
     return Post(
+      sharedFrom: sharedFrom,
       authorId: authorId,
       authorName: authorName,
       authorImage: authorImage,

@@ -20,7 +20,7 @@ class ApiEndpoints {
   static const fetchSinglePost = 'posts'; // GET {id}
   static const editPost = 'posts'; // PATCH {id}`
   static const deletePost = 'posts'; // DELETE {id}
-  static const sharePost = 'posts/share'; // POST {postId}
+  static const sharePost = 'posts'; // POST {postId}
   static const toggleSavePost = 'posts/save'; // POST {postId}
   static const reportPost = 'posts/report'; // POST {postId}
   static const searchPosts = 'posts/search'; // GET ?q=query

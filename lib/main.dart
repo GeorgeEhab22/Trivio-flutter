@@ -32,7 +32,7 @@ void main() async {
 
   await di.init();
   await dotenv.load(fileName: ".env");
-  await _setupDevMode();
+  //await _setupDevMode();
 
   final prefs = await SharedPreferences.getInstance();
   //await prefs.remove('auth_token');
@@ -167,8 +167,7 @@ Future<void> _setupDevMode() async {
   final prefs = await SharedPreferences.getInstance();
 
   const String devToken =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZDZkNGFhMDU0ZmQwYzYwMDBlZTNmNSIsInVzZXJuYW1lIjoiWlNDIiwiZW1haWwiOiJsaW8xMG1lc3NpMjIxNUBnbWFpbC5jb20iLCJpYXQiOjE3NzU4NDcxNjl9.6JSYsWQ7E-E9PPCgIPO05KFHzyi2GTKJuXjk0AfI03g";
-      
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZDQzMGJhMjVmNGM5Yjg0OTcxNWQ4NyIsInVzZXJuYW1lIjoibWVubmEiLCJlbWFpbCI6Im1lbm5hdHVsbGFoODg4QGdtYWlsLmNvbSIsImlhdCI6MTc3NTkyMzMyOH0.1iq07RYh5rlqHM-jR6QY_L-f5K3XG4ZNh1CCyozcztI";
   await prefs.setString('auth_token', devToken);
   print("🛠️ DEV MODE: Token injected. App will start as logged in.");
 }
