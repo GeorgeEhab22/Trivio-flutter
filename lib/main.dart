@@ -4,6 +4,7 @@ import 'package:auth/constants/colors.dart';
 import 'package:auth/core/app_router.dart';
 import 'package:auth/core/theme_reveal_animation.dart';
 import 'package:auth/l10n/app_localizations.dart';
+import 'package:auth/presentation/manager/post_cubit/get_reels/get_reels_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/post_interaction_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_cubit.dart';
@@ -71,6 +72,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(
           create: (_) => ProfileCubit(getMyProfile: di.sl())..loadProfile(),
         ),
+        BlocProvider(create: (context) => di.sl<ReelsCubit>()),
       ],
       child: Provider<RouteObserver<ModalRoute<dynamic>>>.value(
         value: routeObserver,

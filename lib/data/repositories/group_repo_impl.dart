@@ -210,13 +210,15 @@ class GroupRepoImpl implements GroupRepo {
   Future<Either<Failure, String>> changeMemberRole({
     required String groupId,
     required String userId,
+    required String oldRole,
     required String newRole,
   }) async {
     try {
-      await remoteDataSource.promoteMember(
+      await remoteDataSource.changeMemberRole(
         groupId: groupId,
         userId: userId,
-        role: newRole,
+        oldRole: oldRole,
+        newRole: newRole,
       );
       return const Right('Role changed successfully');
     } on ServerException catch (e) {

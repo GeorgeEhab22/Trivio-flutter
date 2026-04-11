@@ -322,4 +322,17 @@ class PostRepositoryImpl implements PostRepo {
       return Left(ServerFailure( e.message));
     }
   }
+
+  @override
+  Future<Either<Failure, List<Post>>> getReels({int page = 1}) async {
+    try {
+      final models = await remoteDataSource.getReels(page: page);
+      final entities = models.map((model) => model.toEntity()).toList();
+      return Right(entities);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } catch (_) {
+      return Left(ServerFailure('Failed to fetch reels'));
+    }
+  }
 }

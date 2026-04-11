@@ -111,6 +111,7 @@ class ModeratorsListView extends StatelessWidget {
                               .read<ChangeMemberRoleCubit>()
                               .changeMemberRole(
                                 groupId: groupId,
+                                oldRole: moderator.role,
                                 userId: moderator.userId,
                                 newRole: newRole,
                               );

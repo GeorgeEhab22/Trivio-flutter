@@ -100,6 +100,7 @@ import 'package:auth/domain/usecases/post/edit_post_usecase.dart';
 import 'package:auth/domain/usecases/post/get_posts_usecase.dart';
 import 'package:auth/domain/usecases/post/get_post_usecase.dart';
 import 'package:auth/domain/usecases/post/get_post_reactions_usecase.dart';
+import 'package:auth/domain/usecases/post/get_reels_usecase.dart';
 import 'package:auth/domain/usecases/post/react_to_post_usecase.dart';
 import 'package:auth/domain/usecases/post/remove_reaction_from_post_usecase.dart';
 import 'package:auth/domain/usecases/post/report_post_usecase.dart';
@@ -164,6 +165,7 @@ import 'package:auth/presentation/manager/log_out_cubit/log_out_cubit.dart';
 import 'package:auth/presentation/manager/notifications_cubit/notifications_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/create_post_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/get_post/get_post_cubit.dart';
+import 'package:auth/presentation/manager/post_cubit/get_reels/get_reels_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/post_interaction_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/get_user_profile_by_id_cubit.dart';
@@ -652,4 +654,8 @@ Future<void> init() async {
     () => FaceRecognitionRepoImpl(remoteDatasource: sl()),
   );
   sl.registerLazySingleton(() => AutoTaggingUseCase(sl()));
+
+  //reels
+  sl.registerFactory(() => ReelsCubit(getReelsUseCase: sl()));
+  sl.registerLazySingleton(() => GetReelsUseCase(sl()));
 }

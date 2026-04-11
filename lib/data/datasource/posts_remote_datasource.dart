@@ -62,6 +62,8 @@ abstract class PostsRemoteDataSource {
     required String type,
     String? caption,
   });
+  //reels
+  Future<List<PostModel>> getReels({int page = 1});
 }
 
 class PostsRemoteDataSourceImpl implements PostsRemoteDataSource {
@@ -291,7 +293,6 @@ class PostsRemoteDataSourceImpl implements PostsRemoteDataSource {
     }
   }
 
-
   @override
   Future<PostModel> toggleSavePost({
     required String postId,
@@ -388,26 +389,37 @@ class PostsRemoteDataSourceImpl implements PostsRemoteDataSource {
 
       final response = await api.post(
         url,
-        data: {
-          'type': type, 
-          'caption': caption,
-        },
+        data: {'type': type, 'caption': caption},
         options: _getAuthOptions(),
       );
       final data = response['data'];
-      
+
       if (data == null || data['post'] == null) {
         throw ServerException('API returned success but post data was null');
       }
 
       final Map<String, dynamic> postJson = data['post'];
-      
+
       return PostModel.fromJson(postJson);
-    }on DioException catch (e) {
+    } on DioException catch (e) {
       debugPrint("Server Error Response: ${e.response?.data}");
       debugPrint("Server Status Code: ${e.response?.statusCode}");
       errorHandler.handleDioError(e);
       rethrow;
+    }
+  }
+
+  //reels
+  @override
+  Future<List<PostModel>> getReels({int page = 1}) async {
+    try {
+      final response = await api.get(
+        "${ApiEndpoints.reels}?page=$page",
+        options: _getAuthOptions(),
+      );
+      final List<dynamic> dataList = response['data']['reels'] ?? [];
+
+      return dataList.map((e) => PostModel.fromJson(e)).toList();
     } catch (e) {
       errorHandler.handleDioError(e);
       rethrow;

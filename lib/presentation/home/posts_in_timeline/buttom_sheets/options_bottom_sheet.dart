@@ -4,6 +4,7 @@ import 'package:auth/presentation/home/posts_in_timeline/buttom_sheets/report_re
 import 'package:auth/common/functions/custom_list_tile.dart';
 import 'package:auth/common/functions/custom_square_button.dart';
 import 'package:auth/presentation/manager/group_cubit/get_group_posts/group_posts_cubit.dart';
+import 'package:auth/presentation/manager/post_cubit/get_reels/get_reels_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/saved_posts/saved_posts_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/saved_posts/saved_posts_state.dart';
@@ -18,11 +19,13 @@ import 'package:auth/l10n/app_localizations.dart';
 class OptionsBottomSheet extends StatelessWidget {
   final Post post;
   final String currentUserId;
+  final bool isReelView;
 
   const OptionsBottomSheet({
     super.key,
     required this.post,
     required this.currentUserId,
+    this.isReelView = false,
   });
 
   @override
@@ -34,11 +37,6 @@ class OptionsBottomSheet extends StatelessWidget {
     final cubit = context.read<PostInteractionCubit>();
     final postCubit = context.read<PostCubit>();
     final savedPostsCubit = context.read<SavedPostsCubit>();
-
-    GroupPostsCubit? groupPostsCubit;
-    if (post.location == 'group') {
-      groupPostsCubit = context.read<GroupPostsCubit>();
-    }
 
     return Container(
       decoration: BoxDecoration(
@@ -61,7 +59,7 @@ class OptionsBottomSheet extends StatelessWidget {
                   borderRadius: BorderRadius.circular(3),
                 ),
               ),
-        
+
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 14),
                 child: Row(
@@ -70,13 +68,13 @@ class OptionsBottomSheet extends StatelessWidget {
                     BlocBuilder<SavedPostsCubit, SavedPostsState>(
                       builder: (context, state) {
                         bool isSaved = false;
-        
+
                         if (state is SavedPostsLoaded) {
                           isSaved = state.savedPosts.any(
                             (p) => p.postID == post.postID,
                           );
                         }
-        
+
                         return Expanded(
                           child: CustomSquareButton(
                             label: isSaved ? l10n.saved : l10n.save,
@@ -111,10 +109,10 @@ class OptionsBottomSheet extends StatelessWidget {
                   ],
                 ),
               ),
-        
+
               const SizedBox(height: 12),
               const Divider(height: 1),
-        
+
               if (post.authorId == currentUserId)
                 CustomListTile(
                   icon: Icons.edit_outlined,
@@ -131,12 +129,19 @@ class OptionsBottomSheet extends StatelessWidget {
                             postId: post.postID,
                             newCaption: newText,
                           );
+
+                          if (isReelView) {
+                            context.read<ReelsCubit>().updateReelCaptionLocally(
+                              post.postID,
+                              newText,
+                            );
+                          }
                         },
                       },
                     );
                   },
                 ),
-        
+
               CustomListTile(
                 icon: Icons.visibility_off_outlined,
                 text: l10n.notInterested,
@@ -145,7 +150,7 @@ class OptionsBottomSheet extends StatelessWidget {
                   context.pop();
                 },
               ),
-        
+
               // Report
               CustomListTile(
                 icon: Icons.report_gmailerrorred_outlined,
@@ -174,7 +179,7 @@ class OptionsBottomSheet extends StatelessWidget {
                   );
                 },
               ),
-        
+
               // Delete Post (Only show if current user is the author)
               if (post.authorId == currentUserId)
                 CustomListTile(
@@ -182,7 +187,12 @@ class OptionsBottomSheet extends StatelessWidget {
                   text: l10n.delete,
                   redColor: true,
                   onTap: () {
+                    final groupCubit = context.read<GroupPostsCubit?>();
+                    final postCubit = context.read<PostCubit?>();
+                    final reelsCubit = context.read<ReelsCubit?>();
+
                     context.pop();
+
                     showCustomDialog(
                       context: context,
                       title: l10n.deletePostTitle,
@@ -190,13 +200,16 @@ class OptionsBottomSheet extends StatelessWidget {
                       confirmText: l10n.delete,
                       confirmTextColor: Colors.red,
                       onConfirm: () {
-                        if (post.location == 'group' && groupPostsCubit != null) {
-                          groupPostsCubit.deletePost(
+                        if (post.location == 'group') {
+                          groupCubit?.deletePost(
                             groupId: post.groupID ?? "",
                             post: post,
                           );
+                        } else if (isReelView) {
+                          postCubit?.deletePost(post: post);
+                          reelsCubit?.deleteReel(post: post);
                         } else {
-                          postCubit.deletePost(post: post);
+                          postCubit?.deletePost(post: post);
                         }
                       },
                     );

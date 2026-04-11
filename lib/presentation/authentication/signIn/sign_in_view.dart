@@ -14,7 +14,9 @@ import '../widgets/new_account_button.dart';
 import 'sign_in_listener.dart';
 
 class SignInPage extends StatefulWidget {
-  const SignInPage({super.key});
+  final List<String>? pendingTeams;
+  final List<String>? pendingPlayers;
+  const SignInPage({super.key, this.pendingTeams, this.pendingPlayers});
 
   @override
   State<SignInPage> createState() => _SignInPageState();
@@ -36,9 +38,9 @@ class _SignInPageState extends State<SignInPage> {
   void _handleSignIn() {
     if (_formKey.currentState!.validate()) {
       context.read<SignInCubit>().signIn(
-            email: _emailController.text.trim(),
-            password: _passwordController.text,
-          );
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
+      );
     }
   }
 
@@ -51,11 +53,11 @@ class _SignInPageState extends State<SignInPage> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         forceMaterialTransparency: true,
-        actions: const[LanguageSwitchButton()],
+        actions: const [LanguageSwitchButton()],
       ),
       body: BlocListener<SignInCubit, SignInState>(
         listener: (context, state) =>
-            SignInListener.handleStateChanges(context, state),
+            SignInListener.handleStateChanges(context, state, widget.pendingTeams, widget.pendingPlayers),
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 60),
           child: Form(

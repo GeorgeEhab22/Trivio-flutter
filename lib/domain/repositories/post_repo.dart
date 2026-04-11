@@ -78,4 +78,5 @@ abstract class PostRepo {
   Future<Either<Failure, Unit>> submitWatchedPosts(
     List<String> watchedPosts,
   );
+  Future<Either<Failure, List<Post>>> getReels({int page = 1});
 }

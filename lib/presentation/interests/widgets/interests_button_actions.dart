@@ -2,7 +2,6 @@ import 'package:auth/common/functions/custom_square_button.dart';
 import 'package:auth/constants/colors.dart';
 import 'package:auth/core/app_routes.dart';
 import 'package:auth/l10n/app_localizations.dart';
-import 'package:auth/presentation/authentication/widgets/show_custom_snackbar.dart';
 import 'package:auth/presentation/manager/profile_cubit/interests/select_interests_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/interests/select_interests_state.dart';
 import 'package:flutter/material.dart';
@@ -90,8 +89,15 @@ class InterestsButtonActions extends StatelessWidget {
                 backgroundColor: Theme.of(context).cardColor,
                 onTap: () {
                   if (isTeams) {
-                    showCustomSnackBar(context, l10n.welcomeBack, true);
-                    context.go(AppRoutes.home);
+                    final teams = cubit.currentData.selectedTeams;
+                    final players = cubit.currentData.selectedPlayers;
+                    context.go(
+                      AppRoutes.signIn,
+                      extra: {
+                        'pendingTeams': teams,
+                        'pendingPlayers': players,
+                      },
+                    );
                   } else {
                     context.pop();
                   }
@@ -113,11 +119,15 @@ class InterestsButtonActions extends StatelessWidget {
                         if (isTeams) {
                           context.push(AppRoutes.selectPlayers);
                         } else {
-                          final success = await cubit.submitInterests();
-                          if (success && context.mounted) {
-                            showCustomSnackBar(context, l10n.welcomeBack, true);
-                            context.go(AppRoutes.home);
-                          }
+                          final teams = cubit.currentData.selectedTeams;
+                          final players = cubit.currentData.selectedPlayers;
+                          context.go(
+                            AppRoutes.signIn,
+                            extra: {
+                              'pendingTeams': teams,
+                              'pendingPlayers': players,
+                            },
+                          );
                         }
                       }
                     : null,
