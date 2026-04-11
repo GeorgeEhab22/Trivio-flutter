@@ -7,7 +7,6 @@ import 'package:auth/presentation/stats/widgets/custom_team_row.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:skeletonizer/skeletonizer.dart';
-// Ensure this import path is correct for your project
 import 'package:auth/common/functions/football_mapper.dart';
 
 class MatchTile extends StatelessWidget {
@@ -30,7 +29,7 @@ class MatchTile extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
       decoration: BoxDecoration(
-        color: isDark? Colors.transparent:Theme.of(context).cardColor,
+        color: isDark? const Color.fromARGB(255, 44, 42, 42) : Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: AppColors.lightGrey.withValues(alpha: 0.3),

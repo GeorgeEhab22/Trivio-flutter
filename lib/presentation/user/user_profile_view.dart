@@ -134,6 +134,7 @@ class _UserProfileViewState extends State<UserProfileView> {
 
   Widget _buildMainScaffold(UserProfile user) {
     final l10n = AppLocalizations.of(context)!;
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     final bool isMyProfile = widget.userId == null;
 
     return NotificationListener<ScrollToPostsNotification>(
@@ -161,15 +162,8 @@ class _UserProfileViewState extends State<UserProfileView> {
                       ),
                     )
                   : null,
-              title: Text(
-                'Trivio',
-                style: TextStyle(
-                  color: Theme.of(context).textTheme.bodyMedium?.color,
-                  fontWeight: FontWeight.w800,
-                  fontSize: 25,
-                ),
-                overflow: TextOverflow.ellipsis,
-              ),
+              title: SvgPicture.asset(isDarkMode ? Paths.trivioDarkLogo : Paths.trivioLogo, width: 55, height: 55),
+
               actions: [
                 if (isMyProfile)
                   Padding(
@@ -284,8 +278,7 @@ class _UserProfileViewState extends State<UserProfileView> {
 
   Widget _renderSliverList(List<Post> posts, String profileId, dynamic l10n) {
     final myState = context.read<ProfileCubit>().state;
-    final postCubit = context
-        .watch<PostCubit>();
+    final postCubit = context.watch<PostCubit>();
     String myActualId = (myState is ProfileLoaded) ? myState.user.id : "";
 
     return SliverList(

@@ -97,6 +97,7 @@ class PostsRemoteDataSourceImpl implements PostsRemoteDataSource {
           .map((json) => PostModel.fromJson(json))
           .toList();
     } catch (e) {
+      debugPrint('Error fetching posts: $e');
       errorHandler.handleDioError(e);
       rethrow;
     }
