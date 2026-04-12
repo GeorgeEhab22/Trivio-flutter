@@ -45,12 +45,11 @@ class PostsSingleLoaded extends PostState {
 
 class PostsLoadingMoreError extends PostState {
   final String message;
-  final List<Post> posts;
 
-  const PostsLoadingMoreError(this.message, this.posts);
+  const PostsLoadingMoreError(this.message);
 
   @override
-  List<Object?> get props => [message, posts];
+  List<Object?> get props => [message];
 }
 
 class PostError extends PostState {

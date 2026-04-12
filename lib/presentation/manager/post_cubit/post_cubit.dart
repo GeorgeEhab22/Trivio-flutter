@@ -340,6 +340,10 @@ class PostCubit extends Cubit<PostState> {
       hasReachedMax = false;
       _hydratedCurrentUserReactionPostIds.clear();
       emit(PostLoading());
+    } else {
+      if (isLoadingMore || hasReachedMax) return;
+      isLoadingMore = true;
+      emit(PostsLoadingMore(List.from(posts)));
     }
 
     final result = await getPostsUseCase(limit: 10);
@@ -347,18 +351,35 @@ class PostCubit extends Cubit<PostState> {
     result.fold(
       (failure) {
         if (isClosed) return;
-        emit(PostError(failure.message));
+        isLoadingMore = false;
+        emit(
+          refresh
+              ? PostError(failure.message)
+              : PostsLoadingMoreError( failure.message),
+        );
       },
       (newPosts) {
         if (isClosed) return;
-        posts = _applyReactionSnapshot(_applyCommentsCountFloors(newPosts));
+        isLoadingMore = false;
 
         if (newPosts.isEmpty) {
           hasReachedMax = true;
-        } else {
-          page++;
+          emit(PostLoaded(List.from(posts), hasReachedMax: hasReachedMax));
+          return;
         }
 
+        // Append instead of replace, deduplicating by postID
+        final existingIds = posts.map((p) => p.postID).toSet();
+        final uniqueNewPosts = newPosts
+            .where((p) => !existingIds.contains(p.postID))
+            .toList();
+
+        posts = [
+          ...posts,
+          ..._applyReactionSnapshot(_applyCommentsCountFloors(uniqueNewPosts)),
+        ];
+
+        page++;
         emit(PostLoaded(List.from(posts), hasReachedMax: hasReachedMax));
       },
     );
