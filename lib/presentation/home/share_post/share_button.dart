@@ -42,7 +42,9 @@ class ShareButton extends StatelessWidget {
     Widget iconWidget = SvgPicture.asset(
       Paths.shareIcon,
       colorFilter: ColorFilter.mode(
-        Theme.of(context).iconTheme.color!,
+       isReelView
+        ? Colors.white
+        : Theme.of(context).iconTheme.color!,
         BlendMode.srcIn,
       ),
     );

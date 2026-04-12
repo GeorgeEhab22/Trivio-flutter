@@ -122,7 +122,7 @@ class _ReelItemState extends State<ReelItem> {
                                 onToggleComments: _toggleComments,
                               ),
                               const SizedBox(height: 6),
-                              const ReelsShareButton(count: 0),
+                              ReelsShareButton(count: 0,post:widget.reel),
                               const SizedBox(height: 6),
                               
                               ReelsMoreButton(

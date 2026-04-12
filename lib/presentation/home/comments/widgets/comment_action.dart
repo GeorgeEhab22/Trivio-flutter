@@ -46,7 +46,9 @@ class CommentAction extends StatelessWidget {
     Widget iconWidget = SvgPicture.asset(
       Paths.commentIcon,
       colorFilter: ColorFilter.mode(
-        Theme.of(context).iconTheme.color!,
+        isReelView
+        ? Colors.white
+        : Theme.of(context).iconTheme.color!,
         BlendMode.srcIn,
       ),
       width: iconSize,

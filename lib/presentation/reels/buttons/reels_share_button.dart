@@ -1,17 +1,19 @@
+import 'package:auth/domain/entities/post.dart';
 import 'package:auth/presentation/home/share_post/share_button.dart';
 import 'package:flutter/material.dart';
 
 class ReelsShareButton extends StatelessWidget {
+  final Post post;
   final int count;
 
-  const ReelsShareButton({super.key, this.count = 0});
+  const ReelsShareButton({super.key, this.count = 0, required this.post});
 
   @override
   Widget build(BuildContext context) {
     return ShareButton(
       count: count,
       isReelView: true,
-      post: null!, // TODO: share reel
+      post:post,
     );
   }
 }
