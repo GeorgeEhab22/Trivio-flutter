@@ -1,3 +1,4 @@
+import 'package:auth/common/functions/parse_date_correct.dart';
 import 'package:auth/core/json_parser.dart';
 import 'package:auth/data/models/reaction_model.dart';
 import 'package:auth/domain/entities/mentions.dart';
@@ -158,7 +159,7 @@ class PostModel extends Post {
         raw['commentsCount'] ?? raw['comments_count'] ?? raw['repliesCount'],
       ),
 
-      createdAt: JsonParser.parseDate(raw['createdAt']) ?? DateTime.now(),
+      createdAt: DateParser.parseDateCorrectly(raw['createdAt']),
 
       tags: (raw['tags'] as List<dynamic>? ?? [])
           .map((e) => e.toString())
