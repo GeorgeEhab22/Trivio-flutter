@@ -21,6 +21,31 @@ class NotificationCubit extends Cubit<NotificationState> {
 
   final List<NotificationListItem> _allItems = [];
 
+  /// IDs the user has already "seen" (i.e. were present when they last opened the page)
+  final Set<String> _seenIds = {};
+
+  // ─── helpers ────────────────────────────────────────────────────────────────
+
+  Set<String> _extractIds(List<NotificationListItem> items) {
+    return items
+        .whereType<NotificationDataItem>()
+        .map((e) => e.notification.id)
+        .toSet();
+  }
+
+  Set<String> _computeNewIds(List<NotificationListItem> items) {
+    final currentIds = _extractIds(items);
+    return currentIds.difference(_seenIds);
+  }
+
+  void markAllAsSeen() {
+    _seenIds.addAll(_extractIds(_allItems));
+
+    if (state is NotificationLoaded) {
+      emit((state as NotificationLoaded).copyWith(newNotificationIds: {}));
+    }
+  }
+
   Future<void> fetchInitialNotifications() async {
     emit(NotificationLoading());
     _currentPage = 1;
@@ -42,6 +67,7 @@ class NotificationCubit extends Cubit<NotificationState> {
           NotificationLoaded(
             items: List.from(_allItems),
             hasReachedMax: newNotifications.length < _limit,
+            newNotificationIds: _computeNewIds(_allItems),
           ),
         );
       },
@@ -54,7 +80,6 @@ class NotificationCubit extends Cubit<NotificationState> {
             (state as NotificationLoaded).hasReachedMax)) {
       return;
     }
-
     _isFetching = true;
     _currentPage++;
 
@@ -63,24 +88,50 @@ class NotificationCubit extends Cubit<NotificationState> {
       limit: _limit,
     );
 
-    result.fold(
-      (failure) {
-        _currentPage--;
-      },
-      (newNotifications) {
-        if (newNotifications.isEmpty) {
-          emit((state as NotificationLoaded).copyWith(hasReachedMax: true));
-        } else {
-          final processedItems = _processNewItems(newNotifications);
-          _allItems.addAll(processedItems);
+    result.fold((failure) => _currentPage--, (newNotifications) {
+      if (newNotifications.isEmpty) {
+        emit((state as NotificationLoaded).copyWith(hasReachedMax: true));
+      } else {
+        final processedItems = _processNewItems(newNotifications);
+        _allItems.addAll(processedItems);
 
-          emit(
-            NotificationLoaded(
-              items: List.from(_allItems),
-              hasReachedMax: newNotifications.length < _limit,
-            ),
-          );
-        }
+        emit(
+          NotificationLoaded(
+            items: List.from(_allItems),
+            hasReachedMax: newNotifications.length < _limit,
+            newNotificationIds: _computeNewIds(_allItems),
+          ),
+        );
+      }
+    });
+
+    _isFetching = false;
+  }
+
+  Future<void> refreshNotifications() async {
+    _currentPage = 1;
+    _lastHeader = null;
+    _isFetching = true;
+
+    final result = await getNotificationsUseCase(
+      page: _currentPage,
+      limit: _limit,
+    );
+
+    result.fold(
+      (failure) => emit(NotificationError(_mapFailureToMessage(failure))),
+      (newNotifications) {
+        _allItems.clear();
+        final processedItems = _processNewItems(newNotifications);
+        _allItems.addAll(processedItems);
+
+        emit(
+          NotificationLoaded(
+            items: List.from(_allItems),
+            hasReachedMax: newNotifications.length < _limit,
+            newNotificationIds: _computeNewIds(_allItems), // badge updates here
+          ),
+        );
       },
     );
 
@@ -106,8 +157,8 @@ class NotificationCubit extends Cubit<NotificationState> {
           senderName: oldNotif.senderName,
           senderAvatar: oldNotif.senderAvatar,
           type: oldNotif.type,
-          message: oldNotif.message, 
-          entityId: oldNotif.entityId, 
+          message: oldNotif.message,
+          entityId: oldNotif.entityId,
           postId: oldNotif.postId,
           isRead: true,
           createdAt: oldNotif.createdAt,
@@ -163,42 +214,52 @@ class NotificationCubit extends Cubit<NotificationState> {
     return newItems;
   }
 
+  /// Call this from your push-notification handler (FCM onMessage, etc.)
+  void onPushNotificationReceived(NotificationEntity newNotification) {
+    // If not yet loaded, just let the next fetch handle it
+    if (state is! NotificationLoaded) return;
+
+    final loadedState = state as NotificationLoaded;
+
+    // Avoid duplicates
+    final alreadyExists = _allItems.any(
+      (item) =>
+          item is NotificationDataItem &&
+          item.notification.id == newNotification.id,
+    );
+    if (alreadyExists) return;
+
+    // Insert header "today" at the top if needed
+    final List<NotificationListItem> updated = [];
+    final firstItem = _allItems.isNotEmpty ? _allItems.first : null;
+    final firstIsToday =
+        firstItem is NotificationHeaderItem && firstItem.title == 'today';
+
+    if (!firstIsToday) {
+      updated.add(const NotificationHeaderItem('today'));
+    }
+
+    updated.add(NotificationDataItem(newNotification));
+    updated.addAll(_allItems);
+
+    _allItems
+      ..clear()
+      ..addAll(updated);
+
+    emit(
+      loadedState.copyWith(
+        items: List.from(_allItems),
+        newNotificationIds: _computeNewIds(
+          _allItems,
+        ), 
+      ),
+    );
+  }
+
   String _mapFailureToMessage(Failure failure) {
     if (failure is ServerFailure) return failure.message;
     if (failure is NetworkFailure) return failure.message;
     if (failure is AuthFailure) return failure.message;
     return 'Unexpected error occurred';
-  }
-
-  Future<void> refreshNotifications() async {
-
-    _currentPage = 1;
-    _lastHeader = null;
-    _isFetching = true;
-
-    final result = await getNotificationsUseCase(
-      page: _currentPage,
-      limit: _limit,
-    );
-
-    result.fold(
-      (failure) {
-        emit(NotificationError(_mapFailureToMessage(failure)));
-      },
-      (newNotifications) {
-        _allItems.clear(); // Clear old data only after a successful fetch
-        final processedItems = _processNewItems(newNotifications);
-        _allItems.addAll(processedItems);
-
-        emit(
-          NotificationLoaded(
-            items: List.from(_allItems),
-            hasReachedMax: newNotifications.length < _limit,
-          ),
-        );
-      },
-    );
-
-    _isFetching = false;
   }
 }

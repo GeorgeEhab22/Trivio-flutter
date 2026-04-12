@@ -44,8 +44,8 @@ class PostModel extends Post {
     final Map<String, dynamic> raw = json['post'] is Map<String, dynamic>
         ? json['post']
         : (json['data']?['post'] is Map<String, dynamic>
-              ? json['data']['post']
-              : json);
+            ? json['data']['post']
+            : json);
 
     final bool isFollowed =
         json['isFollowed'] ??
@@ -69,22 +69,41 @@ class PostModel extends Post {
       );
     }
 
-    /// ✅ AUTHOR SAFE
-    final dynamic authorData = raw['author_details'] ?? raw['author'] ?? raw['authorID'] ?? raw['authorId'] ?? raw['user'];
+    /// ✅ AUTHOR SAFE (UPDATED 🔥)
+    final dynamic authorData =
+        raw['author_details'] ??
+        raw['author'] ??
+        raw['authorID'] ??
+        raw['authorId'] ??
+        raw['user'];
+
     String aId = '';
     String? aName;
     String? aImage;
 
-    if (authorData is String) {
-      aId = authorData;
-    } else if (authorData is Map<String, dynamic>) {
-      aId = JsonParser.parseId(authorData['_id']) ?? '';
-      aName = JsonParser.parseString(
-        authorData['username'] ?? authorData['name'] ?? authorData['fullName'],
-      );
-      aImage = JsonParser.parseString(
-        authorData['avatar'] ?? authorData['profilePicture'] ?? authorData['image'],
-      );
+    if (authorData != null) {
+      // Case 1: ID only
+      if (authorData is String) {
+        aId = authorData;
+      }
+      // Case 2: full object
+      else if (authorData is Map<String, dynamic>) {
+        aId = JsonParser.parseId(authorData['_id']) ??
+            authorData['id']?.toString() ??
+            '';
+
+        aName = JsonParser.parseString(
+          authorData['username'] ??
+              authorData['name'] ??
+              authorData['fullName'],
+        );
+
+        aImage = JsonParser.parseString(
+          authorData['avatar'] ??
+              authorData['profilePicture'] ??
+              authorData['image'],
+        );
+      }
     }
 
     /// ✅ USER REACTION SAFE
@@ -92,7 +111,7 @@ class PostModel extends Post {
       json['userReact']?.toString(),
     );
 
-    /// ✅ MENTIONS SAFE (THIS WAS CRASHING 🚨)
+    /// ✅ MENTIONS SAFE
     final mentionsJson = raw['mentions'] as List<dynamic>? ?? [];
     final userIds = <String>[];
     final usernames = <String>[];
@@ -114,16 +133,17 @@ class PostModel extends Post {
       return JsonParser.parseString(m);
     }).where((url) => url.isNotEmpty).toList();
 
-
+    /// ✅ SHARED POST SAFE
     final dynamic sharedData = raw['sharedFrom'];
-  String? sID;
+    String? sID;
 
-  if (sharedData is String) {
-    sID = sharedData;
-  } else if (sharedData is Map<String, dynamic>) {
-    // If backend populated it, extract the ID from the nested object
-    sID = JsonParser.parseId(sharedData['_id']) ?? sharedData['id']?.toString();
-  }
+    if (sharedData is String) {
+      sID = sharedData;
+    } else if (sharedData is Map<String, dynamic>) {
+      sID =
+          JsonParser.parseId(sharedData['_id']) ??
+          sharedData['id']?.toString();
+    }
 
     return PostModel(
       postID: JsonParser.parseId(raw['_id']) ?? '',
@@ -150,13 +170,16 @@ class PostModel extends Post {
 
       reactions: _parseReactions(raw['reactions']),
       reactionCounts: dummyReactions,
-      reactionCountsByType: JsonParser.mapReactionCounts(raw['reactionCounts']),
+      reactionCountsByType:
+          JsonParser.mapReactionCounts(raw['reactionCounts']),
 
       reactionsCount: _calculateTotalReactions(raw, dummyReactions),
       userReaction: userReaction,
 
       commentsCount: JsonParser.parseInt(
-        raw['commentsCount'] ?? raw['comments_count'] ?? raw['repliesCount'],
+        raw['commentsCount'] ??
+            raw['comments_count'] ??
+            raw['repliesCount'],
       ),
 
       createdAt: DateParser.parseDateCorrectly(raw['createdAt']),
@@ -211,12 +234,15 @@ class PostModel extends Post {
       'mentions': [
         if (mentions != null)
           for (int i = 0; i < mentions!.userIds.length; i++)
-            {'_id': mentions!.userIds[i], 'username': mentions!.usernames[i]},
+            {
+              '_id': mentions!.userIds[i],
+              'username': mentions!.usernames[i]
+            },
       ],
       'media': media?.map((url) {
-        final isVideo = url.toLowerCase().endsWith('.mp4') || 
-                        url.toLowerCase().endsWith('.mov') || 
-                        url.toLowerCase().endsWith('.webm');
+        final isVideo = url.toLowerCase().endsWith('.mp4') ||
+            url.toLowerCase().endsWith('.mov') ||
+            url.toLowerCase().endsWith('.webm');
         return {
           'url': url,
           'mediaType': isVideo ? 'reel' : 'image',
@@ -293,14 +319,16 @@ class PostModel extends Post {
       userReaction: post.userReaction,
       reactionCounts: DummyReactionCounter(
         likesCount:
-            post.reactionCountsByType[ReactionType.like] ?? post.reactionsCount,
+            post.reactionCountsByType[ReactionType.like] ??
+            post.reactionsCount,
         lovesCount: post.reactionCountsByType[ReactionType.love] ?? 0,
         hahaCount: post.reactionCountsByType[ReactionType.haha] ?? 0,
         sadCount: post.reactionCountsByType[ReactionType.sad] ?? 0,
         angryCount: post.reactionCountsByType[ReactionType.angry] ?? 0,
         wowCount: post.reactionCountsByType[ReactionType.wow] ?? 0,
         goalCount: post.reactionCountsByType[ReactionType.goal] ?? 0,
-        offsideCount: post.reactionCountsByType[ReactionType.offside] ?? 0,
+        offsideCount:
+            post.reactionCountsByType[ReactionType.offside] ?? 0,
       ),
       commentsCount: post.commentsCount,
       location: post.location,

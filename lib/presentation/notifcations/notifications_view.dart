@@ -19,13 +19,19 @@ class _NotificationsViewState extends State<NotificationsView> {
   final Color _primaryGreen = const Color(0xFF1DB954);
   int _selectedTabIndex = 0;
   final ScrollController _scrollController = ScrollController();
-
   @override
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
-    context.read<NotificationCubit>().fetchInitialNotifications();
+     _fetchAndMark();
   }
+  Future<void> _fetchAndMark() async {
+    await context.read<NotificationCubit>().fetchInitialNotifications();
+    if (mounted) {
+      context.read<NotificationCubit>().markAllAsSeen();
+    }
+  }
+
 
   @override
   void dispose() {

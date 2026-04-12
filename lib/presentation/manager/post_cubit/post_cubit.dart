@@ -359,6 +359,7 @@ class PostCubit extends Cubit<PostState> {
         );
       },
       (newPosts) {
+        
         if (isClosed) return;
         isLoadingMore = false;
 
