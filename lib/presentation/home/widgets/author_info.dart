@@ -66,7 +66,7 @@ class AuthorInfo extends StatelessWidget {
               borderRadius: BorderRadius.circular(10), 
             ),
             clipBehavior: Clip.antiAlias,
-            child: getImage(groupImage),
+            child: getImage(groupImage, isGroupIcon: true),
           ),
           PositionedDirectional(
             bottom: 0,
@@ -80,7 +80,7 @@ class AuthorInfo extends StatelessWidget {
               child: CircleAvatar(
                 radius: avatarRadius * 0.5,
                 backgroundColor: AppColors.lightBackground,
-                child: ClipOval(child: getImage(authorImage)),
+                child: ClipOval(child: getImage(authorImage, isGroupIcon: false)),
               ),
             ),
           ),
@@ -95,7 +95,7 @@ class AuthorInfo extends StatelessWidget {
         width: avatarRadius * 2,
         height: avatarRadius * 2,
         color: AppColors.lightBackground,
-        child: getImage(authorImage),
+        child: getImage(authorImage, isGroupIcon: false),
       ),
     );
   }
@@ -167,9 +167,9 @@ class AuthorInfo extends StatelessWidget {
     );
   }
 
-  Widget getImage(String? url) {
+  Widget getImage(String? url, {bool isGroupIcon = false}) {
     if (url == null || url.isEmpty) {
-      if (isGroupPost) {
+      if (isGroupIcon) {
         return Image.asset(
           Paths.defaultGroupImage,
           fit: BoxFit.cover,
@@ -182,7 +182,7 @@ class AuthorInfo extends StatelessWidget {
       url,
       fit: BoxFit.cover,
       errorBuilder: (context, error, stackTrace) {
-        if (isGroupPost) {
+        if (isGroupIcon) {
           return Image.asset(
             Paths.defaultGroupImage,
             fit: BoxFit.cover,
