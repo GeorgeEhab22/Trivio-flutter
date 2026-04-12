@@ -13,6 +13,7 @@ class ChatbotBubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool isUser = message.senderType == 'human';
+    final DateTime timestamp = message.createdAt ?? DateTime.now();
 
     return Align(
       alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
@@ -29,10 +30,7 @@ class ChatbotBubble extends StatelessWidget {
               : const LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [
-                    Color(0xFF131313), 
-                    Color(0xFF003D0A), 
-                  ],
+                  colors: [Color(0xFF131313), Color(0xFF003D0A)],
                 ),
           borderRadius: BorderRadius.only(
             topLeft: const Radius.circular(16),
@@ -61,7 +59,7 @@ class ChatbotBubble extends StatelessWidget {
               ),
             ),
 
-            if (!isUser) ResponseFooter(timestamp: message.createdAt ?? DateTime.now()),
+            if (!isUser) ResponseFooter(timestamp: timestamp),
           ],
         ),
       ),
