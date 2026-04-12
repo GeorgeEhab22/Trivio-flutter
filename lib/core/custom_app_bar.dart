@@ -5,9 +5,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
-  final int notificationCount; // ← just a plain int, no cubit needed here
+  final bool hasNotifications; // ← just a plain int, no cubit needed here
 
-  const HomeAppBar({super.key, this.notificationCount = 0});
+  const HomeAppBar({super.key, this.hasNotifications = false});
 
   @override
   Widget build(BuildContext context) {
@@ -60,39 +60,26 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                         colorFilter:
                             ColorFilter.mode(iconColor, BlendMode.srcIn),
                       ),
-                      if (notificationCount > 0)
+                      if (hasNotifications)
                         Positioned(
-                          top: -5,
-                          right: -5,
+                          top: 0,
+                          right: 0,
                           child: Container(
-                            padding: const EdgeInsets.all(2),
-                            decoration: const BoxDecoration(
+                            width: 10,
+                            height: 10,
+                            decoration: BoxDecoration(
                               color: Colors.red,
                               shape: BoxShape.circle,
-                            ),
-                            constraints: const BoxConstraints(
-                              minWidth: 14,
-                              minHeight: 14,
-                            ),
-                            child: Text(
-                              notificationCount > 99
-                                  ? '99+'
-                                  : '$notificationCount',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 8,
-                                fontWeight: FontWeight.bold,
-                                height: 1,
+                              border: Border.all(
+                                color: Theme.of(context).scaffoldBackgroundColor,
+                                width: 1.5,
                               ),
-                              textAlign: TextAlign.center,
                             ),
                           ),
                         ),
                     ],
                   ),
                 ),
-                // ───────────────────────────────────────────────────────────
-
                 IconButton(
                   onPressed: () => context.push(AppRoutes.settings),
                   icon: SvgPicture.asset(

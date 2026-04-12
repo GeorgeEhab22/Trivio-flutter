@@ -43,7 +43,6 @@ import 'package:auth/presentation/manager/group_cubit/get_members_by_roles/membe
 import 'package:auth/presentation/manager/group_cubit/unban_member/unban_member_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/update_group/update_group_cubit.dart';
 import 'package:auth/presentation/manager/log_out_cubit/log_out_cubit.dart';
-import 'package:auth/presentation/manager/notifications_cubit/notifications_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/get_post/get_post_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/get_user_profile_by_id_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/interests/select_interests_cubit.dart';
@@ -494,7 +493,6 @@ GoRouter createRouter(bool isLoggedIn) {
         path: '/notifications',
         builder: (context, state) => MultiBlocProvider(
           providers: [
-            BlocProvider(create: (context) => di.sl<NotificationCubit>()),
             BlocProvider(create: (context) => di.sl<ProfileSocialInfoCubit>()..fetchFollowing()),
           ],
           child: const NotificationsView(),

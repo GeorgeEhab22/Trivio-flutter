@@ -34,6 +34,7 @@ class _HomeViewState extends State<HomeView> with RouteAware {
   void initState() {
     super.initState();
     context.read<PostCubit>().fetchPosts(refresh: true);
+    context.read<NotificationCubit>().fetchInitialNotifications();
   }
 
   @override
@@ -93,7 +94,11 @@ class _HomeViewState extends State<HomeView> with RouteAware {
 
                     displacement: 0,
                     onRefresh: () async {
-                      await context.read<PostCubit>().fetchPosts(refresh: true);
+                      final postCubit = context.read<PostCubit>();
+                      final notificationCubit = context
+                          .read<NotificationCubit>();
+                      await postCubit.fetchPosts(refresh: true);
+                      await notificationCubit.refreshNotifications();
                     },
                     child: CustomScrollView(
                       physics: AlwaysScrollableScrollPhysics(),
@@ -105,7 +110,7 @@ class _HomeViewState extends State<HomeView> with RouteAware {
                           surfaceTintColor: Colors.transparent,
                           titleSpacing: 0,
                           title:
-                              _NotificationAppBar(), // ← separate stateful widget
+                              const _NotificationAppBar(), // ← separate stateful widget
                         ),
                         const TimelineListView(),
                         const SliverToBoxAdapter(child: SizedBox(height: 100)),
@@ -151,12 +156,17 @@ class _NotificationAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    int count = 0;
+    bool showDot = false;
+
     try {
       final state = context.watch<NotificationCubit>().state;
-      count = state is NotificationLoaded ? state.newCount : 0;
-    } catch (_) {}
 
-    return HomeAppBar(notificationCount: count);
+      if (state is NotificationLoaded) {
+        showDot = state.newCount > 0;
+      }
+    } catch (_) {
+    }
+
+    return HomeAppBar(hasNotifications: showDot);
   }
 }
