@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:auth/domain/entities/notification.dart';
 import 'package:auth/presentation/manager/notifications_cubit/notifications_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/foundation.dart';
@@ -92,6 +93,12 @@ class FcmHelper {
         body: body,
         onTap: () => _handleMessageRouting(message),
       );
+
+      // Update cubit so the badge increments immediately in the app bar
+      final entity = _parseMessageToEntity(message);
+      if (entity != null && context != null && context.mounted) {
+        context.read<NotificationCubit>().onPushNotificationReceived(entity);
+      }
     });
   }
 
@@ -154,26 +161,46 @@ class FcmHelper {
     }
   }
 
+  // Parses FCM data payload into a NotificationEntity so the cubit
+  // can insert it into _allItems and update the badge count.
+  // Returns null if the message has no usable ID (nothing to track).
+  static NotificationEntity? _parseMessageToEntity(RemoteMessage message) {
+    final data = message.data;
+    final id = data['id'] ?? data['notificationId'];
+    if (id == null) return null;
+
+    return NotificationEntity(
+      id: id,
+      receiverId: data['receiverId'] ?? '',
+      senderId: data['senderId'] ?? data['userId'] ?? data['actorId'] ?? '',
+      senderName: data['senderName'] ?? message.notification?.title ?? '',
+      senderAvatar: data['senderAvatar'],
+      type: data['entityType'] ?? '',
+      message:
+          message.notification?.body ?? data['body'] ?? data['message'] ?? '',
+      entityId: data['entityId'],
+      postId: data['postId'],
+      isRead: false,
+      createdAt: DateTime.now(),
+    );
+  }
+
   static Future<String?> getDeviceToken() =>
       isSupported ? _messaging.getToken() : Future.value(null);
 
   static Future<void> sendTokenToBackend() async {
-    if (!isSupported) {
-      return;
-    }
+    if (!isSupported) return;
 
     try {
       final token = await _messaging.getToken().timeout(
         const Duration(seconds: 20),
-        onTimeout: () {
-          return null;
-        },
+        onTimeout: () => null,
       );
 
       if (token != null) {
         print("✅ SUCCESS! FCM Token: $token");
         await di.sl<NotificationRemoteDataSource>().registerFcmToken(token);
-      } else {}
+      }
     } catch (_) {}
   }
 }

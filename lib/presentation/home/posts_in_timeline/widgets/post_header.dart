@@ -92,8 +92,8 @@ class PostHeader extends StatelessWidget {
                     color: Theme.of(context).iconTheme.color,
                   ),
                   onPressed: () {
-                    final postInteractionCubit =
-                        context.read<PostInteractionCubit>();
+                    final postInteractionCubit = context
+                        .read<PostInteractionCubit>();
                     final postCubit = context.read<PostCubit>();
                     GroupPostsCubit? groupPostsCubit;
                     try {

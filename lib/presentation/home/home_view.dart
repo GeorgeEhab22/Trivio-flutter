@@ -8,6 +8,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
 import 'package:auth/presentation/authentication/widgets/show_custom_snackbar.dart';
 import 'package:auth/l10n/app_localizations.dart';
+import 'package:auth/presentation/manager/notifications_cubit/notifications_cubit.dart';
+import 'package:auth/presentation/manager/notifications_cubit/notifications_state.dart';
 import 'dart:ui';
 
 class HomeView extends StatefulWidget {
@@ -85,13 +87,15 @@ class _HomeViewState extends State<HomeView> with RouteAware {
                   ),
                   child: RefreshIndicator(
                     color: AppColors.primary,
-                    backgroundColor: isDarkMode ?Color(0xFF18191a) : Colors.white,
+                    backgroundColor: isDarkMode
+                        ? Color(0xFF18191a)
+                        : Colors.white,
 
                     displacement: 0,
                     onRefresh: () async {
                       await context.read<PostCubit>().fetchPosts(refresh: true);
                     },
-                    child: const CustomScrollView(
+                    child: CustomScrollView(
                       physics: AlwaysScrollableScrollPhysics(),
                       slivers: [
                         SliverAppBar(
@@ -99,11 +103,12 @@ class _HomeViewState extends State<HomeView> with RouteAware {
                           snap: true,
                           automaticallyImplyLeading: false,
                           surfaceTintColor: Colors.transparent,
-                          title: HomeAppBar(),
                           titleSpacing: 0,
+                          title:
+                              _NotificationAppBar(), // ← separate stateful widget
                         ),
-                        TimelineListView(),
-                        SliverToBoxAdapter(child: SizedBox(height: 100)),
+                        const TimelineListView(),
+                        const SliverToBoxAdapter(child: SizedBox(height: 100)),
                       ],
                     ),
                   ),
@@ -138,5 +143,20 @@ class _HomeViewState extends State<HomeView> with RouteAware {
         },
       ),
     );
+  }
+}
+
+class _NotificationAppBar extends StatelessWidget {
+  const _NotificationAppBar();
+
+  @override
+  Widget build(BuildContext context) {
+    int count = 0;
+    try {
+      final state = context.watch<NotificationCubit>().state;
+      count = state is NotificationLoaded ? state.newCount : 0;
+    } catch (_) {}
+
+    return HomeAppBar(notificationCount: count);
   }
 }

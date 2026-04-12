@@ -35,24 +35,35 @@ class NotificationLoading extends NotificationState {}
 class NotificationLoaded extends NotificationState {
   final List<NotificationListItem> items;
   final bool hasReachedMax;
+  final Set<String> newNotificationIds;
 
   const NotificationLoaded({
     required this.items,
     this.hasReachedMax = false,
+    this.newNotificationIds = const {},
   });
+
+  int get newCount => newNotificationIds.length;
 
   NotificationLoaded copyWith({
     List<NotificationListItem>? items,
     bool? hasReachedMax,
+    Set<String>? newNotificationIds,
   }) {
     return NotificationLoaded(
       items: items ?? this.items,
       hasReachedMax: hasReachedMax ?? this.hasReachedMax,
+      newNotificationIds: newNotificationIds ?? this.newNotificationIds,
     );
   }
 
   @override
-  List<Object> get props => [items, hasReachedMax];
+  List<Object> get props => [
+    items,
+    hasReachedMax,
+    newNotificationIds,
+    newNotificationIds.length,
+  ];
 }
 
 class NotificationError extends NotificationState {
