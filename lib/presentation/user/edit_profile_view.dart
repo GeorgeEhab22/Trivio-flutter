@@ -37,7 +37,7 @@ class EditProfileScreen extends StatelessWidget {
           appBar: AppBar(
             title: Text(l10n.editProfile),
             centerTitle: true,
-            titleTextStyle: Styles.textStyle20.copyWith(color: Colors.black),
+            titleTextStyle: Styles.textStyle20.copyWith(color: Theme.of(context).textTheme.bodyLarge!.color),
             leading: IconButton(
                 onPressed: () {
                   context.pop();
