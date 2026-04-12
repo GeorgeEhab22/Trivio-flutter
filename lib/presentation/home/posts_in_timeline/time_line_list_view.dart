@@ -31,15 +31,15 @@ class TimelineListView extends StatelessWidget {
         final cubit = context.read<PostCubit>();
         final bool isInitialLoading =
             state is PostLoading && cubit.posts.isEmpty;
-        final bool isLoadingMore = state is PostsLoadingMore;
+        final bool isLoadingMore =
+            state is PostsLoadingMore && cubit.posts.isNotEmpty;
 
-        final displayPosts =
-            isInitialLoading ? DummyData.dummyPosts : cubit.posts;
+        final displayPosts = isInitialLoading
+            ? DummyData.dummyPosts
+            : cubit.posts;
 
         if (state is PostError && cubit.posts.isEmpty) {
-          return SliverFillRemaining(
-            child: Center(child: Text(state.message)),
-          );
+          return SliverFillRemaining(child: Center(child: Text(state.message)));
         }
 
         if (state is PostLoaded && cubit.posts.isEmpty) {
@@ -74,53 +74,46 @@ class TimelineListView extends StatelessWidget {
         return Skeletonizer.sliver(
           enabled: isInitialLoading,
           child: SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (context, index) {
-                if (index >= displayPosts.length) {
-                  return const Padding(
-                    padding: EdgeInsets.all(16.0),
-                    child: Center(
-                      child: CircularProgressIndicator(color: Colors.green),
-                    ),
-                  );
-                }
-
-                if (!isInitialLoading && !isLoadingMore) {
-                  final threshold = (displayPosts.length * 0.6).floor();
-                  if (index >= threshold) {
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      if (context.mounted) {
-                        context.read<PostCubit>().fetchPosts();
-                      }
-                    });
-                  }
-                }
-
-                final post = displayPosts[index];
-
-                final profileState = context.read<ProfileCubit>().state;
-                String currentUserId = '';
-                if (profileState is ProfileLoaded) {
-                  currentUserId = profileState.user.id;
-                }
-
-                if (isInitialLoading) {
-                  return PostCard(
-                    post: post,
-                    currentUserId: currentUserId,
-                  );
-                }
-
-                return PostVisibilityDetector(
-                  postId: post.postID,
-                  child: PostCard(
-                    post: post,
-                    currentUserId: currentUserId,
+            delegate: SliverChildBuilderDelegate((context, index) {
+              if (index >= displayPosts.length) {
+                return const Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Center(
+                    child: CircularProgressIndicator(color: Colors.green),
                   ),
                 );
-              },
-              childCount: displayPosts.length + (isLoadingMore ? 1 : 0),
-            ),
+              }
+
+              if (!isInitialLoading && !isLoadingMore) {
+                final threshold = (displayPosts.length * 0.6).floor();
+                if (index == threshold) {
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    if (context.mounted &&
+                        !cubit.isLoadingMore &&
+                        !cubit.hasReachedMax) {
+                      context.read<PostCubit>().fetchPosts();
+                    }
+                  });
+                }
+              }
+
+              final post = displayPosts[index];
+
+              final profileState = context.read<ProfileCubit>().state;
+              String currentUserId = '';
+              if (profileState is ProfileLoaded) {
+                currentUserId = profileState.user.id;
+              }
+
+              if (isInitialLoading) {
+                return PostCard(post: post, currentUserId: currentUserId);
+              }
+
+              return PostVisibilityDetector(
+                postId: post.postID,
+                child: PostCard(post: post, currentUserId: currentUserId),
+              );
+            }, childCount: displayPosts.length + (isLoadingMore ? 1 : 0)),
           ),
         );
       },

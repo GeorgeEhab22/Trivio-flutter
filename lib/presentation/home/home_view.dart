@@ -8,6 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:auth/presentation/manager/post_cubit/post_cubit.dart';
 import 'package:auth/presentation/authentication/widgets/show_custom_snackbar.dart';
 import 'package:auth/l10n/app_localizations.dart';
+import 'dart:ui';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -25,6 +26,12 @@ class _HomeViewState extends State<HomeView> with RouteAware {
     if (_routeObserver != null) return;
     _routeObserver = context.read<RouteObserver<ModalRoute<dynamic>>>();
     _routeObserver!.subscribe(this, ModalRoute.of(context)!);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<PostCubit>().fetchPosts(refresh: true);
   }
 
   @override
@@ -47,6 +54,7 @@ class _HomeViewState extends State<HomeView> with RouteAware {
   Widget build(BuildContext context) {
     final cubit = context.read<PostCubit>();
     final l10n = AppLocalizations.of(context)!;
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return WatchTimeTracker(
       child: BlocListener<PostCubit, PostState>(
@@ -68,22 +76,36 @@ class _HomeViewState extends State<HomeView> with RouteAware {
           body: SafeArea(
             child: Stack(
               children: [
-                RefreshIndicator(
-                  onRefresh: () =>
-                      context.read<PostCubit>().fetchPosts(refresh: true),
-                  child: const CustomScrollView(
-                    slivers: [
-                      SliverAppBar(
-                        floating: true,
-                        snap: true,
-                        automaticallyImplyLeading: false,
-                        surfaceTintColor: Colors.transparent,
-                        title: HomeAppBar(),
-                        titleSpacing: 0,
-                      ),
-                      TimelineListView(),
-                      SliverToBoxAdapter(child: SizedBox(height: 80)),
-                    ],
+                ScrollConfiguration(
+                  behavior: ScrollConfiguration.of(context).copyWith(
+                    dragDevices: {
+                      PointerDeviceKind.touch,
+                      PointerDeviceKind.mouse,
+                    },
+                  ),
+                  child: RefreshIndicator(
+                    color: AppColors.primary,
+                    backgroundColor: isDarkMode ?Color(0xFF18191a) : Colors.white,
+
+                    displacement: 0,
+                    onRefresh: () async {
+                      await context.read<PostCubit>().fetchPosts(refresh: true);
+                    },
+                    child: const CustomScrollView(
+                      physics: AlwaysScrollableScrollPhysics(),
+                      slivers: [
+                        SliverAppBar(
+                          floating: true,
+                          snap: true,
+                          automaticallyImplyLeading: false,
+                          surfaceTintColor: Colors.transparent,
+                          title: HomeAppBar(),
+                          titleSpacing: 0,
+                        ),
+                        TimelineListView(),
+                        SliverToBoxAdapter(child: SizedBox(height: 100)),
+                      ],
+                    ),
                   ),
                 ),
                 _buildAddPostFAB(context, cubit),
