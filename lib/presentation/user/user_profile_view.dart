@@ -174,8 +174,8 @@ class _UserProfileViewState extends State<UserProfileView> {
                     : null,
                 title: SvgPicture.asset(
                   isDarkMode ? Paths.trivioDarkLogo : Paths.trivioLogo,
-                  width: 55,
-                  height: 55,
+                  width: 60,
+                  height: 60,
                 ),
                 actions: [
                   if (isMyProfile)

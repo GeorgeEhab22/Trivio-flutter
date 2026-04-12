@@ -61,7 +61,8 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       rethrow;
     }
   }
-@override
+
+  @override
   Future<UserProfileModel> getUserProfileById(String userId) async {
     try {
       final response = await api.get(ApiEndpoints.getProfileById(userId));
@@ -81,6 +82,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       rethrow;
     }
   }
+
   @override
   Future<UserProfileModel> updateProfile({
     String? username,
@@ -176,6 +178,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       if (response['data'] == null || response['data']['posts'] == null) {
         return [];
       }
+      print("getMyPosts response: ${response['data']['posts']}"); 
       final List postsJson = response['data']['posts'];
       return postsJson.map((json) => PostModel.fromJson(json)).toList();
     } on DioException catch (e) {
@@ -230,7 +233,6 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
           .where((id) => id.isNotEmpty)
           .toList();
     } catch (e) {
-
       throw _handleError(e);
     }
   }
@@ -259,26 +261,26 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       throw _handleError(e);
     }
   }
-  
-@override
-Future<List<Post>> getUserPostsById(String userId) async {
-  try {
-    final response = await api.get(ApiEndpoints.getProfilePosts(userId));
 
-    final dynamic postsWrapper = response['data']['posts'];
-    
-    if (postsWrapper is Map && postsWrapper.containsKey('posts')) {
-      final List postsList = postsWrapper['posts'];
-      return postsList.map((json) => PostModel.fromJson(json)).toList();
-    } else if (postsWrapper is List) {
-      return postsWrapper.map((json) => PostModel.fromJson(json)).toList();
+  @override
+  Future<List<Post>> getUserPostsById(String userId) async {
+    try {
+      final response = await api.get(ApiEndpoints.getProfilePosts(userId));
+
+      final dynamic postsWrapper = response['data']['posts'];
+
+      if (postsWrapper is Map && postsWrapper.containsKey('posts')) {
+        final List postsList = postsWrapper['posts'];
+        return postsList.map((json) => PostModel.fromJson(json)).toList();
+      } else if (postsWrapper is List) {
+        return postsWrapper.map((json) => PostModel.fromJson(json)).toList();
+      }
+
+      return [];
+    } on DioException catch (e) {
+      throw ServerException(e.response?.data['message'] ?? 'Server Error');
+    } catch (e) {
+      throw ServerException('Mapping Error: $e');
     }
-
-    return [];
-  } on DioException catch (e) {
-    throw ServerException(e.response?.data['message'] ?? 'Server Error');
-  } catch (e) {
-    throw ServerException('Mapping Error: $e');
   }
-}
 }

@@ -80,12 +80,7 @@ class UserProfileSettings extends StatelessWidget {
                         context.push(AppRoutes.selectPlayers, extra: true);
                       },
                     ),
-                    SettingsRow(
-                      title: l10n.likedPosts,
-                      subtitle: l10n.likedPostsSub,
-                      leadingIcon: Icons.favorite_rounded,
-                      onpressed: () => context.push(AppRoutes.likedPosts),
-                    ),
+
 
                     const SizedBox(height: 20),
 
