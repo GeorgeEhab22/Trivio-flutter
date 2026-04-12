@@ -70,7 +70,7 @@ class PostModel extends Post {
     }
 
     /// ✅ AUTHOR SAFE
-    final dynamic authorData = raw['authorID'] ?? raw['authorId'];
+    final dynamic authorData = raw['author_details'] ?? raw['author'] ?? raw['authorID'] ?? raw['authorId'] ?? raw['user'];
     String aId = '';
     String? aName;
     String? aImage;
@@ -80,10 +80,10 @@ class PostModel extends Post {
     } else if (authorData is Map<String, dynamic>) {
       aId = JsonParser.parseId(authorData['_id']) ?? '';
       aName = JsonParser.parseString(
-        authorData['username'] ?? authorData['name'],
+        authorData['username'] ?? authorData['name'] ?? authorData['fullName'],
       );
       aImage = JsonParser.parseString(
-        authorData['avatar'] ?? authorData['profilePicture'],
+        authorData['avatar'] ?? authorData['profilePicture'] ?? authorData['image'],
       );
     }
 
