@@ -1365,4 +1365,22 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get logout => 'Logout';
+
+  @override
+  String get typeMessageHint => 'Type a message...';
+
+  @override
+  String get online => 'Online';
+
+  @override
+  String get information => 'Information';
+
+  @override
+  String get email => 'Email';
+
+  @override
+  String get bio => 'Bio';
+
+  @override
+  String get privacyAndSettings => 'Privacy & Settings';
 }

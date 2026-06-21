@@ -1351,4 +1351,22 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get logout => 'خروج';
+
+  @override
+  String get typeMessageHint => 'اكتب رسالة...';
+
+  @override
+  String get online => 'متصل الآن';
+
+  @override
+  String get information => 'المعلومات';
+
+  @override
+  String get email => 'البريد الإلكتروني';
+
+  @override
+  String get bio => 'النبذة';
+
+  @override
+  String get privacyAndSettings => 'الخصوصية والإعدادات';
 }

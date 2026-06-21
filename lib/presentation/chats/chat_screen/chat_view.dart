@@ -23,6 +23,8 @@ class ChatView extends StatelessWidget {
                   message: index % 2 == 0
                       ? "from me"
                       : "message from my friend...",
+                  isSeen: index == 0,
+                  time: "10:${30 + index} AM",
                 );
               },
             ),

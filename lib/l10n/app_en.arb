@@ -495,6 +495,11 @@
   "attach": "Attach",
   "inquireMatchDynamics": "Inquire about match dynamics...",
   "tacticalIntelligence": "TACTICAL INTELLIGENCE",
-  "logout": "Logout"
-
+  "logout": "Logout",
+  "typeMessageHint": "Type a message...",
+  "online": "Online",
+  "information": "Information",
+  "email": "Email",
+  "bio": "Bio",
+  "privacyAndSettings": "Privacy & Settings"
 }

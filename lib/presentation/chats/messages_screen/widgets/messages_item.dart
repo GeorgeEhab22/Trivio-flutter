@@ -14,10 +14,16 @@ class MessagesItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    final bgColors = isDark
+        ? const [Color(0xFF1D2228), Color(0xFF171B20)]
+        : const [Color(0xFFFFFFFF), Color(0xFFF8FBF9)];
+
+    final bool isUnread = index == 0 || index == 1;
 
     return Slidable(
       key: ValueKey(index),
-      // Slidable automatically handles the sliding direction for RTL/LTR
       endActionPane: ActionPane(
         motion: const ScrollMotion(),
         children: [
@@ -58,43 +64,113 @@ class MessagesItem extends StatelessWidget {
           ),
         ],
       ),
-      child: ListTile(
-        onTap: () {
-          context.push(AppRoutes.chat);
-        },
-        leading: CircleAvatar(
-          radius: 28,
-          backgroundColor: Colors.grey[300],
-          child: const Icon(Icons.person, color: Colors.grey),
-        ),
-        title: const Text("User Name", style: Styles.textStyle15),
-        subtitle: const Text(
-          " preview of the last message until doing real chat...",
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: Styles.textStyle14,
-        ),
-        trailing: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.end, // Aligns to logical end
-          children: [
-            const Text("3:45 PM", style: Styles.textStyle14),
-            const SizedBox(height: 8),
-            Container(
-              width: 12,
-              height: 12,
-              decoration: BoxDecoration(
-                color: AppColors.primary,
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                  width: 2,
-                ),
-              ),
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: bgColors,
+          ),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.04),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: isDark ? Colors.black12 : Colors.black.withValues(alpha: 0.02),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
             ),
           ],
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(16),
+          child: Stack(
+            children: [
+              if (isUnread)
+                Positioned(
+                  right: 0,
+                  top: 0,
+                  bottom: 0,
+                  child: Container(
+                    width: 100, 
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          isDark 
+                              ? AppColors.primary.withValues(alpha: 0.12) 
+                              : AppColors.primary.withValues(alpha: 0.08),
+                          Colors.transparent
+                        ],
+                        begin: Alignment.centerRight, 
+                        end: Alignment.centerLeft,
+                      ),
+                    ),
+                  ),
+                ),
+              
+              ListTile(
+                onTap: () {
+                  context.push(AppRoutes.chat);
+                },
+                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                leading: CircleAvatar(
+                  radius: 28,
+                  backgroundColor: isDark ? const Color(0xFF2C3138) : Colors.grey[200],
+                  child: const Icon(Icons.person, color: Colors.grey),
+                ),
+                title: Text(
+                  "Alex Johnson", 
+                  style: Styles.textStyle16.copyWith(
+                    fontWeight: isUnread ? FontWeight.bold : FontWeight.w600,
+                    color: isDark ? Colors.white : Colors.black,
+                  )
+                ),
+                subtitle: Padding(
+                  padding: const EdgeInsets.only(top: 4.0),
+                  child: Text(
+                    "Hey, let's catch up later!",
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: Styles.textStyle14.copyWith(
+                      color: isUnread 
+                          ? (isDark ? Colors.white70 : Colors.black87)
+                          : (isDark ? Colors.white54 : Colors.black54),
+                      fontWeight: isUnread ? FontWeight.w500 : FontWeight.normal,
+                    ),
+                  ),
+                ),
+                trailing: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      "10:30 AM", 
+                      style: Styles.textStyle14.copyWith(
+                        color: isUnread 
+                            ? AppColors.primary 
+                            : (isDark ? Colors.white38 : Colors.black38),
+                        fontWeight: isUnread ? FontWeight.bold : FontWeight.normal,
+                      )
+                    ),
+                    if (isUnread) ...[
+                      const SizedBox(height: 6),
+                      Container(
+                        width: 10,
+                        height: 10,
+                        decoration: const BoxDecoration(
+                          color: AppColors.primary,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

@@ -496,5 +496,11 @@
   "attach": "إرفاق",
   "inquireMatchDynamics": "استفسر عن أحداث وتفاصيل المباراة...",
   "tacticalIntelligence": "الذكاء التكتيكي",
-  "logout": "خروج"
+  "logout": "خروج",
+  "typeMessageHint": "اكتب رسالة...",
+  "online": "متصل الآن",
+  "information": "المعلومات",
+  "email": "البريد الإلكتروني",
+  "bio": "النبذة",
+  "privacyAndSettings": "الخصوصية والإعدادات"
 }

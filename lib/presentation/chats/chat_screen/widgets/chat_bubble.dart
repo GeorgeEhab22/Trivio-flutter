@@ -5,13 +5,35 @@ import 'package:flutter/material.dart';
 class ChatBubble extends StatelessWidget {
   final bool isMe;
   final String message;
+  final bool isSeen;
+  final String time;
 
-  const ChatBubble({super.key, required this.isMe, required this.message});
+  const ChatBubble({
+    super.key,
+    required this.isMe,
+    required this.message,
+    this.isSeen = false,
+    this.time = "12:00 PM",
+  });
 
   @override
   Widget build(BuildContext context) {
     bool isDark = Theme.of(context).brightness == Brightness.dark;
     final ValueNotifier<bool> isHovered = ValueNotifier(false);
+
+    final myGradientDark = const LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: [Color(0xFF006B1F), Color(0xFF003810)],
+    );
+    final myGradientLight = const LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: [Color(0xFF006B1F), Color(0xFF003810)],
+    );
+
+    final friendBgDark = const Color(0xFF262626);
+    final friendBgLight = const Color(0xFFFFFFFF);
 
     return MouseRegion(
       onEnter: (_) => isHovered.value = true,
@@ -19,40 +41,101 @@ class ChatBubble extends StatelessWidget {
       child: GestureDetector(
         onLongPress: () => showMessageActions(context),
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 5),
+          padding: const EdgeInsets.symmetric(vertical: 8),
           child: Row(
-            // Use end/start so it flips automatically in RTL
             mainAxisAlignment: isMe
                 ? MainAxisAlignment.end
                 : MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               if (isMe) _WebMoreButton(isHovered: isHovered),
               Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 10,
+                constraints: BoxConstraints(
+                  maxWidth: MediaQuery.of(context).size.width * 0.75,
                 ),
-                decoration: BoxDecoration(
-                  color: isMe
-                      ? const Color(0XFF008B1D)
-                      : (isDark ? Colors.grey.shade800 : Colors.grey.shade100),
-                  // Use BorderRadiusDirectional to handle RTL corners
-                  borderRadius: BorderRadiusDirectional.only(
-                    topStart: const Radius.circular(15),
-                    topEnd: const Radius.circular(15),
-                    bottomStart: Radius.circular(isMe ? 15 : 0),
-                    bottomEnd: Radius.circular(isMe ? 0 : 15),
-                  ),
+                decoration: isMe
+                    ? BoxDecoration(
+                        gradient: isDark ? myGradientDark : myGradientLight,
+                        borderRadius: const BorderRadiusDirectional.only(
+                          topStart: Radius.circular(16),
+                          topEnd: Radius.circular(16),
+                          bottomStart: Radius.circular(16),
+                          bottomEnd: Radius.circular(4),
+                        ),
+                      )
+                    : BoxDecoration(
+                        color: isDark ? friendBgDark : friendBgLight,
+                        borderRadius: const BorderRadiusDirectional.only(
+                          topStart: Radius.circular(16),
+                          topEnd: Radius.circular(16),
+                          bottomStart: Radius.circular(4),
+                          bottomEnd: Radius.circular(16),
+                        ),
+                        border: Border.all(
+                          color: isDark
+                              ? Colors.white.withValues(alpha: 0.04)
+                              : Colors.black.withValues(alpha: 0.08),
+                          width: 1,
+                        ),
+                        boxShadow: isDark
+                            ? null
+                            : [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.03),
+                                  blurRadius: 4,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                      ),
+                padding: const EdgeInsets.only(
+                  left: 16,
+                  right: 16,
+                  top: 12,
+                  bottom: 8,
                 ),
-                constraints: const BoxConstraints(maxWidth: 250),
-                child: Text(
-                  message,
-                  style: TextStyle(
-                    color: isMe
-                        ? Colors.white
-                        : Theme.of(context).textTheme.bodyMedium?.color,
-                    fontSize: 15,
-                  ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      message,
+                      style: TextStyle(
+                        color: isMe
+                            ? Colors.white
+                            : (isDark
+                                  ? Colors.white.withValues(alpha: 0.95)
+                                  : Colors.black87),
+                        fontSize: 14.5,
+                        height: 1.4,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          time,
+                          style: TextStyle(
+                            color: isMe
+                                ? Colors.white.withValues(alpha: 0.7)
+                                : (isDark
+                                      ? Colors.white.withValues(alpha: 0.4)
+                                      : Colors.black54),
+                            fontSize: 11,
+                          ),
+                        ),
+                        if (isMe) ...[
+                          const SizedBox(width: 4),
+                          Icon(
+                            isSeen ? Icons.done_all : Icons.check,
+                            size: 16,
+                            color: isSeen
+                                ? const Color(0xFF64D2FF)
+                                : Colors.white.withValues(alpha: 0.7),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ],
                 ),
               ),
               if (!isMe) _WebMoreButton(isHovered: isHovered),
