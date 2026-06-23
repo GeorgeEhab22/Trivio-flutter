@@ -103,4 +103,8 @@ class ApiEndpoints {
 
 //reels
   static const String reels = 'posts/reels';
+
+  //chats
+  static const String chats = 'chats';
+  static const String messages = 'messages';
 }
