@@ -1,3 +1,4 @@
+import 'package:auth/constants/splash_view.dart';
 import 'package:auth/domain/entities/post.dart';
 import 'package:auth/domain/usecases/sign_in/verify_otp.dart';
 import 'package:auth/presentation/authentication/signIn/forget_password_otp_view.dart';
@@ -127,12 +128,16 @@ CustomTransitionPage buildAnimatedPage({
 
 GoRouter createRouter(bool isLoggedIn) {
   return GoRouter(
-    initialLocation:AppRoutes.signIn,
+    initialLocation:AppRoutes.splash,
     observers: [routeObserver],
     navigatorKey: navigatorKey,
     // initialLocation: AppRoutes.selectTeams,
     //  initialLocation: isLoggedIn ? AppRoutes.home : AppRoutes.signIn,
     routes: [
+      GoRoute(
+        path: AppRoutes.splash,
+        builder: (context, state) => const SplashView(),
+      ),
       GoRoute(
         path: AppRoutes.signIn,
         builder: (context, state) {
