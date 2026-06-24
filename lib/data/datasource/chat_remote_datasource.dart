@@ -35,7 +35,7 @@ Future<List<ChatModel>> getChats(String currentUserId) async {
     "chat/conversations",
     options: _getAuthOptions(),
   );
-
+//print('getChats response: $response');
   final List data = response['data']['conversations'] ?? [];
 
   return data

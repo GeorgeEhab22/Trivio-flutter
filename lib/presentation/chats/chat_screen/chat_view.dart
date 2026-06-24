@@ -52,7 +52,7 @@ class ChatView extends StatelessWidget {
                     ),
                   );
                 }
-                return const Center(child: CircularProgressIndicator());
+                return const SizedBox();
               },
             ),
           ),

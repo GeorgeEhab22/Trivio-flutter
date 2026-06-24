@@ -2,7 +2,11 @@ import 'package:auth/common/functions/show_custom_dialog.dart';
 import 'package:auth/constants/colors.dart';
 import 'package:auth/core/styels.dart';
 import 'package:auth/domain/entities/chat.dart';
+import 'package:auth/presentation/manager/chat_cubit/chats_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/profile_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/profile_state.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:go_router/go_router.dart';
 import 'package:auth/l10n/app_localizations.dart';
@@ -21,8 +25,15 @@ class MessagesItem extends StatelessWidget {
         ? const [Color(0xFF1D2228), Color(0xFF171B20)]
         : const [Color(0xFFFFFFFF), Color(0xFFF8FBF9)];
 
-    final bool isUnread = chat.unreadCount > 0;
-    //print("chat.lastMessage: ${chat.lastMessage}");
+    final profileState = context.read<ProfileCubit>().state;
+    String currentUserId = '';
+    if (profileState is ProfileLoaded) {
+      currentUserId = profileState.user.id;
+    }
+
+    final bool isLastMessageMine = chat.lastMessageSenderId == currentUserId;
+    final bool isLastMessageRead = chat.isLastMessageRead;
+    final bool isUnread = !isLastMessageMine && !isLastMessageRead;
 
     return Slidable(
       key: ValueKey(chat.chatId),
@@ -117,10 +128,16 @@ class MessagesItem extends StatelessWidget {
                 ),
 
               ListTile(
-                onTap: () {
-                  context.push(
+                onTap: () async {
+                  await context.push(
                     '/app/messages/chat/${chat.chatId}/${chat.participantId}/${chat.participantName}',
                   );
+                  if (context.mounted) {
+                    context.read<ChatsCubit>().loadChats(
+                      refresh: true,
+                      currentUserId: currentUserId,
+                    );
+                  }
                 },
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: 16,
@@ -149,18 +166,33 @@ class MessagesItem extends StatelessWidget {
                 subtitle: chat.lastMessage != null
                     ? Padding(
                         padding: const EdgeInsets.only(top: 4.0),
-                        child: Text(
-                          chat.lastMessage ?? '',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: Styles.textStyle14.copyWith(
-                            color: isUnread
-                                ? (isDark ? Colors.white70 : Colors.black87)
-                                : (isDark ? Colors.white54 : Colors.black54),
-                            fontWeight: isUnread
-                                ? FontWeight.w500
-                                : FontWeight.normal,
-                          ),
+                        child: Row( 
+                          children: [
+                            if (isLastMessageMine) ...[
+                              Icon(
+                                isLastMessageRead ? Icons.done_all : Icons.check,
+                                size: 16,
+                                color: isLastMessageRead ? Colors.blue : Colors.grey,
+                              ),
+                              const SizedBox(width: 4),
+                            ],
+                            
+                            Expanded(
+                              child: Text(
+                                chat.lastMessage ?? '',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: Styles.textStyle14.copyWith(
+                                  color: (!isLastMessageMine && !isLastMessageRead)
+                                      ? AppColors.primary
+                                      : (isDark ? Colors.white54 : Colors.black54),
+                                  fontWeight: (!isLastMessageMine && !isLastMessageRead)
+                                      ? FontWeight.bold
+                                      : FontWeight.normal,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       )
                     : null,

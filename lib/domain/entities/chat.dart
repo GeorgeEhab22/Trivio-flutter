@@ -7,7 +7,8 @@ class Chat extends Equatable {
   final String? participantAvatar;
   final String? lastMessage;
   final DateTime? lastMessageTime;
-  final int unreadCount;
+  final String? lastMessageSenderId;
+final bool isLastMessageRead;
 
   const Chat({
     required this.chatId,
@@ -16,7 +17,8 @@ class Chat extends Equatable {
     this.participantAvatar,
     this.lastMessage,
     this.lastMessageTime,
-    this.unreadCount = 0,
+    this.lastMessageSenderId,
+    this.isLastMessageRead = true,
   });
 
   @override
@@ -27,6 +29,7 @@ class Chat extends Equatable {
         participantAvatar,
         lastMessage,
         lastMessageTime,
-        unreadCount,
+        lastMessageSenderId,
+        isLastMessageRead,
       ];
 }

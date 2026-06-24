@@ -3,17 +3,18 @@ import 'package:auth/domain/entities/chat.dart';
 class ChatModel extends Chat {
   const ChatModel({
     required super.chatId,
-    required super.participantId, 
+    required super.participantId,
     required super.participantName,
     super.participantAvatar,
     super.lastMessage,
     super.lastMessageTime,
-    super.unreadCount,
+    super.lastMessageSenderId,
+    super.isLastMessageRead,
   });
 
   factory ChatModel.fromJson(Map<String, dynamic> json, String currentUserId) {
     final participants = json['participants'] as List<dynamic>? ?? [];
-    
+
     dynamic other;
     try {
       other = participants.firstWhere((p) {
@@ -38,17 +39,26 @@ class ChatModel extends Chat {
     }
 
     final lastMsg = json['lastMessage'];
+    String? lastSenderId;
+    bool lastIsRead = false;
 
+    if (lastMsg != null) {
+      if (lastMsg['sender'] != null) {
+        lastSenderId = lastMsg['sender']['_id'] ?? lastMsg['sender'];
+      }
+      lastIsRead = lastMsg['isRead'] ?? false;
+    }
     return ChatModel(
       chatId: json['_id'] ?? '',
       participantId: pId,
       participantName: pName,
       participantAvatar: pAvatar,
       lastMessage: lastMsg != null ? lastMsg['content'] : null,
-      lastMessageTime: lastMsg != null && lastMsg['createdAt'] != null 
-          ? DateTime.parse(lastMsg['createdAt']).toLocal() 
+      lastMessageTime: lastMsg != null && lastMsg['createdAt'] != null
+          ? DateTime.parse(lastMsg['createdAt']).toLocal()
           : null,
-      unreadCount: 0,
+      lastMessageSenderId: lastSenderId,
+      isLastMessageRead: lastIsRead,
     );
   }
 }

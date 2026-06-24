@@ -1,17 +1,21 @@
 import 'dart:io';
 import 'package:auth/common/functions/custom_square_button.dart';
 import 'package:auth/constants/colors.dart';
+import 'package:auth/constants/paths.dart';
 import 'package:auth/core/app_routes.dart';
 import 'package:auth/core/styels.dart';
+import 'package:auth/domain/entities/chat.dart';
 import 'package:auth/domain/entities/user_profile.dart';
 import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/home/posts_in_timeline/widgets/follow_button.dart';
 import 'package:auth/presentation/manager/chat_cubit/chats_cubit.dart';
+import 'package:auth/presentation/manager/chat_cubit/chats_state.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_state.dart';
 import 'package:auth/presentation/user/widgets/profile_social_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -34,6 +38,8 @@ class ProfileInfoBox extends StatelessWidget {
     }
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final iconColor = Theme.of(context).iconTheme.color ?? Colors.black;
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 20.0),
       child: Column(
@@ -120,25 +126,59 @@ class ProfileInfoBox extends StatelessWidget {
                     color: isDark ? Colors.grey[800] : Colors.grey[200],
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: IconButton(
-                    icon: const Icon(Icons.message),
+                  child:IconButton(
+                    icon: SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: SvgPicture.asset(
+                        Paths.chatsIcon,
+                        fit: BoxFit.contain,
+                        colorFilter: ColorFilter.mode(
+                          iconColor,
+                          BlendMode.srcIn,
+                        ),
+                      ),
+                    ),
                     onPressed: () async {
-                      final result = await context
-                          .read<ChatsCubit>()
-                          .getOrCreateConversation(targetUserId: user.id);
+                      final chatsCubit = context.read<ChatsCubit>();
 
-                      result.fold(
-                        (failure) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text(failure.message)),
+                      if (chatsCubit.state is! ChatsLoaded) {
+                        await chatsCubit.loadChats(currentUserId: loggedInUserId);
+                      }
+
+                      Chat? existingChat;
+                      if (chatsCubit.state is ChatsLoaded) {
+                        final chats = (chatsCubit.state as ChatsLoaded).chats;
+                        try {
+                          existingChat = chats.firstWhere(
+                            (c) => c.participantId == user.id,
                           );
-                        },
-                        (chat) {
-                          context.push(
-                            '/app/messages/chat/${chat.chatId}/${user.id}/${user.name}',
-                          );
-                        },
-                      );
+                        } catch (_) {
+                          existingChat = null; 
+                        }
+                      }
+
+                      if (existingChat != null) {
+                        context.push(
+                          '/app/messages/chat/${existingChat.chatId}/${user.id}/${user.name}',
+                        );
+                      } else {
+                        final result = await chatsCubit.getOrCreateConversation(
+                            targetUserId: user.id);
+
+                        result.fold(
+                          (failure) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(failure.message)),
+                            );
+                          },
+                          (chat) {
+                            context.push(
+                              '/app/messages/chat/${chat.chatId}/${user.id}/${user.name}',
+                            );
+                          },
+                        );
+                      }
                     },
                   ),
                 ),
