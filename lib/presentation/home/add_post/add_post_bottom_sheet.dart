@@ -5,7 +5,6 @@ import 'package:auth/presentation/auto-tagging/suggested_hashtags_button.dart';
 import 'package:auth/presentation/home/add_post/add_post_header.dart';
 import 'package:auth/presentation/home/add_post/media_buttons_row.dart';
 import 'package:auth/presentation/home/add_post/post_input_field.dart';
-import 'package:auth/presentation/home/add_post/privacy_selector.dart';
 import 'package:auth/presentation/home/add_post/selected_media_preview.dart';
 import 'package:auth/injection_container.dart' as di;
 import 'package:auth/presentation/manager/post_cubit/create_post_cubit.dart';
@@ -170,11 +169,6 @@ final HashtagTextController _postController = HashtagTextController();
                                   },
                                 ),
                           ),
-                          if (widget.groupId == null)
-                            PrivacySelector(
-                              privacy: currentPrivacy,
-                              onChange: (value) => cubit.updatePrivacy(value),
-                            ),
                           const SizedBox(height: 20),
                         ],
                       ),

@@ -1,12 +1,12 @@
 import 'package:auth/constants/colors.dart';
 import 'package:flutter/material.dart';
 
-class NotificationsTabBar extends StatelessWidget {
+class SocialInfoTabBar extends StatelessWidget {
   final List<String> tabs;
   final int selectedIndex;
   final ValueChanged<int> onTabChanged;
 
-  const NotificationsTabBar({
+  const SocialInfoTabBar({
     super.key,
     required this.tabs,
     required this.selectedIndex,
@@ -17,7 +17,6 @@ class NotificationsTabBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
- 
     final inactiveBgColor = isDark
         ? Colors.white.withValues(alpha: 0.06)
         : const Color(0xFFF4F8F5);
@@ -41,11 +40,11 @@ class NotificationsTabBar extends StatelessWidget {
                 borderRadius: BorderRadius.circular(20),
                 color: isActive ? AppColors.primary : inactiveBgColor,
                 border: isActive
-                    ? Border.all(color: Colors.transparent) 
+                    ? Border.all(color: Colors.transparent)
                     : Border.all(color: inactiveBorderColor),
               ),
               child: Material(
-                color: Colors.transparent, 
+                color: Colors.transparent,
                 child: InkWell(
                   borderRadius: BorderRadius.circular(20),
                   onTap: () => onTabChanged(index),
@@ -62,7 +61,7 @@ class NotificationsTabBar extends StatelessWidget {
                             : (isDark ? Colors.grey[400] : Colors.grey[700]),
                         fontWeight: FontWeight.bold,
                         fontSize: 13,
-                        letterSpacing: 0.5, 
+                        letterSpacing: 0.5,
                       ),
                     ),
                   ),

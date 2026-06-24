@@ -56,17 +56,7 @@ class ManageGroupView extends StatelessWidget {
                 onTap: () =>
                     context.push(AppRoutes.groupMembersRequests(groupId)),
               ),
-              CustomListTile(
-                icon: Icons.post_add_outlined,
-                text: l10n.pendingPosts,
-                onTap: () => context.push(AppRoutes.groupPendingPosts(groupId)),
-              ),
-              CustomListTile(
-                icon: Icons.report_gmailerrorred_outlined,
-                text: l10n.reportedPosts,
-                onTap: () =>
-                    context.push(AppRoutes.groupReportedPosts(groupId)),
-              ),
+             
             ]),
             const SizedBox(height: 16),
             _buildSectionHeader(l10n.communityAndPeople),

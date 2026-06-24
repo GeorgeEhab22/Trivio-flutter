@@ -502,5 +502,8 @@
   "information": "المعلومات",
   "email": "البريد الإلكتروني",
   "bio": "النبذة",
-  "privacyAndSettings": "الخصوصية والإعدادات"
+  "privacyAndSettings": "الخصوصية والإعدادات",
+  "noBioAvailable": "لا توجد نبذة شخصية",
+  "noEmailProvided": "لم يتم إدخال بريد إلكتروني",
+  "security": "الأمان"
 }

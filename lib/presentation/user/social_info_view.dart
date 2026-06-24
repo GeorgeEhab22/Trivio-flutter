@@ -5,7 +5,7 @@ import 'package:auth/presentation/authentication/widgets/show_custom_snackbar.da
 import 'package:auth/presentation/manager/profile_cubit/profile_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_social_info_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_social_info_state.dart';
-import 'package:auth/presentation/notifcations/widgets/notifications_tab_bar.dart';
+import 'package:auth/presentation/user/widgets/social_info_tab_bar.dart';
 import 'package:auth/presentation/user/widgets/follow_info_list.dart';
 import 'package:auth/presentation/user/widgets/follow_request_card.dart';
 import 'package:flutter/material.dart';
@@ -36,7 +36,7 @@ class SocialInfoScreen extends StatelessWidget {
           ]
         : [l10n.followers, l10n.following];
 
-    _onWidgetBuilt(context,isPrivateAccount);
+    _onWidgetBuilt(context, isPrivateAccount);
 
     return DefaultTabController(
       length: tabCount,
@@ -52,7 +52,9 @@ class SocialInfoScreen extends StatelessWidget {
                 cubit.fetchFollowers(userId: userId);
               } else if (tabController.index == 1) {
                 cubit.fetchFollowing(userId: userId);
-              } else if (tabController.index == 2 && isMyProfile && isPrivateAccount) {
+              } else if (tabController.index == 2 &&
+                  isMyProfile &&
+                  isPrivateAccount) {
                 cubit.fetchRequests();
               }
             }
@@ -75,7 +77,7 @@ class SocialInfoScreen extends StatelessWidget {
                   size: 25,
                 ),
               ),
-             bottom: PreferredSize(
+              bottom: PreferredSize(
                 preferredSize: const Size.fromHeight(65),
                 child: AnimatedBuilder(
                   animation: tabController,
@@ -85,7 +87,7 @@ class SocialInfoScreen extends StatelessWidget {
                       child: SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         physics: const BouncingScrollPhysics(),
-                        child: NotificationsTabBar(
+                        child: SocialInfoTabBar(
                           tabs: tabTitles,
                           selectedIndex: tabController.index,
                           onTabChanged: (index) {
@@ -180,7 +182,7 @@ class SocialInfoScreen extends StatelessWidget {
 
       if (userId == null) {
         if (isPrivateAccount) {
-           cubit.fetchRequests();
+          cubit.fetchRequests();
         }
         // cubit.fetchSuggestions();
       }

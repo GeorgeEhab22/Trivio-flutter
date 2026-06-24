@@ -1,6 +1,9 @@
 import 'dart:ui';
 import 'package:auth/l10n/app_localizations.dart';
+import 'package:auth/presentation/manager/profile_cubit/profile_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/profile_state.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AddCaptionField extends StatelessWidget {
   final TextEditingController controller;
@@ -10,6 +13,12 @@ class AddCaptionField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final profileState = context.watch<ProfileCubit>().state;
+    
+    String? currentUserAvatar;
+    if (profileState is ProfileLoaded) {
+      currentUserAvatar = profileState.user.avatar; 
+    }
     return ClipRRect(
       borderRadius: BorderRadius.circular(20),
       child: BackdropFilter(
@@ -26,10 +35,15 @@ class AddCaptionField extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.end, 
             children: [
-              const CircleAvatar(
+              CircleAvatar(
                 radius: 16,
                 backgroundColor: Colors.white24,
-                child: Icon(Icons.person, size: 18, color: Colors.white),
+                backgroundImage: currentUserAvatar != null && currentUserAvatar.isNotEmpty
+                    ? NetworkImage(currentUserAvatar)
+                    : null,
+                child: currentUserAvatar == null || currentUserAvatar.isEmpty
+                    ? const Icon(Icons.person, size: 18, color: Colors.white)
+                    : null,
               ),
               const SizedBox(width: 12),
               Expanded(

@@ -102,27 +102,13 @@ class ChatInfoView extends StatelessWidget {
                   children: [
                     _buildInfoTile(
                       l10n.email,
-                      user?.email ?? "No email provided",
+                      user?.email ?? l10n.noEmailProvided,
                     ),
-                    _buildInfoTile(l10n.bio, user?.bio ?? "No bio available"),
+                    _buildInfoTile(l10n.bio, user?.bio ?? l10n.noBioAvailable),
                   ],
                 ),
 
-                _buildSectionContainer(
-                  context,
-                  title: l10n.privacyAndSettings,
-                  children: [
-                    ListTile(title: Text(l10n.block), onTap: () {}),
-                    ListTile(
-                      title: Text(
-                        l10n.report,
-                        style: const TextStyle(color: Colors.red),
-                      ),
-                      onTap: () {},
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 30),
+               
               ],
             ),
           ),

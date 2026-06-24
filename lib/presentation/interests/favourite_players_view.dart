@@ -35,6 +35,7 @@ class _FavouritePlayersViewState extends State<FavouritePlayersView> {
     final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
+        surfaceTintColor: Colors.transparent,
         leading: widget.isEditPlayers
             ? IconButton(
                 icon: const Icon(Icons.arrow_back_ios),
@@ -52,7 +53,7 @@ class _FavouritePlayersViewState extends State<FavouritePlayersView> {
             padding: const EdgeInsets.only(
               left: 16,
               right: 16,
-              bottom: 10, 
+              bottom: 10,
               top: 60,
             ),
             child: Text(
@@ -60,7 +61,7 @@ class _FavouritePlayersViewState extends State<FavouritePlayersView> {
               style: Styles.textStyle14.copyWith(color: Colors.grey),
             ),
           ),
-          
+
           const SearchBox(isTeams: false),
           InterestsGridView(isTeams: false, isEdit: widget.isEditPlayers),
           InterestsButtonActions(isTeams: false, isEdit: widget.isEditPlayers),

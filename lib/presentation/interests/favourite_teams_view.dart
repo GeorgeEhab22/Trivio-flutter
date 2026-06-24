@@ -33,14 +33,17 @@ class _FavouriteTeamsViewState extends State<FavouriteTeamsView> {
     final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        leading: 
-          widget.isEditTeams ?
-          IconButton(
-            icon: const Icon(Icons.arrow_back_ios),
-            onPressed: () => context.pop(),
-          ):null
-        ,
-        title: Text(l10n.favTeamsTitle, style: Styles.textStyle20.copyWith(fontWeight: FontWeight.bold, )),
+        surfaceTintColor: Colors.transparent,
+        leading: widget.isEditTeams
+            ? IconButton(
+                icon: const Icon(Icons.arrow_back_ios),
+                onPressed: () => context.pop(),
+              )
+            : null,
+        title: Text(
+          l10n.favTeamsTitle,
+          style: Styles.textStyle20.copyWith(fontWeight: FontWeight.bold),
+        ),
       ),
       body: Column(
         children: [
@@ -48,7 +51,7 @@ class _FavouriteTeamsViewState extends State<FavouriteTeamsView> {
             padding: const EdgeInsets.only(
               left: 16,
               right: 16,
-              bottom: 10, 
+              bottom: 10,
               top: 60,
             ),
             child: Text(

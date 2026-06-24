@@ -1,6 +1,5 @@
 import 'package:auth/common/functions/show_custom_dialog.dart';
 import 'package:auth/core/app_routes.dart';
-import 'package:auth/presentation/home/posts_in_timeline/buttom_sheets/report_reasons_buttom_sheet.dart';
 import 'package:auth/common/functions/custom_list_tile.dart';
 import 'package:auth/common/functions/custom_square_button.dart';
 import 'package:auth/presentation/manager/group_cubit/get_group_posts/group_posts_cubit.dart';
@@ -11,7 +10,6 @@ import 'package:auth/presentation/manager/profile_cubit/saved_posts/saved_posts_
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:auth/domain/entities/post.dart';
-import 'package:auth/presentation/manager/post_cubit/post_interaction_cubit.dart';
 import 'package:auth/common/functions/copy_to_clipboard.dart';
 import 'package:go_router/go_router.dart';
 import 'package:auth/l10n/app_localizations.dart';
@@ -34,7 +32,6 @@ class OptionsBottomSheet extends StatelessWidget {
     final handleBarColor = Theme.of(context).brightness == Brightness.dark
         ? Colors.grey[700]
         : Colors.grey[300];
-    final cubit = context.read<PostInteractionCubit>();
     final postCubit = context.read<PostCubit>();
     final savedPostsCubit = context.read<SavedPostsCubit>();
 
@@ -141,44 +138,6 @@ class OptionsBottomSheet extends StatelessWidget {
                     );
                   },
                 ),
-
-              CustomListTile(
-                icon: Icons.visibility_off_outlined,
-                text: l10n.notInterested,
-                onTap: () {
-                  // TODO: use the cubit to mark the post as not interested
-                  context.pop();
-                },
-              ),
-
-              // Report
-              CustomListTile(
-                icon: Icons.report_gmailerrorred_outlined,
-                text: l10n.report,
-                redColor: true,
-                onTap: () {
-                  showModalBottomSheet(
-                    context: context,
-                    backgroundColor: Colors.transparent,
-                    useRootNavigator: true,
-                    isScrollControlled: true,
-                    builder: (ctx) {
-                      return BlocProvider.value(
-                        value: cubit,
-                        child: ReportReasonsBottomSheet(
-                          onReportSelected: (reason) {
-                            cubit.reportPost(
-                              postId: post.postID,
-                              userId: currentUserId,
-                              reason: reason,
-                            );
-                          },
-                        ),
-                      );
-                    },
-                  );
-                },
-              ),
 
               // Delete Post (Only show if current user is the author)
               if (post.authorId == currentUserId)

@@ -5,6 +5,7 @@ import 'package:auth/presentation/manager/profile_cubit/profile_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:image_picker/image_picker.dart';
 
@@ -24,11 +25,21 @@ class ReelsPublishViewAppBar extends StatelessWidget
     final l10n = AppLocalizations.of(context)!;
     return AppBar(
       backgroundColor: Colors.black,
+
+      leading: IconButton(
+        onPressed: () {
+          context.pop();
+        },
+        icon: const Icon(
+          Icons.arrow_back_ios_new_rounded,
+          color: Colors.white,
+          size: 25,
+        ),
+      ),
       title: Text(l10n.addvideo, style: TextStyle(color: Colors.white)),
       actions: [
         TextButton(
           onPressed: () {
-            //TODO : create add reel cubit and replace post cubit
             final cubit = context.read<CreatePostCubit>();
 
             final profileState = context.read<ProfileCubit>().state;

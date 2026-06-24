@@ -1,6 +1,9 @@
 import 'package:auth/constants/colors.dart';
+import 'package:auth/presentation/manager/profile_cubit/profile_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/profile_state.dart';
 import 'package:flutter/material.dart';
 import 'package:auth/l10n/app_localizations.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CommentInputField extends StatelessWidget {
   final TextEditingController controller;
@@ -22,11 +25,18 @@ class CommentInputField extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final panelColor = isDark ? const Color(0xFF171C23) : const Color(0xFFF4F8F5);
+    final panelColor = isDark
+        ? const Color(0xFF171C23)
+        : const Color(0xFFF4F8F5);
     final borderColor = isDark
         ? Colors.white.withValues(alpha: 0.11)
         : Colors.black.withValues(alpha: 0.08);
+    final profileState = context.watch<ProfileCubit>().state;
+    String? currentUserAvatar;
 
+    if (profileState is ProfileLoaded) {
+      currentUserAvatar = profileState.user.avatar;
+    }
     return SafeArea(
       top: false,
       child: Column(
@@ -44,8 +54,10 @@ class CommentInputField extends StatelessWidget {
                 if (replyingToUser != null)
                   Container(
                     margin: const EdgeInsets.only(bottom: 8),
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12),
                       color: isDark
@@ -69,7 +81,9 @@ class CommentInputField extends StatelessWidget {
                           child: Text(
                             l10n.replyingTo(replyingToUser!),
                             style: TextStyle(
-                              color: Theme.of(context).textTheme.bodyMedium?.color,
+                              color: Theme.of(
+                                context,
+                              ).textTheme.bodyMedium?.color,
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -84,20 +98,24 @@ class CommentInputField extends StatelessWidget {
                   ),
                 Row(
                   children: [
-                    Container(
-                      width: 36,
-                      height: 36,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: isDark
-                            ? Colors.white.withValues(alpha: 0.12)
-                            : Colors.black.withValues(alpha: 0.08),
-                      ),
-                      child: Icon(
-                        Icons.person,
-                        size: 20,
-                        color: isDark ? Colors.white : Colors.grey[700],
-                      ),
+                    CircleAvatar(
+                      radius: 18,
+                      backgroundColor: isDark
+                          ? Colors.white.withValues(alpha: 0.12)
+                          : Colors.black.withValues(alpha: 0.08),
+                      backgroundImage:
+                          currentUserAvatar != null &&
+                              currentUserAvatar.isNotEmpty
+                          ? NetworkImage(currentUserAvatar)
+                          : null,
+                      child:
+                          currentUserAvatar == null || currentUserAvatar.isEmpty
+                          ? Icon(
+                              Icons.person,
+                              size: 20,
+                              color: isDark ? Colors.white : Colors.grey[700],
+                            )
+                          : null,
                     ),
                     const SizedBox(width: 10),
                     Expanded(
@@ -142,8 +160,11 @@ class CommentInputField extends StatelessWidget {
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             gradient: isNotEmpty
-                                ?  LinearGradient(
-                                    colors: [AppColors.primary, Color(0xFF7BDC5B)],
+                                ? LinearGradient(
+                                    colors: [
+                                      AppColors.primary,
+                                      Color(0xFF7BDC5B),
+                                    ],
                                     begin: Alignment.topLeft,
                                     end: Alignment.bottomRight,
                                   )
@@ -151,8 +172,8 @@ class CommentInputField extends StatelessWidget {
                             color: isNotEmpty
                                 ? null
                                 : (isDark
-                                    ? Colors.white.withValues(alpha: 0.12)
-                                    : Colors.black.withValues(alpha: 0.09)),
+                                      ? Colors.white.withValues(alpha: 0.12)
+                                      : Colors.black.withValues(alpha: 0.09)),
                           ),
                           child: IconButton(
                             padding: EdgeInsets.zero,

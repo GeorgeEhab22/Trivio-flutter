@@ -41,14 +41,6 @@ class GroupPreviewAppBar extends StatelessWidget
                     //TODO: copy link
                   },
                 ),
-                CustomListTile(
-                  icon: Icons.report_gmailerrorred,
-                  text: l10n.reportGroup, // Localized
-                  onTap: () {
-                    context.pop();
-                    //TODO: show report group button sheet
-                  },
-                ),
               ],
             );
           },

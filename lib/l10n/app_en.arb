@@ -501,5 +501,9 @@
   "information": "Information",
   "email": "Email",
   "bio": "Bio",
-  "privacyAndSettings": "Privacy & Settings"
+  "privacyAndSettings": "Privacy & Settings",
+  "noBioAvailable": "No bio available",
+  "noEmailProvided": "No email provided",
+  "security": "Security"
+
 }

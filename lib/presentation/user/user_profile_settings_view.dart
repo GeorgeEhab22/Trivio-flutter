@@ -84,13 +84,7 @@ class UserProfileSettings extends StatelessWidget {
 
                     const SizedBox(height: 20),
 
-                    _buildSectionHeader(l10n.securityAndAlerts, context),
-                    SettingsRow(
-                      title: l10n.notificationPrefs,
-                      subtitle: l10n.notificationPrefsSub,
-                      leadingIcon: Icons.notifications_active_rounded,
-                      onpressed: () {},
-                    ),
+                    _buildSectionHeader(l10n.security, context),
                     SettingsRow(
                       title: l10n.changePassword,
                       subtitle: l10n.changePasswordSub,

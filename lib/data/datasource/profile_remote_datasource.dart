@@ -178,7 +178,6 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       if (response['data'] == null || response['data']['posts'] == null) {
         return [];
       }
-      print("getMyPosts response: ${response['data']['posts']}"); 
       final List postsJson = response['data']['posts'];
       return postsJson.map((json) => PostModel.fromJson(json)).toList();
     } on DioException catch (e) {

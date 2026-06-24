@@ -1383,4 +1383,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get privacyAndSettings => 'Privacy & Settings';
+
+  @override
+  String get noBioAvailable => 'No bio available';
+
+  @override
+  String get noEmailProvided => 'No email provided';
+
+  @override
+  String get security => 'Security';
 }

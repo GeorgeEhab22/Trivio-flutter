@@ -32,3 +32,11 @@ String formatTime(BuildContext context, DateTime? time) {
 
   return DateFormat.MMMd(locale).format(time);
 }
+
+String formatChatClockTime(BuildContext context, DateTime? time) {
+  if (time == null) return '';
+
+  final locale = Localizations.localeOf(context).languageCode;
+  
+  return DateFormat('h:mm a', locale).format(time);
+}

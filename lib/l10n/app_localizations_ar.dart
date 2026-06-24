@@ -1369,4 +1369,13 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get privacyAndSettings => 'الخصوصية والإعدادات';
+
+  @override
+  String get noBioAvailable => 'لا توجد نبذة شخصية';
+
+  @override
+  String get noEmailProvided => 'لم يتم إدخال بريد إلكتروني';
+
+  @override
+  String get security => 'الأمان';
 }

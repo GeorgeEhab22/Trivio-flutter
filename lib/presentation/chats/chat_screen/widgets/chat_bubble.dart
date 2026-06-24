@@ -1,3 +1,4 @@
+import 'package:auth/common/functions/format_time.dart';
 import 'package:auth/presentation/chats/chat_screen/widgets/message_action_sheet.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -6,7 +7,7 @@ class ChatBubble extends StatelessWidget {
   final bool isMe;
   final String message;
   final bool isSeen;
-  final String time;
+  final DateTime time;
 
   const ChatBubble({
     super.key,
@@ -113,7 +114,8 @@ class ChatBubble extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          time,
+                          formatChatClockTime(context, time),
+
                           style: TextStyle(
                             color: isMe
                                 ? Colors.white.withValues(alpha: 0.7)

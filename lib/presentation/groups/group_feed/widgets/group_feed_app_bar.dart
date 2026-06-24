@@ -55,14 +55,7 @@ class GroupFeedAppBar extends StatelessWidget implements PreferredSizeWidget {
                     groupId:groupId,
                   ),
                 ),
-                CustomListTile(
-                  icon: Icons.report_gmailerrorred,
-                  text: l10n.reportGroup,
-                  onTap: () {
-                    context.pop();
-                    //TODO: show report group button sheet
-                  },
-                ),
+               
               ],
             );
           },

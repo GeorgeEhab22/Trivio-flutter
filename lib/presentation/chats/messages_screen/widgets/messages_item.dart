@@ -1,3 +1,4 @@
+import 'package:auth/common/functions/format_time.dart';
 import 'package:auth/common/functions/show_custom_dialog.dart';
 import 'package:auth/constants/colors.dart';
 import 'package:auth/core/styels.dart';
@@ -10,7 +11,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:go_router/go_router.dart';
 import 'package:auth/l10n/app_localizations.dart';
-import 'package:intl/intl.dart';
 
 class MessagesItem extends StatelessWidget {
   final Chat chat;
@@ -166,27 +166,35 @@ class MessagesItem extends StatelessWidget {
                 subtitle: chat.lastMessage != null
                     ? Padding(
                         padding: const EdgeInsets.only(top: 4.0),
-                        child: Row( 
+                        child: Row(
                           children: [
                             if (isLastMessageMine) ...[
                               Icon(
-                                isLastMessageRead ? Icons.done_all : Icons.check,
+                                isLastMessageRead
+                                    ? Icons.done_all
+                                    : Icons.check,
                                 size: 16,
-                                color: isLastMessageRead ? Colors.blue : Colors.grey,
+                                color: isLastMessageRead
+                                    ? Colors.blue
+                                    : Colors.grey,
                               ),
                               const SizedBox(width: 4),
                             ],
-                            
+
                             Expanded(
                               child: Text(
                                 chat.lastMessage ?? '',
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: Styles.textStyle14.copyWith(
-                                  color: (!isLastMessageMine && !isLastMessageRead)
+                                  color:
+                                      (!isLastMessageMine && !isLastMessageRead)
                                       ? AppColors.primary
-                                      : (isDark ? Colors.white54 : Colors.black54),
-                                  fontWeight: (!isLastMessageMine && !isLastMessageRead)
+                                      : (isDark
+                                            ? Colors.white54
+                                            : Colors.black54),
+                                  fontWeight:
+                                      (!isLastMessageMine && !isLastMessageRead)
                                       ? FontWeight.bold
                                       : FontWeight.normal,
                                 ),
@@ -202,7 +210,7 @@ class MessagesItem extends StatelessWidget {
                   children: [
                     Text(
                       chat.lastMessageTime != null
-                          ? DateFormat('hh:mm a').format(chat.lastMessageTime!)
+                          ? formatChatClockTime(context, chat.lastMessageTime!)
                           : "",
                       style: Styles.textStyle14.copyWith(
                         color: isUnread

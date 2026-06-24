@@ -46,7 +46,7 @@ class ChatView extends StatelessWidget {
                           isMe: msg.senderId ==currentUserId,
                           message: msg.text,
                           isSeen: msg.isSeen,
-                          time: msg.createdAt.toLocal().toString().substring(11, 16),
+                          time: msg.createdAt,
                         );
                       },
                     ),

@@ -2737,6 +2737,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Privacy & Settings'**
   String get privacyAndSettings;
+
+  /// No description provided for @noBioAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No bio available'**
+  String get noBioAvailable;
+
+  /// No description provided for @noEmailProvided.
+  ///
+  /// In en, this message translates to:
+  /// **'No email provided'**
+  String get noEmailProvided;
+
+  /// No description provided for @security.
+  ///
+  /// In en, this message translates to:
+  /// **'Security'**
+  String get security;
 }
 
 class _AppLocalizationsDelegate

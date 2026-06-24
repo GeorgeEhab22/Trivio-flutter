@@ -7,6 +7,8 @@ import 'package:auth/presentation/manager/follow_cubit/follow_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/get_post/get_post_cubit.dart';
 import 'package:auth/presentation/manager/post_cubit/get_post/get_post_state.dart'; // Ensure this is imported
 import 'package:auth/presentation/manager/post_cubit/post_interaction_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/profile_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/profile_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -22,7 +24,6 @@ class ShareBottomSheet extends StatefulWidget {
 
 class _ShareBottomSheetState extends State<ShareBottomSheet> {
   final TextEditingController _controller = TextEditingController();
-  String _privacyType = 'public';
 
   @override
   void initState() {
@@ -38,17 +39,24 @@ class _ShareBottomSheetState extends State<ShareBottomSheet> {
   }
 
   void _onSharePressed() {
-  context.read<PostInteractionCubit>().sharePost(
-    postId: widget.post.postID,
-    type: _privacyType,
-    caption: _controller.text.trim(),
-  );
-}
+    context.read<PostInteractionCubit>().sharePost(
+      postId: widget.post.postID,
+      type: 'public',
+      caption: _controller.text.trim(),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final profileState = context.watch<ProfileCubit>().state;
+    String? currentUserAvatar;
+    String currentUserName = l10n.defaultUserName;
 
+    if (profileState is ProfileLoaded) {
+      currentUserAvatar = profileState.user.avatar;
+      currentUserName = profileState.user.name;
+    }
     return MultiBlocListener(
       listeners: [
         BlocListener<PostInteractionCubit, PostInteractionState>(
@@ -101,41 +109,24 @@ class _ShareBottomSheetState extends State<ShareBottomSheet> {
                       CircleAvatar(
                         radius: 20,
                         backgroundColor: Colors.grey[300],
-                        child: const Icon(Icons.person, color: Colors.grey),
+                        backgroundImage:
+                            currentUserAvatar != null &&
+                                currentUserAvatar.isNotEmpty
+                            ? NetworkImage(currentUserAvatar)
+                            : null,
+                        child:
+                            currentUserAvatar == null ||
+                                currentUserAvatar.isEmpty
+                            ? const Icon(Icons.person, color: Colors.grey)
+                            : null,
                       ),
                       const SizedBox(width: 10),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            l10n.defaultUserName,
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          DropdownButton<String>(
-                            value: _privacyType,
-                            isDense: true,
-                            underline: const SizedBox(),
-                            items: const [
-                              DropdownMenuItem(
-                                value: 'public',
-                                child: Text(
-                                  "Public",
-                                  style: TextStyle(fontSize: 12),
-                                ),
-                              ),
-                              DropdownMenuItem(
-                                value: 'private',
-                                child: Text(
-                                  "Private",
-                                  style: TextStyle(fontSize: 12),
-                                ),
-                              ),
-                            ],
-                            onChanged: (val) =>
-                                setState(() => _privacyType = val!),
-                          ),
-                        ],
+
+                      Text(
+                        currentUserName,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
+
                       const Spacer(),
                       BlocBuilder<PostInteractionCubit, PostInteractionState>(
                         builder: (context, state) {

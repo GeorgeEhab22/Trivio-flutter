@@ -4,7 +4,6 @@ import 'package:auth/presentation/manager/notifications_cubit/notifications_stat
 import 'package:auth/presentation/notifcations/widgets/notificatio_card_type.dart';
 import 'package:auth/domain/entities/notification_type.dart';
 import 'package:auth/presentation/notifcations/widgets/notifications_app_bar.dart';
-import 'package:auth/presentation/notifcations/widgets/notifications_tab_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -17,7 +16,7 @@ class NotificationsView extends StatefulWidget {
 
 class _NotificationsViewState extends State<NotificationsView> {
   final Color _primaryGreen = const Color(0xFF1DB954);
-  int _selectedTabIndex = 0;
+  final int _selectedTabIndex = 0;
   final ScrollController _scrollController = ScrollController();
   @override
   void initState() {
@@ -99,21 +98,12 @@ class _NotificationsViewState extends State<NotificationsView> {
     final backgroundColor = Theme.of(context).scaffoldBackgroundColor;
     final textColor =
         Theme.of(context).textTheme.bodyMedium?.color ?? Colors.black;
-    final List<String> tabs = [l10n.all, l10n.matches, l10n.social];
     return Scaffold(
       backgroundColor: backgroundColor,
       appBar: const NotificationsAppBar(),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          NotificationsTabBar(
-            tabs: tabs,
-            selectedIndex: _selectedTabIndex,
-            onTabChanged: (index) {
-              setState(() => _selectedTabIndex = index);
-            },
-          ),
-
           // notifications list
           Expanded(
             child: BlocBuilder<NotificationCubit, NotificationState>(

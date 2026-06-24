@@ -151,26 +151,6 @@ class SettingsView extends StatelessWidget {
                 ),
 
                 const Divider(),
-                CustomListTile(
-                  icon: Icons.block_flipped,
-                  text: l10n.blocked,
-                  withArrow: true,
-                  redColor: true,
-                  onTap: () {
-                    context.push(AppRoutes.blocked);
-                  },
-                ),
-
-                const Divider(),
-                CustomListTile(
-                  icon: Icons.toggle_on_outlined,
-                  text: l10n.activeStatus,
-                  withArrow: true,
-                  onTap: () {
-                    context.push(AppRoutes.activeStates);
-                  },
-                ),
-                const Divider(),
                 const Align(
                   alignment: AlignmentDirectional.topStart,
                   child: LanguageSwitchButton(),
