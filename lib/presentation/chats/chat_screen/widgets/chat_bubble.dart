@@ -13,7 +13,7 @@ class ChatBubble extends StatelessWidget {
     required this.isMe,
     required this.message,
     this.isSeen = false,
-    this.time = "12:00 PM",
+    required this.time,
   });
 
   @override
@@ -39,7 +39,7 @@ class ChatBubble extends StatelessWidget {
       onEnter: (_) => isHovered.value = true,
       onExit: (_) => isHovered.value = false,
       child: GestureDetector(
-        onLongPress: () => showMessageActions(context),
+        onLongPress: () => showMessageActions(context,message),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 8),
           child: Row(
@@ -161,7 +161,7 @@ class _WebMoreButton extends StatelessWidget {
           opacity: hovered ? 1 : 0,
           child: IconButton(
             icon: const Icon(Icons.more_vert, size: 20, color: Colors.grey),
-            onPressed: () => showMessageActions(context),
+            onPressed: () => showMessageActions(context,""),
           ),
         );
       },

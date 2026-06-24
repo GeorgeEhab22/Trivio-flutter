@@ -22,6 +22,8 @@ import 'package:auth/presentation/groups/widgets/edit_post_page.dart';
 import 'package:auth/presentation/home/single_post_view.dart';
 import 'package:auth/presentation/interests/favourite_players_view.dart';
 import 'package:auth/presentation/interests/favourite_teams_view.dart';
+import 'package:auth/presentation/manager/chat_cubit/chat_messages_cubit.dart';
+import 'package:auth/presentation/manager/chat_cubit/chats_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/ban_member/ban_member_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/create_group/create_group_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/delete_group/delete_group_cubit.dart';
@@ -275,6 +277,7 @@ GoRouter createRouter(bool isLoggedIn) {
                   BlocProvider(
                     create: (context) => di.sl<ProfileSocialInfoCubit>(),
                   ),
+                  BlocProvider(create: (context) => di.sl<ChatsCubit>()),
                 ],
                 child: UserProfileView(userId: userId),
               );
@@ -462,6 +465,9 @@ GoRouter createRouter(bool isLoggedIn) {
                             create: (context) =>
                                 di.sl<ProfileSocialInfoCubit>(),
                           ),
+                          BlocProvider(
+                            create: (context) => di.sl<ChatsCubit>(),
+                          ),
                         ],
                         child: UserProfileView(),
                       ),
@@ -473,15 +479,60 @@ GoRouter createRouter(bool isLoggedIn) {
           ),
           GoRoute(
             path: 'messages',
-            builder: (context, state) => const MessagesView(),
+            builder: (context, state) => BlocProvider(
+              create: (context) {
+                final profileState = context.read<ProfileCubit>().state;
+
+                if (profileState is ProfileLoaded) {
+                  return di.sl<ChatsCubit>()..loadChats(
+                    refresh: true,
+                    currentUserId: profileState.user.id,
+                  );
+                }
+
+                return di.sl<ChatsCubit>();
+              },
+              child: const MessagesView(),
+            ),
             routes: [
               GoRoute(
-                path: 'chat',
-                builder: (context, state) => const ChatView(),
+                path: 'chat/:conversationId/:targetUserId/:targetUserName',
+                builder: (context, state) {
+                  final chatId = state.pathParameters['conversationId']!;
+                  final userId = state.pathParameters['targetUserId']!;
+                  final targetusername =
+                      state.pathParameters['targetUserName']!;
+                  return BlocProvider(
+                    create: (context) =>
+                        di.sl<ChatMessagesCubit>()
+                          ..loadMessages(chatId, userId),
+                    child: ChatView(
+                      conversationId: chatId,
+                      targetUserId: userId,
+                      targetUserName: targetusername,
+                    ),
+                  );
+                },
                 routes: [
                   GoRoute(
                     path: 'chat_info',
-                    builder: (context, state) => const ChatInfoView(),
+                    builder: (context, state) {
+                      final userId = state.pathParameters['targetUserId']!;
+                      final targetusername =
+                          state.pathParameters['targetUserName']!;
+                      final conversationId =
+                          state.pathParameters['conversationId']!;
+                      return BlocProvider(
+                        create: (context) =>
+                            di.sl<GetUserProfileByIdCubit>()
+                              ..loadUserProfileById(userId),
+                        child: ChatInfoView(
+                          userId: userId,
+                          targetUserName: targetusername,
+                          conversationId: conversationId,
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),

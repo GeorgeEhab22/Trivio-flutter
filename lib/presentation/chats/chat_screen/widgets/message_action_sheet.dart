@@ -4,10 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:auth/l10n/app_localizations.dart';
 
-void showMessageActions(BuildContext context) {
-  final l10n = AppLocalizations.of(context)!;
-  String copiedMessage = "change later to actual message";
-  
+void showMessageActions(BuildContext context, String copiedMessage) {
+
+  final l10n = AppLocalizations.of(context)!;  
   final handleBarColor = Theme.of(context).brightness == Brightness.dark
       ? Colors.grey[700]
       : Colors.grey[300];

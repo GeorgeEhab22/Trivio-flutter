@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:auth/common/api_service.dart';
 import 'package:auth/common/functions/handle_dio_error.dart';
 import 'package:auth/data/datasource/auth_remote_datasource.dart';
+import 'package:auth/data/datasource/chat_remote_datasource.dart';
 import 'package:auth/data/datasource/chatbot_remote_datasource.dart';
 import 'package:auth/data/datasource/comments_remote_datasource.dart';
 import 'package:auth/data/datasource/face_recognition_remote_datasource.dart';
@@ -14,6 +15,7 @@ import 'package:auth/data/datasource/posts_remote_datasource.dart';
 import 'package:auth/data/datasource/stats_local_datasource.dart';
 import 'package:auth/data/datasource/stats_remote_datasource.dart';
 import 'package:auth/data/repositories/auth_repo_impl.dart';
+import 'package:auth/data/repositories/chat_repo_impl.dart';
 import 'package:auth/data/repositories/chatbot_repo_impl.dart';
 import 'package:auth/data/repositories/comment_repo_impl.dart';
 import 'package:auth/data/repositories/face_recognition_repo_impl.dart';
@@ -23,6 +25,7 @@ import 'package:auth/data/repositories/notification_repo_impl.dart';
 import 'package:auth/data/repositories/post_repo_impl.dart';
 import 'package:auth/data/repositories/stats_repo_impl.dart';
 import 'package:auth/domain/repositories/auth_repo.dart';
+import 'package:auth/domain/repositories/chat_repo.dart';
 import 'package:auth/domain/repositories/chatbot_repo.dart';
 import 'package:auth/domain/repositories/comment_repo.dart';
 import 'package:auth/domain/repositories/face_recognition_repo.dart';
@@ -39,6 +42,10 @@ import 'package:auth/domain/repositories/follow_repo.dart';
 import 'package:auth/domain/repositories/user_profile_repo.dart';
 import 'package:auth/domain/usecases/chatbot/get_chat_history_usecase.dart';
 import 'package:auth/domain/usecases/chatbot/send_message_usecase.dart';
+import 'package:auth/domain/usecases/chats/get_chats_use_case.dart';
+import 'package:auth/domain/usecases/chats/get_messages_use_case.dart';
+import 'package:auth/domain/usecases/chats/get_or_create_conversation_use_case.dart';
+import 'package:auth/domain/usecases/chats/mark_conversation_seen_use_case.dart';
 import 'package:auth/domain/usecases/comment/add_comment_usecase.dart';
 import 'package:auth/domain/usecases/comment/delete_comment_usecase.dart';
 import 'package:auth/domain/usecases/comment/edit_comment_usecase.dart';
@@ -134,6 +141,8 @@ import 'package:auth/domain/usecases/user_profile/get_user_profile_by_id.dart';
 import 'package:auth/domain/usecases/user_profile/save_post.dart';
 import 'package:auth/domain/usecases/user_profile/unsave_post.dart';
 import 'package:auth/domain/usecases/user_profile/update_profile.dart';
+import 'package:auth/presentation/manager/chat_cubit/chat_messages_cubit.dart';
+import 'package:auth/presentation/manager/chat_cubit/chats_cubit.dart';
 import 'package:auth/presentation/manager/chatbot_cubit/chatbot_cubit.dart';
 import 'package:auth/presentation/manager/comment_cubit/comment_cubit.dart';
 import 'package:auth/presentation/manager/group_cubit/ban_member/ban_member_cubit.dart';
@@ -242,7 +251,12 @@ Future<void> init() async {
 
   // Cubits
   sl.registerFactory(
-    () => SignInCubit(signInUseCase: sl(), googleSignInUseCase: sl(), registerFcmTokenUseCase: sl(), deleteFcmTokenUseCase: sl()),
+    () => SignInCubit(
+      signInUseCase: sl(),
+      googleSignInUseCase: sl(),
+      registerFcmTokenUseCase: sl(),
+      deleteFcmTokenUseCase: sl(),
+    ),
   );
   sl.registerLazySingleton(() => RegisterFcmTokenUseCase(sl()));
   sl.registerLazySingleton(() => DeleteFcmTokenUseCase(sl()));
@@ -290,7 +304,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => SavePostUseCase(sl()));
   sl.registerLazySingleton(() => CommentOnPostUseCase(sl()));
   sl.registerLazySingleton(() => SubmitWatchedPostsUseCase(sl()));
-  
+
   sl.registerFactory(
     () => PostCubit(
       submitWatchedPostsUseCase: sl(),
@@ -471,7 +485,7 @@ Future<void> init() async {
   //get user role in group
   sl.registerLazySingleton(() => GetUserGroupRoleUseCase(sl()));
   sl.registerFactory(() => UserGroupRoleCubit(sl()));
-  
+
   // ==========================================================================
   // FEATURE: Chatbot
   // ==========================================================================
@@ -541,23 +555,21 @@ Future<void> init() async {
         ProfilePostsCubit(getMyPostsUseCase: sl(), getLikedPostsUseCase: sl()),
   );
   sl.registerLazySingleton(() => GetUserPostsUseCase(sl()));
-  sl.registerFactory(
-    () => GetUserPostsCubit(
-      getUserPostsUseCase: sl(),
-    ),
-  );
+  sl.registerFactory(() => GetUserPostsCubit(getUserPostsUseCase: sl()));
 
   //saved posts
   sl.registerLazySingleton(() => GetSavedPosts(sl()));
   sl.registerLazySingleton(() => SavePost(sl()));
   sl.registerLazySingleton(() => UnsavePost(sl()));
 
-  sl.registerFactory(() => SavedPostsCubit(
-        getSavedPostsUseCase: sl(),
-        savePostUseCase: sl(),
-        unsavePostUseCase: sl(),
-        getPostUseCase: sl(),
-      ));
+  sl.registerFactory(
+    () => SavedPostsCubit(
+      getSavedPostsUseCase: sl(),
+      savePostUseCase: sl(),
+      unsavePostUseCase: sl(),
+      getPostUseCase: sl(),
+    ),
+  );
 
   //follow
   sl.registerLazySingleton<FollowRemoteDataSource>(
@@ -658,4 +670,30 @@ Future<void> init() async {
   //reels
   sl.registerFactory(() => ReelsCubit(getReelsUseCase: sl()));
   sl.registerLazySingleton(() => GetReelsUseCase(sl()));
+
+  // chats
+  sl.registerLazySingleton<ChatRepo>(
+    () => ChatRepoImpl(remoteDataSource: sl()),
+  );
+
+  sl.registerLazySingleton<ChatRemoteDataSource>(
+    () => ChatRemoteDataSourceImpl(api: sl(), prefs: sl(), errorHandler: sl()),
+  );
+  sl.registerLazySingleton(() => GetMessagesUseCase(sl()));
+  sl.registerLazySingleton(() => MarkConversationSeenUseCase(sl()));
+
+  sl.registerFactory(
+    () =>
+        ChatsCubit(getChatsUseCase: sl(), getOrCreateConversationUseCase: sl()),
+  );
+  sl.registerFactory(
+    () => ChatMessagesCubit(
+      getMessagesUseCase: sl(),
+      markConversationSeenUseCase: sl(),
+      prefs: sl(),
+    ),
+  );
+
+  sl.registerLazySingleton(() => GetChatsUseCase(sl()));
+  sl.registerLazySingleton(() => GetOrCreateConversationUseCase(sl()));
 }

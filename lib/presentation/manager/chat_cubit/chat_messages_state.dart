@@ -21,6 +21,7 @@ class ChatMessagesLoaded extends ChatMessagesState {
   @override
   List<Object?> get props => [messages, hasReachedMax];
 }
+class ChatPartnerTyping extends ChatMessagesState {}
 
 class ChatMessagesLoadingMore extends ChatMessagesState {
   final List<Message> messages;

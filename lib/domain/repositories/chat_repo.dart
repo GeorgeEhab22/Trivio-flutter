@@ -4,23 +4,19 @@ import 'package:auth/domain/entities/message.dart';
 import 'package:dartz/dartz.dart';
 
 abstract class ChatRepo {
-  // 1- Get all chats (Inbox)
-  Future<Either<Failure, List<Chat>>> getChats({int page = 1});
+  Future<Either<Failure, List<Chat>>> getChats({required int page, required String currentUserId});
 
-  // 2- Get messages for a specific chat
   Future<Either<Failure, List<Message>>> getMessages({
     required String chatId, 
     int page = 1,
   });
 
-  // 3- Send a message
-  Future<Either<Failure, Message>> sendMessage({
-    required String chatId,
-    required String text,
+  Future<Either<Failure, Chat>> getOrCreateConversation({
+    required String targetUserId,
   });
 
-  // 4- Mark message as seen
-  Future<Either<Failure, String>> markAsSeen({
-    required String messageId,
+  // 4- Mark conversation as read
+  Future<Either<Failure, String>> markConversationAsRead({
+    required String conversationId,
   });
 }

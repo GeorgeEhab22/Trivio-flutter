@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:auth/l10n/app_localizations.dart';
+import 'package:go_router/go_router.dart';
 
 void showAddOtherOptions(BuildContext context) {
   final l10n = AppLocalizations.of(context)!;
@@ -40,7 +41,7 @@ Widget _buildOptionTile(BuildContext context, IconData icon, String label, Color
       style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
     ),
     onTap: () {
-      Navigator.pop(context);
+      context.pop();
       onTap();
     },
   );

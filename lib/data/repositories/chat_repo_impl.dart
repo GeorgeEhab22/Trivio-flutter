@@ -12,9 +12,10 @@ class ChatRepoImpl implements ChatRepo {
   ChatRepoImpl({required this.remoteDataSource});
 
   @override
-  Future<Either<Failure, List<Chat>>> getChats({int page = 1}) async {
+  Future<Either<Failure, List<Chat>>> getChats({required int page, required String currentUserId}) async {
     try {
-      final models = await remoteDataSource.getChats(page: page);
+      final models = await remoteDataSource.getChats(currentUserId);
+     // print('getChats models: $models');
       return Right(models);
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));
@@ -24,9 +25,13 @@ class ChatRepoImpl implements ChatRepo {
   }
 
   @override
-  Future<Either<Failure, List<Message>>> getMessages({required String chatId, int page = 1}) async {
+  Future<Either<Failure, List<Message>>> getMessages({
+    required String chatId,
+    int page = 1,
+  }) async {
     try {
-      final models = await remoteDataSource.getMessages(chatId: chatId, page: page);
+      final models = await remoteDataSource.getMessages(chatId, page);
+    //  print('getMessages models: $models');
       return Right(models);
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));
@@ -36,26 +41,34 @@ class ChatRepoImpl implements ChatRepo {
   }
 
   @override
-  Future<Either<Failure, Message>> sendMessage({required String chatId, required String text}) async {
+  Future<Either<Failure, Chat>> getOrCreateConversation({
+    required String targetUserId,
+  }) async {
     try {
-      final model = await remoteDataSource.sendMessage(chatId: chatId, text: text);
+      final model = await remoteDataSource.getOrCreateConversation(
+        targetUserId,
+      );
+      //  print('getOrCreateConversation model: $model');
       return Right(model);
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));
     } catch (_) {
-      return Left(ServerFailure('Failed to send message'));
+      return Left(ServerFailure('Failed to get or create conversation'));
     }
   }
 
   @override
-  Future<Either<Failure, String>> markAsSeen({required String messageId}) async {
+  Future<Either<Failure, String>> markConversationAsRead({
+    required String conversationId,
+  }) async {
     try {
-      await remoteDataSource.markAsSeen(messageId: messageId);
-      return const Right('Message marked as seen');
+      await remoteDataSource.markConversationAsRead(conversationId);
+      //  print('markConversationAsRead response: $conversationId');
+      return const Right('Conversation marked as read');
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));
     } catch (_) {
-      return Left(ServerFailure('Failed to update message status'));
+      return Left(ServerFailure('Failed to update conversation status'));
     }
   }
 }

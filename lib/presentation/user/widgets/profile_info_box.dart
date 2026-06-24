@@ -6,6 +6,7 @@ import 'package:auth/core/styels.dart';
 import 'package:auth/domain/entities/user_profile.dart';
 import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/home/posts_in_timeline/widgets/follow_button.dart';
+import 'package:auth/presentation/manager/chat_cubit/chats_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_cubit.dart';
 import 'package:auth/presentation/manager/profile_cubit/profile_state.dart';
 import 'package:auth/presentation/user/widgets/profile_social_info.dart';
@@ -22,10 +23,10 @@ class ProfileInfoBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-   final String targetUserId = user.id; 
+    final String targetUserId = user.id;
     bool isCurrentUser = false;
-    String loggedInUserId = ""; 
-    
+    String loggedInUserId = "";
+
     final state = context.read<ProfileCubit>().state;
     if (state is ProfileLoaded) {
       loggedInUserId = state.user.id;
@@ -111,6 +112,38 @@ class ProfileInfoBox extends StatelessWidget {
                         ),
                 ),
               const SizedBox(width: 12),
+              if (!isCurrentUser) ...[
+                Container(
+                  height: 44,
+                  width: 44,
+                  decoration: BoxDecoration(
+                    color: isDark ? Colors.grey[800] : Colors.grey[200],
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: IconButton(
+                    icon: const Icon(Icons.message),
+                    onPressed: () async {
+                      final result = await context
+                          .read<ChatsCubit>()
+                          .getOrCreateConversation(targetUserId: user.id);
+
+                      result.fold(
+                        (failure) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(failure.message)),
+                          );
+                        },
+                        (chat) {
+                          context.push(
+                            '/app/messages/chat/${chat.chatId}/${user.id}/${user.name}',
+                          );
+                        },
+                      );
+                    },
+                  ),
+                ),
+                const SizedBox(width: 12),
+              ],
               Container(
                 height: 44,
                 width: 44,

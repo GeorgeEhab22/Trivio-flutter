@@ -6,6 +6,7 @@ import 'package:auth/presentation/interests/widgets/search_box.dart';
 import 'package:auth/presentation/manager/profile_cubit/interests/select_interests_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class FavouriteTeamsView extends StatefulWidget {
   final bool isEditTeams;
@@ -36,7 +37,7 @@ class _FavouriteTeamsViewState extends State<FavouriteTeamsView> {
           widget.isEditTeams ?
           IconButton(
             icon: const Icon(Icons.arrow_back_ios),
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => context.pop(),
           ):null
         ,
         title: Text(l10n.favTeamsTitle, style: Styles.textStyle20.copyWith(fontWeight: FontWeight.bold, )),

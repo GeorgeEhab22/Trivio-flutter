@@ -1,15 +1,16 @@
 import 'package:auth/common/functions/show_custom_dialog.dart';
 import 'package:auth/constants/colors.dart';
-import 'package:auth/core/app_routes.dart';
 import 'package:auth/core/styels.dart';
+import 'package:auth/domain/entities/chat.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:go_router/go_router.dart';
 import 'package:auth/l10n/app_localizations.dart';
+import 'package:intl/intl.dart';
 
 class MessagesItem extends StatelessWidget {
-  final int index;
-  const MessagesItem({super.key, required this.index});
+  final Chat chat;
+  const MessagesItem({super.key, required this.chat});
 
   @override
   Widget build(BuildContext context) {
@@ -20,10 +21,11 @@ class MessagesItem extends StatelessWidget {
         ? const [Color(0xFF1D2228), Color(0xFF171B20)]
         : const [Color(0xFFFFFFFF), Color(0xFFF8FBF9)];
 
-    final bool isUnread = index == 0 || index == 1;
+    final bool isUnread = chat.unreadCount > 0;
+    //print("chat.lastMessage: ${chat.lastMessage}");
 
     return Slidable(
-      key: ValueKey(index),
+      key: ValueKey(chat.chatId),
       endActionPane: ActionPane(
         motion: const ScrollMotion(),
         children: [
@@ -74,11 +76,15 @@ class MessagesItem extends StatelessWidget {
           ),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.04),
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.05)
+                : Colors.black.withValues(alpha: 0.04),
           ),
           boxShadow: [
             BoxShadow(
-              color: isDark ? Colors.black12 : Colors.black.withValues(alpha: 0.02),
+              color: isDark
+                  ? Colors.black12
+                  : Colors.black.withValues(alpha: 0.02),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -94,65 +100,86 @@ class MessagesItem extends StatelessWidget {
                   top: 0,
                   bottom: 0,
                   child: Container(
-                    width: 100, 
+                    width: 100,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
-                          isDark 
-                              ? AppColors.primary.withValues(alpha: 0.12) 
+                          isDark
+                              ? AppColors.primary.withValues(alpha: 0.12)
                               : AppColors.primary.withValues(alpha: 0.08),
-                          Colors.transparent
+                          Colors.transparent,
                         ],
-                        begin: Alignment.centerRight, 
+                        begin: Alignment.centerRight,
                         end: Alignment.centerLeft,
                       ),
                     ),
                   ),
                 ),
-              
+
               ListTile(
                 onTap: () {
-                  context.push(AppRoutes.chat);
+                  context.push(
+                    '/app/messages/chat/${chat.chatId}/${chat.participantId}/${chat.participantName}',
+                  );
                 },
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
+                ),
                 leading: CircleAvatar(
                   radius: 28,
-                  backgroundColor: isDark ? const Color(0xFF2C3138) : Colors.grey[200],
-                  child: const Icon(Icons.person, color: Colors.grey),
+                  backgroundColor: isDark
+                      ? const Color(0xFF2C3138)
+                      : Colors.grey[200],
+                  backgroundImage: chat.participantAvatar != null
+                      ? NetworkImage(chat.participantAvatar!)
+                      : null,
+                  child: chat.participantAvatar == null
+                      ? const Icon(Icons.person, color: Colors.grey)
+                      : null,
                 ),
                 title: Text(
-                  "Alex Johnson", 
+                  chat.participantName,
                   style: Styles.textStyle16.copyWith(
                     fontWeight: isUnread ? FontWeight.bold : FontWeight.w600,
                     color: isDark ? Colors.white : Colors.black,
-                  )
-                ),
-                subtitle: Padding(
-                  padding: const EdgeInsets.only(top: 4.0),
-                  child: Text(
-                    "Hey, let's catch up later!",
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: Styles.textStyle14.copyWith(
-                      color: isUnread 
-                          ? (isDark ? Colors.white70 : Colors.black87)
-                          : (isDark ? Colors.white54 : Colors.black54),
-                      fontWeight: isUnread ? FontWeight.w500 : FontWeight.normal,
-                    ),
                   ),
                 ),
+
+                subtitle: chat.lastMessage != null
+                    ? Padding(
+                        padding: const EdgeInsets.only(top: 4.0),
+                        child: Text(
+                          chat.lastMessage ?? '',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: Styles.textStyle14.copyWith(
+                            color: isUnread
+                                ? (isDark ? Colors.white70 : Colors.black87)
+                                : (isDark ? Colors.white54 : Colors.black54),
+                            fontWeight: isUnread
+                                ? FontWeight.w500
+                                : FontWeight.normal,
+                          ),
+                        ),
+                      )
+                    : null,
                 trailing: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      "10:30 AM", 
+                      chat.lastMessageTime != null
+                          ? DateFormat('hh:mm a').format(chat.lastMessageTime!)
+                          : "",
                       style: Styles.textStyle14.copyWith(
-                        color: isUnread 
-                            ? AppColors.primary 
+                        color: isUnread
+                            ? AppColors.primary
                             : (isDark ? Colors.white38 : Colors.black38),
-                        fontWeight: isUnread ? FontWeight.bold : FontWeight.normal,
-                      )
+                        fontWeight: isUnread
+                            ? FontWeight.bold
+                            : FontWeight.normal,
+                      ),
                     ),
                     if (isUnread) ...[
                       const SizedBox(height: 6),

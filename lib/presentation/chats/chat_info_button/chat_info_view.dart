@@ -1,126 +1,133 @@
 import 'package:auth/constants/colors.dart';
+import 'package:auth/core/app_routes.dart';
+import 'package:auth/presentation/manager/profile_cubit/get_user_profile_by_id_cubit.dart';
+import 'package:auth/presentation/manager/profile_cubit/get_user_profile_by_id_state.dart';
 import 'package:flutter/material.dart';
 import 'package:auth/l10n/app_localizations.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class ChatInfoView extends StatelessWidget {
-  const ChatInfoView({super.key});
+  final String userId;
+  final String targetUserName;
+  final String conversationId;
+  const ChatInfoView({
+    super.key,
+    required this.userId,
+    required this.targetUserName,
+    required this.conversationId,
+  });
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: const Text(
-          "Alex Johnson",
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            const SizedBox(height: 20),
-            Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.primary.withValues(alpha: 0.2),
-                    blurRadius: 20,
-                    spreadRadius: 5,
+    return BlocBuilder<GetUserProfileByIdCubit, GetUserProfileByIdState>(
+      builder: (context, state) {
+        if (state is GetUserProfileByIdLoading) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
+        final user = (state is GetUserProfileByIdLoaded) ? state.user : null;
+        return Scaffold(
+          appBar: AppBar(
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back_ios_new),
+              onPressed: () => context.pop(context),
+            ),
+          ),
+          body: SingleChildScrollView(
+            child: Column(
+              children: [
+                const SizedBox(height: 20),
+                GestureDetector(
+                  onTap: () {
+                    context.push(
+                      AppRoutes.userProfileByIdPath(userId ),
+                    );
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.primary.withValues(alpha: 0.2),
+                          blurRadius: 20,
+                          spreadRadius: 5,
+                        ),
+                      ],
+                    ),
+                    child: CircleAvatar(
+                      radius: 50,
+                      backgroundImage: (user?.avatar.isNotEmpty ?? false)
+                          ? NetworkImage(user!.avatar)
+                          : null,
+                      child: (user?.avatar.isEmpty ?? true)
+                          ? const Icon(Icons.person, size: 50)
+                          : null,
+                    ),
                   ),
-                ],
-              ),
-              child: const CircleAvatar(
-                radius: 50,
-                child: Icon(Icons.person, size: 50),
-              ),
-            ),
-            const SizedBox(height: 15),
-            const Text(
-              "Alex Johnson",
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              l10n.online,
-              style: TextStyle(
-                color: AppColors.primary,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-
-            const SizedBox(height: 25),
-
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildActionButton(context, Icons.call, l10n.callAction), 
-                _buildActionButton(context, Icons.videocam, l10n.video),     
-                _buildActionButton(context, Icons.notifications_off, l10n.mute),  
-                _buildActionButton(context, Icons.search, l10n.search),   
-              ],
-            ),
-
-            const SizedBox(height: 20),
-
-            _buildSectionContainer(
-              context,
-              title: l10n.information,
-              children: [
-                _buildInfoTile(l10n.email, "alexj@gmail.com"), 
-                _buildInfoTile(l10n.bio, "Software Developer | Flutter"),
-              ],
-            ),
-
-            _buildSectionContainer(
-              context,
-              title: l10n.privacyAndSettings, 
-              children: [
-                ListTile(title: Text(l10n.block), onTap: () {}), 
-                ListTile(
-                  title: Text(
-                    l10n.report, 
-                    style: const TextStyle(color: Colors.red),
-                  ),
-                  onTap: () {},
                 ),
+                const SizedBox(height: 15),
+                GestureDetector(
+                  onTap: () {
+                    context.push(
+                      AppRoutes.userProfileByIdPath(userId),
+                    );
+                  },
+                  child: Text(
+                    user?.name ?? targetUserName,
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  l10n.online,
+                  style: TextStyle(
+                    color: AppColors.primary,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+
+                const SizedBox(height: 25),
+
+                
+                _buildSectionContainer(
+                  context,
+                  title: l10n.information,
+                  children: [
+                    _buildInfoTile(
+                      l10n.email,
+                      user?.email ?? "No email provided",
+                    ),
+                    _buildInfoTile(l10n.bio, user?.bio ?? "No bio available"),
+                  ],
+                ),
+
+                _buildSectionContainer(
+                  context,
+                  title: l10n.privacyAndSettings,
+                  children: [
+                    ListTile(title: Text(l10n.block), onTap: () {}),
+                    ListTile(
+                      title: Text(
+                        l10n.report,
+                        style: const TextStyle(color: Colors.red),
+                      ),
+                      onTap: () {},
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 30),
               ],
             ),
-            const SizedBox(height: 30),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildActionButton(BuildContext context, IconData icon, String label) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Column(
-      children: [
-        Container(
-          width: 60,
-          height: 60,
-          decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF2C2C2E) : Colors.grey[200],
-            borderRadius: BorderRadius.circular(16),
           ),
-          child: IconButton(
-            icon: Icon(icon, color: AppColors.primary, size: 28),
-            onPressed: () {},
-          ),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          label,
-          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
-        ),
-      ],
+        );
+      },
     );
   }
 

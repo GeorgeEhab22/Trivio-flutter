@@ -1,9 +1,17 @@
-import 'package:auth/core/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const ChatAppBar({super.key});
+  final String targetUserId;
+  final String conversationId;
+  final String targetUserName;
+
+  const ChatAppBar({
+    super.key,
+    required this.targetUserId,
+    required this.conversationId,
+    required this.targetUserName,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +27,7 @@ class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
         onPressed: () => context.pop(),
       ),
       title: Text(
-        "Alex Johnson",
+        targetUserName,
         style: TextStyle(
           fontWeight: FontWeight.bold,
           fontSize: 18,
@@ -31,7 +39,9 @@ class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
         IconButton(
           icon: Icon(Icons.info_outline, color: iconColor),
           onPressed: () {
-            context.push(AppRoutes.chatInfo);
+            context.push(
+              '/app/messages/chat/$conversationId/$targetUserId/$targetUserName/chat_info',
+            );
           },
         ),
         const SizedBox(width: 8),

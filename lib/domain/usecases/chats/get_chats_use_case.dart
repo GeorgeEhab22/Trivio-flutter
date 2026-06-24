@@ -7,7 +7,7 @@ class GetChatsUseCase {
   final ChatRepo chatRepo;
   GetChatsUseCase(this.chatRepo);
 
-  Future<Either<Failure, List<Chat>>> call({int page = 1}) async {
-    return await chatRepo.getChats(page: page);
+  Future<Either<Failure, List<Chat>>> call({required int page,required String currentUserId}) async {
+    return await chatRepo.getChats(page: page,currentUserId: currentUserId);
   }
 }

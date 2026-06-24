@@ -4,6 +4,7 @@ import 'package:auth/presentation/manager/sigin_in_cubit/sign_in_cubit.dart';
 import 'package:auth/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class ConfirmWindow extends StatelessWidget {
   final String title;
@@ -87,7 +88,7 @@ class ConfirmWindow extends StatelessWidget {
                   children: [
                     Expanded(
                       child: TextButton(
-                        onPressed: () => Navigator.pop(context),
+                        onPressed: () => context.pop(),
                         child:  Text(l10n.cancel, style:const TextStyle(color: Colors.grey)),
                       ),
                     ),

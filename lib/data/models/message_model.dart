@@ -11,21 +11,17 @@ class MessageModel extends Message {
   });
 
   factory MessageModel.fromJson(Map<String, dynamic> json) {
+    final senderData = json['sender'] ?? {};
+
     return MessageModel(
-      messageId: json['_id'] ?? json['id'] ?? '',
-      chatId: json['chatId'] ?? '',
-      senderId: json['senderId'] ?? '',
-      text: json['text'] ?? '',
-      isSeen: json['isSeen'] ?? false,
+      messageId: json['_id'] ?? '',
+      chatId: json['conversation'] ?? json['conversationId'] ?? '',
+      senderId: senderData['_id'] ?? senderData ?? '',
+      text: json['content'] ?? '',
+      isSeen: json['isRead'] ?? false, 
       createdAt: json['createdAt'] != null 
-          ? DateTime.parse(json['createdAt']) 
+          ? DateTime.parse(json['createdAt']).toLocal() 
           : DateTime.now(),
     );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'text': text,
-    };
   }
 }

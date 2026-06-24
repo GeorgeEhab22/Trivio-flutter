@@ -1,10 +1,13 @@
 import 'package:auth/l10n/app_localizations.dart';
+import 'package:auth/presentation/manager/chat_cubit/chat_messages_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:auth/presentation/chats/chat_screen/widgets/other_sending_options.dart';
 import 'package:auth/constants/colors.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ChatInputField extends StatefulWidget {
-  const ChatInputField({super.key});
+  final String currentUserId;
+  const ChatInputField({super.key, required this.currentUserId});
 
   @override
   State<ChatInputField> createState() => _ChatInputFieldState();
@@ -59,6 +62,17 @@ class _ChatInputFieldState extends State<ChatInputField> {
             Expanded(
               child: TextField(
                 controller: _controller,
+                onChanged: (value) {
+                  if (value.isNotEmpty) {
+                    context.read<ChatMessagesCubit>().sendTypingEvent(
+                      isTyping: true,
+                    );
+                  } else {
+                    context.read<ChatMessagesCubit>().sendTypingEvent(
+                      isTyping: false,
+                    );
+                  }
+                },
                 style: TextStyle(color: isDark ? Colors.white : Colors.black),
                 decoration: InputDecoration(
                   hintText: l10n.typeMessageHint,
@@ -77,7 +91,15 @@ class _ChatInputFieldState extends State<ChatInputField> {
               child: GestureDetector(
                 onTap: _hasText
                     ? () {
-                        // TODO: Send message logic
+                        context.read<ChatMessagesCubit>().sendMessage(
+                          _controller.text,
+                          widget.currentUserId,
+                        );
+
+                        context.read<ChatMessagesCubit>().sendTypingEvent(
+                          isTyping: false,
+                        );
+
                         _controller.clear();
                       }
                     : null,
