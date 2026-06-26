@@ -2,10 +2,12 @@ import 'package:auth/data/models/message_model.dart';
 import 'package:auth/domain/entities/message.dart';
 import 'package:auth/domain/usecases/chats/get_messages_use_case.dart';
 import 'package:auth/domain/usecases/chats/mark_conversation_seen_use_case.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
 import 'chat_messages_state.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class ChatMessagesCubit extends Cubit<ChatMessagesState> {
   final GetMessagesUseCase getMessagesUseCase;
@@ -52,9 +54,20 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
       socket!.dispose();
     }
 
-//TODO:handle mobile later
+    String getSocketUrl() {
+      String url = "";
+
+      if (defaultTargetPlatform == TargetPlatform.android) {
+        url = dotenv.env['MOBILE_URL'] ?? 'http://192.168.1.9:3500/api/v1/';
+      } else {
+        url = dotenv.env['LOCAL_URL'] ?? 'http://localhost:3500/api/v1/';
+      }
+
+      return url.replaceAll('/api/v1/', '');
+    }
+
     socket = io.io(
-      'http://localhost:3500',
+      getSocketUrl(),
       io.OptionBuilder()
           .setTransports(['websocket'])
           .setPath('/socket.io')
