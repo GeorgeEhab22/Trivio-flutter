@@ -87,7 +87,7 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
         data: {"token": token},
         options: _getAuthOptions(),
       );
-      print("FCM Token registered successfully");
+     // print("FCM Token registered successfully");
     } catch (e) {
       errorHandler.handleDioError(e);
       rethrow;
@@ -102,7 +102,7 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
         data: {"token": token},
         options: _getAuthOptions(),
       );
-      print("FCM Token deleted successfully");
+      //print("FCM Token deleted successfully");
     } catch (e) {
       errorHandler.handleDioError(e);
       rethrow;

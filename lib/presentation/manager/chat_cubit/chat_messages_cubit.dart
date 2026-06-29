@@ -77,9 +77,15 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
           .build(),
     );
 
-    socket?.onConnectError((err) => print(' Socket Connect Error: $err'));
-    socket?.onError((err) => print(' Socket Error: $err'));
-    socket?.onDisconnect((_) => print(' Socket Disconnected'));
+    socket?.onConnectError((err) {
+      /* print(' Socket Connect Error: $err'); */
+    });
+    socket?.onError((err) {
+      /* print(' Socket Error: $err'); */
+    });
+    socket?.onDisconnect((_) {
+      /* print(' Socket Disconnected'); */
+    });
 
     socket?.connect();
 

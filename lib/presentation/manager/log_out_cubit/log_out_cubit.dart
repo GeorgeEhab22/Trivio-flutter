@@ -7,7 +7,6 @@ class LogOutCubit extends Cubit<LogOutState> {
 
   Future<void> executeLogOut() async {
     final prefs = await SharedPreferences.getInstance();
-    //TODO: add "timeline refresh" logic here when created
     await prefs.remove('auth_token');
     emit(LogOutSuccess());
   }

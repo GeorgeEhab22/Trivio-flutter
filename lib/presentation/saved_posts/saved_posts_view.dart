@@ -97,7 +97,7 @@ class _SavedPostsViewState extends State<SavedPostsView> {
                     Icon(
                       Icons.bookmark_border_rounded,
                       size: 64,
-                      color: Colors.grey.withOpacity(0.5),
+                      color: Colors.grey.withValues(alpha: 0.5),
                     ),
                     const SizedBox(height: 16),
                     Text(

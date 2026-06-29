@@ -1,14 +1,15 @@
 import 'package:auth/constants/colors.dart';
 import 'package:auth/core/app_routes.dart';
+import 'package:auth/l10n/app_localizations.dart';
 import 'package:auth/presentation/reels/buttons/reels_add_button.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class ReelsAppBar extends StatelessWidget {
   const ReelsAppBar({super.key});
-
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Positioned(
       top: 0,
       left: 0,
@@ -39,19 +40,17 @@ class ReelsAppBar extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 _buildTabButton(
-                  "For You",
+                  l10n.forYou,
                   isActive: true,
                   onTap: () {
-                    //TODO: add logic to change tab in cubit later
                   },
                 ),
                 const SizedBox(width: 24),
 
                 _buildTabButton(
-                  "Following",
+                  l10n.following,
                   isActive: false,
                   onTap: () {
-                    // TODO: add logic to change tab in cubit later
                   },
                 ),
               ],

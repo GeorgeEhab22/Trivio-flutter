@@ -65,8 +65,8 @@ class NotificationCardType extends StatelessWidget {
           timeText: timeText,
           onTap: () {
             final targetPostId = notification.postId ?? notification.entityId;
-            print("Target Post ID: $targetPostId");
-            print("Comment ID: ${notification.entityId}");
+            //print("Target Post ID: $targetPostId");
+           // print("Comment ID: ${notification.entityId}");
             final commentId = notification.entityId;
 
             final path = Uri(

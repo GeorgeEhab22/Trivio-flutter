@@ -125,7 +125,6 @@ class ProfileSocialInfoCubit extends Cubit<ProfileSocialInfoState> {
     );
   }
 
-  //TODO: requests if we'll do them - this is loval
   Future<void> acceptRequest(String requestId) async {
     if (state is SocialInfoLoaded) {
       final currentState = state as SocialInfoLoaded;
@@ -138,7 +137,7 @@ class ProfileSocialInfoCubit extends Cubit<ProfileSocialInfoState> {
 
       emit(currentState.copyWith(requests: updatedRequests));
       
-      print("✅ Mocked Accept for ID: $requestId. No API call made.");
+      //print("✅ Mocked Accept for ID: $requestId. No API call made.");
     }
   }
 

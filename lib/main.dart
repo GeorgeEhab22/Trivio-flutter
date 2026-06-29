@@ -21,7 +21,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'injection_container.dart' as di;
-
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:video_player_win/video_player_win_plugin.dart';
 final RouteObserver<ModalRoute<dynamic>> routeObserver =
     RouteObserver<ModalRoute<dynamic>>();
 
@@ -30,6 +31,16 @@ final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  HttpOverrides.global = MyHttpOverrides();
+
+  if (!kIsWeb && (Platform.isWindows || Platform.isLinux)) {
+    sqfliteFfiInit();
+    databaseFactory = databaseFactoryFfi;
+
+    WindowsVideoPlayer.registerWith(); 
+  
+  }
+  
   await FcmHelper.initFCM();
 
   await di.init();
@@ -174,5 +185,12 @@ Future<void> _setupDevMode() async {
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZDZkYjczMDU0ZmQwYzYwMDBlZTliYSIsInVzZXJuYW1lIjoibGl2ZXIiLCJlbWFpbCI6Im1hcm40NzI1QGdtYWlsLmNvbSIsImlhdCI6MTc3NTkyMDYxOX0.fyo4R6Tc-7-2gzy7y5CJWiYblm3IQ8w7aajFnLwPMG4";
       
   await prefs.setString('auth_token', devToken);
-  print("🛠️ DEV MODE: Token injected. App will start as logged in.");
+  //print("🛠️ DEV MODE: Token injected. App will start as logged in.");
+}
+class MyHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback = (X509Certificate cert, String host, int port) => true;
+  }
 }

@@ -15,9 +15,7 @@ import 'package:auth/presentation/groups/group_preview/group_preview_view.dart';
 import 'package:auth/presentation/groups/manage_group/banned_members_list.dart';
 import 'package:auth/presentation/groups/manage_group/manage_group_view.dart';
 import 'package:auth/presentation/groups/manage_group/members_requests_list_view.dart';
-import 'package:auth/presentation/groups/manage_group/pending_posts_view.dart';
 import 'package:auth/presentation/groups/manage_group/people_view/people_view.dart';
-import 'package:auth/presentation/groups/manage_group/reported_posts_view.dart';
 import 'package:auth/presentation/groups/my_group/my_group_view.dart';
 import 'package:auth/presentation/groups/widgets/edit_post_page.dart';
 import 'package:auth/presentation/home/single_post_view.dart';
@@ -417,6 +415,10 @@ GoRouter createRouter(bool isLoggedIn) {
                             create: (context) =>
                                 di.sl<ProfileSocialInfoCubit>(),
                           ),
+                          BlocProvider(
+                            create: (context) =>
+                                di.sl<GetUserProfileByIdCubit>(),
+                          ),
                         ],
                         child: ReelsView(),
                       ),
@@ -715,16 +717,7 @@ GoRouter createRouter(bool isLoggedIn) {
                                   );
                                 },
                               ),
-                              GoRoute(
-                                path: 'pending_posts',
-                                builder: (context, state) =>
-                                    const PendingPostsView(),
-                              ),
-                              GoRoute(
-                                path: 'reported_posts',
-                                builder: (context, state) =>
-                                    const ReportedPostsView(),
-                              ),
+                             
                               GoRoute(
                                 path: 'members',
                                 builder: (context, state) {

@@ -52,7 +52,6 @@ void showMessageActions(BuildContext context, String copiedMessage) {
                   confirmText: l10n.delete,
                   confirmTextColor: Colors.red,
                   onConfirm: () {
-                    // TODO: add delete functionality later
                   },
                 );
               }),
@@ -61,7 +60,6 @@ void showMessageActions(BuildContext context, String copiedMessage) {
                 Icons.report_gmailerrorred,
                 l10n.report,
                 () {
-                  // TODO: add report functionality later
                 },
               ),
             ],

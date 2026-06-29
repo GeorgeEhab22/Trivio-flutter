@@ -48,7 +48,6 @@ class MessagesItem extends StatelessWidget {
                 content: l10n.muteChatConfirm,
                 confirmText: l10n.mute,
                 onConfirm: () {
-                  // TODO: Handle mute action
                 },
               );
             },
@@ -66,7 +65,6 @@ class MessagesItem extends StatelessWidget {
                 confirmText: l10n.delete,
                 confirmTextColor: Colors.red,
                 onConfirm: () {
-                  // TODO: Handle delete action
                 },
               );
             },

@@ -17,8 +17,7 @@ class GroupModel extends Group {
 
   factory GroupModel.fromJson(Map<String, dynamic> json) {
     final Map<String, dynamic> data = json['group'] ?? json;
-  //TODO : remove when backend is fixed to add mobile ip
-  // and change to your ip
+  
   
     String? logoUrl = data['logo'] as String?;
     // if (logoUrl != null && logoUrl.contains('localhost')) {

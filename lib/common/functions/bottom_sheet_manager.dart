@@ -151,7 +151,6 @@ class BottomSheetManager {
     }
   }
 
-  // TODO : handle states
   static void showActions(
     BuildContext context, {
     required Comment comment,

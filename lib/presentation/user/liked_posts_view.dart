@@ -35,7 +35,6 @@ class LikedPostsScreen extends StatelessWidget {
 
                 return GestureDetector(
                   onTap: () {
-                    // TODO: Go to individual post view
                   },
                   child: Container(
                     decoration: BoxDecoration(

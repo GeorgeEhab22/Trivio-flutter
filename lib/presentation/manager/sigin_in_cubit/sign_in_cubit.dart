@@ -34,10 +34,10 @@ class SignInCubit extends Cubit<SignInState> {
 
       if (token != null) {
         await _registerFcmTokenUseCase.call(token);
-        print("✅ FCM Token registered after login/google sync");
+        //print("✅ FCM Token registered after login/google sync");
       }
     } catch (e) {
-      print("⚠️ FCM Sync Error (Non-critical): $e");
+     // print("⚠️ FCM Sync Error (Non-critical): $e");
     }
   }
 

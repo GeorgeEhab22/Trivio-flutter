@@ -12,9 +12,7 @@ class GroupMemberModel extends GroupMember {
   factory GroupMemberModel.fromJson(Map<String, dynamic> json) {
     final userData = json['userId'];
 
-    //TODO : remove when backend is fixed to add mobile ip
-    // and change to your ip
-
+   
     String? image = userData is Map
         ? (userData['profileImage'] ?? userData['image']) as String?
         : null;

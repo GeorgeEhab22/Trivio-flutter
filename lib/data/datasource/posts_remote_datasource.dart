@@ -371,7 +371,7 @@ class PostsRemoteDataSourceImpl implements PostsRemoteDataSource {
         data: {'postsID': postIds},
         options: _getAuthOptions(),
       );
-      print('[WatchedPosts] Successfully submitted ${postIds.length} post IDs');
+      //('[WatchedPosts] Successfully submitted ${postIds.length} post IDs');
     } catch (e) {
       debugPrint('[WatchedPosts] remote error: $e');
       errorHandler.handleDioError(e);

@@ -84,7 +84,6 @@ class FcmHelper {
       }
 
       try {
-        //TODO: here to change notification sound
         await _audioPlayer.play(AssetSource('sounds/notificationSound.wav'));
       } catch (_) {}
 
@@ -198,7 +197,7 @@ class FcmHelper {
       );
 
       if (token != null) {
-        print("✅ SUCCESS! FCM Token: $token");
+       // print("SUCCESS! FCM Token: $token");
         await di.sl<NotificationRemoteDataSource>().registerFcmToken(token);
       }
     } catch (_) {}

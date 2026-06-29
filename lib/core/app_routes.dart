@@ -46,7 +46,6 @@ class AppRoutes {
   static String manageGroup(String groupId) => '${myGroup(groupId)}/manage_group';
 
   static String groupMembersRequests(String groupId) => '${manageGroup(groupId)}/members_requests';
-  static String groupPendingPosts(String groupId) => '${manageGroup(groupId)}/pending_posts';
   static String groupReportedPosts(String groupId) => '${manageGroup(groupId)}/reported_posts';
   static String groupMembers(String groupId) => '${manageGroup(groupId)}/members';
   static String bannedMembers(String groupId) => '${manageGroup(groupId)}/banned_members';

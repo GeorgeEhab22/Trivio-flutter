@@ -38,7 +38,6 @@ class GroupPreviewAppBar extends StatelessWidget
                   text: l10n.copyLink, // Localized
                   onTap: () {
                     context.pop();
-                    //TODO: copy link
                   },
                 ),
               ],

@@ -75,7 +75,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       if (token != null) {
         await _storeToken(token);
         api.dio.options.headers['Authorization'] = 'Bearer $token';
-        print ('Token stored: $token');
+        //print ('Token stored: $token');
       } else {
         throw AuthException('Token not found in response');
       }
